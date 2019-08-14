@@ -21,9 +21,9 @@ This application is much convenient than uploading the images manually for many 
 * This tool will work no matter how bad your speed connection minimum of 2kbps Upload and Download << The more speed you got the faster it'll perform >>
 
 ################################################
-* I added a Folder that has lots of images for you to choose
+* I added a Library (Circlizeit.zip) that has lots of images for you to choose
 from BUT DO DONT forget to copy the image you'd like to 
-use to Upload folder first
+use to Uploadit folder first
 
 
 
@@ -45,14 +45,13 @@ are connected to the same WIFI
 >Go to Al-Azif's host 
 >run FTP
 
->run [Iconit v1.00]
+>run [Iconit.exe]
 
 when connection success and asks
 for Game title 
 
 >write the game 
- exp:[grand theft auto five] for GTA V
- or [grand theft]
+ exp:[grand theft auto five] for GTA V #Do not include numbers in the title.
 
 when Game ID found successfully and
 asks for icon name 
@@ -61,7 +60,7 @@ asks for icon name
  extention from Upload file
  exp:[test.jpeg]
 NOTE:Sometimes it detects the
-abbreviation the game title
+abbreviation of the game title
 exp:[grand theft auto = GTA]
 exp:[tricky towers = TT]
 
