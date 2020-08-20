@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import ctypesf
+import ctypes
 myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-import Message, ChangeIcon, ProfileIcon
+import Message, ChangeIcon, ProfileIcons
 
 # connection through FTP
 from ftplib import FTP
@@ -25,7 +25,7 @@ for change in local_path:
         setting_path += change
 
 IP = ""
-Port = 21
+Port = 1337 #Al-Azif's default FTP payload Port
 
 all_CUSA = []
 all_CUSA_ex = []
