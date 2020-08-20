@@ -24,62 +24,23 @@ This application is much convenient than uploading the images manually for many 
 from BUT DO DONT forget to copy the image you'd like to 
 use to Uploadit folder first
 
+###############################################
+*In v4.01 added avatar icon changer feature
 
+# Update v4.01
 
-#Instructions
+*Added new feature change profile icon "avatar".
+*External hdd games support.
+*More homebrew supported starting with:-
+>(SSNE, MODS, LAPY, NP and more) as the Game ID.
+>(Make sure to enable it under Settings>>Options)
+*Fixed cache bar wrong calculations.
+*Fixed many bugs.
 
-How to use Iconit v1.00 ?
-Make sure both PS4 and PC 
-are connected to the same WIFI
-
->run [generate IP file.exe] 
-
->open [PS4 IP.txt]
-
->replace XXX.XXX.XXX.XXX with your IP 
-    exp: 192.168.100.11
-
->replace Port if needed
-
->Go to Al-Azif's host 
->run FTP
-
->run [Iconit.exe]
-
-when connection success and asks
-for Game title 
-
->write the game 
- exp:[grand theft auto five] for GTA V #Do not include numbers in the title.
-
-when Game ID found successfully and
-asks for icon name 
-
->Copy & paste your picture name with the
- extention from Upload file
- exp:[test.jpeg]
-NOTE:Sometimes it detects the
-abbreviation of the game title
-exp:[grand theft auto = GTA]
-exp:[tricky towers = TT]
-
-Let the magic begin ...
-
-have fun!!
-
-#################################
-
-Please help me develop the tool if you have any error report it @OfficialAhmed0
-I will be updating the tool in order to make it much convenient and easy to use
-and more importantly adding new features such as Change
-profile icon ,save data icon etc.
-I might create a Full application.
+###############################################
 
 I tried to change the wallpaper of the games that show up when the game starts (named :pic1) however everytime I change
 it a black screen shows up instead of the image I use .The
 game starts just fine except the wallpaper any idea why?
 you can try changing them through fileZilla if you can fix it
 please DM me I will add it to the tool next update.
-
-By the way thanks for reading. 
-
