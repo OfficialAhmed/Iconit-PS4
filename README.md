@@ -1,9 +1,8 @@
-# Iconit-v1.00
+# Iconit
+Latest version 4.01 (Aug 20, 2020)
 No longer ftp client needed to change PS4 games icons. this tool will do it for you .
 
-
-#What I'm capable of?
-
+# About
 
 This application is much convenient than uploading the images manually for many reasons :-
 
