@@ -30,17 +30,24 @@ use to Uploadit folder first
 # Update v4.01
 
 *Added new feature change profile icon "avatar".
+
+###############################################
 *External hdd games support.
+
 *More homebrew supported starting with:-
 >(SSNE, MODS, LAPY, NP and more) as the Game ID.
 >(Make sure to enable it under Settings>>Options)
-*Fixed cache bar wrong calculations.
-*Fixed many bugs.
 
 ###############################################
+*Fixed cache bar wrong calculations.
 
+###############################################
+*Fixed many bugs.
+
+# Contribution
 I tried to change the wallpaper of the games that show up when the game starts (named :pic1) however everytime I change
 it a black screen shows up instead of the image I use .The
 game starts just fine except the wallpaper any idea why?
-you can try changing them through fileZilla if you can fix it
+you can try changing them through fileZilla if you managed to fix it
 please DM me I will add it to the tool next update.
+Twitter:@OfficialAhmed0
