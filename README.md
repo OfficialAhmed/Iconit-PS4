@@ -10,7 +10,7 @@ This application is much convenient than uploading the images manually for many 
 
 * It'll resize the images for you to the required size so you no longer need to use any applications or whatsoever to do so. 
 
->> Not only that but it also count how many images are required for each game (icon) some games require only 2 images while others require more, so no longer counting them by yourself it'll count and overwrite them.
+> Not only that but it also count how many images are required for each game (icon) some games require only 2 images while others require more, so no longer counting them by yourself it'll count and overwrite them.
 
 * This tool will connect to your PS4 system through FTP directly so you no longer need FTP client applications such as FileZilla atleast not for changing the game icons or profile avatar.
 
@@ -25,7 +25,7 @@ This application is much convenient than uploading the images manually for many 
 
 *More homebrews are supported starting with:-
 >(SSNE, MODS, LAPY, NP and more) as the Game ID.
->(Make sure to enable it under Settings>>Options)
+(Make sure to enable it under Settings>>Options)
 
 *Fixed cache bar wrong calculations.
 
