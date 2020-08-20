@@ -1,395 +1,538 @@
-#for connection through FTP
+from PyQt5 import QtCore, QtGui, QtWidgets
+import ctypes
+myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+import Message, ChangeIcon, ProfileIcon
+
+# connection through FTP
 from ftplib import FTP
-import os, sys
-import time
-#for resizing images
+import os, sys, time
+# resizing images
 from PIL import Image
 import PIL
 
 ftp = FTP()
 working_dir = "user/appmeta"
-img_dir = str(os.getcwd()) + "\\" + "Uploadit\\"
+local_path = str(os.getcwd())
+temp_path = local_path + "\Data\prxUserMeta\\"
+img_dir = local_path + "\\data\\User\\appmeta"
 
-class settings(): #Connecting to PS4
-    IP = ""    
-    Port = ""
-    
-    with open("PS4 IP.txt", "r") as PS4_IP_file:
-        lines = PS4_IP_file.readlines()
-        
-        for check in lines[0][1:-25]:
-            if check.isdigit() or check == ".":
-                IP += check
-            else:
-                continue
-            
-        for check in lines[1][1:-25]:
-            if check.isdigit():
-                Port += check    
-            else:
-                continue
+setting_path = ""
+for change in local_path:
+    if change == "\\":
+        setting_path += "/"
+    else:
+        setting_path += change
 
-def connect(IP, Port): #Connect through FTP 
-    
-    ftp.set_debuglevel(2)
-    ftp.connect(IP, Port)
-    ftp.login("", "")
-    ftp.cwd(working_dir)
+IP = ""
+Port = 21
 
-def Get_CUSA_from_PS4():
-    directories = []
-    ftp.retrlines("LIST ", directories.append)#Get all dir from the server and append them
-    """create a file & copy, paste all them directories within that file"""
-    all_directories_in_system = open("directories in system.dat", "w+")
-    for line in directories:
-        all_directories_in_system.write(line + "\n")#Copy and paste in file
-    all_directories_in_system = open("directories in system.dat", "r")#Read file
-    all_lines = all_directories_in_system.readlines()
-    
-    """Create a file and print only lines that has the word CUSA"""
-    directories_with_CUSA = open("CUSA directories.dat", "w+")
-    for CUSA_lines in all_lines:
-        if "C" + "U" + "S" + "A" in CUSA_lines:
-            directories_with_CUSA.write(CUSA_lines)
-        else:
+all_CUSA = []
+all_CUSA_ex = []
+Game = {}
+class Ui_IPortWindow(object):
+    def setupUi(self, IPortWindow):
+        global local_path, setting_path, temp_path
+        IPortWindow.setObjectName("IPortWindow")
+        IPortWindow.resize(409, 290)
+        IPortWindow.setMinimumSize(QtCore.QSize(409, 290))
+        IPortWindow.setMaximumSize(QtCore.QSize(409, 290))
+        IPortWindow.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+        IPortWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
+        IPortWindow.setWindowIcon(QtGui.QIcon(local_path + "\Data\Pref\ic1.@OfficialAhmed0"))
+        self.centralwidget = QtWidgets.QWidget(IPortWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        #Settings
+        self.userFont = "Arial"
+        self.userPort = "1337"
+        self.userIPath = local_path
+        self.userDPath = local_path
+        self.userHB = "False"
+        try:
+            with open(temp_path + "pref.ini") as file:
+                content = file.readlines()
+                self.userFont = content[0][2: -1]
+                self.userPort = content[1][2: -1]
+                self.userIPath = content[2][6: -1]
+                self.userDPath = content[3][6: -1]
+                self.userHB = (content[4][content[4].find(":")+1:])
+        except:
             pass
-    
-    """finally taking only CUSAxxxx from each line from the file CUSA directories and write them on new file named all Games.dat """
-    all_CUSA = open("all Games.dat", "w+")
-    directories_with_CUSA = open("CUSA directories.dat", "r")
-    lines = directories_with_CUSA.readlines()
-    for line in lines:
-        index_C = line.index("C")
-        only_CUSA = line[index_C:-1]
-        all_CUSA.write(only_CUSA + "\n")
-    
-    """Count how many games in the system by counting CUSA titles"""
-    all_CUSA = open("all Games.dat", "r")
-    CUSA_lines = all_CUSA.readlines()
-    total_CUSA = len(CUSA_lines) - 1 #return number of lines without the last one since it's empty
-    
-    directories_with_CUSA.close()
-    all_directories_in_system.close()
-    return total_CUSA
+        font = QtGui.QFont()
+        font.setFamily(self.userFont)
+        font.setPointSize(13)
+        font.setBold(True)
+        font.setItalic(True)
+        
+        self.BackgroundView = QtWidgets.QGraphicsView(self.centralwidget)
+        self.BackgroundView.setGeometry(QtCore.QRect(-940, -490, 1461, 871))
+        self.BackgroundView.setStyleSheet("background-image: url("+ setting_path +"/Data/Pref/bg.@OfficialAhmed0);")
+        self.BackgroundView.setFrameShape(QtWidgets.QFrame.Box)
+        self.BackgroundView.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.BackgroundView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.BackgroundView.setObjectName("BackgroundView")
+        self.IP_Label = QtWidgets.QLabel(self.centralwidget)
+        self.IP_Label.setGeometry(QtCore.QRect(20, 60, 71, 51))
+        self.IP_Label.setStyleSheet("font: 11pt \""+self.userFont+"\"; color: rgb(85, 170, 255);")
+        self.IP_Label.setObjectName("IP_Label")
+        
+        self.Port_Label = QtWidgets.QLabel(self.centralwidget)
+        self.Port_Label.setGeometry(QtCore.QRect(20, 100, 71, 51))
+        self.Port_Label.setStyleSheet("font: 11pt \""+ self.userFont +"\"; color: rgb(85, 170, 255);")
+        self.Port_Label.setObjectName("Port_Label")
 
-def gameSearch():
-    Title = str(input("""Give me your Game title and let me do the magic for you 
-        [exp: god of war]: """)).strip()
-        
-    print("""
-    This might take few minutes or even seconds depends on how
-    many games you have... 
-    Searching 20 games sometimes up to 35 games per second """)    
-    time.sleep(9)
-    
-    return Title
+        self.Change_label = QtWidgets.QLabel(self.centralwidget)
+        self.Change_label.setGeometry(QtCore.QRect(20, 155, 71, 51))
+        self.Change_label.setStyleSheet("font: 11pt \""+ self.userFont +"\"; color: rgb(85, 170, 255);")
+        self.Change_label.setObjectName("Change_label")
 
-def check_each_CUSA_file(title):
-    title = title.rstrip()
-    
-    file = open("all Games.dat", "r")
-    games = file.readlines()
-    
-    next_game = 0
-    file_name = "pronunciation.xml"
-    CUSA = ""
+        self.IP_input = QtWidgets.QLineEdit(self.centralwidget)
+        self.IP_input.setGeometry(QtCore.QRect(110, 70, 201, 31))
+        self.IP_input.setFont(font)
+        self.IP_input.setStyleSheet("background-color: rgb(77, 99, 126); border-radius: 5px;")
+        self.IP_input.setMaxLength(24)
+        self.IP_input.setEchoMode(QtWidgets.QLineEdit.Normal)
+        self.IP_input.setAlignment(QtCore.Qt.AlignCenter)
+        self.IP_input.setCursorMoveStyle(QtCore.Qt.VisualMoveStyle)
+        self.IP_input.setClearButtonEnabled(True)
+        self.IP_input.setObjectName("IP_input")
         
-    while next_game < len(games) :
-        #Check the files in each game directory
-        ftp.cwd(games[next_game][0:-1])
-        CUSA = games[next_game][0:-1]
-            
-        with open("files_in_dir.dat", "w+", encoding="utf8") as files_in_dir:
-            ftp.retrlines("LIST", files_in_dir.write)
-            
-            print("""Created by : @OfficialAhmed0""")
+        self.Port_input = QtWidgets.QLineEdit(self.centralwidget)
+        self.Port_input.setGeometry(QtCore.QRect(110, 110, 201, 31))
+        self.Port_input.setFont(font)
+        self.Port_input.setStyleSheet("background-color: rgb(77, 99, 126); border-radius: 5px;")
+        self.Port_input.setInputMethodHints(QtCore.Qt.ImhNone)
+        self.Port_input.setMaxLength(8)
+        self.Port_input.setEchoMode(QtWidgets.QLineEdit.Normal)
+        self.Port_input.setAlignment(QtCore.Qt.AlignCenter)
+        self.Port_input.setCursorMoveStyle(QtCore.Qt.VisualMoveStyle)
+        self.Port_input.setClearButtonEnabled(True)
+        self.Port_input.setObjectName("Port_input")
+
+        font.setPointSize(8)
+        self.Connect_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.Connect_btn.setGeometry(QtCore.QRect(264, 180, 93, 31))
+        self.Connect_btn.setFont(font)
+        self.Connect_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.Connect_btn.setStyleSheet("background-color: rgb(77, 99, 126);")
+        self.Connect_btn.setText("Connect PS4")
+        self.Connect_btn.setObjectName("Connect_btn")
+
+        self.Connect_btn.clicked.connect(self.Check_IPort)
         
-        with open("files_in_dir.dat", "r", encoding="utf8") as files_in_dir:
-            content_in_file = files_in_dir.read()
-            if file_name in content_in_file: #If pronunciation.xml found 
-                
-                with open(file_name, "wb") as downloaded_file: #Download it
-                    ftp.retrbinary("RETR " + file_name, downloaded_file.write, 1024) #copy everything in downloaded file                    
-                print("Created by : @OfficialAhmed0")
-                with open(file_name, "r", encoding="utf8") as file: #Read Downloaded ponunciation.xml file
-                    with open("Possible game title.dat", "w+", encoding="utf8") as game_titles_file: #Create temp file
-                        for each_line in file: #Check for <text> which is 100% will be the title of the game
-                            if "text" in each_line: #It's there copy it to temp file
-                                game_titles_file.write(each_line)
-                            else: #it's not there just ignore it and go to next line
-                                pass
-                with open("Possible game title.dat", "r", encoding="utf8") as game_titles_file:
-                    check = game_titles_file.read()
-                    
-                    possible_titles = []
-                    def caps(x): #Change the way capitalization look
-                        a = x.lower()   #All letters are lowerCase
-                        b = x.upper()    #All letters are upperCase
-                        c = x.title()        #All first letters are upperCase only
-                        d = x.capitalize()  #first letter of first word is upperCase only
-                        e = x                      #original letters the user put
-                        
-                        total_words = x.split() #Count words
-                        if len(total_words) == 3:   #Capitalize only first and third words
-                            first_word = total_words[0].title()
-                            second_word = total_words[1]
-                            thrid_word = total_words[2].title()
-                            
-                            f = first_word + " " + second_word + " " + thrid_word 
-                            
-                            return a,b,c,d,e,f
-                        else:
-                            return a,b,c,d,e
-                    for characters_Cases in caps(title):
-                        possible_titles.append(characters_Cases)                    
-                    
-                    found = False
-                    
-                    #Get Original game title from the downloaded pronunciation.xml 
-                    from_file = open("Possible game title.dat", "r", encoding="utf8")
-                    game_title_in_console = from_file.readlines()
-                    lines = len(game_title_in_console)
-                    
-                    lower_alphabets = "abcdefghijklmnopqrstuvwxyz"
-                    upper_alphabets = lower_alphabets.upper()
-                    
-                    for each_line in range(lines):
-                        if game_title_in_console[each_line] in lower_alphabets or upper_alphabets:
-                            title_from_line = game_title_in_console[each_line]
-                        else:
-                            print("""
-                The game not in English it might be in different language 
-                for now supporting only English """)
-                        
-                    #getting this <text display="1">God of War</text> 
-                        #only get >God of War</text> and then split the rest from God of War
-                    starting_index = title_from_line.index(">") + 1
-                    original_title = title_from_line[starting_index : -8]
-                    
-                    if len(possible_titles) == 4:
-                        if possible_titles[0] in check or possible_titles[1] in check or possible_titles[2] in check or possible_titles[3] in check:
-                            print("")
-                            print("Found [" + title + "] as [" + original_title + "] in your system") 
-                            found = True
+        self.Status = QtWidgets.QLabel(self.centralwidget)
+        self.Status.setGeometry(QtCore.QRect(110, 20, 185, 31))
+        self.Status.setStyleSheet("font: 11pt \""+ self.userFont +"\"; color: rgb(85, 170, 255);")
+        self.Status.setFrameShape(QtWidgets.QFrame.Panel)
+        self.Status.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.Status.setAlignment(QtCore.Qt.AlignCenter)
+        self.Status.setObjectName("Status")
+
+        self.Credits = QtWidgets.QLabel(self.centralwidget)
+        self.Credits.setGeometry(QtCore.QRect(10, 230, 191, 41))
+
+        self.Credits.setFont(font)
+        self.Credits.setStyleSheet("font: 9pt \""+ self.userFont +"\"; color: rgba(85, 170, 255, 80);")
+        self.Credits.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.Credits.setAlignment(QtCore.Qt.AlignCenter)
+        self.Credits.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.Credits.setObjectName("Credits")
+
+        self.CacheBar = QtWidgets.QProgressBar(self.centralwidget)
+        self.CacheBar.setGeometry(QtCore.QRect(80, 220, 121, 21))
+        self.CacheBar.setProperty("value", 0)
+        self.CacheBar.setAlignment(QtCore.Qt.AlignCenter)
+        self.CacheBar.setOrientation(QtCore.Qt.Horizontal)
+        self.CacheBar.setObjectName("CacheBar")
+
+        self.Cache_label = QtWidgets.QLabel(self.centralwidget)
+        self.Cache_label.setGeometry(QtCore.QRect(20, 200, 71, 51))
+        self.Cache_label.setStyleSheet("font: 11pt \""+ self.userFont +"\"; color: rgb(85, 170, 255);")
+        self.Cache_label.setObjectName("Cache_label")
+
+        self.ProfileIcon_label = QtWidgets.QLabel(self.centralwidget)
+        self.ProfileIcon_label.setGeometry(QtCore.QRect(130, 170, 71, 51))
+        self.ProfileIcon_label.setStyleSheet("font: 11pt \""+ self.userFont +"\"; color: rgb(85, 170, 255);")
+        self.ProfileIcon_label.setObjectName("ProfileIcon_label")
+        self.ProfileIcon = QtWidgets.QRadioButton(self.centralwidget)
+        self.ProfileIcon.setGeometry(QtCore.QRect(100, 170, 71, 51))
+
+        self.GameIcon_label = QtWidgets.QLabel(self.centralwidget)
+        self.GameIcon_label.setGeometry(QtCore.QRect(130, 140, 71, 51))
+        self.GameIcon_label.setStyleSheet("font: 11pt \""+ self.userFont +"\"; color: rgb(85, 170, 255);")
+        self.GameIcon_label.setObjectName("GameIcon_label")
+        self.GameIcon = QtWidgets.QRadioButton(self.centralwidget)
+        self.GameIcon.setGeometry(QtCore.QRect(100, 140, 71, 51))
+        self.GameIcon.setChecked(True)
+
+        # Settings
+        IPortWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(IPortWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 409, 21))
+        self.menubar.setObjectName("menubar")
+        self.menuSettings = QtWidgets.QMenu(self.menubar)
+        self.menuSettings.setObjectName("menuSettings")
+        IPortWindow.setMenuBar(self.menubar)
+
+        self.About = QtWidgets.QAction(IPortWindow)
+        self.About.setObjectName("About")
+
+        self.Options = QtWidgets.QAction(IPortWindow)
+        self.Options.setObjectName("Options")
+
+        self.menuSettings.addAction(self.Options)
+        self.menuSettings.addSeparator()
+        self.menuSettings.addAction(self.About)
+        self.menubar.addAction(self.menuSettings.menuAction())
+
+        self.Options.triggered.connect(self.OpenOptions)
+        self.About.triggered.connect(self.about)
+
+        self.retranslateUi(IPortWindow)
+        QtCore.QMetaObject.connectSlotsByName(IPortWindow)
+    
+    def OpenOptions(self):
+        import OptionsWin
+        self.window = QtWidgets.QDialog()
+        self.ui = OptionsWin.Ui_OptionsWin()
+        self.ui.setupUi(self.window)
+        self.window.show()
+
+    def about(self):
+        self.window = QtWidgets.QDialog()
+        self.ui = Message.Ui_Message()
+        self.ui.setupUi(self.window, "About")
+        self.window.show()
+
+    def retranslateUi(self, IPortWindow):
+        _translate = QtCore.QCoreApplication.translate
+        IPortWindow.setWindowTitle(_translate("IPortWindow", "Iconit v4.01"))
+        self.IP_Label.setText(_translate("IPortWindow", "PS4 IP"))
+        self.Port_Label.setText(_translate("IPortWindow", "PS4 Port"))
+        self.IP_input.setPlaceholderText(_translate("IPortWindow", "Exp: 192.168.100.1"))
+        self.Port_input.setText(_translate("IPortWindow", self.userPort))
+        self.Port_input.setPlaceholderText(_translate("IPortWindow", "Exp: 1337"))
+        self.Status.setText(_translate("IPortWindow", "Waiting to connect"))
+        self.Credits.setText(_translate("IPortWindow", "Created by @OfficialAhmed0"))
+        self.Cache_label.setText(_translate("IPortWindow", "Caching"))
+        self.menuSettings.setTitle(_translate("IPortWindow", "Setting"))
+        self.About.setText(_translate("IPortWindow", "About"))
+        self.Options.setText(_translate("IPortWindow", "Options..."))
+        self.ProfileIcon_label.setText(_translate("IPortWindow", "Profile Icon"))
+        self.GameIcon_label.setText(_translate("IPortWindow", "Game Icon"))
+        self.Change_label.setText(_translate("IPortWindow", "Change "))
+
+    def Check_IPort(self):
+        global IP, Port
+
+        IP = self.IP_input.text()
+        Port = self.Port_input.text()
+
+        valid = True
+        for i in IP:
+            if i.isalpha():
+                valid = False
+                break
+        for p in str(Port):
+            if p.isalpha():
+                valid = False
+                break
+        self.Connect_PS4(valid)
+
+    def Connect_PS4(self, isvalid):
+        global ftp, working_dir, IP, Port, local_path, all_CUSA, all_CUSA_ex, temp_path
+        self.window = QtWidgets.QDialog()
+        self.ui = Message.Ui_Message()
+        if isvalid:
+            try:
+                #Delete old Cache
+                try:
+                    cache = os.listdir(temp_path + "MegaSRX\metadata")
+                    for i in cache:
+                        os.remove(temp_path + "MegaSRX\metadata\\" + str(i))
+                except:
+                    pass
+
+                #Iconit Or Profileit ?
+                if self.GameIcon.isChecked() == True:
+                    self.iconDirs = [working_dir]
+                    ftp.set_debuglevel(2)
+                    ftp.connect(IP, int(Port))
+                    ftp.login("", "")
+                    ftp.cwd("user/appmeta")
+                    #look for external folder in appmeta
+                    directories = []
+                    ftp.retrlines("LIST ", directories.append)
+                    for dir in directories:
+                        if "external" in dir:
+                            print(">"*70, "External found")
+                            self.iconDirs.append(working_dir + "/external")
                             break
-                    if len(possible_titles) == 5: 
-                        if possible_titles[0] in check or possible_titles[1] in check or possible_titles[2] in check or possible_titles[3] in check or possible_titles[4] in check:
-                            print("")
-                            print("Found [" + title + "] as [" + original_title + "] in your system") 
-                            found = True
-                            break
-                    if len(possible_titles) == 6: 
-                        if possible_titles[0] in check or possible_titles[1] in check or possible_titles[2] in check or possible_titles[3] in check or possible_titles[4] in check or possible_titles[5] in check:
-                            print("")
-                            print("Found [" + title + "] as [" + original_title + "] in your system") 
-                            found = True
-                            break                            
-                        else:
+
+                    self.Status.setText("Connected")
+                    self.Status.setStyleSheet("font: 11pt \""+ self.userFont +"\"; color: rgb(92, 213, 21);")
+                    self.Connect_btn.setEnabled(False)
+                    self.GameIcon.setEnabled(False)
+                    self.ProfileIcon.setEnabled(False)
+                    for dir in self.iconDirs:
+                        ftp.set_debuglevel(2)
+                        ftp.connect(IP, int(Port))
+                        ftp.login("", "")
+                        try:
+                            ftp.cwd(dir)
+                        except:
                             pass
-                next_game += 1  #Go to next game  
-            else: #If pronunciation.xml isn't found
-                next_game += 1
-        connect(settings.IP ,int(settings.Port)) #Going back to root of the system
-    
-    if found == True:
-        print(original_title + " = " + CUSA)
-        
-    if found == False:
-        print("Sorry cannot find [" + title + "] in your system")
-        check_each_CUSA_file(gameSearch())  
-        
-    return found    
-    
-def resize_and_duplicate(IconName):
-    try:
-        Icon_dir = img_dir + str(IconName)
-        
-        """ 
-        For icon0 type images
-        """            
-        picture = Image.open(Icon_dir) 
-        size = picture.size
-        resize = None
-        
-        if size[0] == 512 and size[1] == 512:
-            resize = picture
-        if size[0] < 512 or size[1] < 512:
-            print("The Image is smaller than (512x512)")
-        else:
-            resize = picture.resize((512, 512), PIL.Image.ANTIALIAS)           
-        
-        print(""" 
-    Please wait while I resize the images...""")
-        time.sleep(2)
-        with open("files_in_dir.dat", "r", encoding="utf8") as files_in_dir_4_pics:
-            content_in_file = files_in_dir_4_pics.read() 
-                    
-            files = []
-            
-            if "icon0.png" in content_in_file:
-                resize.save(img_dir + "icon0.png")
-                files.append("icon0.png")
-            if "icon0.dds" in content_in_file:
-                resize.save(img_dir + "icon00.png")     
-                os.rename(img_dir + "icon00.png", img_dir + "icon0.dds")
-                files.append("icon0.dds")
-                
-            for through_20 in range(1, 21): 
-                if through_20 <= 9:
-                    search_png = ("icon0_0" + str(through_20) + ".png")
-                    search_dds = ("icon0_0" + str(through_20) + ".dds")
-                    
-                    copy_for_dds = ("icon0_0" + str(through_20) + ".jpeg")
-                    
-                    if search_png in content_in_file:
-                        resize.save(img_dir + search_png)               
-                        files.append(search_png)
-                        
-                    if search_dds in content_in_file:
-                        resize.save(img_dir + copy_for_dds)   
-                        os.rename(img_dir + copy_for_dds, img_dir + search_dds)
-                        files.append(search_dds)
-                        
-                else:
-                    search_png = ("icon0_" + str(through_20) + ".png")
-                    search_dds = ("icon0_" + str(through_20) + ".dds")
-                    
-                    copy_for_dds = ("icon0_" + str(through_20) + ".jpeg")
-                    
-                    search_png = ("icon0_" + str(through_20) + ".png")
-                    search_dds = ("icon0_" + str(through_20) + ".dds")
-                    if search_png in content_in_file:
-                        resize.save(img_dir + search_png) 
-                        files.append(search_png)
-                        
-                    if search_dds in content_in_file:
-                        os.rename(img_dir + copy_for_dds, img_dir + search_dds)
-                        files.append(search_dds)
-                        
-            print("""
-    Resized Successfully 
-            """)       
-        pictures = open("FoundImg.dat", "w+")                
-        for picture in files:
-            pictures.write(picture + ",")
-            
-        pictures.close()                       
-    except FileNotFoundError:
-            print("""
-    Sorry I couldn't find the image. make sure you typed the image name correctly
-    with the extension and don't forget to keep it in [Uploadit] folder 
-    if it doesn't exist create one >> NOTE : everything's CASE sensitive.
-            """)
-            
-    except FileExistsError:
-            print("""
-    SORRY I couldn't create a file when that file already exists please delete all pictures
-    in the [Uploadit] file except the icon you want to upload as well as the image and try again. 
-            """)                 
-            resize_and_duplicate(input("""
-    Give me the picture name you want to upload for the 
-    >>> Icon <<< with it's format [exp: test.png]: """) )            
+                        directories = []
 
-def upload():
-    try:
-        with open("FoundImg.dat", "r", encoding="utf8") as pictures:
-            read_pictures = pictures.read()[0:-1]
-            pic = read_pictures.split(",")
-            print("""
-    I am Uploading...
-            """)
-            for i in pic:
-                save_file = open(img_dir + str(i), "rb")
-                ftp.storbinary("STOR " + str(i), save_file,1024)
-            print("""
-    All Images uploaded successfully .
-    Some games require system restart to show up correctly, 
-    and sometimes it takes minutes to be changed.
-    Restart your PS4. See you next time 
-    @OfficialAhmed0
-            """)
-    except:
-        print("DEV_ERROR: " + str(sys.exc_info()[0]))     
+                        ftp.retrlines("LIST ", directories.append)
+                        """create a file & copy, paste all them directories within"""
+
+                        all_directories_in_system = open(temp_path + "directories in system.dat", "w+")
+                        for line in directories:
+                            all_directories_in_system.write(line + "\n")
+                        all_directories_in_system = open(temp_path + "directories in system.dat", "r")
+                        all_lines = all_directories_in_system.readlines()
+                        all_Games = open(temp_path + "All Games.dat", "w+")
+
+                        """Take only CUSAxxxx from each line and write them on all Games.dat """
+                        if self.userHB == "True": 
+                            #Check Homebrews
+                            HB_id = ("LAPY", "MODS", "CRST", "NPX", "PNE", "BOR", "FLT", "CUSB", "MEDN", "SLES", "SLUS", "SSNE")
+                            for CUSA_lines in all_lines:
+                                for HB in HB_id:
+                                    if HB in CUSA_lines:
+                                        index_l = CUSA_lines.index(HB)
+                                        only_CUSA = CUSA_lines[index_l:]
+                                        if "external" in dir:
+                                            all_Games.write(only_CUSA)
+                                            all_CUSA_ex.append(only_CUSA[:-1])
+                                        else:
+                                            all_Games.write(only_CUSA)
+                                            all_CUSA.append(only_CUSA[:-1])
+
+                        for CUSA_lines in all_lines:
+                            if "CUSA" in CUSA_lines:
+                                index_C = CUSA_lines.index("CUSA")
+                                only_CUSA = CUSA_lines[index_C:]
+                                if "external" in dir:
+                                    all_Games.write(only_CUSA)
+                                    all_CUSA_ex.append(only_CUSA[:-1])
+                                else:
+                                    all_Games.write(only_CUSA)
+                                    all_CUSA.append(only_CUSA[:-1])
+
+                    all_directories_in_system.close()
+                    all_Games.close()
+                    self.CacheGameIcon()
+
+                else: #Profileit
+                    ftp.set_debuglevel(2)
+                    ftp.connect(IP, int(Port))
+                    ftp.login("", "")
+                    self.sysProfileRoot = "system_data/priv/cache/profile/"
+                    self.userID = []
+                    ftp.cwd(self.sysProfileRoot)
+                    self.Status.setText("Connected")
+                    self.Status.setStyleSheet("font: 11pt \""+ self.userFont +"\"; color: rgb(92, 213, 21);")
+                    self.Connect_btn.setEnabled(False)
+                    self.GameIcon.setEnabled(False)
+                    self.ProfileIcon.setEnabled(False)
+                    directories = []
+                    ftp.retrlines("LIST ", directories.append)
+
+                    with open(temp_path + "directories in system.dat", "w+") as all_directories_in_system:
+                        for line in directories:
+                            all_directories_in_system.write(line + "\n")
+                    with open(temp_path + "directories in system.dat") as file:
+                        lines = file.readlines()
+                        for line in lines:
+                            if "0x" in line:
+                                account_index = line.index("0x")
+                                self.userID.append(line[account_index:-1])
+                    self.CacheProfileIcon()
+
+            except Exception as e:
+                self.Status.setText("Not connected")
+                self.Status.setStyleSheet("font: 11pt \""+ self.userFont +"\"; color: rgb(255, 0, 0);")
+                self.ui.setupUi(self.window, str(e))
+                self.window.show()
+        else:
+            self.Status.setText("Not connected")
+            self.Status.setStyleSheet("font: 11pt \""+ self.userFont +"\"; color: rgb(255, 0, 0);")
+            self.ui.setupUi(self.window, "Invalid")
+            self.window.show()
+
+    def CacheProfileIcon(self):
+        import shutil
+        fileName = "online.json"
+        dir = temp_path + "MegaSRX\metaprodata\\"
+        progress = int(100/len(self.userID))
+        progressed = 0
+        self.CacheBar.setProperty("value", 1)
+        for user in self.userID:
+            ftp.set_debuglevel(0)
+            ftp.connect(IP, int(Port))
+            ftp.login("", "")
+            ftp.cwd(self.sysProfileRoot + "/" + user)
+
+            with open(dir + "\\" + user + ".png", "wb") as file:
+                ftp.retrbinary("RETR " + "avatar.png", file.write, 1024)
+            with open(dir + "\\" + user + ".json", "wb") as file:
+                ftp.retrbinary("RETR " + fileName, file.write, 1024)
+
+            #Download original Profile Icon from Sony server
+            import requests as req
+            try:
+                with open(dir + "\\" + user + ".json") as file:
+                    #Extract Icon url from json file
+                    read = file.read()
+                    url = read[read.find("avatarUrl") + len("avatarUrl") + 3 : read.find(".png")+len(".png")]
+                    cont = url.split("\/")
+                    link = ""
+                    for i in cont:
+                        if i != "":
+                            link += i + "//"
+                    img = req.get(link[:-2])
+                    
+                    with open(dir + "\\" + user + "Original.png", "wb") as origIcon:
+                        origIcon.write(img.content)
+            except:
+                pass
+
+            for i in range(1, progress):
+                self.CacheBar.setProperty("value", progressed + i)
+                time.sleep(0.01)
+            progressed += progress
+        self.CacheBar.setProperty("value", 100)
+        self.OpenWindow("ProfileIcon")
+
+    def CacheGameIcon(self):
+        global all_CUSA, all_CUSA_ex, ftp, temp_path, working_dir, IP, Port, Game
+
+        numGames = len(all_CUSA+all_CUSA_ex)
+
+        file_name = "pronunciation.xml"
+        icon_name = "icon0.png"
+        CUSA = ""
+        self.CacheBar.setProperty("value", 1)
+        for dir in self.iconDirs:
+            ftp.set_debuglevel(0)
+            ftp.connect(IP, int(Port))
+            ftp.login("", "")
+            ftp.cwd(dir)
+            counter = 0
+            if "external" in dir:
+                currentDir = all_CUSA_ex
+            else:
+                currentDir = all_CUSA
+            for i in currentDir:
+                if counter == int(numGames/2):
+                    for i in range(25, 50):
+                        self.CacheBar.setProperty("value", i)
+                        time.sleep(0.01)
+                elif counter == int(numGames/4):
+                    for i in range(2, 25):
+                        self.CacheBar.setProperty("value", i)
+                        time.sleep(0.01)
+                elif counter == int(numGames/(75/100)):
+                    for i in range(50, 75):
+                        self.CacheBar.setProperty("value", i)
+                        time.sleep(0.01)
+                ftp.cwd(currentDir[counter])
+                CUSA = currentDir[counter]
+
+                #Check the files in each game directory
+                with open(temp_path + "files_in_dir.dat", "w+", encoding="utf8") as files_in_dir:
+                    ftp.retrlines("LIST", files_in_dir.write)
+                with open(temp_path + "files_in_dir.dat", "r", encoding="utf8") as files_in_dir:
+                    content_in_file = files_in_dir.read()
+                    #Check for pronunciation.xml or icon0
+                    if file_name in content_in_file or icon_name in content_in_file :
+                        current_CUSA = currentDir[counter]
+                        if file_name in content_in_file:
+                            with open(temp_path + file_name, "wb") as downloaded_file:
+                                ftp.retrbinary("RETR " + file_name, downloaded_file.write, 1024)
+
+                            with open(temp_path + "MegaSRX\metadata\\" + str(current_CUSA) + ".png", "wb") as downloaded_file:
+                                ftp.retrbinary("RETR " + icon_name, downloaded_file.write, 1024) 
+
+                            #Reading pronounciation.xml for gameTitle
+                            with open(temp_path + file_name, "r", encoding="utf8") as file: 
+                                with open(temp_path + "Possible game title.dat", "w+", encoding="utf8") as game_titles_file: #Create temp file
+                                    for each_line in file:
+                                        if "text" in each_line:
+                                            game_titles_file.write(each_line)
+                            #simplifying xml file
+                            alpha = ("a A b B c C d D e E f F g G h H i I j J k K l L m M n N o O p P q Q r R s S t T u U v V w W x X y Y z Z ™ ' ! ?")
+                            Eng = alpha.split(" ")
+                            Eng.append(" ")
+                            num = (1, 2, 3, 4 , 5, 6 , 7, 8 , 9, 0)
+                            with open(temp_path + "Possible game title.dat", "r", encoding="utf8") as game_titles_file:
+                                lines = game_titles_file.readlines()
+                                GameTitle = ""
+                                for line in lines:
+                                    english = True
+                                    starting_index = line.index(">") + 1
+                                    original_title = line[starting_index : -8]
+
+                                    if "One" or "Two" or "Three" or "Nine" or "Seven" or "Eight" or "Four" or "Six" in original_title:
+                                        GameTitle = original_title
+                                        Game[current_CUSA] = GameTitle
+                                    else:
+                                        for char in original_title:
+                                            if char not in Eng and char not in num:
+                                                english = False
+                                                break
+                                    if english:
+                                        if len(original_title) > len(GameTitle):
+                                            GameTitle = original_title
+                                            Game[current_CUSA] = GameTitle
+                        else:
+                            with open(temp_path + "MegaSRX\metadata\\" + str(current_CUSA) + ".png", "wb") as downloaded_file:
+                                ftp.retrbinary("RETR " + icon_name, downloaded_file.write, 1024) 
+                            if "CUSA" in current_CUSA:
+                                Game[current_CUSA] = "Unknown"
+                            else:
+                                Game[current_CUSA] = "Unknown Homebrew"
+                    if "external" in dir:
+                        #Get back to root directory
+                        ftp.set_debuglevel(0)
+                        ftp.connect(IP, int(Port))
+                        ftp.login("", "")
+                        ftp.cwd(dir)
+                    else:
+                        ftp.set_debuglevel(0)
+                        ftp.connect(IP, int(Port))
+                        ftp.login("", "")
+                        ftp.cwd(working_dir)
+                counter += 1
             
-           # >>> Delete all files <<<<
-    try:
-        os.remove("directories in system.dat")
-        os.remove("CUSA directories.dat")
-        os.remove("pronunciation.xml")
-        os.remove("all Games.dat")
-        os.remove("CUSA_ID.dat")
-        os.remove("files_in_dir.dat")
-        os.remove("FoundImg.dat")
-        os.remove("Possible game title.dat")
-    except:
-        pass
-    
-    time.sleep(25) #Before ShutDown
-    
-#<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>
-        
-if settings.IP == "...":  
-    print("<<<  Please Put your PS4 IP in [PS4 IP.txt] file. turns off in 20sec  >>>")
-    time.sleep(10)
-    
-else:
-    print("""
-    Connecting to your PS4 system... 
-    """)
-    time.sleep(2)
-    
-    try:
-        connect(settings.IP ,int(settings.Port)) #<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        time.sleep(3)
-        print("""
-    Connected successfully!
-        """)
-        time.sleep(3)
-        
-        print("""
-    Reading your games...
-        """)
-        time.sleep(5)
-        Get_CUSA_from_PS4() #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        
-        print("""
-##### Please DO NOT include anything in the title other than the alphabets 
-##### [ Exp: (the sims 4) ------> (the sims) or even (the sims four) ]
-##### [ Exp: (Grand Theft auto : san andreas) ------> (grand theft auto) 
-##### if you have more than one title matchs (grand theft auto) then be more
-##### specific (grand theft auto san andreas) without (:)]
-        """)
-        time.sleep(2)
-        
-        check_each_CUSA_file(gameSearch()) #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<
-        
-        time.sleep(5)
-        resize_and_duplicate(input("""
-            Give me the picture name you want to upload for the 
-            >>> Icon <<< 
-            with it's format [exp: test.png]: """))  
-        
-        upload() #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        
-    except TimeoutError:                    
-        print("""
-        PS4 didn't respond
-        >> Make sure you're connected to the same Internet connection <<
-        >> Make sure you entered the right IP/port <<  
-        """)
-        time.sleep(10)
-        
-    except OSError:
-        print("""
-        UnknownError: Possible solutions 
-        >> Make sure you're connected to the same Internet connection <<
-        >> Make sure you entered the right IP/port <<
-        >> Try to change name of the image you want to upload << 
-        DEV_ERROR_""" + str(sys.exc_info()[0]))
-        time.sleep(20)
-        
-    except:
-        print("""UnknownError : Please read errors file to see possible solutions
-        """ + "_DevError: " + str(sys.exc_info()[0]))
-        
-        time.sleep(20)
+        for i in range(51, 100):
+            self.CacheBar.setProperty("value", i)
+            time.sleep(0.01)
+        self.OpenWindow("GameIcon")
+
+    def OpenWindow(self, WinType):
+        if WinType == "GameIcon":
+            global IP, Port, Game
+            IPortWindow.hide()
+            self.window = QtWidgets.QWidget()
+            self.ui = ChangeIcon.Ui_ChangeIconWindow()
+            self.ui.setupUi(self.window, IP, Port, Game, self.userFont, self.userIPath, self.userDPath, self.userHB, all_CUSA_ex)
+            self.window.show()
+        else:
+            IPortWindow.hide()
+            self.window = QtWidgets.QWidget()
+            self.ui = ProfileIcon.Ui_ProfileIconWin()
+            self.ui.setupUi(self.window, self.userID, IP, Port)
+            self.window.show()
+
+if __name__ == "__main__":
+    print("OfficialAhmed0")
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    IPortWindow = QtWidgets.QMainWindow()
+    ui = Ui_IPortWindow()
+    ui.setupUi(IPortWindow)
+    IPortWindow.show()
+    sys.exit(app.exec_())
