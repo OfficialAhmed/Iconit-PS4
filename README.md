@@ -1,12 +1,11 @@
 # Iconit
-Latest version 4.01 (Aug 20, 2020)
+Latest version 4.05 (Aug 30, 2020)
 No longer ftp client needed to change PS4 games icons. this tool will do it for you .Though FTP payload must be running on the PS4
 
 # Download from here
 >
-**Iconit v4.01 (89.6Mb)**
-https://mega.nz/file/zu43zDiL#yIKFNKVpTwWZpY0_YID0pzf72IxE0ClHsMRaMph7Y8s
-
+**Iconit v4.05 (131.1Mb)**
+https://mega.nz/file/Tq4zAB7L#Vm3Cj003CDWUYZzkN5WcQJGuvvwL3f4oJVfamAIuMMI
 # About
 
 This application is much convenient than uploading the images manually for many reasons :-
@@ -20,6 +19,16 @@ This application is much convenient than uploading the images manually for many 
 * This tool will connect to your PS4 system through FTP directly so you no longer need FTP client applications such as FileZilla atleast not for changing the game icons or profile avatar.
 
 * I added a Library (Circlizeit.zip) that has lots of images for you to choose from.
+
+# Update v4.05
+
+*Changed the entire UI to support 2k and 4k screen resolution
+
+*App size now resizable
+
+*Fixed 505 error when changing profile avatar 
+
+*Fixed 550 error
 
 # Update v4.01
 
@@ -44,7 +53,7 @@ please DM me I will add it to the tool next update.
 Twitter:@OfficialAhmed0
 
 # Pictures 
-![Game Icon change iconit v4.01](https://img.techpowerup.org/200820/app.png)
-![Image of homebrew icon using iconit v4.01](https://img.techpowerup.org/200820/1.png)
-![Profile avatar using iconit v4.01](https://img.techpowerup.org/200820/2.png)
+![iconit v4.05](https://img.techpowerup.org/200830/1.png)
+![Image of Game icon using iconit v4.05](https://img.techpowerup.org/200830/2.png)
+![Profile avatar using iconit v4.05](https://img.techpowerup.org/200830/3.png)
 
