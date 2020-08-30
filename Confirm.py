@@ -1,612 +1,366 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
-import Iconit_v3 as main
+import PIL, os, sys
 from PIL import Image
-import os
+from ftplib import FTP
 
-class Ui_ChangeIconWindow(object):
-    def setupUi(self, ChangeIconWindow, IP, Port, Games, uFont, uIPath, uDPath, userHB, exGames, w, h):
-        self.ver = 4.05
-        self.screenWidth = w
-        self.screenHeight = h
+class Ui_ConfirmWindow(object):
+    def setupUi(self, ConfirmWindow, changeIconPath, IP, Port, CUSA, ConfirmType, exGames, CurrentUser=None):
+        ConfirmWindow.setObjectName("ConfirmWindow")
+        ConfirmWindow.resize(378, 229)
+        ConfirmWindow.setMinimumSize(QtCore.QSize(500, 500))
+        ConfirmWindow.setMaximumSize(QtCore.QSize(500, 500))
 
-        #Settings
-        self.userFont = uFont
-        self.userIPath = uIPath
-        self.userDPath = uDPath
-        self.userHB = userHB
-        
         self.exGames = exGames
         self.IP = IP
         self.Port = Port
-        self.temp_path = main.temp_path
-        self.img_dir = main.img_dir
-        self.setting_path = main.setting_path
-
-        self.Games = Games
-        temp = self.temp_path + "MegaSRX\\metadata\\"
-        self.CUSA_img = ""
-        for i in temp:
-            if i == "\\":
-                self.CUSA_img += "/"
-            else:
-                self.CUSA_img += i
-        #Get all icon names from local path
-        dirs = os.listdir(temp)
-        self.imgs = []
-        for img in dirs:
-            if "png" in img:
-                self.imgs.append(img)
-        self.changeIconPath = ""
-        self.img_limit = len(self.imgs)
-        self.img_counter = 0
-        self.logging = "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;\">*Connected to PS4: " + self.IP + "*</span></p>\n"
-        
-        ####### v4.05
-        self.prefloc = self.setting_path + "\\Data\\Pref\\"
-        ChangeIconWindow.setObjectName("ChangeIconWindow")
-        ChangeIconWindow.resize(1080, 720)
-        ChangeIconWindow.setWindowIcon(QtGui.QIcon(self.prefloc + "ic1.@OfficialAhmed0"))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(ChangeIconWindow.sizePolicy().hasHeightForWidth())
-        ChangeIconWindow.setSizePolicy(sizePolicy)
-        ChangeIconWindow.setMinimumSize(QtCore.QSize(1300, 720))
-
-        #Change bg accroding to user Resolution
-        if self.screenWidth <= 1366:
-            background = "SDbg.@OfficialAhmed0"
-        elif self.screenWidth <= 1920:
-            background = "HDbg.@OfficialAhmed0"
-        elif self.screenWidth <= 2048 :
-            background = "2kbg.@OfficialAhmed0"
-        else: 
-            background = "4kbg.@OfficialAhmed0"
-        ChangeIconWindow.setStyleSheet("background-image: url("+ self.convert2Url(self.prefloc + background) +");")
-
-        self.formLayout = QtWidgets.QFormLayout(ChangeIconWindow)
-        self.formLayout.setObjectName("formLayout")
-        self.TopLayout = QtWidgets.QFormLayout()
-        self.TopLayout.setContentsMargins(20, 20, 20, -1)
-        self.TopLayout.setObjectName("TopLayout")
-        self.Title_label = QtWidgets.QLabel(ChangeIconWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Title_label.sizePolicy().hasHeightForWidth())
-        self.Title_label.setSizePolicy(sizePolicy)
-        self.Title_label.setMinimumSize(QtCore.QSize(300, 50))
+        self.CurrentUser = CurrentUser
+        self.ftp = FTP()
+        self.ConfirmType = ConfirmType
+        self.working_dir = "user/appmeta"
+        self.Current_CUSA = CUSA
+        self.local_path = str(os.getcwd())
+        self.temp_path = self.local_path + "\Data\prxUserMeta\\"
+        self.changeIconPath = changeIconPath
+        self.centralwidget = QtWidgets.QWidget(ConfirmWindow)
+        self.centralwidget.setObjectName("ConfirmWindow")
         font = QtGui.QFont()
-        font.setPointSize(25)
-        font.setBold(True)
-        font.setFamily(self.userFont)
-        font.setWeight(75)
-        self.Title_label.setFont(font)
-        self.Title_label.setStyleSheet("color: rgb(255, 255, 255);")
-        self.Title_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.Title_label.setObjectName("Title_label")
-        self.TopLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.Title_label)
-        self.AccountLabel = QtWidgets.QLabel(ChangeIconWindow)
-        self.AccountLabel.setEnabled(False)
+        font.setFamily("Comic Sans MS")
+        font.setPointSize(12)
+        font.setItalic(True)
+        ConfirmWindow.setWindowIcon(QtGui.QIcon(self.local_path + "\Data\Pref\ic1.@OfficialAhmed0"))
 
-        sizePolicy.setHeightForWidth(self.AccountLabel.sizePolicy().hasHeightForWidth())
-        self.AccountLabel.setSizePolicy(sizePolicy)
-        self.AccountLabel.setMinimumSize(QtCore.QSize(200, 0))
-        font.setPointSize(20)
-        font.setBold(True)
-        font.setUnderline(False)
-        font.setWeight(75)
-        self.AccountLabel.setFont(font)
-        self.AccountLabel.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        self.AccountLabel.setStyleSheet("color: rgb(255, 255, 255);")
-        self.AccountLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.AccountLabel.setObjectName("AccountLabel")
-        self.TopLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.AccountLabel)
-        self.line_2 = QtWidgets.QFrame(ChangeIconWindow)
-        self.line_2.setMinimumSize(QtCore.QSize(4000, 1))
-        self.line_2.setStyleSheet("border-image: url("+ self.convert2Url(self.prefloc + "White.@OfficialAhmed0") +");")
-        self.line_2.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.line_2.setLineWidth(1)
-        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_2.setObjectName("line_2")
-        self.TopLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.line_2)
-        self.formLayout.setLayout(1, QtWidgets.QFormLayout.SpanningRole, self.TopLayout)
-        self.LeftLayout = QtWidgets.QVBoxLayout()
-        self.LeftLayout.setContentsMargins(20, 30, -1, 10)
-        self.LeftLayout.setSpacing(5)
-        self.LeftLayout.setObjectName("LeftLayout")
-        self.Icon = QtWidgets.QGraphicsView(ChangeIconWindow)
+        self.Yes = QtWidgets.QPushButton(ConfirmWindow)
+        self.Yes.setGeometry(QtCore.QRect(155, 120, 100, 31))
+        self.Yes.setFont(font)
+        self.Yes.setStyleSheet("background-color: rgb(190, 190, 190);")
+        self.Yes.setObjectName("Yes")
+        self.Yes.clicked.connect(self.Resize_Upload)
+        
+        self.Ok = QtWidgets.QPushButton(ConfirmWindow)
+        self.Ok.setGeometry(QtCore.QRect(215, 120, 100, 31))
+        self.Ok.setFont(font)
+        self.Ok.setStyleSheet("background-color: rgb(190, 190, 190);")
+        self.Ok.setObjectName("Ok")
+        self.Ok.clicked.connect(ConfirmWindow.close)
 
-        sizePolicy.setHeightForWidth(self.Icon.sizePolicy().hasHeightForWidth())
-        self.Icon.setSizePolicy(sizePolicy)
-        self.Icon.setMinimumSize(QtCore.QSize(340, 370))
-        self.Icon.setStyleSheet("border-image: url("+ self.convert2Url(self.prefloc + "White.@OfficialAhmed0") +");")
-        self.Icon.setObjectName("Icon")
-        self.LeftLayout.addWidget(self.Icon)
-        self.Change_DownloadBtnLayout = QtWidgets.QFormLayout()
-        self.Change_DownloadBtnLayout.setContentsMargins(-1, -1, -1, 0)
-        self.Change_DownloadBtnLayout.setVerticalSpacing(3)
-        self.Change_DownloadBtnLayout.setObjectName("Change_DownloadBtnLayout")
-        self.ChangeIcon_btn = QtWidgets.QPushButton(ChangeIconWindow)
+        self.No = QtWidgets.QPushButton(ConfirmWindow)
+        self.No.setGeometry(QtCore.QRect(290, 120, 100, 31))
+        self.No.setFont(font)
+        self.No.setStyleSheet("background-color: rgb(190, 190, 190);")
+        self.No.setObjectName("No")
+        self.No.clicked.connect(ConfirmWindow.close)
 
-        sizePolicy.setHeightForWidth(self.ChangeIcon_btn.sizePolicy().hasHeightForWidth())
-        self.ChangeIcon_btn.setSizePolicy(sizePolicy)
-        self.ChangeIcon_btn.setMinimumSize(QtCore.QSize(170, 35))
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setWeight(75)
-        self.ChangeIcon_btn.setFont(font)
-        self.ChangeIcon_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.ChangeIcon_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.ChangeIcon_btn.setObjectName("ChangeIcon_btn")
-        self.Change_DownloadBtnLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.ChangeIcon_btn)
-        self.DownloadIcon_btn = QtWidgets.QPushButton(ChangeIconWindow)
-
-        sizePolicy.setHeightForWidth(self.DownloadIcon_btn.sizePolicy().hasHeightForWidth())
-        self.DownloadIcon_btn.setSizePolicy(sizePolicy)
-        self.DownloadIcon_btn.setMinimumSize(QtCore.QSize(0, 35))
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setWeight(75)
-        self.DownloadIcon_btn.setFont(font)
-        self.DownloadIcon_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.DownloadIcon_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.DownloadIcon_btn.setObjectName("DownloadIcon_btn")
-        self.Change_DownloadBtnLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.DownloadIcon_btn)
-        self.Prev_btn = QtWidgets.QToolButton(ChangeIconWindow)
-
-        sizePolicy.setHeightForWidth(self.Prev_btn.sizePolicy().hasHeightForWidth())
-        self.Prev_btn.setSizePolicy(sizePolicy)
-        self.Prev_btn.setMinimumSize(QtCore.QSize(170, 30))
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setWeight(75)
-        self.Prev_btn.setFont(font)
-        self.Prev_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Prev_btn.setAutoFillBackground(False)
-        self.Prev_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.Prev_btn.setArrowType(QtCore.Qt.LeftArrow)
-        self.Prev_btn.setObjectName("Prev_btn")
-        self.Change_DownloadBtnLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.Prev_btn)
-        self.Next_btn = QtWidgets.QToolButton(ChangeIconWindow)
-
-        sizePolicy.setHeightForWidth(self.Next_btn.sizePolicy().hasHeightForWidth())
-        self.Next_btn.setSizePolicy(sizePolicy)
-        self.Next_btn.setMinimumSize(QtCore.QSize(0, 25))
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setWeight(75)
-        self.Next_btn.setFont(font)
-        self.Next_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Next_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.Next_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
-        self.Next_btn.setArrowType(QtCore.Qt.RightArrow)
-        self.Next_btn.setObjectName("Next_btn")
-        self.Change_DownloadBtnLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.Next_btn)
-        self.LeftLayout.addLayout(self.Change_DownloadBtnLayout)
-        self.Submit_btn = QtWidgets.QPushButton(ChangeIconWindow)
-
-        sizePolicy.setHeightForWidth(self.Submit_btn.sizePolicy().hasHeightForWidth())
-        self.Submit_btn.setSizePolicy(sizePolicy)
-        self.Submit_btn.setMinimumSize(QtCore.QSize(0, 50))
-        font.setPointSize(17)
-        font.setBold(True)
-        font.setWeight(75)
-        self.Submit_btn.setFont(font)
-        self.Submit_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Submit_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.Submit_btn.setObjectName("Submit_btn")
-        self.LeftLayout.addWidget(self.Submit_btn)
-        self.formLayout.setLayout(2, QtWidgets.QFormLayout.LabelRole, self.LeftLayout)
-        self.RightLayout = QtWidgets.QFormLayout()
-        self.RightLayout.setContentsMargins(-1, 60, 20, -1)
-        self.RightLayout.setObjectName("RightLayout")
-        self.GameTitle = QtWidgets.QLabel(ChangeIconWindow)
-        font.setPointSize(22)
-        font.setBold(True)
-        font.setWeight(75)
-        self.GameTitle.setFont(font)
-        self.GameTitle.setMinimumHeight(45)
-        self.GameTitle.setStyleSheet("color:rgb(255,255,255);")
-        self.GameTitle.setFrameShape(QtWidgets.QFrame.Box)
-        self.GameTitle.setAlignment(QtCore.Qt.AlignCenter)
-        self.GameTitle.setObjectName("GameTitle")
-        self.RightLayout.setWidget(0, QtWidgets.QFormLayout.SpanningRole, self.GameTitle)
-        self.GameID_label = QtWidgets.QLabel(ChangeIconWindow)
-        self.GameID_label.setMinimumSize(QtCore.QSize(190, 40))
-        font.setPointSize(15)
-        self.GameID_label.setFont(font)
-        self.GameID_label.setStyleSheet("color:rgb(255, 255, 255);")
-        self.GameID_label.setFrameShape(QtWidgets.QFrame.Box)
-        self.GameID_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.GameID_label.setObjectName("GameID_label")
-        self.RightLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.GameID_label)
-        self.GameID = QtWidgets.QLabel(ChangeIconWindow)
-        font.setPointSize(16)
-        self.GameID.setFont(font)
-        self.GameID.setStyleSheet("color:rgb(255, 255, 255);")
-        self.GameID.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.GameID.setObjectName("GameID")
-        self.RightLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.GameID)
-        self.line = QtWidgets.QFrame(ChangeIconWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line.sizePolicy().hasHeightForWidth())
-        self.line.setSizePolicy(sizePolicy)
-        self.line.setMinimumSize(QtCore.QSize(50, 0))
-        self.line.setStyleSheet("border-image: url("+ self.convert2Url(self.prefloc + "White.@OfficialAhmed0") +");")
-        self.line.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.line.setLineWidth(0)
+        self.line = QtWidgets.QFrame(ConfirmWindow)
+        self.line.setGeometry(QtCore.QRect(10, 160, 480, 20))
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
-        self.RightLayout.setWidget(2, QtWidgets.QFormLayout.SpanningRole, self.line)
-        self.Ex_In_label = QtWidgets.QLabel(ChangeIconWindow)
+        self.CheckingBar = QtWidgets.QProgressBar(ConfirmWindow)
+        self.CheckingBar.setGeometry(QtCore.QRect(220, 250, 170, 40))
+        self.CheckingBar.setProperty("value", 0)
+        self.CheckingBar.setAlignment(QtCore.Qt.AlignCenter)
+        self.CheckingBar.setTextVisible(True)
+        self.CheckingBar.setOrientation(QtCore.Qt.Horizontal)
+        self.CheckingBar.setInvertedAppearance(False)
+        self.CheckingBar.setObjectName("CheckingBar")
+        self.ResizingBar = QtWidgets.QProgressBar(ConfirmWindow)
+        self.ResizingBar.setGeometry(QtCore.QRect(220, 350, 170, 40))
+        self.ResizingBar.setProperty("value", 0)
+        self.ResizingBar.setAlignment(QtCore.Qt.AlignCenter)
+        self.ResizingBar.setTextVisible(True)
+        self.ResizingBar.setObjectName("ResizingBar")
+        self.UploadingBar = QtWidgets.QProgressBar(ConfirmWindow)
+        self.UploadingBar.setGeometry(QtCore.QRect(220, 430, 170, 40))
+        self.UploadingBar.setProperty("value", 0)
+        self.UploadingBar.setAlignment(QtCore.Qt.AlignCenter)
+        self.UploadingBar.setTextVisible(True)
+        self.UploadingBar.setObjectName("UploadingBar")
+        self.graphicsView = QtWidgets.QGraphicsView(ConfirmWindow)
+        self.graphicsView.setGeometry(QtCore.QRect(-20, -10, 700, 700))
+        self.graphicsView.setStyleSheet("background-color: rgb(50, 50, 50);")
+        self.graphicsView.setObjectName("graphicsView")
 
-        sizePolicy.setHeightForWidth(self.Ex_In_label.sizePolicy().hasHeightForWidth())
-        self.Ex_In_label.setSizePolicy(sizePolicy)
-        self.Ex_In_label.setMinimumSize(QtCore.QSize(190, 40))
-        font.setPointSize(15)
-        font.setBold(False)
-        font.setWeight(50)
-        self.Ex_In_label.setFont(font)
-        self.Ex_In_label.setStyleSheet("color:rgb(255, 255, 255);")
-        self.Ex_In_label.setFrameShape(QtWidgets.QFrame.Box)
-        self.Ex_In_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.Ex_In_label.setObjectName("Ex_In_label")
-        self.RightLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.Ex_In_label)
-        self.Ex_In = QtWidgets.QLabel(ChangeIconWindow)
-        font.setPointSize(16)
-        self.Ex_In.setFont(font)
-        self.Ex_In.setStyleSheet("color:rgb(255, 255, 255);")
-        self.Ex_In.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.Ex_In.setObjectName("Ex_In")
-        self.RightLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.Ex_In)
-        self.line_3 = QtWidgets.QFrame(ChangeIconWindow)
-        self.line_3.setMinimumSize(QtCore.QSize(30, 3))
-        self.line_3.setStyleSheet("border-image: url("+ self.convert2Url(self.prefloc + "White.@OfficialAhmed0") +");")
-        self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_3.setObjectName("line_3")
-        self.RightLayout.setWidget(4, QtWidgets.QFormLayout.SpanningRole, self.line_3)
-        self.TotalGames_label = QtWidgets.QLabel(ChangeIconWindow)
-        self.TotalGames_label.setMinimumSize(QtCore.QSize(190, 40))
-        font.setPointSize(15)
-        self.TotalGames_label.setFont(font)
-        self.TotalGames_label.setStyleSheet("color:rgb(255, 255, 255);")
-        self.TotalGames_label.setFrameShape(QtWidgets.QFrame.Box)
-        self.TotalGames_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.TotalGames_label.setObjectName("TotalGames_label")
-        self.RightLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.TotalGames_label)
-        self.TotalGames = QtWidgets.QLabel(ChangeIconWindow)
-        font.setPointSize(16)
-        self.TotalGames.setFont(font)
-        self.TotalGames.setStyleSheet("color:rgb(255, 255, 255);")
-        self.TotalGames.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.TotalGames.setObjectName("TotalGames")
-        self.RightLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.TotalGames)
-        self.line_4 = QtWidgets.QFrame(ChangeIconWindow)
-        self.line_4.setMinimumSize(QtCore.QSize(100, 3))
-        self.line_4.setStyleSheet("border-image: url("+ self.convert2Url(self.prefloc + "White.@OfficialAhmed0") +");")
-        self.line_4.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_4.setObjectName("line_4")
-        self.RightLayout.setWidget(6, QtWidgets.QFormLayout.SpanningRole, self.line_4)
-        self.IconSize_label = QtWidgets.QLabel(ChangeIconWindow)
-        self.IconSize_label.setMinimumSize(QtCore.QSize(190, 40))
+        font = QtGui.QFont()
+        font.setFamily("Comic Sans MS")
         font.setPointSize(13)
-        self.IconSize_label.setFont(font)
-        self.IconSize_label.setStyleSheet("color:rgb(255, 255, 255);")
-        self.IconSize_label.setFrameShape(QtWidgets.QFrame.Box)
-        self.IconSize_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.IconSize_label.setObjectName("IconSize_label")
-        self.RightLayout.setWidget(7, QtWidgets.QFormLayout.LabelRole, self.IconSize_label)
-        self.IconSize = QtWidgets.QLabel(ChangeIconWindow)
-        font.setPointSize(16)
-        self.IconSize.setFont(font)
-        self.IconSize.setStyleSheet("color:rgb(255, 255, 255);")
-        self.IconSize.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.IconSize.setObjectName("IconSize")
-        self.RightLayout.setWidget(7, QtWidgets.QFormLayout.FieldRole, self.IconSize)
-        self.line_5 = QtWidgets.QFrame(ChangeIconWindow)
-        self.line_5.setMinimumSize(QtCore.QSize(100, 3))
-        self.line_5.setStyleSheet("border-image: url("+ self.convert2Url(self.prefloc + "White.@OfficialAhmed0") +");")
-        self.line_5.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_5.setObjectName("line_5")
-        self.RightLayout.setWidget(8, QtWidgets.QFormLayout.SpanningRole, self.line_5)
-        self.AllGames_label = QtWidgets.QLabel(ChangeIconWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.AllGames_label.sizePolicy().hasHeightForWidth())
-        self.AllGames_label.setSizePolicy(sizePolicy)
-        self.AllGames_label.setMinimumSize(QtCore.QSize(190, 0))
-        font.setPointSize(20)
-        self.AllGames_label.setFont(font)
-        self.AllGames_label.setStyleSheet("color:rgb(255, 255, 255);")
-        self.AllGames_label.setFrameShape(QtWidgets.QFrame.Box)
-        self.AllGames_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.AllGames_label.setObjectName("AllGames_label")
-        self.RightLayout.setWidget(11, QtWidgets.QFormLayout.LabelRole, self.AllGames_label)
-        self.GameTitles = QtWidgets.QComboBox(ChangeIconWindow)
 
-        sizePolicy.setHeightForWidth(self.GameTitles.sizePolicy().hasHeightForWidth())
-        self.GameTitles.setSizePolicy(sizePolicy)
-        self.GameTitles.setMinimumSize(QtCore.QSize(0, 30))
-        font.setPointSize(15)
-        self.GameTitles.setFont(font)
-        self.GameTitles.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.GameTitles.setDuplicatesEnabled(True)
-        self.GameTitles.setStyleSheet("color: rgb(0, 0, 0);")
-        self.GameTitles.setObjectName("GameTitles")
+        self.Checking = QtWidgets.QLabel(ConfirmWindow)
+        self.Checking.setGeometry(QtCore.QRect(60, 255, 111, 31))
+        self.Checking.setFont(font)
+        self.Checking.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.Checking.setAlignment(QtCore.Qt.AlignCenter)
+        self.Checking.setObjectName("Checking")
 
-        font.setPointSize(12)
-        self.RightLayout.setWidget(11, QtWidgets.QFormLayout.FieldRole, self.GameTitles)
-        self.SelectBtnLayout = QtWidgets.QFormLayout()
-        self.SelectBtnLayout.setContentsMargins(200, 0, 200, -1)
-        self.SelectBtnLayout.setObjectName("SelectBtnLayout")
-        self.Select_btn = QtWidgets.QPushButton(ChangeIconWindow)
-        self.Select_btn.setMinimumSize(QtCore.QSize(0, 35))
-        self.Select_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Select_btn.setStyleSheet("color:rgb(255, 255, 255);")
-        self.Select_btn.setObjectName("Select_btn")
-        self.SelectBtnLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.Select_btn)
-        self.RightLayout.setLayout(12, QtWidgets.QFormLayout.FieldRole, self.SelectBtnLayout)
-        font.setPointSize(12)
+        self.Resizing_label = QtWidgets.QLabel(ConfirmWindow)
+        self.Resizing_label.setGeometry(QtCore.QRect(60, 355, 111, 31))
+        self.Resizing_label.setFont(font)
+        self.Resizing_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.Resizing_label.setObjectName("Resizing_label")
 
-        self.Logs = QtWidgets.QTextEdit(ChangeIconWindow)
-        self.Logs.setReadOnly(True)
-        self.Logs.setObjectName("Logs")
-        self.RightLayout.setWidget(13, QtWidgets.QFormLayout.FieldRole, self.Logs)
-        self.formLayout.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.RightLayout)
-        self.BottomLayout = QtWidgets.QVBoxLayout()
-        self.BottomLayout.setContentsMargins(20, 10, 20, 0)
-        self.BottomLayout.setObjectName("BottomLayout")
-        self.line_6 = QtWidgets.QFrame(ChangeIconWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line_6.sizePolicy().hasHeightForWidth())
-        self.line_6.setSizePolicy(sizePolicy)
-        self.line_6.setMinimumSize(QtCore.QSize(4000, 0))
-        self.line_6.setStyleSheet("border-image: url("+ self.convert2Url(self.prefloc + "White.@OfficialAhmed0") +");")
-        self.line_6.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_6.setObjectName("line_6")
-        self.BottomLayout.addWidget(self.line_6)
-        self.CreditsLayout = QtWidgets.QVBoxLayout()
-        self.CreditsLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.CreditsLayout.setContentsMargins(500, 0, 0, -1)
-        self.CreditsLayout.setSpacing(5)
-        self.CreditsLayout.setObjectName("CreditsLayout")
-        self.Title_label_2 = QtWidgets.QLabel(ChangeIconWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Title_label_2.sizePolicy().hasHeightForWidth())
-        self.Title_label_2.setSizePolicy(sizePolicy)
-        self.Title_label_2.setMinimumSize(QtCore.QSize(10, 0))
-        self.Title_label_2.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.Title_label_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Title_label_2.setFrameShape(QtWidgets.QFrame.Box)
-        self.Title_label_2.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.Title_label_2.setLineWidth(1)
-        self.Title_label_2.setOpenExternalLinks(True)
-        self.Title_label_2.setObjectName("Title_label_2")
-        self.CreditsLayout.addWidget(self.Title_label_2)
-        self.SupportMe = QtWidgets.QLabel(ChangeIconWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.SupportMe.sizePolicy().hasHeightForWidth())
-        self.SupportMe.setSizePolicy(sizePolicy)
-        self.SupportMe.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.SupportMe.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.SupportMe.setFrameShape(QtWidgets.QFrame.Box)
-        self.SupportMe.setOpenExternalLinks(True)
-        self.SupportMe.setObjectName("SupportMe")
-        self.CreditsLayout.addWidget(self.SupportMe)
-        self.BottomLayout.addLayout(self.CreditsLayout)
-        self.formLayout.setLayout(3, QtWidgets.QFormLayout.SpanningRole, self.BottomLayout)
-        
-        ##### v4.01
-        self.Icon.setStyleSheet("border-image: url(" + self.CUSA_img + self.imgs[0] + ");")
-        self.Icon.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.Icon.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.Icon.setLineWidth(2)
-        self.Icon.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.Icon.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        #buttons back-end
-        self.ChangeIcon_btn.clicked.connect(self.BrowseIcon)
-        self.DownloadIcon_btn.clicked.connect(self.DownloadIcon)
-        self.Next_btn.clicked.connect(self.Next)
-        self.Prev_btn.clicked.connect(self.Prev)
-        self.Submit_btn.clicked.connect(self.Resize_Upload)
-        self.Select_btn.clicked.connect(self.Select)
-        
-        #add items the number of games that are found 
-        for number_of_games in range(len(self.Games)):
-            self.GameTitles.addItem("select")
+        self.Uploading_label = QtWidgets.QLabel(ConfirmWindow)
+        self.Uploading_label.setGeometry(QtCore.QRect(60, 440, 111, 31))
+        self.Uploading_label.setFont(font)
+        self.Uploading_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.Uploading_label.setObjectName("Uploading_label")
 
-        self.retranslateUi(ChangeIconWindow)
-        self.GameTitles.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(ChangeIconWindow)
+        self.Statement = QtWidgets.QLabel(ConfirmWindow)
+        self.Statement.setGeometry(QtCore.QRect(20, 50, 470, 40))
+        self.Statement.setFont(font)
+        self.Statement.setStyleSheet("color: rgb(255, 255, 255);")
+        self.Statement.setFrameShape(QtWidgets.QFrame.Box)
+        self.Statement.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.Statement.setAlignment(QtCore.Qt.AlignCenter)
+        self.Statement.setObjectName("Statement")
 
-    def retranslateUi(self, ChangeIconWindow):
+        self.graphicsView.raise_()
+        self.Yes.raise_()
+        self.No.raise_()
+        self.line.raise_()
+        self.CheckingBar.raise_()
+        self.ResizingBar.raise_()
+        self.UploadingBar.raise_()
+        self.Checking.raise_()
+        self.Resizing_label.raise_()
+        self.Uploading_label.raise_()
+        self.Statement.raise_()
+        self.retranslateUi(ConfirmWindow)
+        QtCore.QMetaObject.connectSlotsByName(ConfirmWindow)
+
+    def retranslateUi(self, ConfirmWindow):
         _translate = QtCore.QCoreApplication.translate
-        ChangeIconWindow.setWindowTitle(_translate("ChangeIconWindow", "Iconit v"+ str(self.ver)))
-        self.Title_label.setText(_translate("ChangeIconWindow", "Change Game Icon"))
-        self.ChangeIcon_btn.setText(_translate("ChangeIconWindow", "Change Icon..."))
-        self.DownloadIcon_btn.setText(_translate("ChangeIconWindow", "Download Icon..."))
-        self.Prev_btn.setText(_translate("ChangeIconWindow", "Previous"))
-        self.Next_btn.setText(_translate("ChangeIconWindow", "Next"))
-        self.Submit_btn.setText(_translate("ChangeIconWindow", "Resize && Upload"))
-        self.GameTitle.setText(_translate("ChangeIconWindow", "Game Title Here"))
-        self.GameID_label.setText(_translate("ChangeIconWindow", "Game ID:"))
-        self.GameID.setText(_translate("ChangeIconWindow", "TextLabel"))
-        self.Ex_In_label.setText(_translate("ChangeIconWindow", "External / Internal"))
-        self.Ex_In.setText(_translate("ChangeIconWindow", "TextLabel"))
-        self.TotalGames_label.setText(_translate("ChangeIconWindow", "Total Games"))
-        self.TotalGames.setText(_translate("ChangeIconWindow", "TextLabel"))
-        self.IconSize_label.setText(_translate("ChangeIconWindow", "Min. Icon Size(512x512)"))
-        self.IconSize.setText(_translate("ChangeIconWindow", "Current Icon size(5112x22153)"))
-        self.AllGames_label.setText(_translate("ChangeIconWindow", "All Games"))
-        self.Select_btn.setText(_translate("ChangeIconWindow", "Select"))
-        self.Logs.setHtml(_translate("ChangeIconWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-            "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-            "p, li { white-space: pre-wrap; }\n"
-            "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-            "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;\">*Connected to PS4: " + self.IP + "*</span></p>\n"            
-            "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;\"><br /></p>\n"))
-        self.Title_label_2.setText(_translate("ChangeIconWindow", "<html><head/><body><p align=\"center\"><a href=\"https://twitter.com/OfficialAhmed0\"><span style=\" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#90f542; vertical-align:super;\">Created By @OfficialAhmed0</span></a></p></body></html>"))
-        self.SupportMe.setText(_translate("ChangeIconWindow", "<html><head/><body><p align=\"center\"><a href=\"https://www.paypal.com/paypalme/Officialahmed0\"><span style=\" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#90f542; vertical-align:super;\">Support me (PayPal)</span></a></p></body></html>"))
-        self.Next_btn.setToolTip(_translate("ChangeIconWindow", "Next Game Icon"))
-        self.Next_btn.setText(_translate("ChangeIconWindow", "Browse Icon ..."))
-        self.Prev_btn.setToolTip(_translate("ChangeIconWindow", "Previous Game Icon"))
-        self.Prev_btn.setText(_translate("ChangeIconWindow", "Browse Icon ..."))
-        self.GameTitle.setText(_translate("ChangeIconWindow", self.Games[self.imgs[self.img_counter][:-4]]))
-        self.GameID.setText(_translate("ChangeIconWindow", self.imgs[self.img_counter][:-4]))
-        self.TotalGames.setText(_translate("ChangeIconWindow", str(self.img_counter + 1) + "/" + str(len(self.Games))))
-
-        for i in range(len(self.Games)):
-            self.GameTitles.setItemText(i, _translate("ChangeIconWindow", "  "*25 + self.Games[self.imgs[i][:-4]]))
-        if self.userHB == "True":
-            if "CUSA" in self.imgs[self.img_counter][:-4]:
-                self.AccountLabel.setText(_translate("ChangeIconWindow", "Homebrew icon: No"))
-            else:
-                self.AccountLabel.setText(_translate("ChangeIconWindow", "Homebrew icon: Yes"))
-        else:
-            self.AccountLabel.setText(_translate("ChangeIconWindow", "Homebrew icon: Turned off"))
-        if self.Games[self.imgs[self.img_counter][:-4]] in self.exGames:
-            self.Ex_In.setText(_translate("ChangeIconWindow", "External"))
-        else:
-            self.Ex_In.setText(_translate("ChangeIconWindow", "Internal"))
-
-    def convert2Url(self, path):
-        result = ""
-        for i in path:
-            if i == "\\":
-                result += "/"
-            else:
-                result += i
-        return result
-
-    def UpdateLogs(self):
-        self.Logs.setHtml("<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;\">" + self.logging + "</span></p>\n")
-        self.Logs.moveCursor(QtGui.QTextCursor.End)
-
-    def UpdateInfo(self, CustomImgSelected = False):
-        self.Submit_btn.setDisabled(True)
-        current_img_path = self.CUSA_img + self.imgs[self.img_counter]
-        GameTitle = self.Games[self.imgs[self.img_counter][:-4]]
-
-        self.Icon.setStyleSheet("border-image: url(" + current_img_path + ");")
-        self.GameTitle.setText(GameTitle)
-        self.GameID.setText(self.imgs[self.img_counter][:-4])
-        self.CheckImg(current_img_path)
-
-        #If Custom image selected by choosing image manually
-        if CustomImgSelected:
-            self.TotalGames.setText(str(self.GameTitles.currentIndex()+1) + "/" + str(len(self.Games)))
-        else:
-            self.TotalGames.setText(str(self.img_counter + 1) + "/" + str(len(self.Games)))
-        #Check homebrew
-        if self.userHB == "True":
-            if "CUSA" in self.imgs[self.img_counter][:-4]:
-                self.AccountLabel.setText("Homebrew icon: No")
-            else:
-                self.AccountLabel.setText("Homebrew icon: Yes")
-
-        #Change External or Internal
-        if self.imgs[self.img_counter][:-4] in self.exGames:
-            self.Ex_In.setText("External")
-        else:
-            self.Ex_In.setText("Internal")
-
-    def Next(self):
-        if self.img_counter < self.img_limit-1:
-            self.img_counter += 1
-            if self.img_counter < self.img_limit and self.img_counter >= 0:
-                self.UpdateInfo()
-
-    def Prev(self):
-        if self.img_counter > 0 and self.img_counter <= self.img_limit:
-            self.img_counter -= 1
-            self.UpdateInfo()
-
-    def Select(self):
-        selected_Game = self.GameTitles.currentText()[15:]
-        self.img_counter = self.GameTitles.currentIndex()
-        self.UpdateInfo(CustomImgSelected = True)
-        
-    def CheckImg(self, path):
-        icon = Image.open(path)
-        size = icon.size
-        if size[0] == 512 and size[1] == 512:
-            self.IconSize.setStyleSheet("color: rgb(10, 255, 20);")
-            self.IconSize.setText("Current Icon size(" + str(size[0]) + "x" + str(size[1]) + ")")
-
-        elif (size[0] and size[1] > 512) or (size[0] == 512 and size[1] > 512) or (size[0] > 512 and size[1] == 512):
-            self.IconSize.setStyleSheet("color: rgb(250, 150, 0);")
-            self.IconSize.setText("Current Icon size(" + str(size[0]) + "x" + str(size[1]) + ")")
-            self.logging += "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#ffaa00;\">[Warning] : Image needs to be resized (Too large)</span></p></body></html>"
-            self.UpdateLogs()
-        else:
-            self.IconSize.setStyleSheet("color: rgb(255, 10, 20);")
-            self.IconSize.setText("Current Icon size(" + str(size[0]) + "x" + str(size[1]) + ")")
-            self.Submit_btn.setDisabled(True)
-            self.logging += "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#ffaa00;\">[Warning] : Image cannot be resized (Too Small)</span></p></body></html>"
-            self.UpdateLogs()
-
-    def BrowseIcon(self):
-        options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseSheet
-        dialog = QFileDialog()
-        dialog.setOptions(options)
-        dialog.setDirectory(self.userIPath)
-
-        img, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Choose the icon to upload", "", "PNG(*.png);; jpg(*.jpg);; Jpeg(*.jpeg);; icon(*.ico)", options=options)
-        if img:
-            self.Submit_btn.setDisabled(False)
-            self.Icon.setStyleSheet("border-image: url(" + img + ");")
-            self.CheckImg(img)
-            self.changeIconPath = img
-
-    def DownloadIcon(self):
-        options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseSheet
-        dialog = QFileDialog()
-        dialog.setOptions(options)
-        dialog.setDirectory(self.userDPath)
-
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Where to Download?", "Icon.png", "PNG (*.png)", options=options)
-        if path:
-            try:
-                import shutil
-                shutil.copy(self.CUSA_img + self.imgs[self.img_counter], path)
-                self.logging += "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#55ff00;\">[Success] : Downloaded " + self.Games[self.imgs[self.img_counter][:-4]] +" Icon</span></p>\n"
-                self.UpdateLogs()
-            except Exception as e:
-                "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#e83c3c;\">[Error] : " + self.Games[self.imgs[self.img_counter][:-4]] + " | Dev Error " + str(e) + "</span></p>\n"
-                self.logging += "Error while Downloading " + self.Games[self.imgs[self.img_counter][:-4]] + " " + str(e) + " | "
-                self.UpdateLogs()
+        ConfirmWindow.setWindowTitle(_translate("ConfirmWindow", "Confirm"))
+        self.Yes.setText(_translate("ConfirmWindow", "Yes"))
+        self.Ok.setText(_translate("ConfirmWindow", "Ok"))
+        self.No.setText(_translate("ConfirmWindow", "No"))
+        self.Checking.setText(_translate("ConfirmWindow", "Checking"))
+        self.Resizing_label.setText(_translate("ConfirmWindow", "Resizing"))
+        self.Uploading_label.setText(_translate("ConfirmWindow", "Uploading"))
+        self.Statement.setText(_translate("ConfirmWindow", "Are sure you want to change the icon?"))
 
     def Resize_Upload(self):
-        import Confirm
-        self.Submit_btn.setEnabled(False)
-        Current_CUSA = self.imgs[self.img_counter][:-4]
-        self.windo = QtWidgets.QWidget()
-        self.ui = Confirm.Ui_ConfirmWindow()
-        self.ui.setupUi(self.windo, self.changeIconPath, self.IP, self.Port, Current_CUSA, "Iconit", self.exGames, None)
-        self.windo.show()
+        try:
+            self.Yes.setEnabled(False)
+            self.No.setEnabled(False)
+            self.ftp.set_debuglevel(2)
+            self.ftp.connect(self.IP, int(self.Port))
+            self.ftp.login("", "")
+            self.CheckingBar.setProperty("value", 10)
+            if self.ConfirmType == "Iconit":
+                files = []
+                if self.Current_CUSA in self.exGames:
+                    self.ftp.cwd(self.working_dir + "/external/" + self.Current_CUSA)
+                else:
+                    self.ftp.cwd(self.working_dir + "/" + self.Current_CUSA)
+
+                self.CheckingBar.setProperty("value", 40)
+                img_dir = self.temp_path + "MegaSRX\\"
+                #Check how many icons in Game directory
+                with open(self.temp_path + "files_in_dir.dat", "w+", encoding="utf8") as files_in_dir:
+                    self.ftp.retrlines("LIST", files_in_dir.write)
+                self.CheckingBar.setProperty("value", 85)
+
+                Icon_dir = self.changeIconPath
+                #Resize picture but don't save it yet
+                picture = Image.open(Icon_dir) 
+                resize = picture.resize((512, 512), PIL.Image.ANTIALIAS)
+                self.CheckingBar.setProperty("value", 100)
+                self.ResizingBar.setProperty("value", 1)
+                with open(self.temp_path + "files_in_dir.dat", "r", encoding="utf8") as files_in_dir_4_pics:
+                    content_in_file = files_in_dir_4_pics.read()
+                    self.ResizingBar.setProperty("value", 20)
+
+                    if "icon0.png" in content_in_file:
+                        resize.save(img_dir + "icon0.png")
+                        files.append("icon0.png")
+                    if "icon0.dds" in content_in_file:
+                        resize.save(img_dir + "icon00.png")
+                        try:
+                            os.rename(img_dir + "icon00.png", img_dir + "icon0.dds")
+                        except FileExistsError:
+                            os.remove(img_dir + "icon0.dds")
+                            os.rename(img_dir + "icon00.png", img_dir + "icon0.dds")
+                        files.append("icon0.dds")
+                    self.ResizingBar.setProperty("value", 40)
+                    img_count = 22
+                    if "icon0_21.png" in content_in_file :
+                        img_count = 42
+
+                    #Limit of icons 42
+                    for through_20 in range(1, img_count): 
+                        if 40+through_20 <= 98:
+                            self.ResizingBar.setProperty("value", 40+through_20)
+
+                        if through_20 <= 9:
+                            search_png = ("icon0_0" + str(through_20) + ".png")
+                            search_dds = ("icon0_0" + str(through_20) + ".dds")
+                            copy_for_dds = ("icon0_0" + str(through_20) + ".TIFF")
+                            
+                            if search_png in content_in_file:
+                                resize.save(img_dir + search_png)               
+                                files.append(search_png)
+                                
+                            if search_dds in content_in_file:
+                                resize.save(img_dir + copy_for_dds)   
+                                os.rename(img_dir + copy_for_dds, img_dir + search_dds)
+                                files.append(search_dds)
+                        else:
+                            search_png = ("icon0_" + str(through_20) + ".png")
+                            search_dds = ("icon0_" + str(through_20) + ".dds")
+                            copy_for_dds = ("icon0_" + str(through_20) + ".TIFF")
+
+                            if search_png in content_in_file:
+                                try:
+                                    resize.save(img_dir + search_png) 
+                                    files.append(search_png)
+                                except Exception as e:
+                                    self.logIt(str(e), "Warning")
+
+                            if search_dds in content_in_file:
+                                try:
+                                    os.rename(img_dir + copy_for_dds, img_dir + search_dds)
+                                    files.append(search_dds)
+                                except Exception as e:
+                                    self.logIt(str(e), "Error")
+                self.ResizingBar.setProperty("value", 98)
+                with open(self.temp_path + "FoundImg.dat", "w+") as pictures:
+                    for pic in files:
+                        pictures.write(pic + ",")
+
+                self.ResizingBar.setProperty("value", 100)
+                self.UploadingBar.setProperty("value", 1)
+                try:
+                    import shutil
+                    with open(self.temp_path + "FoundImg.dat", "r", encoding="utf8") as pictures:
+                        read_pictures = pictures.read()[0:-1]
+                        pic = read_pictures.split(",")
+                        progress = int(100/len(pic))
+                        progressed = 0
+                        for i in pic:
+                            with open(img_dir + str(i), "rb") as save_file:
+                                self.ftp.storbinary("STOR " + str(i), save_file, 1024)
+                            if i == "icon0.png" or i == "icon0.PNG":
+                                shutil.move(img_dir + str(i), self.temp_path + "MegaSRX\metadata\\" + self.Current_CUSA + ".png")
+                            progressed += progress
+                            self.UploadingBar.setProperty("value", progressed)
+                except Exception as e:
+                    self.logIt(str(e), "Error")
+                self.UploadingBar.setProperty("value", 100)
+
+                self.Statement.setStyleSheet("font: 10pt; color: rgb(5, 255, 20);")
+                self.Statement.setText("Done. Give it some time & the icon will change.")
+                self.Ok.raise_()
+                self.No.hide()
+                self.Yes.hide()
+
+            elif self.ConfirmType == "Profileit":
+                sysProfileRoot = "system_data/priv/cache/profile/"
+                temp_path = str(os.getcwd()) + "\Data\prxUserMeta\\"
+                try:
+                    #Resize Icon and make copies
+                    required_dds = ("avatar64", "avatar128", "avatar260", "avatar440")
+                    ResizeImg = Image.open(self.changeIconPath)
+                    avatar = ResizeImg.resize((440, 440), PIL.Image.ANTIALIAS)
+                    avatar.save(temp_path + "avatar.png")
+                    self.CheckingBar.setProperty("value", 20)
+                    progress = 20
+                    progressed = 60
+                    for dds in required_dds:
+                        if "64" in dds:
+                            avatar = ResizeImg.resize((64, 64), PIL.Image.ANTIALIAS)
+                            avatar.save(temp_path + "avatar64.png")
+                            self.CheckingBar.setProperty("value", 40)
+                        else:
+                            s = int(dds[-3:])
+                            avatar = ResizeImg.resize((s, s), PIL.Image.ANTIALIAS)
+                            avatar.save(temp_path + "avatar" + str(s) + ".png")
+                            self.CheckingBar.setProperty("value", progressed)
+                            progressed +=  20
+                    self.CheckingBar.setProperty("value", 100)
+                except Exception as e:
+                    self.logIt(str(e), "error")
+
+                #Convert PNG To DDS
+                if os.path.isfile("C:\Program Files\ImageMagick-6.9.10-Q16\convert.exe"):
+                    progress = 25
+                    progressed = 0
+                    
+                    try:
+                        from wand.image import Image as OpenThis 
+                        import time
+                        for dds in required_dds:
+                            with OpenThis(filename = temp_path + dds + ".png") as Original:
+                                Original.save(filename = temp_path + dds + ".dds")
+                            for i in range(progressed, progress):
+                                self.ResizingBar.setProperty("value", i)
+                                time.sleep(0.01)
+                            progressed += progress
+                            os.remove(temp_path + dds + ".png")
+                        self.ResizingBar.setProperty("value", 100)
+                        self.Statement.setStyleSheet("font: 10pt; color: rgb(5, 255, 20);")
+                        self.Statement.setText("Done. Give it some time & the avatar will change.")
+                        self.Ok.setEnabled(False)
+                        self.Ok.raise_()
+                        self.No.hide()
+                        self.Yes.hide()
+
+                    except Exception as e:
+                        self.logIt(str(e), "Error")(str(e))
+                else:
+                    import Message
+                    self.window = QtWidgets.QDialog()
+                    self.ui = Message.Ui_Message()
+                    self.ui.setupUi(self.window, "Magick image not found")
+                    self.window.show()
+
+                #Upload
+                self.ftp.cwd(sysProfileRoot + "/" + self.CurrentUser)
+                progress = 20
+                progressed = 20
+                with open(temp_path + "avatar.png", "rb") as save_file:
+                    self.ftp.storbinary("STOR " + "avatar.png", save_file, 1024)
+                    self.UploadingBar.setProperty("value", progressed)
+                for avatar in required_dds:
+                    with open(temp_path + avatar + ".dds", "rb") as save_file:
+                        self.ftp.storbinary("STOR " + avatar + ".dds", save_file, 1024)
+                    for i in range(progressed,progressed + progress+1):
+                        self.UploadingBar.setProperty("value", i)
+                        time.sleep(0.01)
+                    progressed += progress
+                self.Ok.setEnabled(True)
+
+        except FileNotFoundError:
+            pass
+
+        except FileExistsError:
+            icons = os.listdir(img_dir)
+            for i in icons:
+                if i != "Do Not put any file in here" or i != "metadata":
+                    try:
+                        os.remove(img_dir + i)
+                    except Exception as e:
+                        self.logIt(str(e), "Error")(str(e))
+            self.Resize_Upload()
+
+        except Exception as e:
+            self.logIt(str(e), "Error")(str(e))
+
+    def logIt(self, description, Type):
+        import datetime
+        try:
+            error_file = open("Logs.txt", "a")
+        except:
+            error_file = open("Logs.txt", "w")
+        if Type == "Warning":
+            error_file.write(str(datetime.datetime.now()) + " | " + "_DEV Warning: " + str(description) + "\n")
+        else:
+            error_file.write(str(datetime.datetime.now()) + " | " + "_DEV ERROR: " + str(description) + "\n")
+
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    ChangeIconWindow = QtWidgets.QWidget()
-    ui = Ui_ChangeIconWindow()
-    ui.setupUi(ChangeIconWindow)
-    ChangeIconWindow.show()
+    ConfirmWindow = QtWidgets.QDialog()
+    ui = Ui_ConfirmWindow()
+    ui.setupUi(ConfirmWindow)
+    ConfirmWindow.show()
     sys.exit(app.exec_())
