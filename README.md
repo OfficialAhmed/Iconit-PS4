@@ -44,6 +44,27 @@ This application is much convenient than uploading the images manually for many 
 
 *Fixed many bugs.
 
+# Older versions
+
+The tool consist of 2 files 
+
+* The application executable 
+
+>Iconit v4.01 (89.6Mb)
+https://mega.nz/file/zu43zDiL#yIKFNKVpTwWZpY0_YID0pzf72IxE0ClHsMRaMph7Y8s
+
+>Iconit v3.00 (53.6Mb)
+https://mega.nz/file/mv4hyJya#dylV-otTZH_GMptPRafhg7kJd1T6mvARuuZvQF3VTBg
+
+>Iconit v1.00 (31Mb)
+https://mega.nz/#!nqQ3RKrD!Tgbu4mp2flfrZPx-wA9_j_MZyBae3Z5xCwf3ZV_Gcw4
+________________________________________
+
+* Images library (Optional) 
+
+>Circlizeit (Icons package)(62Mb)
+https://mega.nz/#!qrRTAA4R!vId588A9wkINXz7q3EpN62GKrIdKM0oh5c3Ge0ne-oA
+
 # Contribution
 I tried to change the wallpaper of the games that show up when the game starts (named :pic1) however everytime I change
 it a black screen shows up instead of the image I use .The
