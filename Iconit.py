@@ -33,7 +33,8 @@ Game = {}
 class Ui_IPortWindow(object):
     def setupUi(self, IPortWindow, w, h):
         global local_path, setting_path, temp_path, screenHeight, screenWidth
-        self.ver = 4.05
+        self.ver = 4.07
+
         #screen res
         self.w = w
         self.h = h
@@ -208,6 +209,7 @@ class Ui_IPortWindow(object):
         font.setUnderline(False)
         font.setWeight(75)
         font.setStrikeOut(False)
+    
         self.Connect_btn.setFont(font)
         self.Connect_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Connect_btn.setStyleSheet("color: rgb(85, 170, 255); background-color: rgb(206, 206, 206);")
@@ -371,6 +373,7 @@ class Ui_IPortWindow(object):
     def retranslateUi(self, IPortWindow):
         _translate = QtCore.QCoreApplication.translate
         IPortWindow.setWindowTitle(_translate("IPortWindow", "Iconit v"+ str(self.ver)))
+
         self.Status.setText(_translate("IPortWindow", "Waiting to connect..."))
         self.IP_Label.setText(_translate("IPortWindow", "PS4 IP"))
         self.IP_input.setPlaceholderText(_translate("IPortWindow", "Example: 192.168.100.1"))
@@ -386,6 +389,9 @@ class Ui_IPortWindow(object):
         self.Options.setText(_translate("IPortWindow", "Options..."))
         self.menuSettings.setTitle(_translate("IPortWindow", "Setting"))
         self.About.setText(_translate("IPortWindow", "About"))
+                
+        #Keyboard recognition v4.07
+        self.Connect_btn.setShortcut("Return")
 
     def Check_IPort(self):
         global IP, Port
@@ -403,6 +409,7 @@ class Ui_IPortWindow(object):
                     valid = False
                     break
             self.Connect_PS4(valid)
+            
         except Exception as e:
             self.logIt(str(e), "Warning")
     def ChangeColors(self, Connected):
@@ -436,7 +443,8 @@ class Ui_IPortWindow(object):
                     pass
 
                 #Iconit Or Profileit ?
-                if self.GameIcon.isChecked() == True:
+                #app.processEvents() = Multiprocessing included v4.07 
+                if self.GameIcon.isChecked() == True: #Iconit
                     self.iconDirs = [working_dir]
                     ftp.set_debuglevel(2)
                     ftp.connect(IP, int(Port))
@@ -447,7 +455,6 @@ class Ui_IPortWindow(object):
                     ftp.retrlines("LIST ", directories.append)
                     for dir in directories:
                         if "external" in dir:
-                            print(">"*70, "External found")
                             self.iconDirs.append(working_dir + "/external")
                             break
 
@@ -456,6 +463,7 @@ class Ui_IPortWindow(object):
                     self.GameIcon.setEnabled(False)
                     self.ProfileIcon.setEnabled(False)
                     for dir in self.iconDirs:
+                        app.processEvents()
                         ftp.set_debuglevel(2)
                         ftp.connect(IP, int(Port))
                         ftp.login("", "")
@@ -464,7 +472,7 @@ class Ui_IPortWindow(object):
                         except:
                             pass
                         directories = []
-
+                        app.processEvents()
                         ftp.retrlines("LIST ", directories.append)
                         """create a file & copy, paste all them directories within"""
 
@@ -501,7 +509,7 @@ class Ui_IPortWindow(object):
                                 else:
                                     all_Games.write(only_CUSA)
                                     all_CUSA.append(only_CUSA[:-1])
-
+                    app.processEvents()
                     all_directories_in_system.close()
                     all_Games.close()
                     self.CacheGameIcon()
@@ -559,13 +567,18 @@ class Ui_IPortWindow(object):
             ftp.connect(IP, int(Port))
             ftp.login("", "")
             ftp.cwd(self.sysProfileRoot + "/" + user)
-
+            OfflineUser = False
+            
             with open(dir + "\\" + user + ".png", "wb") as file:
                 ftp.retrbinary("RETR " + "avatar.png", file.write, 1024)
-            try:
-                with open(dir + "\\" + user + ".json", "wb") as file:
+            with open(dir + "\\" + user + ".json", "wb") as file:
+                try:
                     ftp.retrbinary("RETR " + fileName, file.write, 1024)
-            except:#make a fake one if online json not found
+                except:
+                    OfflineUser = True
+
+            #550 Error Fix (v4.07) make a fake one if online json not found
+            if OfflineUser:
                 data = '{"avatarUrl":"","firstName":"Unknown","lastName":"user name","pictureUrl":"https:\/\/image.api.np.km.playstation.net\/images\/?format=png&w=440&h=440&image=https%3A%2F%2Fgraph.facebook.com%2F100001923179045%2Fpicture%3Fwidth%3D400%26height%3D400&sign=524238c4d61e345be9eeec2ad0a631cab59fe7e6","trophySummary":"{\"level\":0,\"progress\":0,\"earnedTrophies\":{\"platinum\":0,\"gold\":0,\"silver\":0,\"bronze\":0}}","aboutMe":"Temporary created by Iconit app by @OfficialAhmed0","isOfficiallyVerified":"false"}'
                 with open(dir + "\\" + user + ".json", "w+") as fakeOnlineFile:
                     fakeOnlineFile.write(data)
