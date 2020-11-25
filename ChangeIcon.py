@@ -6,7 +6,7 @@ import os
 
 class Ui_ChangeIconWindow(object):
     def setupUi(self, ChangeIconWindow, IP, Port, Games, uFont, uIPath, uDPath, userHB, exGames, w, h):
-        self.ver = 4.05
+        self.ver = 4.07
         self.screenWidth = w
         self.screenHeight = h
 
@@ -469,6 +469,10 @@ class Ui_ChangeIconWindow(object):
         self.GameTitle.setText(_translate("ChangeIconWindow", self.Games[self.imgs[self.img_counter][:-4]]))
         self.GameID.setText(_translate("ChangeIconWindow", self.imgs[self.img_counter][:-4]))
         self.TotalGames.setText(_translate("ChangeIconWindow", str(self.img_counter + 1) + "/" + str(len(self.Games))))
+
+        #Keyboard recognition v4.07 
+        self.Next_btn.setShortcut("Right")
+        self.Prev_btn.setShortcut("Left")
 
         for i in range(len(self.Games)):
             self.GameTitles.setItemText(i, _translate("ChangeIconWindow", "  "*25 + self.Games[self.imgs[i][:-4]]))
