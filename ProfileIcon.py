@@ -6,7 +6,7 @@ ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 class Ui_ProfileIconWin(object):
     def setupUi(self, ProfileIconWin, allUsers, IP, Port, w, h):
-        self.ver = 4.05
+        self.ver = 4.07
         self.screenWidth = w
         self.screenHeight = h
 
@@ -510,6 +510,10 @@ class Ui_ProfileIconWin(object):
         self.SupportMe.setText(_translate("ProfileIconWin", "<html><head/><body><p align=\"center\"><a href=\"https://www.paypal.com/paypalme/Officialahmed0\"><span style=\" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#90f542; vertical-align:super;\">Support me (PayPal)</span></a></p></body></html>"))
         self.AccountID.setText(_translate("ProfileIconWin", self.user[0]))
         self.TotalAccounts.setText(_translate("ProfileIconWin", "1/4"))
+
+        #Keyboard recognition v4.07 
+        self.Next_btn.setShortcut("Right")
+        self.Prev_btn.setShortcut("Left")
     
     def logIt(self, description, Type):
         import datetime
