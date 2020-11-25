@@ -1,11 +1,11 @@
 # Iconit
-Latest version 4.05 (Aug 30, 2020)
-No longer ftp client needed to change PS4 games icons. this tool will do it for you .Though FTP payload must be running on the PS4
+Latest version 4.07 (Nov 25, 2020)
+No longer ftp client needed to change PS4 games' icon this tool will do it for you (Automated). Works on FTP payload (PS4 Jailbreak required)
 
 # Download from here
->
-**Iconit v4.05 (131.1Mb)**
-https://mega.nz/file/Tq4zAB7L#Vm3Cj003CDWUYZzkN5WcQJGuvvwL3f4oJVfamAIuMMI
+**Iconit v4.07 (74.1Mb)**
+https://mega.nz/file/fnwhWaZb#q3i-dZMoQ7piaaimP2tsMhaHCJ006adJQwHoHmAlovk
+
 # About
 
 This application is much convenient than uploading the images manually for many reasons :-
@@ -20,29 +20,37 @@ This application is much convenient than uploading the images manually for many 
 
 * I added a Library (Circlizeit.zip) that has lots of images for you to choose from.
 
+# Update v4.07
+
+* Key shortcuts supported (Return) to click main button. (Left & Right arrows) for (Next image, Previous image respectively) 
+
+* Multiprocessing method added for better performance
+
+* Lowered application size from(131mb) to(74mb)
+
+* Fixed 550 error and other bugs
+
 # Update v4.05
 
-*Changed the entire UI to support 2k and 4k screen resolution
+* Changed the entire UI to support 2k and 4k screen resolution
 
-*App size now resizable
+* Application window now resizable
 
-*Fixed 505 error when changing profile avatar 
-
-*Fixed 550 error
+* Fixed 505 error when changing profile avatar 
 
 # Update v4.01
 
-*Added new feature change profile icon "profile avatar".
+* Added new feature change profile icon "profile avatar" (Many issues fixed in later versions)
 
-*External hdd games support.
+* External hdd games support.
 
-*More homebrews are supported starting with:-
+* More homebrews are supported starting with:-
 >(SSNE, MODS, LAPY, NP and more) as the Game ID.
 (Make sure to enable it under Settings>>Options)
 
-*Fixed cache bar wrong calculations.
+* Fixed cache bar wrong calculations.
 
-*Fixed many bugs.
+* Fixed many bugs.
 
 # Older versions
 
@@ -50,7 +58,10 @@ The tool consist of 2 files
 
 * The application executable 
 
->Iconit v4.01 (89.6Mb)
+>Iconit v4.05 (131.6Mb)(Aug 30, 2020)
+https://mega.nz/file/Tq4zAB7L#Vm3Cj003CDWUYZzkN5WcQJGuvvwL3f4oJVfamAIuMMI
+
+>Iconit v4.01 (91.6Mb)
 https://mega.nz/file/zu43zDiL#yIKFNKVpTwWZpY0_YID0pzf72IxE0ClHsMRaMph7Y8s
 
 >Iconit v3.00 (53.6Mb)
