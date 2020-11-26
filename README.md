@@ -5,7 +5,7 @@ it's an open source you can clone the repository or download the executable vers
 
 # Download from here
 **Iconit v4.07 (74.1Mb)**
-https://mega.nz/file/fnwhWaZb#q3i-dZMoQ7piaaimP2tsMhaHCJ006adJQwHoHmAlovk
+https://mega.nz/file/S7h2QIQY#uSgZBu_iET1ihZBJvpTYNXcH1481cLGFg4ZNbG1DIP8
 
 # About
 
