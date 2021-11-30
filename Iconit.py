@@ -1,3 +1,12 @@
+
+            
+            ########   concatenate IP and Port into one string --> check with one loop (line 400, func Check_IPort()) ########
+            ########   add an option for sys icons prob. located /system_ex --> if they sys icons read/write ########
+            ########   Double check error 505 solution if JSON found and if not --> Profileit segment  ########
+            ########   Check for dds library if bg imgs aren't invincible --> convertion method  ########
+            ########   Minimize instruction statements --> PyQt set...0    ########
+            ########   add an option in the settings --> fixed win size when app launch  (line 78)  ########
+            
 from PyQt5 import QtCore, QtGui, QtWidgets
 import ctypes
 myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
@@ -398,7 +407,7 @@ class Ui_IPortWindow(object):
         try:
             IP = self.IP_input.text()
             Port = self.Port_input.text()
-
+            
             valid = True
             for i in IP:
                 if i.isalpha():
@@ -584,6 +593,7 @@ class Ui_IPortWindow(object):
                     fakeOnlineFile.write(data)
 
             #Download original Profile Icon from Sony server
+
             import requests as req
             try:
                 with open(dir + "\\" + user + ".json") as file:
