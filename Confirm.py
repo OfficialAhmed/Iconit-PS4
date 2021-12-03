@@ -1,7 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import PIL, os, sys
+import PIL
+import os
+import sys
 from PIL import Image
 from ftplib import FTP
+
 
 class Ui_ConfirmWindow(object):
     def setupUi(self, ConfirmWindow, changeIconPath, IP, Port, CUSA, ConfirmType, exGames, CurrentUser=None):
@@ -27,7 +30,8 @@ class Ui_ConfirmWindow(object):
         font.setFamily("Comic Sans MS")
         font.setPointSize(12)
         font.setItalic(True)
-        ConfirmWindow.setWindowIcon(QtGui.QIcon(self.local_path + "\Data\Pref\ic1.@OfficialAhmed0"))
+        ConfirmWindow.setWindowIcon(QtGui.QIcon(
+            self.local_path + "\Data\Pref\ic1.@OfficialAhmed0"))
 
         self.Yes = QtWidgets.QPushButton(ConfirmWindow)
         self.Yes.setGeometry(QtCore.QRect(155, 120, 100, 31))
@@ -35,7 +39,7 @@ class Ui_ConfirmWindow(object):
         self.Yes.setStyleSheet("background-color: rgb(190, 190, 190);")
         self.Yes.setObjectName("Yes")
         self.Yes.clicked.connect(self.Resize_Upload)
-        
+
         self.Ok = QtWidgets.QPushButton(ConfirmWindow)
         self.Ok.setGeometry(QtCore.QRect(215, 120, 100, 31))
         self.Ok.setFont(font)
@@ -132,39 +136,61 @@ class Ui_ConfirmWindow(object):
         self.Yes.setText(_translate("ConfirmWindow", "Yes"))
         self.Ok.setText(_translate("ConfirmWindow", "Ok"))
         self.No.setText(_translate("ConfirmWindow", "No"))
-        self.Checking.setText(_translate("ConfirmWindow", "Checking"))
-        self.Resizing_label.setText(_translate("ConfirmWindow", "Resizing"))
-        self.Uploading_label.setText(_translate("ConfirmWindow", "Uploading"))
-        self.Statement.setText(_translate("ConfirmWindow", "Are sure you want to change the icon?"))
+        self.Checking.setText(_translate("ConfirmWindow", "Validation"))
+        self.Resizing_label.setText(_translate(
+            "ConfirmWindow", "Convertion"))
+        self.Uploading_label.setText(_translate("ConfirmWindow", "Sending"))
+        self.Statement.setText(_translate(
+            "ConfirmWindow", "Are sure you want to change the icon?"))
+
+    def png2dds(self, input_dir, output_dir):
+        # implementation added v4.51
+        # convert legit png to dds using imageMagic lib (wand)
+        with self.image.Image(filename=input_dir) as img:
+            img.compression = 'dxt1'
+            img.save(filename=output_dir)
 
     def Resize_Upload(self):
         try:
+            try:
+                from wand import image
+                import time
+                self.image = image
+
+            except Exception as e:
+                self.logIt(
+                    str(e) + " | DEV module wand cannot be found, something related to imageMagic", "Warning")
+
             self.Yes.setEnabled(False)
             self.No.setEnabled(False)
             self.ftp.set_debuglevel(2)
             self.ftp.connect(self.IP, int(self.Port))
             self.ftp.login("", "")
             self.CheckingBar.setProperty("value", 10)
+
             if self.ConfirmType == "Iconit":
                 files = []
                 if self.Current_CUSA in self.exGames:
-                    self.ftp.cwd(self.working_dir + "/external/" + self.Current_CUSA)
+                    self.ftp.cwd(self.working_dir +
+                                 "/external/" + self.Current_CUSA)
                 else:
                     self.ftp.cwd(self.working_dir + "/" + self.Current_CUSA)
 
                 self.CheckingBar.setProperty("value", 40)
                 img_dir = self.temp_path + "MegaSRX\\"
-                #Check how many icons in Game directory
+                # Check how many icons in Game directory
                 with open(self.temp_path + "files_in_dir.dat", "w+", encoding="utf8") as files_in_dir:
                     self.ftp.retrlines("LIST", files_in_dir.write)
                 self.CheckingBar.setProperty("value", 85)
 
                 Icon_dir = self.changeIconPath
-                #Resize picture but don't save it yet
-                picture = Image.open(Icon_dir) 
+                # Resize picture but don't save it yet
+                picture = Image.open(Icon_dir)
                 resize = picture.resize((512, 512), PIL.Image.ANTIALIAS)
                 self.CheckingBar.setProperty("value", 100)
                 self.ResizingBar.setProperty("value", 1)
+
+                # update v4.51 compatible compression type for PS4 .DDS = DXT1
                 with open(self.temp_path + "files_in_dir.dat", "r", encoding="utf8") as files_in_dir_4_pics:
                     content_in_file = files_in_dir_4_pics.read()
                     self.ResizingBar.setProperty("value", 20)
@@ -173,52 +199,55 @@ class Ui_ConfirmWindow(object):
                         resize.save(img_dir + "icon0.png")
                         files.append("icon0.png")
                     if "icon0.dds" in content_in_file:
-                        resize.save(img_dir + "icon00.png")
-                        try:
-                            os.rename(img_dir + "icon00.png", img_dir + "icon0.dds")
-                        except FileExistsError:
-                            os.remove(img_dir + "icon0.dds")
-                            os.rename(img_dir + "icon00.png", img_dir + "icon0.dds")
+                        self.png2dds(img_dir + "icon0.png",
+                                     img_dir + "icon0.dds")
+
                         files.append("icon0.dds")
                     self.ResizingBar.setProperty("value", 40)
                     img_count = 22
-                    if "icon0_21.png" in content_in_file :
+                    if "icon0_21.png" in content_in_file:
                         img_count = 42
 
-                    #Limit of icons 42
-                    for through_20 in range(1, img_count): 
+                    # Limit of icons 42
+                    for through_20 in range(1, img_count):
                         if 40+through_20 <= 98:
-                            self.ResizingBar.setProperty("value", 40+through_20)
+                            self.ResizingBar.setProperty(
+                                "value", 40+through_20)
 
                         if through_20 <= 9:
                             search_png = ("icon0_0" + str(through_20) + ".png")
                             search_dds = ("icon0_0" + str(through_20) + ".dds")
-                            copy_for_dds = ("icon0_0" + str(through_20) + ".TIFF")
-                            
+
                             if search_png in content_in_file:
-                                resize.save(img_dir + search_png)               
+                                resize.save(img_dir + search_png)
                                 files.append(search_png)
-                                
+
                             if search_dds in content_in_file:
-                                resize.save(img_dir + copy_for_dds)   
-                                os.rename(img_dir + copy_for_dds, img_dir + search_dds)
+                                # if png exists override it no issue, otherwise
+                                # create a png, resize it and convert it to dds
+                                resize.save(img_dir + search_png)
+
+                                self.png2dds(img_dir + search_png,
+                                             img_dir + search_dds)
+
                                 files.append(search_dds)
                         else:
                             search_png = ("icon0_" + str(through_20) + ".png")
                             search_dds = ("icon0_" + str(through_20) + ".dds")
-                            copy_for_dds = ("icon0_" + str(through_20) + ".TIFF")
 
                             if search_png in content_in_file:
                                 try:
-                                    resize.save(img_dir + search_png) 
+                                    resize.save(img_dir + search_png)
                                     files.append(search_png)
                                 except Exception as e:
                                     self.logIt(str(e), "Warning")
 
                             if search_dds in content_in_file:
                                 try:
-                                    os.rename(img_dir + copy_for_dds, img_dir + search_dds)
+                                    self.png2dds(
+                                        img_dir + search_png, img_dir + search_dds)
                                     files.append(search_dds)
+
                                 except Exception as e:
                                     self.logIt(str(e), "Error")
                 self.ResizingBar.setProperty("value", 98)
@@ -237,74 +266,84 @@ class Ui_ConfirmWindow(object):
                         progressed = 0
                         for i in pic:
                             with open(img_dir + str(i), "rb") as save_file:
-                                self.ftp.storbinary("STOR " + str(i), save_file, 1024)
+                                self.ftp.storbinary(
+                                    "STOR " + str(i), save_file, 1024)
                             if i == "icon0.png" or i == "icon0.PNG":
-                                shutil.move(img_dir + str(i), self.temp_path + "MegaSRX\metadata\\" + self.Current_CUSA + ".png")
+                                shutil.move(img_dir + str(i), self.temp_path +
+                                            "MegaSRX\metadata\\" + self.Current_CUSA + ".png")
                             progressed += progress
                             self.UploadingBar.setProperty("value", progressed)
+
                 except Exception as e:
                     self.logIt(str(e), "Error")
                 self.UploadingBar.setProperty("value", 100)
 
-                self.Statement.setStyleSheet("font: 10pt; color: rgb(5, 255, 20);")
-                self.Statement.setText("Done. Give it some time & the icon will change.")
+                self.Statement.setStyleSheet(
+                    "font: 10pt; color: rgb(5, 255, 20);")
+                self.Statement.setText(
+                    "Done. Give it some time & the icon will change.")
                 self.Ok.raise_()
                 self.No.hide()
                 self.Yes.hide()
 
             elif self.ConfirmType == "Profileit":
                 sysProfileRoot = "system_data/priv/cache/profile/"
-                temp_path = str(os.getcwd()) + "\Data\prxUserMeta\\"
                 try:
-                    #Resize Icon and make copies
-                    required_dds = ("avatar64", "avatar128", "avatar260", "avatar440")
+                    # Resize Icon and make copies
+                    required_dds = ("avatar64", "avatar128",
+                                    "avatar260", "avatar440")
                     ResizeImg = Image.open(self.changeIconPath)
                     avatar = ResizeImg.resize((440, 440), PIL.Image.ANTIALIAS)
-                    avatar.save(temp_path + "avatar.png")
+                    avatar.save(self.temp_path + "avatar.png")
                     self.CheckingBar.setProperty("value", 20)
                     progress = 20
                     progressed = 60
                     for dds in required_dds:
                         if "64" in dds:
-                            avatar = ResizeImg.resize((64, 64), PIL.Image.ANTIALIAS)
-                            avatar.save(temp_path + "avatar64.png")
+                            avatar = ResizeImg.resize(
+                                (64, 64), PIL.Image.ANTIALIAS)
+                            avatar.save(self.temp_path + "avatar64.png")
                             self.CheckingBar.setProperty("value", 40)
                         else:
                             s = int(dds[-3:])
-                            avatar = ResizeImg.resize((s, s), PIL.Image.ANTIALIAS)
-                            avatar.save(temp_path + "avatar" + str(s) + ".png")
+                            avatar = ResizeImg.resize(
+                                (s, s), PIL.Image.ANTIALIAS)
+                            avatar.save(self.temp_path +
+                                        "avatar" + str(s) + ".png")
                             self.CheckingBar.setProperty("value", progressed)
-                            progressed +=  20
+                            progressed += 20
                     self.CheckingBar.setProperty("value", 100)
                 except Exception as e:
                     self.logIt(str(e), "error")
 
-                #Convert PNG To DDS
-                if os.path.isfile("C:\Program Files\ImageMagick-6.9.10-Q16\convert.exe"):
+                # Convert PNG To DDS
+                if os.path.isfile("C:\Program Files\ImageMagick-6.9.10-Q16\convert.exe") or os.path.isfile("C:\Program Files (x86)\ImageMagick-7.1.0-Q16\convert.exe"):
                     progress = 25
                     progressed = 0
-                    
+
                     try:
-                        from wand.image import Image as OpenThis 
-                        import time
                         for dds in required_dds:
-                            with OpenThis(filename = temp_path + dds + ".png") as Original:
-                                Original.save(filename = temp_path + dds + ".dds")
+                            # update v4.21 compatible compression type for PS4 .DDS = DXT1
+                            self.png2dds(self.temp_path + dds +
+                                         ".png", self.temp_path + dds + ".dds")
+
                             for i in range(progressed, progress):
                                 self.ResizingBar.setProperty("value", i)
                                 time.sleep(0.01)
                             progressed += progress
-                            os.remove(temp_path + dds + ".png")
+                            os.remove(self.temp_path + dds + ".png")
                         self.ResizingBar.setProperty("value", 100)
-                        self.Statement.setStyleSheet("font: 10pt; color: rgb(5, 255, 20);")
-                        self.Statement.setText("Done. Give it some time & the avatar will change.")
+                        self.Statement.setStyleSheet(
+                            "font: 10pt; color: rgb(5, 255, 20);")
+                        self.Statement.setText(
+                            "Done. Give it some time & the avatar will change.")
                         self.Ok.setEnabled(False)
                         self.Ok.raise_()
                         self.No.hide()
                         self.Yes.hide()
 
                     except Exception as e:
-                        self.logIt(str(e), "Error")(str(e))
+                        self.logIt(str(e), "Error")
                 else:
                     import Message
                     self.window = QtWidgets.QDialog()
@@ -312,17 +351,19 @@ class Ui_ConfirmWindow(object):
                     self.ui.setupUi(self.window, "Magick image not found")
                     self.window.show()
 
-                #Upload
+                # Upload
                 self.ftp.cwd(sysProfileRoot + "/" + self.CurrentUser)
                 progress = 20
                 progressed = 20
-                with open(temp_path + "avatar.png", "rb") as save_file:
-                    self.ftp.storbinary("STOR " + "avatar.png", save_file, 1024)
+                with open(self.temp_path + "avatar.png", "rb") as save_file:
+                    self.ftp.storbinary(
+                        "STOR " + "avatar.png", save_file, 1024)
                     self.UploadingBar.setProperty("value", progressed)
                 for avatar in required_dds:
-                    with open(temp_path + avatar + ".dds", "rb") as save_file:
-                        self.ftp.storbinary("STOR " + avatar + ".dds", save_file, 1024)
-                    for i in range(progressed,progressed + progress+1):
+                    with open(self.temp_path + avatar + ".dds", "rb") as save_file:
+                        self.ftp.storbinary(
+                            "STOR " + avatar + ".dds", save_file, 1024)
+                    for i in range(progressed, progressed + progress+1):
                         self.UploadingBar.setProperty("value", i)
                         time.sleep(0.01)
                     progressed += progress
@@ -338,11 +379,11 @@ class Ui_ConfirmWindow(object):
                     try:
                         os.remove(img_dir + i)
                     except Exception as e:
-                        self.logIt(str(e), "Error")(str(e))
+                        self.logIt(str(e), "Error")
             self.Resize_Upload()
 
         except Exception as e:
-            self.logIt(str(e), "Error")(str(e))
+            self.logIt(str(e), "Error")
 
     def logIt(self, description, Type):
         import datetime
@@ -351,9 +392,11 @@ class Ui_ConfirmWindow(object):
         except:
             error_file = open("Logs.txt", "w")
         if Type == "Warning":
-            error_file.write(str(datetime.datetime.now()) + " | " + "_DEV Warning: " + str(description) + "\n")
+            error_file.write(str(datetime.datetime.now()) +
+                             " | " + "_DEV Warning: " + str(description) + "\n")
         else:
-            error_file.write(str(datetime.datetime.now()) + " | " + "_DEV ERROR: " + str(description) + "\n")
+            error_file.write(str(datetime.datetime.now()) +
+                             " | " + "_DEV ERROR: " + str(description) + "\n")
 
 
 if __name__ == "__main__":
