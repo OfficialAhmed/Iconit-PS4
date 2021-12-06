@@ -2,13 +2,14 @@ import time
 import os
 import sys
 import ctypes
-import ProfileIcon
+import ChangeAvatar
 import ChangeIcon
 import Message
+import Update
 from ftplib import FTP
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
+myappid = "mycompany.myproduct.subproduct.version"  # arbitrary string
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 # connection through FTP
@@ -38,7 +39,7 @@ Game = {}
 class Ui_IPortWindow(object):
     def setupUi(self, IPortWindow, w, h):
         global local_path, setting_path, temp_path, screenHeight, screenWidth
-        self.ver = 4.52
+        self.ver = Update.get_update_version()
 
         # screen res
         self.w = w
@@ -54,12 +55,12 @@ class Ui_IPortWindow(object):
         try:
             with open("Data/Pref/pref.ini") as file:
                 content = file.readlines()
-                self.userFont = content[0][2: -1]
-                self.userPort = content[1][2: -1]
-                self.userIp = content[2][3: -1]
-                self.userIPath = content[3][6: -1]
-                self.userDPath = content[4][6: -1]
-                self.userHB = (content[5][content[4].find(":")+1:])
+                self.userFont = content[0][2:-1]
+                self.userPort = content[1][2:-1]
+                self.userIp = content[2][3:-1]
+                self.userIPath = content[3][6:-1]
+                self.userDPath = content[4][6:-1]
+                self.userHB = content[5][3:].strip()
         except:
             pass
         font = QtGui.QFont()
@@ -71,21 +72,23 @@ class Ui_IPortWindow(object):
         # v4.05 new UI support 2k, 4k res
         IPortWindow.setObjectName("IPortWindow")
         IPortWindow.setWindowModality(QtCore.Qt.WindowModal)
-        IPortWindow.setWindowIcon(QtGui.QIcon(
-            local_path + "\\Data\\Pref\\" + "ic1.@OfficialAhmed0"))
+        IPortWindow.setWindowIcon(
+            QtGui.QIcon(local_path + "\\Data\\Pref\\" + "ic1.@OfficialAhmed0")
+        )
 
         IPortWindow.resize(720, 521)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            IPortWindow.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(IPortWindow.sizePolicy().hasHeightForWidth())
         IPortWindow.setSizePolicy(sizePolicy)
         IPortWindow.setMinimumSize(QtCore.QSize(720, 512))
         IPortWindow.setWindowOpacity(1.0)
         IPortWindow.setStyleSheet(
-            "color: rgb(73, 170, 255); background-color: rgb(1, 10, 30);")
+            "color: rgb(73, 170, 255); background-color: rgb(1, 10, 30);"
+        )
         IPortWindow.setDocumentMode(False)
         IPortWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.MainWidget = QtWidgets.QWidget(IPortWindow)
@@ -100,11 +103,11 @@ class Ui_IPortWindow(object):
         self.Status = QtWidgets.QLabel(self.MainWidget)
         self.Status.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.Status.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.Status.sizePolicy().hasHeightForWidth())
         self.Status.setSizePolicy(sizePolicy)
         self.Status.setMinimumSize(QtCore.QSize(500, 45))
         self.Status.setBaseSize(QtCore.QSize(0, 0))
@@ -120,8 +123,7 @@ class Ui_IPortWindow(object):
         self.Status.setAlignment(QtCore.Qt.AlignCenter)
         self.Status.setIndent(-1)
         self.Status.setObjectName("label")
-        self.FormLayout.setWidget(
-            0, QtWidgets.QFormLayout.FieldRole, self.Status)
+        self.FormLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.Status)
         self.hidenLabel = QtWidgets.QLabel(self.MainWidget)
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -130,15 +132,14 @@ class Ui_IPortWindow(object):
         self.hidenLabel.setFont(font)
         self.hidenLabel.setText("")
         self.hidenLabel.setObjectName("label_2")
-        self.FormLayout.setWidget(
-            1, QtWidgets.QFormLayout.LabelRole, self.hidenLabel)
+        self.FormLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.hidenLabel)
         self.IP_Label = QtWidgets.QLabel(self.MainWidget)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.IP_Label.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.IP_Label.sizePolicy().hasHeightForWidth())
         self.IP_Label.setSizePolicy(sizePolicy)
         self.IP_Label.setMinimumSize(QtCore.QSize(120, 40))
         font = QtGui.QFont()
@@ -151,15 +152,14 @@ class Ui_IPortWindow(object):
         self.IP_Label.setLineWidth(2)
         self.IP_Label.setAlignment(QtCore.Qt.AlignCenter)
         self.IP_Label.setObjectName("IP_Label")
-        self.FormLayout.setWidget(
-            2, QtWidgets.QFormLayout.LabelRole, self.IP_Label)
+        self.FormLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.IP_Label)
         self.IP_input = QtWidgets.QLineEdit(self.MainWidget)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.IP_input.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.IP_input.sizePolicy().hasHeightForWidth())
         self.IP_input.setSizePolicy(sizePolicy)
         self.IP_input.setMinimumSize(QtCore.QSize(500, 50))
         self.IP_input.setSizeIncrement(QtCore.QSize(0, 0))
@@ -177,15 +177,14 @@ class Ui_IPortWindow(object):
         self.IP_input.setCursorMoveStyle(QtCore.Qt.VisualMoveStyle)
         self.IP_input.setClearButtonEnabled(True)
         self.IP_input.setObjectName("IP_input")
-        self.FormLayout.setWidget(
-            2, QtWidgets.QFormLayout.FieldRole, self.IP_input)
+        self.FormLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.IP_input)
         self.Port_Label = QtWidgets.QLabel(self.MainWidget)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.Port_Label.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.Port_Label.sizePolicy().hasHeightForWidth())
         self.Port_Label.setSizePolicy(sizePolicy)
         self.Port_Label.setMinimumSize(QtCore.QSize(120, 40))
         font = QtGui.QFont()
@@ -198,15 +197,14 @@ class Ui_IPortWindow(object):
         self.Port_Label.setLineWidth(2)
         self.Port_Label.setAlignment(QtCore.Qt.AlignCenter)
         self.Port_Label.setObjectName("Port_Label")
-        self.FormLayout.setWidget(
-            3, QtWidgets.QFormLayout.LabelRole, self.Port_Label)
+        self.FormLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.Port_Label)
         self.Port_input = QtWidgets.QLineEdit(self.MainWidget)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.Port_input.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.Port_input.sizePolicy().hasHeightForWidth())
         self.Port_input.setSizePolicy(sizePolicy)
         self.Port_input.setMinimumSize(QtCore.QSize(500, 50))
         font = QtGui.QFont()
@@ -221,8 +219,7 @@ class Ui_IPortWindow(object):
         self.Port_input.setAlignment(QtCore.Qt.AlignCenter)
         self.Port_input.setClearButtonEnabled(True)
         self.Port_input.setObjectName("Port_input")
-        self.FormLayout.setWidget(
-            3, QtWidgets.QFormLayout.FieldRole, self.Port_input)
+        self.FormLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.Port_input)
         self.gridLayout_3 = QtWidgets.QGridLayout()
         self.gridLayout_3.setSizeConstraint(QtWidgets.QLayout.SetMaximumSize)
         self.gridLayout_3.setContentsMargins(0, 70, 0, 10)
@@ -240,7 +237,8 @@ class Ui_IPortWindow(object):
         self.Connect_btn.setFont(font)
         self.Connect_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Connect_btn.setStyleSheet(
-            "color: rgb(85, 170, 255); background-color: rgb(206, 206, 206);")
+            "color: rgb(85, 170, 255); background-color: rgb(206, 206, 206);"
+        )
         self.Connect_btn.setDefault(False)
         self.Connect_btn.setFlat(False)
         self.Connect_btn.setObjectName("Connect_btn")
@@ -264,11 +262,11 @@ class Ui_IPortWindow(object):
         self.gridLayout_3.addWidget(self.Cache_label, 7, 1, 1, 1)
         self.GameIcon = QtWidgets.QRadioButton(self.MainWidget)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.GameIcon.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.GameIcon.sizePolicy().hasHeightForWidth())
         self.GameIcon.setSizePolicy(sizePolicy)
         self.GameIcon.setMinimumSize(QtCore.QSize(0, 40))
         font = QtGui.QFont()
@@ -287,25 +285,25 @@ class Ui_IPortWindow(object):
         self.GameIcon.setChecked(True)
         self.GameIcon.setObjectName("GameIcon")
         self.gridLayout_3.addWidget(self.GameIcon, 0, 1, 1, 2)
-        self.ProfileIcon = QtWidgets.QRadioButton(self.MainWidget)
+        self.ChangeAvatar = QtWidgets.QRadioButton(self.MainWidget)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ProfileIcon.sizePolicy().hasHeightForWidth())
-        self.ProfileIcon.setSizePolicy(sizePolicy)
-        self.ProfileIcon.setMinimumSize(QtCore.QSize(0, 40))
+        sizePolicy.setHeightForWidth(self.ChangeAvatar.sizePolicy().hasHeightForWidth())
+        self.ChangeAvatar.setSizePolicy(sizePolicy)
+        self.ChangeAvatar.setMinimumSize(QtCore.QSize(0, 40))
         font = QtGui.QFont()
         font.setPointSize(13)
         font.setBold(True)
         font.setWeight(75)
-        self.ProfileIcon.setFont(font)
-        self.ProfileIcon.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.ProfileIcon.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.ProfileIcon.setStyleSheet("color: rgb(255, 255, 255);")
-        self.ProfileIcon.setObjectName("ProfileIcon")
-        self.gridLayout_3.addWidget(self.ProfileIcon, 2, 1, 1, 1)
+        self.ChangeAvatar.setFont(font)
+        self.ChangeAvatar.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.ChangeAvatar.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.ChangeAvatar.setStyleSheet("color: rgb(255, 255, 255);")
+        self.ChangeAvatar.setObjectName("ChangeAvatar")
+        self.gridLayout_3.addWidget(self.ChangeAvatar, 2, 1, 1, 1)
         self.CacheBar = QtWidgets.QProgressBar(self.MainWidget)
         self.CacheBar.setMinimumSize(QtCore.QSize(100, 30))
         self.CacheBar.setProperty("value", 0)
@@ -317,11 +315,11 @@ class Ui_IPortWindow(object):
         self.gridLayout_3.addWidget(self.CacheBar, 7, 3, 1, 1)
         self.Change_label = QtWidgets.QLabel(self.MainWidget)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.Change_label.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.Change_label.sizePolicy().hasHeightForWidth())
         self.Change_label.setSizePolicy(sizePolicy)
         self.Change_label.setMinimumSize(QtCore.QSize(120, 80))
         font = QtGui.QFont()
@@ -346,7 +344,8 @@ class Ui_IPortWindow(object):
         self.line.setObjectName("line")
         self.gridLayout_3.addWidget(self.line, 5, 0, 2, 6)
         self.FormLayout.setLayout(
-            4, QtWidgets.QFormLayout.SpanningRole, self.gridLayout_3)
+            4, QtWidgets.QFormLayout.SpanningRole, self.gridLayout_3
+        )
         self.Credits = QtWidgets.QLabel(self.MainWidget)
         self.Credits.setMinimumSize(QtCore.QSize(0, 20))
         font = QtGui.QFont()
@@ -358,8 +357,7 @@ class Ui_IPortWindow(object):
         self.Credits.setAlignment(QtCore.Qt.AlignCenter)
         self.Credits.setOpenExternalLinks(True)
         self.Credits.setObjectName("Credits")
-        self.FormLayout.setWidget(
-            5, QtWidgets.QFormLayout.SpanningRole, self.Credits)
+        self.FormLayout.setWidget(5, QtWidgets.QFormLayout.SpanningRole, self.Credits)
         self.PayPal = QtWidgets.QLabel(self.MainWidget)
         font = QtGui.QFont()
         font.setPointSize(10)
@@ -368,8 +366,7 @@ class Ui_IPortWindow(object):
         self.PayPal.setAlignment(QtCore.Qt.AlignCenter)
         self.PayPal.setOpenExternalLinks(True)
         self.PayPal.setObjectName("PayPal")
-        self.FormLayout.setWidget(
-            6, QtWidgets.QFormLayout.SpanningRole, self.PayPal)
+        self.FormLayout.setWidget(6, QtWidgets.QFormLayout.SpanningRole, self.PayPal)
         self.gridLayout_2.addLayout(self.FormLayout, 0, 0, 1, 1)
         IPortWindow.setCentralWidget(self.MainWidget)
         self.menuBar = QtWidgets.QMenuBar(IPortWindow)
@@ -396,6 +393,7 @@ class Ui_IPortWindow(object):
 
     def OpenOptions(self):
         import OptionsWin
+
         self.window = QtWidgets.QDialog()
         self.ui = OptionsWin.Ui_OptionsWin()
         self.ui.setupUi(self.window)
@@ -409,23 +407,39 @@ class Ui_IPortWindow(object):
 
     def retranslateUi(self, IPortWindow):
         _translate = QtCore.QCoreApplication.translate
-        IPortWindow.setWindowTitle(_translate(
-            "IPortWindow", "Iconit v" + str(self.ver)))
+        IPortWindow.setWindowTitle(
+            _translate(
+                "IPortWindow",
+                "Iconit v"
+                + str(self.ver)
+                + " ("
+                + str(Update.get_update_release_date())
+                + ")",
+            )
+        )
 
         self.Status.setText(_translate("IPortWindow", "Waiting to connect..."))
         self.IP_Label.setText(_translate("IPortWindow", "PS4 IP"))
-        self.IP_input.setPlaceholderText(_translate(
-            "IPortWindow", "Exp: 192.168.1.10"))
+        self.IP_input.setPlaceholderText(_translate("IPortWindow", "Exp: 192.168.1.10"))
         self.Port_Label.setText(_translate("IPortWindow", "PS4 Port"))
-        self.Port_input.setPlaceholderText(
-            _translate("IPortWindow", self.userPort))
+        self.Port_input.setPlaceholderText(_translate("IPortWindow", self.userPort))
         self.Connect_btn.setText(_translate("IPortWindow", "Connect PS4"))
         self.Cache_label.setText(_translate("IPortWindow", "Caching"))
-        self.GameIcon.setText(_translate("IPortWindow", "Game Icon"))
-        self.ProfileIcon.setText(_translate("IPortWindow", "Profile avatar"))
+        self.GameIcon.setText(_translate("IPortWindow", "Game Icon / Game Pic"))
+        self.ChangeAvatar.setText(_translate("IPortWindow", "Profile avatar"))
         self.Change_label.setText(_translate("IPortWindow", "Mode"))
-        self.Credits.setText(_translate("IPortWindow", "<html><head/><body><p align=\"center\"><a href=\"https://twitter.com/OfficialAhmed0\"><span style=\" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;\">Created By @OfficialAhmed0</span></a></p></body></html>"))
-        self.PayPal.setText(_translate("IPortWindow", "<html><head/><body><p align=\"center\"><a href=\"https://www.paypal.com/paypalme/Officialahmed0\"><span style=\" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;\">Support me (PayPal)</span></a></p></body></html>"))
+        self.Credits.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><a href="https://twitter.com/OfficialAhmed0"><span style=" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;">Created By @OfficialAhmed0</span></a></p></body></html>',
+            )
+        )
+        self.PayPal.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><a href="https://www.paypal.com/paypalme/Officialahmed0"><span style=" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;">Support me (PayPal)</span></a></p></body></html>',
+            )
+        )
         self.Options.setText(_translate("IPortWindow", "Options..."))
         self.menuSettings.setTitle(_translate("IPortWindow", "Settings"))
         self.About.setText(_translate("IPortWindow", "About"))
@@ -440,14 +454,11 @@ class Ui_IPortWindow(object):
             Port = self.Port_input.text()
 
             valid = True
-            for i in IP:
+            for i in IP + str(Port):
                 if i.isalpha():
                     valid = False
                     break
-            for p in str(Port):
-                if p.isalpha():
-                    valid = False
-                    break
+
             self.Connect_PS4(valid)
 
         except Exception as e:
@@ -502,7 +513,7 @@ class Ui_IPortWindow(object):
                     self.ChangeColors(True)
                     self.Connect_btn.setEnabled(False)
                     self.GameIcon.setEnabled(False)
-                    self.ProfileIcon.setEnabled(False)
+                    self.ChangeAvatar.setEnabled(False)
                     for dir in self.iconDirs:
                         app.processEvents()
                         ftp.set_debuglevel(0)
@@ -517,12 +528,15 @@ class Ui_IPortWindow(object):
                         ftp.retrlines("LIST ", directories.append)
                         """create a file & copy, paste all them directories within"""
 
-                        with open(temp_path + "directories in system.dat", "w+") as all_directories_in_system:
+                        with open(
+                            temp_path + "directories in system.dat", "w+"
+                        ) as all_directories_in_system:
                             for line in directories:
                                 all_directories_in_system.write(line + "\n")
 
                         all_directories_in_system = open(
-                            temp_path + "directories in system.dat", "r")
+                            temp_path + "directories in system.dat", "r"
+                        )
 
                         all_lines = all_directories_in_system.readlines()
                         all_Games = open(temp_path + "All Games.dat", "w+")
@@ -530,8 +544,23 @@ class Ui_IPortWindow(object):
                         """Take only CUSAxxxx from each line and write them on all Games.dat """
                         if self.userHB == "True":
                             # Check Homebrews
-                            HB_id = ("LAPY", "MODS", "CRST", "NPX", "PNE", "BOR",
-                                     "FLT", "CUSB", "MEDN", "SLES", "SLUS", "SSNE")
+                            HB_id = (
+                                "LAPY",
+                                "MODS",
+                                "CRST",
+                                "NPX",
+                                "NPXS",
+                                "NPXX",
+                                "PNES",
+                                "BORC",
+                                "FLTZ",
+                                "CUSB",
+                                "MEDN",
+                                "SLES",
+                                "SLUS",
+                                "SSNE",
+                                "PKGI",
+                            )
                             for CUSA_lines in all_lines:
                                 for HB in HB_id:
                                     if HB in CUSA_lines:
@@ -571,11 +600,13 @@ class Ui_IPortWindow(object):
 
                     self.Connect_btn.setEnabled(False)
                     self.GameIcon.setEnabled(False)
-                    self.ProfileIcon.setEnabled(False)
+                    self.ChangeAvatar.setEnabled(False)
                     directories = []
                     ftp.retrlines("LIST ", directories.append)
 
-                    with open(temp_path + "directories in system.dat", "w+") as all_directories_in_system:
+                    with open(
+                        temp_path + "directories in system.dat", "w+"
+                    ) as all_directories_in_system:
                         for line in directories:
                             all_directories_in_system.write(line + "\n")
 
@@ -585,7 +616,7 @@ class Ui_IPortWindow(object):
                             if "0x" in line:
                                 account_index = line.index("0x")
                                 self.userID.append(line[account_index:-1])
-                    self.CacheProfileIcon()
+                    self.CacheChangeAvatar()
 
             except Exception as e:
                 self.ChangeColors(False)
@@ -596,8 +627,7 @@ class Ui_IPortWindow(object):
             self.ui.setupUi(self.window, "Invalid")
             self.window.show()
 
-    def CacheProfileIcon(self):
-        import shutil
+    def CacheChangeAvatar(self):
         fileName = "online.json"
         dir = temp_path + "MegaSRX\metaprodata\\"
         # Remove old data
@@ -605,10 +635,10 @@ class Ui_IPortWindow(object):
             data = os.listdir(dir)
             try:
                 for i in data:
-                    os.remove(dir+i)
+                    os.remove(dir + i)
             except:
                 pass
-        progress = int(100/len(self.userID))
+        progress = int(100 / len(self.userID))
         progressed = 0
         self.CacheBar.setProperty("value", 1)
         for user in self.userID:
@@ -631,7 +661,7 @@ class Ui_IPortWindow(object):
                 except:
                     # data = '{"avatarUrl":"","firstName":"Unknown","lastName":"Username","pictureUrl":"https:\/\/image.api.np.km.playstation.net\/images\/?format=png&w=440&h=440&image=https%3A%2F%2Fgraph.facebook.com%2F100001923179045%2Fpicture%3Fwidth%3D400%26height%3D400&sign=524238c4d61e345be9eeec2ad0a631cab59fe7e6","trophySummary":"{\"level\":0,\"progress\":0,\"earnedTrophies\":{\"platinum\":0,\"gold\":0,\"silver\":0,\"bronze\":0}}","aboutMe":"Temporary created by Iconit app by @OfficialAhmed0","isOfficiallyVerified":"true"}'
                     # data = '{"avatarUrl":"http:\/\/static-resource.np.community.playstation.net\/avatar_xl\/WWS_E\/E0012_XL.png","firstName":"","lastName":"","pictureUrl":"https:\/\/image.api.np.km.playstation.net\/images\/?format=png&w=440&h=440&image=https%3A%2F%2Fkfscdn.api.np.km.playstation.net%2F00000000000008%2F000000000000003.png&sign=blablabla019501","trophySummary":"{\"level\":1,\"progress\":0,\"earnedTrophies\":{\"platinum\":0,\"gold\":0,\"silver\":0,\"bronze\":0}}","isOfficiallyVerified":"true"}'
-                    data = '{"avatarUrl":"http:\/\/static-resource.np.community.playstation.net\/avatar_xl\/WWS_E\/E0012_XL.png","firstName":"Unknown","lastName":"username","pictureUrl":"https:\/\/image.api.np.km.playstation.net\/images\/?format=png&w=440&h=440&image=https%3A%2F%2Fkfscdn.api.np.km.playstation.net%2F00000000000008%2F000000000000003.png&sign=blablabla019501","trophySummary":"{\\"level\\":1,\\"progress\\":0,\\"earnedTrophies\\":{\\"platinum\\":0,\\"gold\\":0,\\"silver\\":0,\\"bronze\\":0}}","isOfficiallyVerified":"true"}'
+                    data = '{"avatarUrl":"http:\/\/static-resource.np.community.playstation.net\/avatar_xl\/WWS_E\/E0012_XL.png","firstName":"Unknown","lastName":"username","pictureUrl":"https:\/\/image.api.np.km.playstation.net\/images\/?format=png&w=440&h=440&image=https%3A%2F%2Fkfscdn.api.np.km.playstation.net%2F00000000000008%2F000000000000003.png&sign=blablabla019501","trophySummary":"{\\"level\\":1,\\"progress\\":0,\\"earnedTrophies\\":{\\"platinum\\":0,\\"gold\\":0,\\"silver\\":0,\\"bronze\\":0}}","aboutMe":"Temporary file created by Iconit app by @OfficialAhmed0","isOfficiallyVerified":"true"}'
                     with open(dir + "\\" + user + ".json", "w+") as fakeOnlineFile:
                         fakeOnlineFile.write(data)
                     with open(dir + "\\" + user + ".json", "rb") as json:
@@ -640,12 +670,17 @@ class Ui_IPortWindow(object):
             # Download original Profile Icon from Sony server
 
             import requests as req
+
             try:
                 with open(dir + "\\" + user + ".json") as file:
                     # Extract Icon url from json file
                     read = file.read()
-                    url = read[read.find(
-                        "avatarUrl") + len("avatarUrl") + 3: read.find(".png")+len(".png")]
+                    url = read[
+                        read.find("avatarUrl")
+                        + len("avatarUrl")
+                        + 3 : read.find(".png")
+                        + len(".png")
+                    ]
                     cont = url.split("\/")
                     link = ""
                     for i in cont:
@@ -663,12 +698,12 @@ class Ui_IPortWindow(object):
                 time.sleep(0.01)
             progressed += progress
         self.CacheBar.setProperty("value", 100)
-        self.OpenWindow("ProfileIcon")
+        self.OpenWindow("ChangeAvatar")
 
     def CacheGameIcon(self):
         global all_CUSA, all_CUSA_ex, ftp, temp_path, working_dir, IP, Port, Game
 
-        numGames = len(all_CUSA+all_CUSA_ex)
+        numGames = len(all_CUSA + all_CUSA_ex)
 
         file_name = "pronunciation.xml"
         icon_name = "icon0.png"
@@ -684,24 +719,28 @@ class Ui_IPortWindow(object):
             else:
                 currentDir = all_CUSA
             for i in currentDir:
-                if counter == int(numGames/2):
+                if counter == int(numGames / 2):
                     for i in range(25, 50):
                         self.CacheBar.setProperty("value", i)
                         time.sleep(0.01)
-                elif counter == int(numGames/4):
+                elif counter == int(numGames / 4):
                     for i in range(2, 25):
                         self.CacheBar.setProperty("value", i)
                         time.sleep(0.01)
-                elif counter == int(numGames/(75/100)):
+                elif counter == int(numGames / (75 / 100)):
                     for i in range(50, 75):
                         self.CacheBar.setProperty("value", i)
                         time.sleep(0.01)
                 ftp.cwd(currentDir[counter])
 
                 # Check the files in each game directory
-                with open(temp_path + "files_in_dir.dat", "w+", encoding="utf8") as files_in_dir:
+                with open(
+                    temp_path + "files_in_dir.dat", "w+", encoding="utf8"
+                ) as files_in_dir:
                     ftp.retrlines("LIST", files_in_dir.write)
-                with open(temp_path + "files_in_dir.dat", "r", encoding="utf8") as files_in_dir:
+                with open(
+                    temp_path + "files_in_dir.dat", "r", encoding="utf8"
+                ) as files_in_dir:
                     content_in_file = files_in_dir.read()
                     # Check for pronunciation.xml or icon0
                     if file_name in content_in_file or icon_name in content_in_file:
@@ -709,34 +748,61 @@ class Ui_IPortWindow(object):
                         if file_name in content_in_file:
                             with open(temp_path + file_name, "wb") as downloaded_file:
                                 ftp.retrbinary(
-                                    "RETR " + file_name, downloaded_file.write, 1024)
+                                    "RETR " + file_name, downloaded_file.write, 1024
+                                )
 
-                            with open(temp_path + "MegaSRX\metadata\\" + str(current_CUSA) + ".png", "wb") as downloaded_file:
+                            with open(
+                                temp_path
+                                + "MegaSRX\metadata\\"
+                                + str(current_CUSA)
+                                + ".png",
+                                "wb",
+                            ) as downloaded_file:
                                 ftp.retrbinary(
-                                    "RETR " + icon_name, downloaded_file.write, 1024)
+                                    "RETR " + icon_name, downloaded_file.write, 1024
+                                )
 
                             # Reading pronounciation.xml for gameTitle
-                            with open(temp_path + file_name, "r", encoding="utf8") as file:
+                            with open(
+                                temp_path + file_name, "r", encoding="utf8"
+                            ) as file:
                                 # Create temp file
-                                with open(temp_path + "Possible game title.dat", "w+", encoding="utf8") as game_titles_file:
+                                with open(
+                                    temp_path + "Possible game title.dat",
+                                    "w+",
+                                    encoding="utf8",
+                                ) as game_titles_file:
                                     for each_line in file:
                                         if "text" in each_line:
                                             game_titles_file.write(each_line)
                             # simplifying xml file
-                            alpha = (
-                                "a A b B c C d D e E f F g G h H i I j J k K l L m M n N o O p P q Q r R s S t T u U v V w W x X y Y z Z ™ ' ! ?")
+                            alpha = "a A b B c C d D e E f F g G h H i I j J k K l L m M n N o O p P q Q r R s S t T u U v V w W x X y Y z Z ™ ' ! ?"
                             Eng = alpha.split(" ")
                             Eng.append(" ")
                             num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
-                            with open(temp_path + "Possible game title.dat", "r", encoding="utf8") as game_titles_file:
+                            with open(
+                                temp_path + "Possible game title.dat",
+                                "r",
+                                encoding="utf8",
+                            ) as game_titles_file:
                                 lines = game_titles_file.readlines()
                                 GameTitle = ""
                                 for line in lines:
                                     english = True
                                     starting_index = line.index(">") + 1
-                                    original_title = line[starting_index: -8]
+                                    original_title = line[starting_index:-8]
 
-                                    if "One" or "Two" or "Three" or "Nine" or "Seven" or "Eight" or "Four" or "Six" in original_title:
+                                    if (
+                                        "One"
+                                        or "Two"
+                                        or "Three"
+                                        or "Four"
+                                        or "Five"
+                                        or "Six"
+                                        or "Seven"
+                                        or "Eight"
+                                        or "Nine" in original_title
+                                    ):
                                         GameTitle = original_title
                                         Game[current_CUSA] = GameTitle
                                     else:
@@ -749,9 +815,16 @@ class Ui_IPortWindow(object):
                                             GameTitle = original_title
                                             Game[current_CUSA] = GameTitle
                         else:
-                            with open(temp_path + "MegaSRX\metadata\\" + str(current_CUSA) + ".png", "wb") as downloaded_file:
+                            with open(
+                                temp_path
+                                + "MegaSRX\metadata\\"
+                                + str(current_CUSA)
+                                + ".png",
+                                "wb",
+                            ) as downloaded_file:
                                 ftp.retrbinary(
-                                    "RETR " + icon_name, downloaded_file.write, 1024)
+                                    "RETR " + icon_name, downloaded_file.write, 1024
+                                )
                             if "CUSA" in current_CUSA:
                                 Game[current_CUSA] = "Unknown"
                             else:
@@ -780,32 +853,55 @@ class Ui_IPortWindow(object):
             IPortWindow.hide()
             self.window = QtWidgets.QWidget()
             self.ui = ChangeIcon.Ui_ChangeIconWindow()
-            self.ui.setupUi(self.window, IP, Port, Game, self.userFont, self.userIPath,
-                            self.userDPath, self.userHB, all_CUSA_ex, self.w, self.h)
+            self.ui.setupUi(
+                self.window,
+                IP,
+                Port,
+                Game,
+                self.userFont,
+                self.userIPath,
+                self.userDPath,
+                self.userHB,
+                all_CUSA_ex,
+                self.w,
+                self.h,
+            )
             self.window.show()
         else:
             IPortWindow.hide()
             self.window = QtWidgets.QWidget()
-            self.ui = ProfileIcon.Ui_ProfileIconWin()
+            self.ui = ChangeAvatar.Ui_ChangeAvatarWin()
             self.ui.setupUi(self.window, self.userID, IP, Port, self.w, self.h)
             self.window.show()
 
     def logIt(self, description, Type):
         import datetime
+
         try:
             error_file = open("Logs.txt", "a")
         except:
             error_file = open("Logs.txt", "w")
         if Type == "Warning":
-            error_file.write(str(datetime.datetime.now()) +
-                             " | " + "_DEV Warning: " + str(description) + "\n")
+            error_file.write(
+                str(datetime.datetime.now())
+                + " | "
+                + "_DEV Warning: "
+                + str(description)
+                + "\n"
+            )
         else:
-            error_file.write(str(datetime.datetime.now()) +
-                             " | " + "_DEV ERROR: " + str(description) + "\n")
+            error_file.write(
+                str(datetime.datetime.now())
+                + " | "
+                + "_DEV ERROR: "
+                + str(description)
+                + "\n"
+            )
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     screenResolution = app.desktop().screenGeometry()
     screenWidth, screenHeight = screenResolution.width(), screenResolution.height()

@@ -17,12 +17,12 @@ class Ui_OptionsWin(object):
         try:
             with open("Data/Pref/pref.ini") as file:
                 content = file.readlines()
-                self.userFont = content[0][2: -1]
-                self.userPort = content[1][2: -1]
-                self.userIp = content[2][3: -1]
-                self.userIPath = content[3][6: -1]
-                self.userDPath = content[4][6: -1]
-                self.userHB = (content[5][content[4].find(":")+1:])
+                self.userFont = content[0][2:-1]
+                self.userPort = content[1][2:-1]
+                self.userIp = content[2][3:-1]
+                self.userIPath = content[3][6:-1]
+                self.userDPath = content[4][6:-1]
+                self.userHB = content[5][3:].strip()
         except:
             pass
 
@@ -39,7 +39,8 @@ class Ui_OptionsWin(object):
         self.Window_btn = QtWidgets.QDialogButtonBox(OptionsWin)
         self.Window_btn.setGeometry(QtCore.QRect(30, 210, 300, 23))
         self.Window_btn.setStandardButtons(
-            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Save)
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Save
+        )
         self.Window_btn.setObjectName("Window_btn")
 
         self.Window_btn.accepted.connect(self.SaveOptions)
@@ -48,10 +49,10 @@ class Ui_OptionsWin(object):
         self.Default_btn = QtWidgets.QDialogButtonBox(OptionsWin)
         self.Default_btn.setGeometry(QtCore.QRect(25, 210, 110, 23))
 
-        self.Default_btn.setStandardButtons(
-            QtWidgets.QDialogButtonBox.Yes)
+        self.Default_btn.setStandardButtons(QtWidgets.QDialogButtonBox.Yes)
         self.Default_btn.button(QtWidgets.QDialogButtonBox.Yes).setText(
-            "Default settings")
+            "Default settings"
+        )
         self.Default_btn.setObjectName("Default_btn")
 
         self.Default_btn.accepted.connect(self.ResetDefaults)
@@ -144,10 +145,8 @@ class Ui_OptionsWin(object):
         self.plainTextEdit.setGeometry(QtCore.QRect(270, 140, 171, 51))
         self.plainTextEdit.setFont(self.font)
         self.plainTextEdit.setStyleSheet("color: rgb(255, 53, 53);")
-        self.plainTextEdit.setVerticalScrollBarPolicy(
-            QtCore.Qt.ScrollBarAlwaysOff)
-        self.plainTextEdit.setHorizontalScrollBarPolicy(
-            QtCore.Qt.ScrollBarAlwaysOff)
+        self.plainTextEdit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.plainTextEdit.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.plainTextEdit.setReadOnly(True)
         self.plainTextEdit.setObjectName("plainTextEdit")
 
@@ -180,22 +179,24 @@ class Ui_OptionsWin(object):
         self.Port_label.setText(_translate("OptionsWin", "Default Port"))
         self.IP_label.setText(_translate("OptionsWin", "Default IP"))
         self.Font_label.setText(_translate("OptionsWin", "Default Font"))
-        self.IconPath_label.setText(_translate(
-            "OptionsWin", "Default Icon Path"))
+        self.IconPath_label.setText(_translate("OptionsWin", "Default Icon Path"))
         self.ShowHB_label.setText(_translate("OptionsWin", "Show Homebrew"))
         self.Port.setPlaceholderText(_translate("OptionsWin", self.userPort))
         self.IP.setPlaceholderText(_translate("OptionsWin", self.userIp))
-        self.IconPath.setPlaceholderText(
-            _translate("OptionsWin", self.userIPath))
+        self.IconPath.setPlaceholderText(_translate("OptionsWin", self.userIPath))
         self.Font.setCurrentText(_translate("OptionsWin", self.userFont))
-        self.DownloadPath_label.setText(_translate(
-            "OptionsWin", "Default Download Path"))
-        self.DownloadPath.setPlaceholderText(
-            _translate("OptionsWin", self.userDPath))
+        self.DownloadPath_label.setText(
+            _translate("OptionsWin", "Default Download Path")
+        )
+        self.DownloadPath.setPlaceholderText(_translate("OptionsWin", self.userDPath))
         self.Yes.setText(_translate("OptionsWin", "Yes"))
         self.No.setText(_translate("OptionsWin", "No"))
-        self.plainTextEdit.setPlainText(_translate(
-            "OptionsWin", "Yes will allow you to change Homebrew / Applications icons\n(This will take longer to cache)"))
+        self.plainTextEdit.setPlainText(
+            _translate(
+                "OptionsWin",
+                "Yes will allow you to change Homebrew / Applications icons\n(This will take longer to cache)",
+            )
+        )
 
     def ResetDefaults(self):
         try:
@@ -222,8 +223,20 @@ class Ui_OptionsWin(object):
             DownloadPath = self.userDPath
 
         with open("Data/Pref/pref.ini", "w+") as file:
-            file.write("F:" + Font + "\nP:" + str(Port) + "\nIP:" + IP + "\nIPath:" +
-                       IconPath + "\nDPath:" + DownloadPath + "\nHB:" + ShowHB)
+            file.write(
+                "F:"
+                + Font
+                + "\nP:"
+                + str(Port)
+                + "\nIP:"
+                + IP
+                + "\nIPath:"
+                + IconPath
+                + "\nDPath:"
+                + DownloadPath
+                + "\nHB:"
+                + ShowHB
+            )
         self.OptionsWin.close()
 
     def GetDownloadPath(self):
@@ -235,7 +248,8 @@ class Ui_OptionsWin(object):
         dialog.setOptions(opt)
         dialog.setDirectory(self.appPath)
         path = QtWidgets.QFileDialog.getExistingDirectory(
-            None, "Default Download Directory...", self.appPath, options=opt)
+            None, "Default Download Directory...", self.appPath, options=opt
+        )
         if path:
             self.DownloadPath.setText(path)
 
@@ -248,13 +262,15 @@ class Ui_OptionsWin(object):
         dialog.setOptions(opt)
         dialog.setDirectory(self.appPath)
         path = QtWidgets.QFileDialog.getExistingDirectory(
-            None, "Default Icon Directory...", self.appPath, options=opt)
+            None, "Default Icon Directory...", self.appPath, options=opt
+        )
         if path:
             self.IconPath.setText(path)
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     OptionsWin = QtWidgets.QDialog()
     ui = Ui_OptionsWin()

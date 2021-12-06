@@ -1,15 +1,23 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
+import Update
+
 
 class Ui_Message(object):
     def setupUi(self, Message, MessageType):
+        self.ver = Update.get_update_version()
+        self.releaseDate = Update.get_update_release_date()
+        self.copyright = "\nhttps://twitter.com/OfficialAhmed0\nThanks for using Iconit"
+
         self.Type = MessageType
         Message.setObjectName("Message")
         Message.resize(357, 208)
         Message.setMinimumSize(QtCore.QSize(357, 208))
         Message.setMaximumSize(QtCore.QSize(357, 208))
-        Message.setStyleSheet("font: 75 12pt \"Comic Sans MS\";")
-        Message.setWindowIcon(QtGui.QIcon(str(os.getcwd()) + "\Data\Pref\ic1.@OfficialAhmed0"))
+        Message.setStyleSheet('font: 75 12pt "Comic Sans MS";')
+        Message.setWindowIcon(
+            QtGui.QIcon(str(os.getcwd()) + "\Data\Pref\ic1.@OfficialAhmed0")
+        )
         self.buttonBox = QtWidgets.QDialogButtonBox(Message)
         self.buttonBox.setGeometry(QtCore.QRect(-40, 160, 261, 51))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -39,56 +47,77 @@ class Ui_Message(object):
         _translate = QtCore.QCoreApplication.translate
         if self.Type == "About":
             Message.setWindowTitle(_translate("Message", "About"))
-            self.Message.setPlainText(_translate("Message", 
-"                   Change Game Icons & \n             profile avatars with few clicks.\n"
-"   App version 4.01 released in Aug 20, 2020 \n             if you have any reports don\'t\n"
-"                   hesitate to submit them\n"
-"         https://twitter.com/OfficialAhmed0\n"
-"                 Thanks for using Iconit"))
+            self.Message.setPlainText(
+                _translate(
+                    "Message",
+                    "Iconit is a Windows application for jailbroken PS4 console to change game icons and profile avatars with the help of FTP payload. Do you like what you see? Please consider donating \n"
+                    "\n   App version v"
+                    + str(self.ver)
+                    + " released in "
+                    + self.releaseDate
+                    + "\n"
+                    "                 Thanks for using Iconit",
+                )
+            )
 
         elif self.Type == "Invalid":
             Message.setWindowTitle(_translate("Message", "Error"))
-            self.Message.setPlainText(_translate("Message", 
-"Invalid IP or Port (Alphabets not allowed).\n"
-"\nhttps://twitter.com/OfficialAhmed0\n"
-"   Thanks for using Iconit v4.01"))
+            self.Message.setPlainText(
+                _translate(
+                    "Message",
+                    "Invalid IP or Port (Alphabets not allowed).\n" + self.copyright,
+                )
+            )
 
         elif self.Type == "IconIssue":
             Message.setWindowTitle(_translate("Message", "Error"))
-            self.Message.setPlainText(_translate("Message", 
-"Invalid IP or Port (Alphabets not allowed).\n"
-"\nhttps://twitter.com/OfficialAhmed0\n"
-"   Thanks for using Iconit v4.01"))
+            self.Message.setPlainText(
+                _translate(
+                    "Message",
+                    "Invalid IP or Port (Alphabets not allowed).\n" + self.copyright,
+                )
+            )
 
         elif self.Type == "Invalid icon size":
             Message.setWindowTitle(_translate("Message", "Too small icon ERROR"))
-            self.Message.setPlainText(_translate("Message", 
-"Invalid icon size 'too small'. Minimum size required (440x440).\n"
-"\nhttps://twitter.com/OfficialAhmed0\n"
-"   Thanks for using Iconit v4.01"))
+            self.Message.setPlainText(
+                _translate(
+                    "Message",
+                    "Invalid icon size 'too small'. Minimum size required (440x440).\n"
+                    + self.copyright,
+                )
+            )
         elif self.Type == "disconnected":
             Message.setWindowTitle(_translate("Message", "Too small icon ERROR"))
-            self.Message.setPlainText(_translate("Message", 
-"Disconnected from PS4. Re-enable FTP payload.\n"
-"\nhttps://twitter.com/OfficialAhmed0\n"
-"   Thanks for using Iconit v4.01"))
+            self.Message.setPlainText(
+                _translate(
+                    "Message",
+                    "Disconnected from PS4. Re-enable FTP payload.\n" + self.copyright,
+                )
+            )
 
         elif self.Type == "Magick image not found":
             Message.setWindowTitle(_translate("Message", "Too small icon ERROR"))
-            self.Message.setPlainText(_translate("Message", 
-"ImageMagick-6.9.10 not installed in \nC:\Program Files\ImageMagick-6.9.10-Q16.\nInstall it from 'Install This' Folder\n"
-"\nhttps://twitter.com/OfficialAhmed0\n"
-"   Thanks for using Iconit v4.01"))
+            self.Message.setPlainText(
+                _translate(
+                    "Message",
+                    "ImageMagick not installed in \nrequired path.\nInstall it from 'Install This' Folder\n"
+                    + self.copyright,
+                )
+            )
 
         else:
             Message.setWindowTitle(_translate("Message", "Error"))
-            self.Message.setPlainText(_translate("Message", 
-"Error Type: " + self.Type + ". \n*Check Your IP and Port\n*Make sure PS4 & PC connected to same WiFi\n"
-"\nhttps://twitter.com/OfficialAhmed0\n"
-"   Thanks for using Iconit v4.01"))
+            self.Message.setPlainText(
+                _translate(
+                    "Message", "Error Type: " + self.Type + ". \n" + self.copyright
+                )
+            )
+
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     Message = QtWidgets.QDialog()
     ui = Ui_Message()
