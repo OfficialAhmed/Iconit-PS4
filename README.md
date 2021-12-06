@@ -104,12 +104,8 @@ ________________________________________
 https://mega.nz/#!qrRTAA4R!vId588A9wkINXz7q3EpN62GKrIdKM0oh5c3Ge0ne-oA
 
 # Contribution
-I tried to change the wallpaper of the games that show up when the game starts (named :pic1) however everytime I change
-it a black screen shows up instead of the image I use .The
-game starts just fine except the wallpaper any idea why?
-you can try changing them through fileZilla if you managed to fix it
-please DM me I will add it to the tool next update.
-Twitter:@OfficialAhmed0
+Do not hesitate to send me new suggestions and ideas for the application.
+Twitter: https://twitter.com/OfficialAhmed0
 
 # Pictures 
 ![iconit v4.05](https://img.techpowerup.org/200830/1.png)
