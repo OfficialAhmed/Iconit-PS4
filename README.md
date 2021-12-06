@@ -1,11 +1,12 @@
 # Iconit
-Latest version 4.07 (Nov 25, 2020)
+Latest version 4.65 (Dec 6, 2021)
 No longer ftp client needed to change PS4 games' icon this tool will do it for you (Automated). Works on FTP payload (PS4 Jailbreak required)
 it's an open source you can clone the repository or download the executable version (exe) down below
 
 # Download from here
-**Iconit v4.07 (74.1Mb)**
-https://mega.nz/file/S7h2QIQY#uSgZBu_iET1ihZBJvpTYNXcH1481cLGFg4ZNbG1DIP8
+**Iconit v4.65 (85.1Mb)**
+https://github.com/OfficialAhmed/Iconit-PS4/releases/tag/v4.65
+
 
 # About
 
@@ -20,6 +21,28 @@ This application is much convenient than uploading the images manually for many 
 * This tool will connect to your PS4 system through FTP directly so you no longer need FTP client applications such as FileZilla atleast not for changing the game icons or profile avatar.
 
 * I added a Library (Circlizeit.zip) that has lots of images for you to choose from.
+
+# Update v4.65
+
+* Added Pic change (you can now change background of any game, that show up when a game launches) => full hd up to 2k dimensions only
+
+* Avatar change now works for both (Offline & Activated accounts)
+
+* Avatar change works on 64-bit and 32-bit using only "32-bit ImageMagic" (used to yield 550 error for 64-bit windows)
+
+* Added legit png to dds convertion for accurate icons (Dxt1 compression)
+
+* Added more functions under Settings (default IP, restore default settings)
+
+* Added shortcut key (Enter/Return) to Select a game title
+
+* Added Tooltips to better understand each section of the application
+
+* Added numbering along the game title in the Games List
+
+* Added Renaming accounts (used to be visible only on application now will be visible on PS4 system)
+
+* Added more homebrew compatibles with prefix (PKGI, FLTZ, BORC, NPXS, NPXX, PNES)
 
 # Update v4.07
 
@@ -58,6 +81,9 @@ This application is much convenient than uploading the images manually for many 
 The tool consist of 2 files 
 
 * The application executable 
+
+>Iconit v4.07 (74.1Mb)(Nov 25, 2020)
+https://mega.nz/file/S7h2QIQY#uSgZBu_iET1ihZBJvpTYNXcH1481cLGFg4ZNbG1DIP8
 
 >Iconit v4.05 (131.6Mb)(Aug 30, 2020)
 https://mega.nz/file/Tq4zAB7L#Vm3Cj003CDWUYZzkN5WcQJGuvvwL3f4oJVfamAIuMMI
