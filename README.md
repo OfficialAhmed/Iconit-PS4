@@ -1,6 +1,6 @@
 # Iconit
 Latest version 4.65 (Dec 6, 2021)
-No longer ftp client needed to change PS4 games' icon this tool will do it for you (Automated). Works on FTP payload (PS4 Jailbreak required)
+No longer ftp client needed to change PS4 games' icon this tool will do it for you (everything Automated). Works with FTP (PS4 fw "1.74-9.00")
 it's an open source you can clone the repository or download the executable version (exe) down below
 
 # Download from here
@@ -12,21 +12,21 @@ https://github.com/OfficialAhmed/Iconit-PS4/releases/tag/v4.65
 
 This application is much convenient than uploading the images manually for many reasons :-
 
-* This tool will take the game title and search for the CUSA type of the game from your system so you don't have to search CUSA of the game anymore 
+* This tool will take the game title and search for the equivalent CUSA title of the game from the PS4 console. You don't have to deal with CUSA of the game anymore 
 
-* It'll resize the images for you to the required size so you no longer need to use any applications or whatsoever to do so. 
+* It'll resize the images for you to the required size so you don't need to use any applications whatsoever note:(for pic1 change the tool needed is included with the zip file). 
 
-> Not only that but it also count how many images are required for each game (icon) some games require only 2 images while others require more, so no longer counting them by yourself it'll count and overwrite them.
+* It'll count how many icons are required for the game some games require only 1, while others require more
 
 * This tool will connect to your PS4 system through FTP directly so you no longer need FTP client applications such as FileZilla atleast not for changing the game icons or profile avatar.
 
-* I added a Library (Circlizeit.zip) that has lots of images for you to choose from.
+* I added a Library (https://all-exhost.github.io/icon%20downloader.html) that has Dozens of icons for you to pick from.
 
 # Update v4.65
 
 * Added Pic change (you can now change background of any game, that show up when a game launches) => full hd up to 2k dimensions only
 
-* Avatar change now works for both (Offline & Activated accounts)
+* Avatar change now works for both (Offline & Activated accounts) Note: If you have psn games installed, this will disable the games use it on your own risk
 
 * Avatar change works on 64-bit and 32-bit using only "32-bit ImageMagic" (used to yield 550 error for 64-bit windows)
 
