@@ -1,7 +1,15 @@
-import time
+from itertools import count
+import time  # (Ahm) 505
 import os
 import sys
 import ctypes
+
+# import threading v4.72
+import _thread
+from multiprocessing import Pool
+
+from black import E
+from sqlalchemy import false
 import ChangeAvatar
 import ChangeIcon
 import Message
@@ -61,8 +69,8 @@ class Ui_IPortWindow(object):
                 self.userIPath = content[3][6:-1]
                 self.userDPath = content[4][6:-1]
                 self.userHB = content[5][3:].strip()
-        except:
-            pass
+        except Exception as e:
+            self.logIt(str(e), "Warning")
         font = QtGui.QFont()
         font.setFamily(self.userFont)
         font.setPointSize(13)
@@ -346,6 +354,27 @@ class Ui_IPortWindow(object):
         self.FormLayout.setLayout(
             4, QtWidgets.QFormLayout.SpanningRole, self.gridLayout_3
         )
+
+        self.iconWS = QtWidgets.QLabel(self.MainWidget)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.iconWS.setFont(font)
+        self.iconWS.setTextFormat(QtCore.Qt.AutoText)
+        self.iconWS.setAlignment(QtCore.Qt.AlignCenter)
+        self.iconWS.setOpenExternalLinks(True)
+        self.iconWS.setObjectName("iconWS")
+        self.FormLayout.setWidget(5, QtWidgets.QFormLayout.SpanningRole, self.iconWS)
+
+        self.PayPal = QtWidgets.QLabel(self.MainWidget)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.PayPal.setFont(font)
+        self.PayPal.setTextFormat(QtCore.Qt.AutoText)
+        self.PayPal.setAlignment(QtCore.Qt.AlignCenter)
+        self.PayPal.setOpenExternalLinks(True)
+        self.PayPal.setObjectName("PayPal")
+        self.FormLayout.setWidget(6, QtWidgets.QFormLayout.SpanningRole, self.PayPal)
+
         self.Credits = QtWidgets.QLabel(self.MainWidget)
         self.Credits.setMinimumSize(QtCore.QSize(0, 20))
         font = QtGui.QFont()
@@ -357,16 +386,8 @@ class Ui_IPortWindow(object):
         self.Credits.setAlignment(QtCore.Qt.AlignCenter)
         self.Credits.setOpenExternalLinks(True)
         self.Credits.setObjectName("Credits")
-        self.FormLayout.setWidget(5, QtWidgets.QFormLayout.SpanningRole, self.Credits)
-        self.PayPal = QtWidgets.QLabel(self.MainWidget)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.PayPal.setFont(font)
-        self.PayPal.setTextFormat(QtCore.Qt.AutoText)
-        self.PayPal.setAlignment(QtCore.Qt.AlignCenter)
-        self.PayPal.setOpenExternalLinks(True)
-        self.PayPal.setObjectName("PayPal")
-        self.FormLayout.setWidget(6, QtWidgets.QFormLayout.SpanningRole, self.PayPal)
+        self.FormLayout.setWidget(7, QtWidgets.QFormLayout.SpanningRole, self.Credits)
+
         self.gridLayout_2.addLayout(self.FormLayout, 0, 0, 1, 1)
         IPortWindow.setCentralWidget(self.MainWidget)
         self.menuBar = QtWidgets.QMenuBar(IPortWindow)
@@ -418,7 +439,7 @@ class Ui_IPortWindow(object):
             )
         )
 
-        self.Status.setText(_translate("IPortWindow", "Waiting to connect..."))
+        self.Status.setText(_translate("IPortWindow", "Waiting connection..."))
         self.IP_Label.setText(_translate("IPortWindow", "PS4 IP"))
         self.IP_input.setPlaceholderText(_translate("IPortWindow", "Exp: 192.168.1.10"))
         self.Port_Label.setText(_translate("IPortWindow", "PS4 Port"))
@@ -434,10 +455,16 @@ class Ui_IPortWindow(object):
                 '<html><head/><body><p align="center"><a href="https://twitter.com/OfficialAhmed0"><span style=" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;">Created By @OfficialAhmed0</span></a></p></body></html>',
             )
         )
+        self.iconWS.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><a href="https://all-exhost.github.io/icon%20downloader.html"><span style=" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;">Download free icons</span></a></p></body></html>',
+            )
+        )
         self.PayPal.setText(
             _translate(
                 "IPortWindow",
-                '<html><head/><body><p align="center"><a href="https://www.paypal.com/paypalme/Officialahmed0"><span style=" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;">Support me (PayPal)</span></a></p></body></html>',
+                '<html><head/><body><p align="center"><a href="https://www.paypal.com/paypalme/Officialahmed0"><span style=" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;">Donate (PayPal)</span></a></p></body></html>',
             )
         )
         self.Options.setText(_translate("IPortWindow", "Options..."))
@@ -465,21 +492,23 @@ class Ui_IPortWindow(object):
             self.logIt(str(e), "Warning")
 
     def ChangeColors(self, Connected):
+        labels = (
+            self.Status,
+            self.IP_Label,
+            self.Port_Label,
+            self.Change_label,
+            self.Cache_label,
+        )
         if Connected:
             self.Status.setText("Connected")
-            self.Status.setStyleSheet("color: rgb(92, 213, 21);")
-            self.IP_Label.setStyleSheet("color: rgb(92, 213, 21);")
-            self.Port_Label.setStyleSheet("color: rgb(92, 213, 21);")
-            self.Change_label.setStyleSheet("color: rgb(92, 213, 21);")
-            self.Cache_label.setStyleSheet("color: rgb(92, 213, 21);")
         else:
             self.Status.setText("Not Connected")
-            self.Status.setStyleSheet("color: rgb(255, 0, 0);")
-            self.IP_Label.setStyleSheet("color: rgb(255, 0, 0);")
-            self.Port_Label.setStyleSheet("color: rgb(255, 0, 0);")
-            self.Change_label.setStyleSheet("color: rgb(255, 0, 0);")
-            self.Cache_label.setStyleSheet("color: rgb(255, 0, 0);")
+        for l in labels:
+            l.setStyleSheet("color: rgb(255, 0, 0);")
+            if Connected:
+                l.setStyleSheet("color: rgb(92, 213, 21);")
 
+    # (ed0) Done
     def Connect_PS4(self, isvalid):
         global ftp, working_dir, IP, Port, local_path, all_CUSA, all_CUSA_ex, temp_path
         self.window = QtWidgets.QDialog()
@@ -491,11 +520,10 @@ class Ui_IPortWindow(object):
                     cache = os.listdir(temp_path + "MegaSRX\metadata")
                     for i in cache:
                         os.remove(temp_path + "MegaSRX\metadata\\" + str(i))
-                except:
-                    pass
+                except Exception as e:
+                    print(str(e), ": Couldn't remove cache")
 
                 # Iconit Or Profileit ?
-                # app.processEvents() = Multiprocessing included v4.07
                 if self.GameIcon.isChecked() == True:  # Iconit
                     self.iconDirs = [working_dir]
                     ftp.set_debuglevel(0)
@@ -515,78 +543,36 @@ class Ui_IPortWindow(object):
                     self.GameIcon.setEnabled(False)
                     self.ChangeAvatar.setEnabled(False)
                     for dir in self.iconDirs:
-                        app.processEvents()
                         ftp.set_debuglevel(0)
                         ftp.connect(IP, int(Port))
                         ftp.login("", "")
                         try:
                             ftp.cwd(dir)
-                        except:
-                            pass
+                        except Exception as e:
+                            self.logIt(str(e), "Warning")
                         directories = []
-                        app.processEvents()
                         ftp.retrlines("LIST ", directories.append)
-                        """create a file & copy, paste all them directories within"""
 
-                        with open(
-                            temp_path + "directories in system.dat", "w+"
-                        ) as all_directories_in_system:
-                            for line in directories:
-                                all_directories_in_system.write(line + "\n")
+                        game_ids = [line.split(" ")[-1] for line in directories]
+                        all_Games = []
 
-                        all_directories_in_system = open(
-                            temp_path + "directories in system.dat", "r"
-                        )
+                        for game_id in game_ids:
+                            if len(game_id) == len("CUSA00000"):
+                                accept = True
+                                if self.userHB != "True":
+                                    # skip homebrews if turned off
+                                    if "CUSA" not in game_id:
+                                        accept = False
 
-                        all_lines = all_directories_in_system.readlines()
-                        all_Games = open(temp_path + "All Games.dat", "w+")
+                                if accept:
+                                    if "external" in dir:
+                                        all_Games.append(game_id)
+                                        all_CUSA_ex.append(game_id)
+                                    else:
+                                        all_Games.append(game_id)
+                                        all_CUSA.append(game_id)
 
-                        """Take only CUSAxxxx from each line and write them on all Games.dat """
-                        if self.userHB == "True":
-                            # Check Homebrews
-                            HB_id = (
-                                "LAPY",
-                                "MODS",
-                                "CRST",
-                                "NPX",
-                                "NPXS",
-                                "NPXX",
-                                "PNES",
-                                "BORC",
-                                "FLTZ",
-                                "CUSB",
-                                "MEDN",
-                                "SLES",
-                                "SLUS",
-                                "SSNE",
-                                "PKGI",
-                            )
-                            for CUSA_lines in all_lines:
-                                for HB in HB_id:
-                                    if HB in CUSA_lines:
-                                        index_l = CUSA_lines.index(HB)
-                                        only_CUSA = CUSA_lines[index_l:]
-                                        if "external" in dir:
-                                            all_Games.write(only_CUSA)
-                                            all_CUSA_ex.append(only_CUSA[:-1])
-                                        else:
-                                            all_Games.write(only_CUSA)
-                                            all_CUSA.append(only_CUSA[:-1])
-
-                        for CUSA_lines in all_lines:
-                            if "CUSA" in CUSA_lines:
-                                index_C = CUSA_lines.index("CUSA")
-                                only_CUSA = CUSA_lines[index_C:]
-                                if "external" in dir:
-                                    all_Games.write(only_CUSA)
-                                    all_CUSA_ex.append(only_CUSA[:-1])
-                                else:
-                                    all_Games.write(only_CUSA)
-                                    all_CUSA.append(only_CUSA[:-1])
-                    app.processEvents()
-                    all_directories_in_system.close()
-                    all_Games.close()
-                    self.CacheGameIcon()
+                    _thread.start_new_thread(self.CacheGameIcon())
 
                 else:  # Profileit
                     self.sysProfileRoot = "system_data/priv/cache/profile/"
@@ -619,6 +605,7 @@ class Ui_IPortWindow(object):
                     self.CacheChangeAvatar()
 
             except Exception as e:
+                self.logIt(str(e), "Error")
                 self.ChangeColors(False)
                 self.ui.setupUi(self.window, str(e))
                 self.window.show()
@@ -636,8 +623,8 @@ class Ui_IPortWindow(object):
             try:
                 for i in data:
                     os.remove(dir + i)
-            except:
-                pass
+            except Exception as e:
+                self.logIt(str(e), "Warning")
         progress = int(100 / len(self.userID))
         progressed = 0
         self.CacheBar.setProperty("value", 1)
@@ -651,24 +638,35 @@ class Ui_IPortWindow(object):
                 # cache avatar if available
                 try:
                     ftp.retrbinary("RETR " + "avatar.png", file.write, 1024)
-                except:
-                    pass
+                except Exception as e:
+                    self.logIt(str(e), "Warning")
             with open(dir + "\\" + user + ".json", "wb") as file:
                 # Fix (v4.07) make a fake one if online json not found
                 # fix (json not found) v4.51
                 try:
                     ftp.retrbinary("RETR " + fileName, file.write, 1024)
-                except:
-                    # data = '{"avatarUrl":"","firstName":"Unknown","lastName":"Username","pictureUrl":"https:\/\/image.api.np.km.playstation.net\/images\/?format=png&w=440&h=440&image=https%3A%2F%2Fgraph.facebook.com%2F100001923179045%2Fpicture%3Fwidth%3D400%26height%3D400&sign=524238c4d61e345be9eeec2ad0a631cab59fe7e6","trophySummary":"{\"level\":0,\"progress\":0,\"earnedTrophies\":{\"platinum\":0,\"gold\":0,\"silver\":0,\"bronze\":0}}","aboutMe":"Temporary created by Iconit app by @OfficialAhmed0","isOfficiallyVerified":"true"}'
-                    # data = '{"avatarUrl":"http:\/\/static-resource.np.community.playstation.net\/avatar_xl\/WWS_E\/E0012_XL.png","firstName":"","lastName":"","pictureUrl":"https:\/\/image.api.np.km.playstation.net\/images\/?format=png&w=440&h=440&image=https%3A%2F%2Fkfscdn.api.np.km.playstation.net%2F00000000000008%2F000000000000003.png&sign=blablabla019501","trophySummary":"{\"level\":1,\"progress\":0,\"earnedTrophies\":{\"platinum\":0,\"gold\":0,\"silver\":0,\"bronze\":0}}","isOfficiallyVerified":"true"}'
-                    data = '{"avatarUrl":"http:\/\/static-resource.np.community.playstation.net\/avatar_xl\/WWS_E\/E0012_XL.png","firstName":"Unknown","lastName":"username","pictureUrl":"https:\/\/image.api.np.km.playstation.net\/images\/?format=png&w=440&h=440&image=https%3A%2F%2Fkfscdn.api.np.km.playstation.net%2F00000000000008%2F000000000000003.png&sign=blablabla019501","trophySummary":"{\\"level\\":1,\\"progress\\":0,\\"earnedTrophies\\":{\\"platinum\\":0,\\"gold\\":0,\\"silver\\":0,\\"bronze\\":0}}","aboutMe":"Temporary file created by Iconit app by @OfficialAhmed0","isOfficiallyVerified":"true"}'
-                    with open(dir + "\\" + user + ".json", "w+") as fakeOnlineFile:
-                        fakeOnlineFile.write(data)
+                except Exception as e:
+                    print(str(e))
+
+                    import json
+
+                    data = {
+                        "avatarUrl": "http://static-resource.np.community.playstation.net/a/vatar_xl/WWS_E/E0012_XL.png",
+                        "firstName": "Unknown",
+                        "lastName": "username",
+                        "pictureUrl": "https://image.api.np.km.playstation.net/images/?format=png&w=440&h=440&image=https%3A%2F%2Fkfscdn.api.np.km.playstation.net%2F00000000000008%2F000000000000003.png&sign=blablabla019501",
+                        "trophySummary": '{"level":1,"progress":0,"earnedTrophies":{"platinum":0,"gold":0,"silver":0,"bronze":0}}',
+                        "isOfficiallyVerified": "true",
+                        "aboutMe": "Temporary file created by Iconit app by @OfficialAhmed0",
+                    }
+
+                    with open(dir + "\\" + user + ".json", "w+") as jsonFile:
+                        json.dump(data, jsonFile)
+
                     with open(dir + "\\" + user + ".json", "rb") as json:
                         ftp.storbinary("STOR online.json", json, 1024)
 
             # Download original Profile Icon from Sony server
-
             import requests as req
 
             try:
@@ -695,19 +693,49 @@ class Ui_IPortWindow(object):
 
             for i in range(1, progress):
                 self.CacheBar.setProperty("value", progressed + i)
-                time.sleep(0.01)
             progressed += progress
+
         self.CacheBar.setProperty("value", 100)
         self.OpenWindow("ChangeAvatar")
 
+    def fetchIcon(self, current_CUSA, icon_name):
+        # called by multiprocessing method
+        with open(
+            temp_path + "MegaSRX\metadata\\" + str(current_CUSA) + ".png",
+            "wb",
+        ) as downloaded_file:
+            ftp.retrbinary("RETR " + icon_name, downloaded_file.write, 24)
+
     def CacheGameIcon(self):
+        t1 = time.time()
         global all_CUSA, all_CUSA_ex, ftp, temp_path, working_dir, IP, Port, Game
+        from xml.dom import minidom
 
         numGames = len(all_CUSA + all_CUSA_ex)
-
+        # (FF) (go to 900)
         file_name = "pronunciation.xml"
         icon_name = "icon0.png"
         self.CacheBar.setProperty("value", 1)
+        Eng1 = [chr(x) for x in range(ord("a"), ord("a") + 26)]  # a - z
+        Eng2 = [chr(x) for x in range(ord("A"), ord("A") + 26)]  # A - Z
+        Eng = Eng1 + Eng2
+        Eng.append(" ")
+        alphaNum = (
+            "one",  # @
+            "two",  # O
+            "three",  # f
+            "four",  # f
+            "five",  # i
+            "six",  # c
+            "seven",  # i
+            "eight",  # a
+            "nine",  # l
+            "™",  # A
+            "'",  # h
+            "!",  # m
+            "?",  # ed0
+        )
+
         for dir in self.iconDirs:
             ftp.set_debuglevel(0)
             ftp.connect(IP, int(Port))
@@ -722,98 +750,82 @@ class Ui_IPortWindow(object):
                 if counter == int(numGames / 2):
                     for i in range(25, 50):
                         self.CacheBar.setProperty("value", i)
-                        time.sleep(0.01)
+                        time.sleep(0.00001)
                 elif counter == int(numGames / 4):
                     for i in range(2, 25):
                         self.CacheBar.setProperty("value", i)
-                        time.sleep(0.01)
+                        time.sleep(0.00001)
                 elif counter == int(numGames / (75 / 100)):
                     for i in range(50, 75):
                         self.CacheBar.setProperty("value", i)
-                        time.sleep(0.01)
+                        time.sleep(0.00001)
                 ftp.cwd(currentDir[counter])
 
-                # Check the files in each game directory
-                with open(
-                    temp_path + "files_in_dir.dat", "w+", encoding="utf8"
-                ) as files_in_dir:
-                    ftp.retrlines("LIST", files_in_dir.write)
-                with open(
-                    temp_path + "files_in_dir.dat", "r", encoding="utf8"
-                ) as files_in_dir:
-                    content_in_file = files_in_dir.read()
-                    # Check for pronunciation.xml or icon0
+                files_in_dir = ftp.nlst()
+
+                # Check for pronunciation.xml or icon0
+                for content_in_file in files_in_dir:
                     if file_name in content_in_file or icon_name in content_in_file:
                         current_CUSA = currentDir[counter]
+
                         if file_name in content_in_file:
+                            # Cache xml file
                             with open(temp_path + file_name, "wb") as downloaded_file:
                                 ftp.retrbinary(
                                     "RETR " + file_name, downloaded_file.write, 1024
                                 )
 
-                            with open(
-                                temp_path
-                                + "MegaSRX\metadata\\"
-                                + str(current_CUSA)
-                                + ".png",
-                                "wb",
-                            ) as downloaded_file:
-                                ftp.retrbinary(
-                                    "RETR " + icon_name, downloaded_file.write, 1024
-                                )
+                            # cache icon0
 
-                            # Reading pronounciation.xml for gameTitle
-                            with open(
-                                temp_path + file_name, "r", encoding="utf8"
-                            ) as file:
-                                # Create temp file
-                                with open(
-                                    temp_path + "Possible game title.dat",
-                                    "w+",
-                                    encoding="utf8",
-                                ) as game_titles_file:
-                                    for each_line in file:
-                                        if "text" in each_line:
-                                            game_titles_file.write(each_line)
-                            # simplifying xml file
-                            alpha = "a A b B c C d D e E f F g G h H i I j J k K l L m M n N o O p P q Q r R s S t T u U v V w W x X y Y z Z ™ ' ! ?"
-                            Eng = alpha.split(" ")
-                            Eng.append(" ")
-                            num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
-                            with open(
-                                temp_path + "Possible game title.dat",
-                                "r",
-                                encoding="utf8",
-                            ) as game_titles_file:
-                                lines = game_titles_file.readlines()
-                                GameTitle = ""
-                                for line in lines:
-                                    english = True
-                                    starting_index = line.index(">") + 1
-                                    original_title = line[starting_index:-8]
+                            # with open(
+                            #     temp_path
+                            #     + "MegaSRX\metadata\\"
+                            #     + str(current_CUSA)
+                            #     + ".png",
+                            #     "wb",
+                            # ) as downloaded_file:
+                            #     ftp.retrbinary(
+                            #         "RETR " + icon_name, downloaded_file.write, 1024
+                            #     )
 
-                                    if (
-                                        "One"
-                                        or "Two"
-                                        or "Three"
-                                        or "Four"
-                                        or "Five"
-                                        or "Six"
-                                        or "Seven"
-                                        or "Eight"
-                                        or "Nine" in original_title
-                                    ):
-                                        GameTitle = original_title
+                            # MultiProccesing
+                            pool = Pool(1)
+                            pool.apply_async(
+                                self.fetchIcon,
+                                args=(current_CUSA, icon_name),
+                            )
+
+                            """
+                            Algorithm implemented(v4.72)
+                            fetch the best gameTitle for the current game [pronunciation.xml]
+
+                            """
+                            diff_titles = (
+                                []
+                            )  # all different titles for current fetched game
+                            file = minidom.parse(
+                                temp_path + file_name
+                            ).getElementsByTagName("text")
+
+                            for name in file:
+                                diff_titles.append(name.firstChild.data)
+
+                            GameTitle = ""
+                            for title in diff_titles:
+                                english = True
+
+                                for alpha in alphaNum:
+                                    if alpha in title or alpha.title() in title:
+                                        GameTitle = title
                                         Game[current_CUSA] = GameTitle
                                     else:
-                                        for char in original_title:
-                                            if char not in Eng and char not in num:
+                                        for char in title:
+                                            if char not in Eng:
                                                 english = False
                                                 break
-                                    if english:
-                                        if len(original_title) > len(GameTitle):
-                                            GameTitle = original_title
-                                            Game[current_CUSA] = GameTitle
+                                if english:
+                                    GameTitle = title
+                                    Game[current_CUSA] = GameTitle
                         else:
                             with open(
                                 temp_path
@@ -829,23 +841,28 @@ class Ui_IPortWindow(object):
                                 Game[current_CUSA] = "Unknown"
                             else:
                                 Game[current_CUSA] = "Unknown Homebrew"
-                    if "external" in dir:
-                        # Get back to root directory
-                        ftp.set_debuglevel(0)
-                        ftp.connect(IP, int(Port))
-                        ftp.login("", "")
-                        ftp.cwd(dir)
-                    else:
-                        ftp.set_debuglevel(0)
-                        ftp.connect(IP, int(Port))
-                        ftp.login("", "")
-                        ftp.cwd(working_dir)
+                if "external" in dir:
+                    # Get back to root directory
+                    ftp.set_debuglevel(0)
+                    ftp.connect(IP, int(Port))
+                    ftp.login("", "")
+                    ftp.cwd(dir)
+                else:
+                    ftp.set_debuglevel(0)
+                    ftp.connect(IP, int(Port))
+                    ftp.login("", "")
+                    ftp.cwd(working_dir)
                 counter += 1
 
         for i in range(51, 100):
             self.CacheBar.setProperty("value", i)
             time.sleep(0.01)
-        self.OpenWindow("GameIcon")
+        try:
+            t2 = time.time()
+            print((t2 - t1) / 60)
+            self.OpenWindow("GameIcon")
+        except Exception as e:
+            print(str(e), "<<<<<<<<<<<<<<<<<<<<< (O) go to line 700 Error")
 
     def OpenWindow(self, WinType):
         if WinType == "GameIcon":
@@ -896,7 +913,7 @@ class Ui_IPortWindow(object):
                 + "_DEV ERROR: "
                 + str(description)
                 + "\n"
-            )
+            )  # (al) to 1
 
 
 if __name__ == "__main__":
@@ -906,7 +923,7 @@ if __name__ == "__main__":
     screenResolution = app.desktop().screenGeometry()
     screenWidth, screenHeight = screenResolution.width(), screenResolution.height()
     IPortWindow = QtWidgets.QMainWindow()
-    ui = Ui_IPortWindow()
+    ui = Ui_IPortWindow()  # (ici) line 890
     ui.setupUi(IPortWindow, screenWidth, screenHeight)
     IPortWindow.show()
     sys.exit(app.exec_())

@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import ctypes
 import Update
+import json
 
 myappid = "mycompany.myproduct.subproduct.version"  # arbitrary string
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -29,7 +30,7 @@ class Ui_ChangeAvatarWin(object):
         self.userIPath = self.appPath
         self.userDPath = self.appPath
         try:
-            with open(self.AppSettingDir + "prxUserMeta\\pref.ini") as file:
+            with open(self.AppSettingDir + "Pref\\pref.ini") as file:
                 content = file.readlines()
                 self.userFont = content[0][2:-1]
                 self.userIPath = content[2][6:-1]
@@ -577,21 +578,20 @@ class Ui_ChangeAvatarWin(object):
         self.Rename_btn.clicked.connect(self.RenameAccount)
 
         # Get First/Last name for first profile
-        self.name = ""
-        with open(
-            self.AppSettingDir
-            + "prxUserMeta\MegaSRX\metaprodata\\"
-            + self.user[self.currentUserCounter]
-            + ".json"
-        ) as file:
-            reading = file.read()
-            start = reading.find("firstName") + 12
-            end = reading.find("lastName") - 3
-            self.name += reading[start:end] + " "
-            start = reading.find("lastName") + 11
-            end = reading.find('"', start)
-            self.name += reading[start : reading.find('"', start)]
-        self.AccountName.setText(self.name)
+        try:
+            jsonFile = open(
+                self.AppSettingDir
+                + "prxUserMeta\MegaSRX\metaprodata\\"
+                + self.user[self.currentUserCounter]
+                + ".json",
+                "r",
+            )
+            readJson = json.load(jsonFile)
+            jsonFile.close()
+
+            self.AccountName.setText(readJson["firstName"] + " " + readJson["lastName"])
+        except Exception as e:
+            self.logIt(str(e), "Warning")
         # Original Icon
         if os.path.isfile(
             self.dataPath
@@ -720,22 +720,29 @@ class Ui_ChangeAvatarWin(object):
                 fn = "Unknown"
             if ln == "":
                 ln = "Username"
-            file = self.AppSettingDir + "prxUserMeta\online.json"
+            file = (
+                self.AppSettingDir
+                + "prxUserMeta\\MegaSRX\\metaprodata\\"
+                + self.user[self.currentUserCounter]
+                + ".json"
+            )
             ftp.set_debuglevel(2)
             ftp.connect(self.IP, int(self.Port))
             ftp.login("", "")
             ftp.cwd(
                 "system_data/priv/cache/profile/" + self.user[self.currentUserCounter]
             )
-            data = (
-                '{"avatarUrl":"","firstName":"'
-                + fn
-                + '","lastName":"'
-                + ln
-                + '","pictureUrl":"https:\/\/image.api.np.km.playstation.net\/images\/?format=png&w=440&h=440&image=https%3A%2F%2Fgraph.facebook.com%2F100001923179045%2Fpicture%3Fwidth%3D400%26height%3D400&sign=524238c4d61e345be9eeec2ad0a631cab59fe7e6","trophySummary":"{"level":0,"progress":0,"earnedTrophies":{"platinum":0,"gold":0,"silver":0,"bronze":0}}","aboutMe":"Temporary created by Iconit app by @OfficialAhmed0","isOfficiallyVerified":"true"}'
-            )
-            with open(file, "w+") as fakeOnlineFile:
-                fakeOnlineFile.write(data)
+            jsonFile = open(file, "r")
+            json_object = json.load(jsonFile)
+
+            json_object["firstName"] = fn
+            json_object["lastName"] = ln
+            jsonFile.close()
+
+            jsonFile = open(file, "w+")
+            json.dump(json_object, jsonFile)
+            jsonFile.close()
+
             with open(file, "rb") as fakeOnlineFile:
                 ftp.storlines("STOR online.json", fakeOnlineFile)
             self.Rename_btn.setStyleSheet("color:rgb(61, 226, 61);")
@@ -753,20 +760,20 @@ class Ui_ChangeAvatarWin(object):
 
     def getAccountName(self):
         name = ""
-        file = open(
-            self.AppSettingDir
-            + "prxUserMeta\MegaSRX\metaprodata\\"
-            + self.user[self.currentUserCounter]
-            + ".json"
-        )
-        reading = file.read()
-        start = reading.find("firstName") + 12
-        end = reading.find("lastName") - 3
-        name += reading[start:end] + " "
-        start = reading.find("lastName") + 11
-        end = reading.find('"', start)
-        name += reading[start : reading.find('"', start)]
-        file.close()
+        try:
+            jsonFile = open(
+                self.AppSettingDir
+                + "prxUserMeta\MegaSRX\metaprodata\\"
+                + self.user[self.currentUserCounter]
+                + ".json",
+                "r",
+            )
+            readJson = json.load(jsonFile)
+            jsonFile.close()
+
+            name = readJson["firstName"] + " " + readJson["lastName"]
+        except Exception as e:
+            self.logIt(str(e), "Warning")
         return name
 
     def UpdateInfo(self):
@@ -954,6 +961,7 @@ class Ui_ChangeAvatarWin(object):
                     else:
                         path += i
                 self.ChangeAvatar.setStyleSheet("border-image: url(" + path + ");")
+
             self.windo = QtWidgets.QWidget()
             self.ui = Confirm.Ui_ConfirmWindow()
             self.ui.setupUi(

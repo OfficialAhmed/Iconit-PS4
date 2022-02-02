@@ -22,6 +22,24 @@ This application is much convenient than uploading the images manually for many 
 
 * I added a Library (https://all-exhost.github.io/icon%20downloader.html) that has Dozens of icons for you to pick from.
 
+# Update v4.72 (WIP. Not yet compiled for the end-user)
+
+* Ability to detect all Homebrews (Note: make sure to enable HB in the settings) (4-letter prefix followed by 5-number suffix format. Exp: LAPY00000)  
+
+* More accurate Game Titles (Less abbreviations shown as the Game title)
+
+* Overall performance ++ (Implemented low-level Threading/multiprocessing)
+
+* Better caching performance (used to Write/Read some data from/to Hard Disk now uses the RAM instead)
+
+* Caching size reduced
+
+* Fixed when renaming PSN activated account Deactivates it (Recommended to use it on offline accounts. Use it on online accounts on your own risk this might need more attention as I don't have PSN activated accounts I can't test it, so I can't guarantee for activated accounts SORRY!)
+
+* Fixed when using AvatarChange Error (No such file or directory: Pref.ini)
+
+* Fixed more noob algorithms (now the code is waaaaay much easier to read)
+
 # Update v4.65
 
 * Added Pic change (you can now change background of any game, that show up when a game launches) => full hd up to 2k dimensions only
@@ -50,7 +68,7 @@ This application is much convenient than uploading the images manually for many 
 
 * Multiprocessing method added for better performance
 
-* Lowered application size from(131mb) to(74mb)
+* Shrinked application size from(131mb) to(74mb)
 
 * Fixed 550 error and other bugs
 
