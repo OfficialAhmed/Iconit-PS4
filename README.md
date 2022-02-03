@@ -24,7 +24,9 @@ This application is much convenient than uploading the images manually for many 
 
 # Update v4.72 (WIP. Not yet compiled for the end-user)
 
-* Ability to detect all Homebrews (Note: make sure to enable HB in the settings) (4-letter prefix followed by 5-number suffix format. Exp: LAPY00000)  
+* Ability to change all Homebrews (Note: make sure to enable HB in the settings) (4-letter prefix followed by 5-number suffix format. Exp: LAPY00000)  
+
+* Ability to change System icons (ATTENTION: This will require extra permissions. Make sure to run FTP with Full R/W mode, as of writing this only Lapy Xplorer offer an option to allow FTP in "Danger mode" => Full R/W permissions by pressing (L2+Triangle). Only allow "Danger mode" when you need to change the system icons disable it afterwards to be in the safe side) 
 
 * More accurate Game Titles (Less abbreviations shown as the Game title)
 

@@ -1012,7 +1012,10 @@ class Ui_ChangeIconWindow(object):
 
 
 if __name__ == "__main__":
-    import sys
+    import sys, os
+    from shared import playSound as play
+
+    play(f"{os.getcwd()}/Data/Pref/bgm/home.mp3")
 
     app = QtWidgets.QApplication(sys.argv)
     ChangeIconWindow = QtWidgets.QWidget()

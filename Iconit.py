@@ -29,6 +29,8 @@ local_path = str(os.getcwd())
 temp_path = local_path + "\Data\prxUserMeta\\"
 img_dir = local_path + "\\data\\User\\appmeta"
 
+sys_path = "system_ex\\app\\"
+
 setting_path = ""
 for change in local_path:
     if change == "\\":
@@ -625,9 +627,11 @@ class Ui_IPortWindow(object):
                     os.remove(dir + i)
             except Exception as e:
                 self.logIt(str(e), "Warning")
+
         progress = int(100 / len(self.userID))
         progressed = 0
         self.CacheBar.setProperty("value", 1)
+
         for user in self.userID:
             ftp.set_debuglevel(0)
             ftp.connect(IP, int(Port))
@@ -681,6 +685,7 @@ class Ui_IPortWindow(object):
                     ]
                     cont = url.split("\/")
                     link = ""
+
                     for i in cont:
                         if i != "":
                             link += i + "//"
@@ -688,11 +693,13 @@ class Ui_IPortWindow(object):
 
                     with open(dir + "\\" + user + "Original.png", "wb") as origIcon:
                         origIcon.write(img.content)
+
             except Exception as e:
                 self.logIt(str(e), "Warning")
 
             for i in range(1, progress):
                 self.CacheBar.setProperty("value", progressed + i)
+
             progressed += progress
 
         self.CacheBar.setProperty("value", 100)
@@ -707,9 +714,10 @@ class Ui_IPortWindow(object):
             ftp.retrbinary("RETR " + icon_name, downloaded_file.write, 24)
 
     def CacheGameIcon(self):
-        t1 = time.time()
-        global all_CUSA, all_CUSA_ex, ftp, temp_path, working_dir, IP, Port, Game
         from xml.dom import minidom
+
+        global all_CUSA, all_CUSA_ex, ftp, temp_path, working_dir, IP, Port, Game
+        t1 = time.time()
 
         numGames = len(all_CUSA + all_CUSA_ex)
         # (FF) (go to 900)
@@ -742,10 +750,12 @@ class Ui_IPortWindow(object):
             ftp.login("", "")
             ftp.cwd(dir)
             counter = 0
+
             if "external" in dir:
                 currentDir = all_CUSA_ex
             else:
                 currentDir = all_CUSA
+
             for i in currentDir:
                 if counter == int(numGames / 2):
                     for i in range(25, 50):
@@ -841,6 +851,7 @@ class Ui_IPortWindow(object):
                                 Game[current_CUSA] = "Unknown"
                             else:
                                 Game[current_CUSA] = "Unknown Homebrew"
+
                 if "external" in dir:
                     # Get back to root directory
                     ftp.set_debuglevel(0)
@@ -857,12 +868,13 @@ class Ui_IPortWindow(object):
         for i in range(51, 100):
             self.CacheBar.setProperty("value", i)
             time.sleep(0.01)
+
         try:
             t2 = time.time()
             print((t2 - t1) / 60)
             self.OpenWindow("GameIcon")
         except Exception as e:
-            print(str(e), "<<<<<<<<<<<<<<<<<<<<< (O) go to line 700 Error")
+            print(str(e), "(O) go to line 700")
 
     def OpenWindow(self, WinType):
         if WinType == "GameIcon":
@@ -918,6 +930,9 @@ class Ui_IPortWindow(object):
 
 if __name__ == "__main__":
     import sys
+    from func import playSound as play
+
+    play(f"{local_path}/Data/Pref/bgm/home.mp3")
 
     app = QtWidgets.QApplication(sys.argv)
     screenResolution = app.desktop().screenGeometry()
