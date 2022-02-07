@@ -50,13 +50,37 @@ class Ui_Message(object):
             self.Message.setPlainText(
                 _translate(
                     "Message",
-                    "Iconit is a Windows application for jailbroken PS4 console to change game icons and profile avatars with the help of FTP payload. Do you like what you see? Please consider donating \n"
+                    "Iconit is an automated Windows application for jailbroken PS4 consoles to change xmb icons and profile avatars with the help of FTP payload. Do you like what you see? Please consider donating \n"
                     "\n   App version v"
                     + str(self.ver)
                     + " released in "
                     + self.releaseDate
                     + "\n"
                     "                 Thanks for using Iconit",
+                )
+            )
+        elif self.Type == "CUSTOMspecial_thanks":
+            Message.setWindowTitle(_translate("Message", "Shout-out"))
+            self.Message.setPlainText(
+                _translate(
+                    "Message",
+                    "Special Thanks:-\n@Lapy05575948\n\nTesters:-\n@laz305\n@maxtinion\n@_deejay87_\n@PS__TRICKS\n\nThanks to all the devs in the scene who made this possible",
+                )
+            )
+        elif self.Type == "CUSTOMdoneRmvCache":
+            Message.setWindowTitle(_translate("Message", "Cache Removed"))
+            self.Message.setPlainText(
+                _translate(
+                    "Message",
+                    "Cached icons has been removed.",
+                )
+            )
+        elif self.Type == "PermissionDenied":
+            Message.setWindowTitle(_translate("Message", "Error"))
+            self.Message.setPlainText(
+                _translate(
+                    "Message",
+                    "Error Iconit needs admin permission to perform the task. Rerun as administrator",
                 )
             )
 

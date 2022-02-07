@@ -1,27 +1,17 @@
-from itertools import count
-import time  # (Ahm) 505
-import os
-import sys
+import os  # (Ahm) 505
+import sys, time, json
 import ctypes
 
-# import threading v4.72
-import _thread
-from multiprocessing import Pool
+from ftplib import FTP
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-from black import E
-from sqlalchemy import false
+# Custom mod.
 import ChangeAvatar
 import ChangeIcon
 import Message
 import Update
-from ftplib import FTP
-from PyQt5 import QtCore, QtGui, QtWidgets
 
-myappid = "mycompany.myproduct.subproduct.version"  # arbitrary string
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-
-# connection through FTP
-# resizing images
+from xml.dom import minidom  # XML parsing
 
 ftp = FTP()
 working_dir = "user/appmeta"
@@ -29,7 +19,7 @@ local_path = str(os.getcwd())
 temp_path = local_path + "\Data\prxUserMeta\\"
 img_dir = local_path + "\\data\\User\\appmeta"
 
-sys_path = "system_ex\\app\\"
+sys_path = "system_ex/app"
 
 setting_path = ""
 for change in local_path:
@@ -38,11 +28,19 @@ for change in local_path:
     else:
         setting_path += change
 
-IP = ""
+IP = "not accepted"
 Port = 21
 
+#############################################################
+#####
+#####  Lists store icons and related info for the next window
+#####  to be able to navigate back n forth
+#####
+#############################################################
 all_CUSA = []
 all_CUSA_ex = []
+all_CUSA_sys = []
+
 Game = {}
 
 
@@ -55,7 +53,12 @@ class Ui_IPortWindow(object):
         self.w = w
         self.h = h
 
-        # Settings
+        #######################################################
+        #####
+        #####  Settings
+        #####
+        #######################################################
+
         self.userFont = "Arial"
         self.userPort = "1337"
         self.userIp = ""
@@ -73,6 +76,45 @@ class Ui_IPortWindow(object):
                 self.userHB = content[5][3:].strip()
         except Exception as e:
             self.logIt(str(e), "Warning")
+
+        #############################################################
+        #####
+        #####  Data used to determine the best Game Title possible
+        #####
+        ############################################################
+
+        self.file_name = "pronunciation.xml"
+        self.icon_name = "icon0.png"
+        self.Eng1 = [chr(x) for x in range(ord("a"), ord("a") + 26)]  # a - z
+        self.Eng2 = [chr(x) for x in range(ord("A"), ord("A") + 26)]  # A - Z
+        self.Eng = self.Eng1 + self.Eng2
+        self.Eng.append(" ")
+        self.alphaNum = (
+            "one",  # @
+            "two",  # O
+            "three",  # f
+            "four",  # f
+            "five",  # i
+            "six",  # c
+            "seven",  # i
+            "eight",  # a
+            "nine",  # l
+            "™",  # A
+            "'",  # h
+            "!",  # m
+            "?",  # ed0
+        )
+
+        self.modeSelected = ""
+        self.cached = ""
+
+        ######################################################
+        #####
+        #####           GUI and Signals
+        #####           Starting point
+        #####
+        ######################################################
+
         font = QtGui.QFont()
         font.setFamily(self.userFont)
         font.setPointSize(13)
@@ -82,9 +124,6 @@ class Ui_IPortWindow(object):
         # v4.05 new UI support 2k, 4k res
         IPortWindow.setObjectName("IPortWindow")
         IPortWindow.setWindowModality(QtCore.Qt.WindowModal)
-        IPortWindow.setWindowIcon(
-            QtGui.QIcon(local_path + "\\Data\\Pref\\" + "ic1.@OfficialAhmed0")
-        )
 
         IPortWindow.resize(720, 521)
         sizePolicy = QtWidgets.QSizePolicy(
@@ -96,323 +135,334 @@ class Ui_IPortWindow(object):
         IPortWindow.setSizePolicy(sizePolicy)
         IPortWindow.setMinimumSize(QtCore.QSize(720, 512))
         IPortWindow.setWindowOpacity(1.0)
-        IPortWindow.setStyleSheet(
-            "color: rgb(73, 170, 255); background-color: rgb(1, 10, 30);"
-        )
+        IPortWindow.setStyleSheet("")
         IPortWindow.setDocumentMode(False)
         IPortWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
-        self.MainWidget = QtWidgets.QWidget(IPortWindow)
-        self.MainWidget.setObjectName("MainWidget")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.MainWidget)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        self.FormLayout = QtWidgets.QFormLayout()
-        self.FormLayout.setContentsMargins(20, 50, 20, 0)
-        self.FormLayout.setHorizontalSpacing(5)
-        self.FormLayout.setVerticalSpacing(0)
-        self.FormLayout.setObjectName("FormLayout")
-        self.Status = QtWidgets.QLabel(self.MainWidget)
-        self.Status.setEnabled(False)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Status.sizePolicy().hasHeightForWidth())
-        self.Status.setSizePolicy(sizePolicy)
-        self.Status.setMinimumSize(QtCore.QSize(500, 45))
-        self.Status.setBaseSize(QtCore.QSize(0, 0))
-        font = QtGui.QFont()
-        font.setPointSize(18)
-        font.setBold(False)
-        font.setWeight(50)
-        self.Status.setFont(font)
-        self.Status.setStyleSheet("color: rgb(85, 170, 255);")
-        self.Status.setFrameShape(QtWidgets.QFrame.Box)
-        self.Status.setLineWidth(2)
-        self.Status.setMidLineWidth(0)
-        self.Status.setAlignment(QtCore.Qt.AlignCenter)
-        self.Status.setIndent(-1)
-        self.Status.setObjectName("label")
-        self.FormLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.Status)
-        self.hidenLabel = QtWidgets.QLabel(self.MainWidget)
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        font.setBold(True)
-        font.setWeight(75)
-        self.hidenLabel.setFont(font)
-        self.hidenLabel.setText("")
-        self.hidenLabel.setObjectName("label_2")
-        self.FormLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.hidenLabel)
-        self.IP_Label = QtWidgets.QLabel(self.MainWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.IP_Label.sizePolicy().hasHeightForWidth())
-        self.IP_Label.setSizePolicy(sizePolicy)
-        self.IP_Label.setMinimumSize(QtCore.QSize(120, 40))
-        font = QtGui.QFont()
-        font.setPointSize(14)
-        font.setBold(True)
-        font.setWeight(75)
-        self.IP_Label.setFont(font)
-        self.IP_Label.setStyleSheet("color: rgb(85, 170, 255);")
-        self.IP_Label.setFrameShape(QtWidgets.QFrame.Box)
-        self.IP_Label.setLineWidth(2)
-        self.IP_Label.setAlignment(QtCore.Qt.AlignCenter)
-        self.IP_Label.setObjectName("IP_Label")
-        self.FormLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.IP_Label)
-        self.IP_input = QtWidgets.QLineEdit(self.MainWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.IP_input.sizePolicy().hasHeightForWidth())
-        self.IP_input.setSizePolicy(sizePolicy)
-        self.IP_input.setMinimumSize(QtCore.QSize(500, 50))
-        self.IP_input.setSizeIncrement(QtCore.QSize(0, 0))
-        self.IP_input.setBaseSize(QtCore.QSize(0, 0))
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        font.setBold(True)
-        font.setItalic(True)
-        font.setWeight(75)
-        self.IP_input.setFont(font)
-        self.IP_input.setText(self.userIp)
-        self.IP_input.setStyleSheet("color: rgb(255, 255, 255);")
-        self.IP_input.setMaxLength(24)
-        self.IP_input.setAlignment(QtCore.Qt.AlignCenter)
-        self.IP_input.setCursorMoveStyle(QtCore.Qt.VisualMoveStyle)
-        self.IP_input.setClearButtonEnabled(True)
-        self.IP_input.setObjectName("IP_input")
-        self.FormLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.IP_input)
-        self.Port_Label = QtWidgets.QLabel(self.MainWidget)
+        IPortWindow.setObjectName("IPortWindow")
+        IPortWindow.resize(701, 620)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Port_Label.sizePolicy().hasHeightForWidth())
-        self.Port_Label.setSizePolicy(sizePolicy)
-        self.Port_Label.setMinimumSize(QtCore.QSize(120, 40))
+        sizePolicy.setHeightForWidth(IPortWindow.sizePolicy().hasHeightForWidth())
+        IPortWindow.setSizePolicy(sizePolicy)
+        IPortWindow.setMinimumSize(QtCore.QSize(701, 620))
+
+        ######################################################
+        #####           Background Design
+        ######################################################
+        self.mainWidget = QtWidgets.QWidget(IPortWindow)
+        self.mainWidget.setStyleSheet(
+            "QWidget#mainWidget{\n"
+            "background-image: url(Data//Pref//IPortWinbg.@OfficialAhmed0);\n"
+            "background-size:  cover;               \n"
+            "background-repeat:   no-repeat;\n"
+            "background-position: center center;        \n"
+            "\n"
+            "}"
+        )
+        self.mainWidget.setObjectName("mainWidget")
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.mainWidget)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.TitleLabel_withURL = QtWidgets.QLabel(self.mainWidget)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.TitleLabel_withURL.sizePolicy().hasHeightForWidth()
+        )
+        self.TitleLabel_withURL.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(22)
+        font.setBold(True)
+        font.setItalic(False)
+        font.setUnderline(False)
+        self.TitleLabel_withURL.setFont(font)
+        self.TitleLabel_withURL.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.TitleLabel_withURL.setAlignment(QtCore.Qt.AlignCenter)
+        self.TitleLabel_withURL.setOpenExternalLinks(True)
+        self.TitleLabel_withURL.setObjectName("TitleLabel_withURL")
+        self.verticalLayout_5.addWidget(self.TitleLabel_withURL)
+        self.widgetWithRadius = QtWidgets.QWidget(self.mainWidget)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.widgetWithRadius.sizePolicy().hasHeightForWidth()
+        )
+        self.widgetWithRadius.setSizePolicy(sizePolicy)
+        self.widgetWithRadius.setMaximumSize(QtCore.QSize(16777212, 16777215))
+        self.widgetWithRadius.setStyleSheet(
+            "QWidget#widgetWithRadius{\n"
+            "background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(124, 57, 191, 120), stop:1 rgba(42, 44, 89, 220));\n"
+            "border-radius: 80px;\n"
+            "}"
+        )
+        self.widgetWithRadius.setObjectName("widgetWithRadius")
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.widgetWithRadius)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.verticalLayout_6 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_6.setObjectName("verticalLayout_6")
+        self.Status = QtWidgets.QLabel(self.widgetWithRadius)
+        self.Status.setAlignment(QtCore.Qt.AlignCenter)
+        self.Status.setObjectName("Status")
+        self.verticalLayout_6.addWidget(self.Status)
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout.setObjectName("gridLayout")
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
+        self.gridLayout.addItem(spacerItem, 2, 0, 1, 1)
+        self.SystemIcon = QtWidgets.QRadioButton(self.widgetWithRadius)
+
+        ######################################################
+        #####           Labels and inputs
+        ######################################################
         font = QtGui.QFont()
         font.setPointSize(14)
-        font.setBold(True)
-        font.setWeight(75)
-        self.Port_Label.setFont(font)
-        self.Port_Label.setStyleSheet("color: rgb(85, 170, 255);")
-        self.Port_Label.setFrameShape(QtWidgets.QFrame.Box)
-        self.Port_Label.setLineWidth(2)
+        font.setItalic(True)
+        self.SystemIcon.setFont(font)
+        self.SystemIcon.setStyleSheet("color: rgb(255, 255, 255);")
+        self.SystemIcon.setObjectName("SystemIcon")
+        self.gridLayout.addWidget(self.SystemIcon, 10, 2, 1, 1)
+        self.Port_Label = QtWidgets.QLabel(self.widgetWithRadius)
         self.Port_Label.setAlignment(QtCore.Qt.AlignCenter)
         self.Port_Label.setObjectName("Port_Label")
-        self.FormLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.Port_Label)
-        self.Port_input = QtWidgets.QLineEdit(self.MainWidget)
+        self.gridLayout.addWidget(self.Port_Label, 3, 1, 1, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
+        self.gridLayout.addItem(spacerItem1, 5, 2, 1, 1)
+        self.GameIcon = QtWidgets.QRadioButton(self.widgetWithRadius)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        font.setItalic(True)
+        self.GameIcon.setFont(font)
+        self.GameIcon.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.GameIcon.setStyleSheet("color: rgb(255, 255, 255);")
+        self.GameIcon.setChecked(True)
+        self.GameIcon.setObjectName("GameIcon")
+        self.gridLayout.addWidget(self.GameIcon, 8, 2, 1, 1)
+        self.Port_input = QtWidgets.QLineEdit(self.widgetWithRadius)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.Port_input.sizePolicy().hasHeightForWidth())
         self.Port_input.setSizePolicy(sizePolicy)
-        self.Port_input.setMinimumSize(QtCore.QSize(500, 50))
         font = QtGui.QFont()
-        font.setPointSize(15)
-        font.setBold(True)
+        font.setPointSize(13)
+        font.setBold(False)
         font.setItalic(True)
-        font.setWeight(75)
         self.Port_input.setFont(font)
-        self.Port_input.setStyleSheet("color: rgb(255, 255, 255);")
+        self.Port_input.setStyleSheet("border-radius: 10px;")
         self.Port_input.setText(self.userPort)
-        self.Port_input.setMaxLength(10)
+        self.Port_input.setMaxLength(6)
         self.Port_input.setAlignment(QtCore.Qt.AlignCenter)
-        self.Port_input.setClearButtonEnabled(True)
         self.Port_input.setObjectName("Port_input")
-        self.FormLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.Port_input)
-        self.gridLayout_3 = QtWidgets.QGridLayout()
-        self.gridLayout_3.setSizeConstraint(QtWidgets.QLayout.SetMaximumSize)
-        self.gridLayout_3.setContentsMargins(0, 70, 0, 10)
-        self.gridLayout_3.setHorizontalSpacing(10)
-        self.gridLayout_3.setObjectName("gridLayout_3")
-        self.Connect_btn = QtWidgets.QPushButton(self.MainWidget)
-        self.Connect_btn.setMinimumSize(QtCore.QSize(200, 40))
-        font = QtGui.QFont()
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setUnderline(False)
-        font.setWeight(75)
-        font.setStrikeOut(False)
-
-        self.Connect_btn.setFont(font)
-        self.Connect_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Connect_btn.setStyleSheet(
-            "color: rgb(85, 170, 255); background-color: rgb(206, 206, 206);"
+        self.gridLayout.addWidget(self.Port_input, 3, 2, 1, 1)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
-        self.Connect_btn.setDefault(False)
-        self.Connect_btn.setFlat(False)
-        self.Connect_btn.setObjectName("Connect_btn")
-        self.gridLayout_3.addWidget(self.Connect_btn, 2, 3, 1, 1)
-        self.Cache_label = QtWidgets.QLabel(self.MainWidget)
-        self.Cache_label.setMinimumSize(QtCore.QSize(90, 35))
-        font = QtGui.QFont()
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setItalic(False)
-        font.setUnderline(False)
-        font.setWeight(75)
-        self.Cache_label.setFont(font)
-        self.Cache_label.setStyleSheet("color: rgb(85, 170, 255);")
-        self.Cache_label.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.Cache_label.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.Cache_label.setLineWidth(3)
-        self.Cache_label.setMidLineWidth(2)
-        self.Cache_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.Cache_label.setObjectName("Cache_label")
-        self.gridLayout_3.addWidget(self.Cache_label, 7, 1, 1, 1)
-        self.GameIcon = QtWidgets.QRadioButton(self.MainWidget)
+        self.gridLayout.addItem(spacerItem2, 2, 3, 1, 1)
+        self.SysIcon_Note = QtWidgets.QLabel(self.widgetWithRadius)
+        self.SysIcon_Note.setObjectName("SysIcon_Note")
+        self.gridLayout.addWidget(self.SysIcon_Note, 11, 2, 1, 1)
+        self.IP_input = QtWidgets.QLineEdit(self.widgetWithRadius)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.GameIcon.sizePolicy().hasHeightForWidth())
-        self.GameIcon.setSizePolicy(sizePolicy)
-        self.GameIcon.setMinimumSize(QtCore.QSize(0, 40))
+        sizePolicy.setHeightForWidth(self.IP_input.sizePolicy().hasHeightForWidth())
+        self.IP_input.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(13)
-        font.setBold(True)
-        font.setItalic(False)
-        font.setUnderline(False)
-        font.setWeight(75)
-        font.setStrikeOut(False)
-        font.setKerning(True)
-        self.GameIcon.setFont(font)
-        self.GameIcon.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.GameIcon.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.GameIcon.setAutoFillBackground(False)
-        self.GameIcon.setStyleSheet("color: rgb(255, 255, 255);")
-        self.GameIcon.setChecked(True)
-        self.GameIcon.setObjectName("GameIcon")
-        self.gridLayout_3.addWidget(self.GameIcon, 0, 1, 1, 2)
-        self.ChangeAvatar = QtWidgets.QRadioButton(self.MainWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.ChangeAvatar.sizePolicy().hasHeightForWidth())
-        self.ChangeAvatar.setSizePolicy(sizePolicy)
-        self.ChangeAvatar.setMinimumSize(QtCore.QSize(0, 40))
+        font.setBold(False)
+        font.setItalic(True)
+        self.IP_input.setFont(font)
+        self.IP_input.setStyleSheet("border-radius: 10px;")
+        self.IP_input.setText(self.userIp)
+        self.IP_input.setMaxLength(16)
+        self.IP_input.setAlignment(QtCore.Qt.AlignCenter)
+        self.IP_input.setClearButtonEnabled(True)
+        self.IP_input.setObjectName("IP_input")
+        self.gridLayout.addWidget(self.IP_input, 2, 2, 1, 1)
+        self.Change_label = QtWidgets.QLabel(self.widgetWithRadius)
+        self.Change_label.setObjectName("Change_label")
+        self.gridLayout.addWidget(self.Change_label, 10, 1, 1, 1)
+        self.IP_Label = QtWidgets.QLabel(self.widgetWithRadius)
+        self.IP_Label.setObjectName("IP_Label")
+        self.gridLayout.addWidget(self.IP_Label, 2, 1, 1, 1)
+        self.ChangeAvatar = QtWidgets.QRadioButton(self.widgetWithRadius)
         font = QtGui.QFont()
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setWeight(75)
+        font.setPointSize(14)
         self.ChangeAvatar.setFont(font)
         self.ChangeAvatar.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.ChangeAvatar.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.ChangeAvatar.setStyleSheet("color: rgb(255, 255, 255);")
         self.ChangeAvatar.setObjectName("ChangeAvatar")
-        self.gridLayout_3.addWidget(self.ChangeAvatar, 2, 1, 1, 1)
-        self.CacheBar = QtWidgets.QProgressBar(self.MainWidget)
-        self.CacheBar.setMinimumSize(QtCore.QSize(100, 30))
+        self.gridLayout.addWidget(self.ChangeAvatar, 12, 2, 1, 1)
+        spacerItem3 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
+        self.gridLayout.addItem(spacerItem3, 1, 2, 1, 1)
+        self.GameIcon_Note = QtWidgets.QLabel(self.widgetWithRadius)
+        self.GameIcon_Note.setAlignment(QtCore.Qt.AlignCenter)
+        self.GameIcon_Note.setObjectName("GameIcon_Note")
+        self.gridLayout.addWidget(self.GameIcon_Note, 9, 2, 1, 1)
+        spacerItem4 = QtWidgets.QSpacerItem(
+            500, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum
+        )
+        self.gridLayout.addItem(spacerItem4, 6, 2, 1, 1)
+        self.verticalLayout_6.addLayout(self.gridLayout)
+        self.gridLayout_2 = QtWidgets.QGridLayout()
+        self.gridLayout_2.setContentsMargins(-1, 15, -1, -1)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+
+        ######################################################
+        #####           Custom progressBar
+        ######################################################
+        self.CacheBar = QtWidgets.QProgressBar(self.widgetWithRadius)
+        self.CacheBar.setStyleSheet(
+            """QProgressBar {
+            border-radius: 10px;
+            color:rgb(255, 255, 255);
+            }
+            QProgressBar::chunk {
+            background: QLinearGradient( x1:0.358, y1:0.602182, x2:0.960318, y2:0.648, stop:0 rgb(124, 57, 191), stop:0.903409 rgb(242, 80, 231));
+            border-radius: 10px;
+            };
+            """
+        )
         self.CacheBar.setProperty("value", 0)
         self.CacheBar.setAlignment(QtCore.Qt.AlignCenter)
         self.CacheBar.setTextVisible(True)
-        self.CacheBar.setOrientation(QtCore.Qt.Horizontal)
-        self.CacheBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
         self.CacheBar.setObjectName("CacheBar")
-        self.gridLayout_3.addWidget(self.CacheBar, 7, 3, 1, 1)
-        self.Change_label = QtWidgets.QLabel(self.MainWidget)
+        self.gridLayout_2.addWidget(self.CacheBar, 4, 2, 1, 1)
+        self.Cache_label = QtWidgets.QLabel(self.widgetWithRadius)
+        self.Cache_label.setObjectName("Cache_label")
+        self.gridLayout_2.addWidget(self.Cache_label, 4, 1, 1, 1)
+        self.label = QtWidgets.QLabel(self.widgetWithRadius)
+        self.label.setOpenExternalLinks(True)
+        self.label.setObjectName("label")
+        self.gridLayout_2.addWidget(self.label, 7, 2, 1, 1)
+        spacerItem5 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
+        self.gridLayout_2.addItem(spacerItem5, 0, 2, 1, 1)
+        spacerItem6 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
+        self.gridLayout_2.addItem(spacerItem6, 2, 1, 2, 1)
+        spacerItem7 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
+        self.gridLayout_2.addItem(spacerItem7, 2, 0, 1, 1)
+        self.Credits = QtWidgets.QLabel(self.widgetWithRadius)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Change_label.sizePolicy().hasHeightForWidth())
-        self.Change_label.setSizePolicy(sizePolicy)
-        self.Change_label.setMinimumSize(QtCore.QSize(120, 80))
-        font = QtGui.QFont()
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setWeight(75)
-        self.Change_label.setFont(font)
-        self.Change_label.setStyleSheet("color: rgb(85, 170, 255);")
-        self.Change_label.setFrameShape(QtWidgets.QFrame.Box)
-        self.Change_label.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.Change_label.setLineWidth(2)
-        self.Change_label.setMidLineWidth(0)
-        self.Change_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.Change_label.setObjectName("Change_label")
-        self.gridLayout_3.addWidget(self.Change_label, 0, 0, 5, 1)
-        self.line = QtWidgets.QFrame(self.MainWidget)
-        self.line.setMinimumSize(QtCore.QSize(0, 10))
-        self.line.setStyleSheet("color: rgb(255, 255, 255);")
-        self.line.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.line.setLineWidth(3)
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setObjectName("line")
-        self.gridLayout_3.addWidget(self.line, 5, 0, 2, 6)
-        self.FormLayout.setLayout(
-            4, QtWidgets.QFormLayout.SpanningRole, self.gridLayout_3
-        )
-
-        self.iconWS = QtWidgets.QLabel(self.MainWidget)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.iconWS.setFont(font)
-        self.iconWS.setTextFormat(QtCore.Qt.AutoText)
-        self.iconWS.setAlignment(QtCore.Qt.AlignCenter)
-        self.iconWS.setOpenExternalLinks(True)
-        self.iconWS.setObjectName("iconWS")
-        self.FormLayout.setWidget(5, QtWidgets.QFormLayout.SpanningRole, self.iconWS)
-
-        self.PayPal = QtWidgets.QLabel(self.MainWidget)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.PayPal.setFont(font)
-        self.PayPal.setTextFormat(QtCore.Qt.AutoText)
-        self.PayPal.setAlignment(QtCore.Qt.AlignCenter)
-        self.PayPal.setOpenExternalLinks(True)
-        self.PayPal.setObjectName("PayPal")
-        self.FormLayout.setWidget(6, QtWidgets.QFormLayout.SpanningRole, self.PayPal)
-
-        self.Credits = QtWidgets.QLabel(self.MainWidget)
-        self.Credits.setMinimumSize(QtCore.QSize(0, 20))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setItalic(True)
-        font.setUnderline(True)
-        self.Credits.setFont(font)
-        self.Credits.setStyleSheet("color: rgb(152, 255, 88);")
+        sizePolicy.setHeightForWidth(self.Credits.sizePolicy().hasHeightForWidth())
+        self.Credits.setSizePolicy(sizePolicy)
         self.Credits.setAlignment(QtCore.Qt.AlignCenter)
         self.Credits.setOpenExternalLinks(True)
         self.Credits.setObjectName("Credits")
-        self.FormLayout.setWidget(7, QtWidgets.QFormLayout.SpanningRole, self.Credits)
+        self.gridLayout_2.addWidget(self.Credits, 6, 2, 1, 1)
+        self.Connect_btn = QtWidgets.QPushButton(self.widgetWithRadius)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Connect_btn.sizePolicy().hasHeightForWidth())
+        self.Connect_btn.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        self.Connect_btn.setFont(font)
+        self.Connect_btn.setStyleSheet("color: rgb(42, 44, 89);")
+        self.Connect_btn.setCheckable(False)
+        self.Connect_btn.setFlat(False)
+        self.Connect_btn.setObjectName("Connect_btn")
+        self.gridLayout_2.addWidget(self.Connect_btn, 2, 2, 2, 1)
+        spacerItem8 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
+        self.gridLayout_2.addItem(spacerItem8, 5, 2, 1, 1)
+        spacerItem9 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
+        self.gridLayout_2.addItem(spacerItem9, 1, 2, 1, 1)
+        spacerItem10 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
+        self.gridLayout_2.addItem(spacerItem10, 2, 3, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.widgetWithRadius)
+        self.label_2.setOpenExternalLinks(True)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_2.addWidget(self.label_2, 8, 2, 1, 1)
+        self.verticalLayout_6.addLayout(self.gridLayout_2)
+        self.verticalLayout_4.addLayout(self.verticalLayout_6)
+        spacerItem11 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
+        self.verticalLayout_4.addItem(spacerItem11)
+        self.verticalLayout_5.addWidget(self.widgetWithRadius)
 
-        self.gridLayout_2.addLayout(self.FormLayout, 0, 0, 1, 1)
-        IPortWindow.setCentralWidget(self.MainWidget)
-        self.menuBar = QtWidgets.QMenuBar(IPortWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 720, 21))
-        self.menuBar.setObjectName("menuBar")
-        self.menuSettings = QtWidgets.QMenu(self.menuBar)
+        ######################################################
+        #####           The Menu/Settings hierarchy
+        ######################################################
+        IPortWindow.setCentralWidget(self.mainWidget)
+        self.menubar = QtWidgets.QMenuBar(IPortWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 701, 22))
+        self.menubar.setObjectName("menubar")
+        self.menuSettings = QtWidgets.QMenu(self.menubar)
         self.menuSettings.setObjectName("menuSettings")
-        IPortWindow.setMenuBar(self.menuBar)
+        IPortWindow.setMenuBar(self.menubar)
         self.Options = QtWidgets.QAction(IPortWindow)
         self.Options.setObjectName("Options")
+        self.actionAbout = QtWidgets.QAction(IPortWindow)
+        self.actionAbout.setObjectName("actionAbout")
         self.About = QtWidgets.QAction(IPortWindow)
         self.About.setObjectName("About")
+        self.actionRemove_cache = QtWidgets.QAction(IPortWindow)
+        self.actionRemove_cache.setObjectName("actionAbout")
+        self.Remove_cache = QtWidgets.QAction(IPortWindow)
+        self.Remove_cache.setObjectName("Remove_cache")
+        self.Special_thanks = QtWidgets.QAction(IPortWindow)
+        self.Special_thanks.setObjectName("Special_thanks")
         self.menuSettings.addAction(self.Options)
+        self.menuSettings.addAction(self.Remove_cache)
         self.menuSettings.addSeparator()
         self.menuSettings.addAction(self.About)
-        self.menuBar.addAction(self.menuSettings.menuAction())
+        self.menuSettings.addAction(self.Special_thanks)
+        self.menubar.addAction(self.menuSettings.menuAction())
+
+        self.retranslateUi(IPortWindow)
+
+        ######################################################
+        #####           Slots and Signals
+        ######################################################
+        self.GameIcon.toggled["bool"].connect(self.GameIcon_Note.setVisible)
+        self.SystemIcon.toggled["bool"].connect(self.SysIcon_Note.setVisible)
+        self.ChangeAvatar.toggled["bool"].connect(self.SysIcon_Note.hide)
+        self.ChangeAvatar.toggled["bool"].connect(self.GameIcon_Note.hide)
+        QtCore.QMetaObject.connectSlotsByName(IPortWindow)
 
         self.Connect_btn.clicked.connect(self.Check_IPort)
         self.Options.triggered.connect(self.OpenOptions)
         self.About.triggered.connect(self.about)
 
-        self.retranslateUi(IPortWindow)
-        QtCore.QMetaObject.connectSlotsByName(IPortWindow)
+        self.Special_thanks.triggered.connect(self.thanks_2)
+        self.Remove_cache.triggered.connect(self.rmvCache)
 
     def OpenOptions(self):
         import OptionsWin
@@ -428,7 +478,30 @@ class Ui_IPortWindow(object):
         self.ui.setupUi(self.window, "About")
         self.window.show()
 
+    def thanks_2(self):
+        self.window = QtWidgets.QDialog()
+        self.ui = Message.Ui_Message()
+        self.ui.setupUi(self.window, "CUSTOMspecial_thanks")
+        self.window.show()
+
+    def rmvCache(self):
+        self.window = QtWidgets.QDialog()
+        self.ui = Message.Ui_Message()
+        cache_dir = "Data\prxUserMeta\MegaSRX\metadata\game"
+        all = os.listdir(cache_dir)
+        try:
+            for i in all:
+                os.remove(cache_dir + "\\" + i)
+            self.ui.setupUi(self.window, "CUSTOMdoneRmvCache")
+        except:
+            self.ui.setupUi(self.window, "PermissionDenied")
+        self.window.show()
+
     def retranslateUi(self, IPortWindow):
+        ######################################################
+        #####           Gui elements init
+        ######################################################
+
         _translate = QtCore.QCoreApplication.translate
         IPortWindow.setWindowTitle(
             _translate(
@@ -440,183 +513,323 @@ class Ui_IPortWindow(object):
                 + ")",
             )
         )
+        self.TitleLabel_withURL.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><a href="https://github.com/OfficialAhmed/Iconit-PS4/releases"><span style=" text-decoration: underline; color:#f250e7;">Iconit v4.72</span></a></p></body></html>',
+            )
+        )
+        self.Status.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Waiting Connection ..</span></p></body></html>',
+            )
+        )
+        self.SystemIcon.setText(_translate("IPortWindow", "System Icons"))
+        self.Port_Label.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><span style=" font-size:16pt; font-weight:700; color:#f2ae30;">PS4 Port</span></p></body></html>',
+            )
+        )
+        self.GameIcon.setText(_translate("IPortWindow", "Game Icon/Pic"))
+        self.Port_input.setText(_translate("IPortWindow", self.userPort))
+        self.SysIcon_Note.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><span style=" font-size:8pt; font-weight:700; color:#f2ae30;">Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)</span></p></body></html>',
+            )
+        )
+        self.IP_input.setPlaceholderText(_translate("IPortWindow", "192.168.XXX.XXX"))
+        self.Change_label.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><span style=" font-size:16pt; font-weight:700; color:#f2ae30;">Mode</span></p></body></html>',
+            )
+        )
+        self.IP_Label.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><span style=" font-size:16pt; font-weight:700; color:#f2ae30;">PS4 IP</span></p></body></html>',
+            )
+        )
+        self.ChangeAvatar.setText(_translate("IPortWindow", "Profile Avatar"))
+        self.GameIcon_Note.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><span style=" font-size:8pt; font-weight:700; color:#f2ae30;">Note: You can enable Homebrew icons in the settings before connecting to the PS4</span></p></body></html>',
+            )
+        )
+        self.Cache_label.setText(
+            _translate(
+                "IPortWindow",
+                '<html><head/><body><p align="center"><span style=" font-size:10pt; color:#f2ae30;">Caching</span></p></body></html>',
+            )
+        )
+        self.label.setText(
+            _translate(
+                "MainWindow",
+                '<html><head/><body><p align="center"><a href="https://www.paypal.com/paypalme/Officialahmed0"><span style=" font-weight:700; font-style:italic; text-decoration: underline; color:#f250e7;">Donate (PayPal)</span></a></p></body></html>',
+            )
+        )
 
-        self.Status.setText(_translate("IPortWindow", "Waiting connection..."))
-        self.IP_Label.setText(_translate("IPortWindow", "PS4 IP"))
-        self.IP_input.setPlaceholderText(_translate("IPortWindow", "Exp: 192.168.1.10"))
-        self.Port_Label.setText(_translate("IPortWindow", "PS4 Port"))
-        self.Port_input.setPlaceholderText(_translate("IPortWindow", self.userPort))
-        self.Connect_btn.setText(_translate("IPortWindow", "Connect PS4"))
-        self.Cache_label.setText(_translate("IPortWindow", "Caching"))
-        self.GameIcon.setText(_translate("IPortWindow", "Game Icon / Game Pic"))
-        self.ChangeAvatar.setText(_translate("IPortWindow", "Profile avatar"))
-        self.Change_label.setText(_translate("IPortWindow", "Mode"))
         self.Credits.setText(
             _translate(
-                "IPortWindow",
-                '<html><head/><body><p align="center"><a href="https://twitter.com/OfficialAhmed0"><span style=" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;">Created By @OfficialAhmed0</span></a></p></body></html>',
+                "MainWindow",
+                '<html><head/><body><p align="center"><a href="https://all-exhost.github.io/icon%20downloader.html"><span style=" font-size:8pt; font-weight:700; font-style:italic; text-decoration: underline; color:#f250e7;">Download Free Icons</span></a></p></body></html>',
             )
         )
-        self.iconWS.setText(
+
+        self.label_2.setText(
             _translate(
-                "IPortWindow",
-                '<html><head/><body><p align="center"><a href="https://all-exhost.github.io/icon%20downloader.html"><span style=" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;">Download free icons</span></a></p></body></html>',
+                "MainWindow",
+                '<html><head/><body><p align="center"><a href="https://twitter.com/OfficialAhmed0"><span style=" font-weight:700; font-style:italic; text-decoration: underline; color:#f250e7;">Created by @OfficialAhmed0</span></a></p></body></html>',
             )
         )
-        self.PayPal.setText(
-            _translate(
-                "IPortWindow",
-                '<html><head/><body><p align="center"><a href="https://www.paypal.com/paypalme/Officialahmed0"><span style=" font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#98ff58; vertical-align:super;">Donate (PayPal)</span></a></p></body></html>',
-            )
-        )
-        self.Options.setText(_translate("IPortWindow", "Options..."))
+
+        self.Connect_btn.setText(_translate("IPortWindow", "Connect PS4"))
         self.menuSettings.setTitle(_translate("IPortWindow", "Settings"))
+        self.Options.setText(_translate("IPortWindow", "Options..."))
+        self.actionAbout.setText(_translate("IPortWindow", "About"))
         self.About.setText(_translate("IPortWindow", "About"))
+        self.Remove_cache.setText(_translate("IPortWindow", "Remove cache"))
+        self.Special_thanks.setText(_translate("IPortWindow", "Special thanks"))
 
         # Keyboard recognition v4.07
         self.Connect_btn.setShortcut("Return")
 
     def Check_IPort(self):
         global IP, Port
+        self.Status.setText(
+            '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Connecting...</span></p></body></html>',
+        )
         try:
             IP = self.IP_input.text()
             Port = self.Port_input.text()
 
-            valid = True
-            for i in IP + str(Port):
-                if i.isalpha():
-                    valid = False
-                    break
-
-            self.Connect_PS4(valid)
-
+            if len(IP) < 8:
+                self.Connect_PS4(False)
+            else:
+                valid = True
+                for i in IP + str(Port):
+                    if i.isalpha():
+                        valid = False
+                        break
+                self.Connect_PS4(valid)
         except Exception as e:
             self.logIt(str(e), "Warning")
 
     def ChangeColors(self, Connected):
-        labels = (
-            self.Status,
-            self.IP_Label,
-            self.Port_Label,
-            self.Change_label,
-            self.Cache_label,
-        )
+        labels = {
+            self.IP_Label: "PS4 IP",
+            self.Port_Label: "PS4 Port",
+            self.Change_label: "Mode",
+            self.Cache_label: "caching",
+        }
         if Connected:
-            self.Status.setText("Connected")
+            self.Status.setText(
+                '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:rgb(92, 213, 21);">Connected</span></p></body></html>',
+            )
         else:
-            self.Status.setText("Not Connected")
+            self.Status.setText(
+                '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:rgb(255, 0, 0);">Failed to connect</span></p></body></html>',
+            )
         for l in labels:
-            l.setStyleSheet("color: rgb(255, 0, 0);")
+            l.setText(
+                '<html><head/><body><p align="center"><span style=" font-size:16pt; font-weight:700; color:rgb(255, 0, 0);">'
+                + labels[l]
+                + "</span></p></body></html>",
+            )
             if Connected:
-                l.setStyleSheet("color: rgb(92, 213, 21);")
+                l.setText(
+                    '<html><head/><body><p align="center"><span style=" font-size:16pt; font-weight:700; color:rgb(92, 213, 21);">'
+                    + labels[l]
+                    + "</span></p></body></html>"
+                )
 
     # (ed0) Done
     def Connect_PS4(self, isvalid):
-        global ftp, working_dir, IP, Port, local_path, all_CUSA, all_CUSA_ex, temp_path
+        global ftp, working_dir, IP, Port, local_path, all_CUSA, all_CUSA_ex, temp_path, sys_path, all_CUSA_sys, Game
         self.window = QtWidgets.QDialog()
         self.ui = Message.Ui_Message()
         if isvalid:
+            ################################################################################
+            ###
+            ###                     Naive Approach  ;)
+            ###         Solution for one connection only (GoldHen FTP)
+            ###     *Try to connect otherwise, try to close the connection
+            ###            might not been closed properly before.
+            ###      *Never close connection until we move to the next window
+            ### *Avoid reconnceting to step back to root dir, Change dir manually (/)
+            ###
+            ################################################################################
             try:
-                # Delete old Cache
-                try:
-                    cache = os.listdir(temp_path + "MegaSRX\metadata")
-                    for i in cache:
-                        os.remove(temp_path + "MegaSRX\metadata\\" + str(i))
-                except Exception as e:
-                    print(str(e), ": Couldn't remove cache")
-
-                # Iconit Or Profileit ?
-                if self.GameIcon.isChecked() == True:  # Iconit
-                    self.iconDirs = [working_dir]
-                    ftp.set_debuglevel(0)
-                    ftp.connect(IP, int(Port))
-                    ftp.login("", "")
-                    ftp.cwd("user/appmeta")
-                    # look for external folder in appmeta
-                    directories = []
-                    ftp.retrlines("LIST ", directories.append)
-                    for dir in directories:
-                        if "external" in dir:
-                            self.iconDirs.append(working_dir + "/external")
-                            break
-
-                    self.ChangeColors(True)
-                    self.Connect_btn.setEnabled(False)
-                    self.GameIcon.setEnabled(False)
-                    self.ChangeAvatar.setEnabled(False)
-                    for dir in self.iconDirs:
-                        ftp.set_debuglevel(0)
-                        ftp.connect(IP, int(Port))
-                        ftp.login("", "")
-                        try:
-                            ftp.cwd(dir)
-                        except Exception as e:
-                            self.logIt(str(e), "Warning")
-                        directories = []
-                        ftp.retrlines("LIST ", directories.append)
-
-                        game_ids = [line.split(" ")[-1] for line in directories]
-                        all_Games = []
-
-                        for game_id in game_ids:
-                            if len(game_id) == len("CUSA00000"):
-                                accept = True
-                                if self.userHB != "True":
-                                    # skip homebrews if turned off
-                                    if "CUSA" not in game_id:
-                                        accept = False
-
-                                if accept:
-                                    if "external" in dir:
-                                        all_Games.append(game_id)
-                                        all_CUSA_ex.append(game_id)
-                                    else:
-                                        all_Games.append(game_id)
-                                        all_CUSA.append(game_id)
-
-                    _thread.start_new_thread(self.CacheGameIcon())
-
-                else:  # Profileit
-                    self.sysProfileRoot = "system_data/priv/cache/profile/"
-                    ftp.set_debuglevel(0)
-                    ftp.connect(IP, int(Port))
-                    ftp.login("", "")
-                    ftp.cwd(self.sysProfileRoot)
-                    self.userID = []
-
-                    self.ChangeColors(True)
-
-                    self.Connect_btn.setEnabled(False)
-                    self.GameIcon.setEnabled(False)
-                    self.ChangeAvatar.setEnabled(False)
-                    directories = []
-                    ftp.retrlines("LIST ", directories.append)
-
-                    with open(
-                        temp_path + "directories in system.dat", "w+"
-                    ) as all_directories_in_system:
-                        for line in directories:
-                            all_directories_in_system.write(line + "\n")
-
-                    with open(temp_path + "directories in system.dat") as file:
-                        lines = file.readlines()
-                        for line in lines:
-                            if "0x" in line:
-                                account_index = line.index("0x")
-                                self.userID.append(line[account_index:-1])
-                    self.CacheChangeAvatar()
-
-            except Exception as e:
-                self.logIt(str(e), "Error")
+                ftp.set_debuglevel(0)
+                ftp.connect(IP, int(Port))
+                ftp.login("", "")
+                ftp.getwelcome()
+            except ConnectionRefusedError:
                 self.ChangeColors(False)
-                self.ui.setupUi(self.window, str(e))
+                self.ui.setupUi(
+                    self.window,
+                    "Cannot make connection with the given IP/Port. DEV| ConnectionRefusedError",
+                )
                 self.window.show()
+                return
+            except Exception as e:
+                ftp.close()
+                self.logIt(e, "Error")
+                self.ChangeColors(False)
+                self.ui.setupUi(
+                    self.window,
+                    "Cannot make connection with the given IP/Port. DEV|" + str(e),
+                )
+                self.window.show()
+                return
+
+            ##############################################
+            ###       User Picked Game Icon
+            ###############################################
+            if self.GameIcon.isChecked():
+                self.Status.setText(
+                    '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Please wait...</span></p></body></html>'
+                )
+                # v4.72 json for caching
+                jsonPath = "Data\prxUserMeta\MegaSRX\metadata\game\info.json"
+                if os.path.isfile(jsonPath):
+                    ReadJson = open(jsonPath)
+                    Game = json.load(ReadJson)
+
+                self.modeSelected = "game"
+                self.iconDirs = [working_dir]
+                ftp.cwd("/")
+                ftp.cwd("user/appmeta")
+
+                directories = []
+                ftp.retrlines("LIST ", directories.append)
+                for dir in directories:
+                    if "external" in dir:
+                        self.iconDirs.append(working_dir + "/external")
+                        break
+                self.ChangeColors(True)
+                self.Connect_btn.setEnabled(False)
+                self.GameIcon.setEnabled(False)
+                self.ChangeAvatar.setEnabled(False)
+
+                for dir in self.iconDirs:
+                    ftp.cwd("/")
+                    try:
+                        ftp.cwd(dir)
+                    except Exception as e:
+                        self.logIt(str(e), "Warning")
+                    directories = []
+                    ftp.retrlines("LIST ", directories.append)
+
+                    game_ids = [line.split(" ")[-1] for line in directories]
+                    all_Games = []
+
+                    for game_id in game_ids:
+                        if len(game_id) == len("CUSA00000"):
+                            accept = True
+
+                            """
+                            If HB is on
+                            check each game id for CUSA or NPXS(sys icons) only
+                            """
+                            if self.userHB != "True":
+                                if "CUSA" not in game_id:
+                                    accept = False
+                                    try:
+                                        Game.pop(game_id)
+                                    except:
+                                        pass
+
+                            if accept:
+                                if "external" in dir:
+                                    all_Games.append(game_id)
+                                    all_CUSA_ex.append(game_id)
+                                else:
+                                    all_Games.append(game_id)
+                                    all_CUSA.append(game_id)
+                self.CacheGameIcon()
+
+            ##############################################
+            ###       User picked Sys icons
+            ###############################################
+            elif self.SystemIcon.isChecked():
+                self.Status.setText(
+                    '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Please wait...</span></p></body></html>'
+                )
+                ftp.cwd("/")
+                ftp.cwd(sys_path)
+
+                sys_files = self.listDirs()
+
+                self.ChangeColors(True)
+                self.Connect_btn.setEnabled(False)
+                self.GameIcon.setEnabled(False)
+                self.ChangeAvatar.setEnabled(False)
+
+                for sys_game in sys_files:
+                    if len(sys_game) == len("CUSA00000"):
+                        ftp.cwd(sys_game)
+                        folders_inside = self.listDirs()
+                        if "sce_sys" in folders_inside:
+                            ftp.cwd("sce_sys")
+                            files_inside = self.listDirs()
+                            if "icon0.png" in files_inside:
+                                all_CUSA_sys.append(sys_game)
+
+                    ftp.cwd("/")
+                    ftp.cwd(sys_path)
+
+                self.CacheSysIcon()
+            ##############################################
+            ###       User picked Avatar change
+            ###############################################
+            else:
+                self.Status.setText(
+                    '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Please wait...</span></p></body></html>'
+                )
+                self.sysProfileRoot = "system_data/priv/cache/profile/"
+                ftp.cwd("/")
+                ftp.cwd(self.sysProfileRoot)
+                self.userID = []
+
+                self.ChangeColors(True)
+
+                self.Connect_btn.setEnabled(False)
+                self.GameIcon.setEnabled(False)
+                self.ChangeAvatar.setEnabled(False)
+                directories = []
+                ftp.retrlines("LIST ", directories.append)
+
+                with open(
+                    temp_path + "directories in system.dat", "w+"
+                ) as all_directories_in_system:
+                    for line in directories:
+                        all_directories_in_system.write(line + "\n")
+
+                with open(temp_path + "directories in system.dat") as file:
+                    lines = file.readlines()
+                    for line in lines:
+                        if "0x" in line:
+                            account_index = line.index("0x")
+                            self.userID.append(line[account_index:-1])
+                self.CacheChangeAvatar()
         else:
             self.ChangeColors(False)
-            self.ui.setupUi(self.window, "Invalid")
+            self.ui.setupUi(
+                self.window,
+                "Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection",
+            )
             self.window.show()
 
     def CacheChangeAvatar(self):
+        ###############################################
+        #            Prepare Avatars
+        ################################################
+
         fileName = "online.json"
         dir = temp_path + "MegaSRX\metaprodata\\"
         # Remove old data
@@ -633,9 +846,7 @@ class Ui_IPortWindow(object):
         self.CacheBar.setProperty("value", 1)
 
         for user in self.userID:
-            ftp.set_debuglevel(0)
-            ftp.connect(IP, int(Port))
-            ftp.login("", "")
+            ftp.cwd("/")
             ftp.cwd(self.sysProfileRoot + "/" + user)
 
             with open(dir + "\\" + user + ".png", "wb") as file:
@@ -665,7 +876,7 @@ class Ui_IPortWindow(object):
                     }
 
                     with open(dir + "\\" + user + ".json", "w+") as jsonFile:
-                        json.dump(data, jsonFile)
+                        json.dump(data, jsonFile, indent=4)
 
                     with open(dir + "\\" + user + ".json", "rb") as json:
                         ftp.storbinary("STOR online.json", json, 1024)
@@ -705,180 +916,213 @@ class Ui_IPortWindow(object):
         self.CacheBar.setProperty("value", 100)
         self.OpenWindow("ChangeAvatar")
 
-    def fetchIcon(self, current_CUSA, icon_name):
-        # called by multiprocessing method
-        with open(
-            temp_path + "MegaSRX\metadata\\" + str(current_CUSA) + ".png",
-            "wb",
-        ) as downloaded_file:
-            ftp.retrbinary("RETR " + icon_name, downloaded_file.write, 24)
+    def CacheSysIcon(self):
 
-    def CacheGameIcon(self):
-        from xml.dom import minidom
+        ###############################################
+        #            Sys Icons impl v4.72
+        ################################################
 
-        global all_CUSA, all_CUSA_ex, ftp, temp_path, working_dir, IP, Port, Game
-        t1 = time.time()
+        global all_CUSA_sys
+        GameWeightInFraction = (1 / len(all_CUSA_sys)) * 100
+        percentage = 0
+        ftp.set_debuglevel(0)
+        ftp.cwd("/")
+        ftp.cwd(sys_path)
 
-        numGames = len(all_CUSA + all_CUSA_ex)
-        # (FF) (go to 900)
-        file_name = "pronunciation.xml"
-        icon_name = "icon0.png"
-        self.CacheBar.setProperty("value", 1)
-        Eng1 = [chr(x) for x in range(ord("a"), ord("a") + 26)]  # a - z
-        Eng2 = [chr(x) for x in range(ord("A"), ord("A") + 26)]  # A - Z
-        Eng = Eng1 + Eng2
-        Eng.append(" ")
-        alphaNum = (
-            "one",  # @
-            "two",  # O
-            "three",  # f
-            "four",  # f
-            "five",  # i
-            "six",  # c
-            "seven",  # i
-            "eight",  # a
-            "nine",  # l
-            "™",  # A
-            "'",  # h
-            "!",  # m
-            "?",  # ed0
-        )
+        for sysIcon in all_CUSA_sys:
+            ftp.cwd(sysIcon + "/sce_sys")
+            inside_sce_sys = self.listDirs()
+            icon_2_fetch = "icon0.png"
 
-        for dir in self.iconDirs:
-            ftp.set_debuglevel(0)
-            ftp.connect(IP, int(Port))
-            ftp.login("", "")
-            ftp.cwd(dir)
-            counter = 0
+            # fetch 4k version if found
+            if "icon0_4k.png" in inside_sce_sys:
+                icon_2_fetch = "icon0_4k.png"
 
-            if "external" in dir:
-                currentDir = all_CUSA_ex
-            else:
-                currentDir = all_CUSA
+            self.fetchData(
+                icon_2_fetch,
+                f"{temp_path}MegaSRX\metadata\\{sysIcon}.png",
+            )
+            if self.file_name in inside_sce_sys:
+                self.fetchData(self.file_name, temp_path + self.file_name)
 
-            for i in currentDir:
-                if counter == int(numGames / 2):
-                    for i in range(25, 50):
-                        self.CacheBar.setProperty("value", i)
-                        time.sleep(0.00001)
-                elif counter == int(numGames / 4):
-                    for i in range(2, 25):
-                        self.CacheBar.setProperty("value", i)
-                        time.sleep(0.00001)
-                elif counter == int(numGames / (75 / 100)):
-                    for i in range(50, 75):
-                        self.CacheBar.setProperty("value", i)
-                        time.sleep(0.00001)
-                ftp.cwd(currentDir[counter])
+                diff_titles = []  # all different titles for current fetched game
+                file = minidom.parse(temp_path + self.file_name).getElementsByTagName(
+                    "text"
+                )
 
-                files_in_dir = ftp.nlst()
+                for name in file:
+                    diff_titles.append(name.firstChild.data)
 
-                # Check for pronunciation.xml or icon0
-                for content_in_file in files_in_dir:
-                    if file_name in content_in_file or icon_name in content_in_file:
-                        current_CUSA = currentDir[counter]
+                GameTitle = ""
+                for title in diff_titles:
+                    english = True
 
-                        if file_name in content_in_file:
-                            # Cache xml file
-                            with open(temp_path + file_name, "wb") as downloaded_file:
-                                ftp.retrbinary(
-                                    "RETR " + file_name, downloaded_file.write, 1024
-                                )
-
-                            # cache icon0
-
-                            # with open(
-                            #     temp_path
-                            #     + "MegaSRX\metadata\\"
-                            #     + str(current_CUSA)
-                            #     + ".png",
-                            #     "wb",
-                            # ) as downloaded_file:
-                            #     ftp.retrbinary(
-                            #         "RETR " + icon_name, downloaded_file.write, 1024
-                            #     )
-
-                            # MultiProccesing
-                            pool = Pool(1)
-                            pool.apply_async(
-                                self.fetchIcon,
-                                args=(current_CUSA, icon_name),
-                            )
-
-                            """
-                            Algorithm implemented(v4.72)
-                            fetch the best gameTitle for the current game [pronunciation.xml]
-
-                            """
-                            diff_titles = (
-                                []
-                            )  # all different titles for current fetched game
-                            file = minidom.parse(
-                                temp_path + file_name
-                            ).getElementsByTagName("text")
-
-                            for name in file:
-                                diff_titles.append(name.firstChild.data)
-
-                            GameTitle = ""
-                            for title in diff_titles:
-                                english = True
-
-                                for alpha in alphaNum:
-                                    if alpha in title or alpha.title() in title:
-                                        GameTitle = title
-                                        Game[current_CUSA] = GameTitle
-                                    else:
-                                        for char in title:
-                                            if char not in Eng:
-                                                english = False
-                                                break
-                                if english:
-                                    GameTitle = title
-                                    Game[current_CUSA] = GameTitle
+                    for alpha in self.alphaNum:
+                        if alpha in title or alpha.title() in title:
+                            GameTitle = title
+                            Game[sysIcon] = GameTitle
                         else:
-                            with open(
-                                temp_path
-                                + "MegaSRX\metadata\\"
-                                + str(current_CUSA)
-                                + ".png",
-                                "wb",
-                            ) as downloaded_file:
-                                ftp.retrbinary(
-                                    "RETR " + icon_name, downloaded_file.write, 1024
-                                )
-                            if "CUSA" in current_CUSA:
-                                Game[current_CUSA] = "Unknown"
-                            else:
-                                Game[current_CUSA] = "Unknown Homebrew"
-
-                if "external" in dir:
-                    # Get back to root directory
-                    ftp.set_debuglevel(0)
-                    ftp.connect(IP, int(Port))
-                    ftp.login("", "")
-                    ftp.cwd(dir)
+                            for char in title:
+                                if char not in self.Eng:
+                                    english = False
+                                    break
+                    if english:
+                        GameTitle = title
+                        Game[sysIcon] = GameTitle
+            else:
+                if "NPXS" in sysIcon:
+                    Game[sysIcon] = 'Unknown system icon "Sony didn\'t provide one :)"'
                 else:
-                    ftp.set_debuglevel(0)
-                    ftp.connect(IP, int(Port))
-                    ftp.login("", "")
-                    ftp.cwd(working_dir)
-                counter += 1
+                    Game[sysIcon] = f"Cannot find title for {sysIcon}"
 
-        for i in range(51, 100):
-            self.CacheBar.setProperty("value", i)
-            time.sleep(0.01)
+            ftp.cwd("/")
+            ftp.cwd(sys_path)
+            percentage += GameWeightInFraction
+            self.CacheBar.setProperty(
+                "value", str(percentage)[: str(percentage).index(".")]
+            )
 
         try:
-            t2 = time.time()
-            print((t2 - t1) / 60)
             self.OpenWindow("GameIcon")
         except Exception as e:
             print(str(e), "(O) go to line 700")
 
+    def CacheGameIcon(self):
+        ################################################
+        #   Internal/External HDD Game Icons
+        ################################################
+        global all_CUSA, all_CUSA_ex, ftp, temp_path, working_dir, IP, Port, Game, all_CUSA_sys
+
+        # (FF) (go to 900)
+        try:
+            self.cached = os.listdir(f"{temp_path}MegaSRX\metadata\\game")
+            numGames = len(all_CUSA + all_CUSA_ex)
+            GameWeightInFraction = (1 / numGames) * 100
+            percentage = 0
+
+            for dir in self.iconDirs:
+                ftp.cwd("/")
+                ftp.cwd(dir)
+                counter = 0
+
+                if "external" in dir:
+                    currentDir = all_CUSA_ex
+                else:
+                    currentDir = all_CUSA
+
+                for i in currentDir:
+                    ftp.cwd(i)
+                    gameId = currentDir[counter]
+
+                    if gameId not in Game:
+                        ######################################################
+                        ###  Fetch icons only if its not it the cache => info.json
+                        ###  impl. v4.72
+                        ######################################################
+
+                        files_in_dir = self.listDirs()
+
+                        for content_in_file in files_in_dir:
+                            if (
+                                self.file_name in content_in_file
+                                or self.icon_name in content_in_file
+                            ):
+                                if self.file_name in content_in_file:
+                                    self.fetchData(
+                                        self.file_name, temp_path + self.file_name
+                                    )
+                                if self.icon_name in content_in_file:
+                                    self.fetchData(
+                                        self.icon_name,
+                                        f"{temp_path}MegaSRX\metadata\\game\\{gameId}.png",
+                                    )
+                                diff_titles = (
+                                    []
+                                )  # all different titles for current fetched game
+                                file = minidom.parse(
+                                    temp_path + self.file_name
+                                ).getElementsByTagName("text")
+
+                                for name in file:
+                                    diff_titles.append(name.firstChild.data)
+
+                                GameTitle = ""
+                                for title in diff_titles:
+                                    if self.file_name in files_in_dir:
+                                        GameTitle = title
+                                        Game[gameId] = GameTitle
+                                    else:
+                                        GameTitle = "Unknown"
+                                        Game[gameId] = GameTitle
+                                        break
+                                    english = True
+
+                                    for char in title:
+                                        if char not in self.Eng:
+                                            english = False
+                                            break
+                                    if english:
+                                        GameTitle = title
+                                        Game[gameId] = GameTitle
+                                        break
+
+                    # Get back to root directory
+                    ftp.cwd("/")
+
+                    if "external" in dir:
+                        ftp.cwd(dir)
+                    else:
+                        ftp.cwd(working_dir)
+                    counter += 1
+                    percentage += GameWeightInFraction
+                    self.CacheBar.setProperty(
+                        "value", str(percentage)[: str(percentage).index(".")]
+                    )
+            try:
+                self.OpenWindow("GameIcon")
+            except Exception as e:
+                print(str(e), "(O) go to line 700")
+        except Exception as e:
+            self.logIt(e, "Error")
+            self.ChangeColors(False)
+            self.ui.setupUi(self.window, str(e))
+            self.window.show()
+
+    def listDirs(self):
+        ######################################################
+        ##     Equevalent of nlst() method
+        ##     PS4 FTP doesn't support nlst             impl. v4.72
+        ######################################################
+
+        dir_with_info = []
+        ftp.retrlines("LIST ", dir_with_info.append)
+
+        directories = [x.split(" ")[-1] for x in dir_with_info]
+        return directories
+
+    def fetchData(self, file_name, file_path_with_extension):
+        self.Status.setText(
+            '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Please wait...</span></p></body></html>'
+        )
+        with open(
+            file_path_with_extension,
+            "wb",
+        ) as downloaded_file:
+            ftp.retrbinary("RETR " + file_name, downloaded_file.write)
+
     def OpenWindow(self, WinType):
+        global IP, Port, Game, all_CUSA_sys
+        sorted_Games = {k: v for k, v in sorted(Game.items(), key=lambda item: item[1])}
+        ftp.close()
+
         if WinType == "GameIcon":
-            global IP, Port, Game
+            # store games in json for cache if not IconSys
+            if len(all_CUSA_sys) == 0:
+                with open(
+                    "Data\prxUserMeta\MegaSRX\metadata\game\info.json", "w+"
+                ) as jsonFile:
+                    json.dump(sorted_Games, jsonFile)
+
             IPortWindow.hide()
             self.window = QtWidgets.QWidget()
             self.ui = ChangeIcon.Ui_ChangeIconWindow()
@@ -886,7 +1130,7 @@ class Ui_IPortWindow(object):
                 self.window,
                 IP,
                 Port,
-                Game,
+                sorted_Games,
                 self.userFont,
                 self.userIPath,
                 self.userDPath,
@@ -894,6 +1138,8 @@ class Ui_IPortWindow(object):
                 all_CUSA_ex,
                 self.w,
                 self.h,
+                all_CUSA_sys,
+                self.modeSelected,
             )
             self.window.show()
         else:
@@ -932,7 +1178,7 @@ if __name__ == "__main__":
     import sys
     from func import playSound as play
 
-    play(f"{local_path}/Data/Pref/bgm/home.mp3")
+    play(f"{local_path}/Data/Pref/bgm/home.@OfficialAhmed0")
 
     app = QtWidgets.QApplication(sys.argv)
     screenResolution = app.desktop().screenGeometry()

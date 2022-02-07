@@ -4,6 +4,8 @@ import os
 import sys
 from PIL import Image
 from ftplib import FTP
+import Message
+import shutil
 
 
 class Ui_ConfirmWindow(object):
@@ -18,6 +20,8 @@ class Ui_ConfirmWindow(object):
         exGames,
         CurrentUser=None,
         changeBgPath=None,
+        modeSelected="",
+        sysIconsAlgo=False,
     ):
         ConfirmWindow.setObjectName("ConfirmWindow")
         ConfirmWindow.resize(378, 229)
@@ -36,6 +40,12 @@ class Ui_ConfirmWindow(object):
         self.temp_path = self.local_path + "\Data\prxUserMeta\\"
         self.changeIconPath = changeIconPath
         self.changeBgPath = changeBgPath
+        self.modeSelected = modeSelected
+        self.sysIconsAlgo = sysIconsAlgo
+
+        self.window = QtWidgets.QDialog()
+        self.ui = Message.Ui_Message()
+
         self.centralwidget = QtWidgets.QWidget(ConfirmWindow)
         self.centralwidget.setObjectName("ConfirmWindow")
         font = QtGui.QFont()
@@ -163,6 +173,37 @@ class Ui_ConfirmWindow(object):
             img.compression = "dxt1"
             img.save(filename=output_dir)
 
+    def backup(self, sys=False):
+        ###################################################
+        ###             backup impl. v4.72
+        ###       Move icon to Your Backup folder
+        ###################################################
+
+        backup = []
+        try:
+            backup = os.listdir("Your Backup")
+        except:
+            os.mkdir("Your Backup")
+
+        if self.Current_CUSA + ".png" in backup:
+            try:
+                os.remove("Your Backup\\" + self.Current_CUSA + ".png")
+            except Exception as e:
+                self.logIt(str(e), "Error")
+
+        try:
+            shutil.copyfile(
+                "Data\prxUserMeta\MegaSRX\metadata\\"
+                + self.modeSelected
+                + "\\"
+                + self.Current_CUSA
+                + ".png",
+                "Your Backup\\" + self.Current_CUSA + ".png",
+            )
+
+        except Exception as e:
+            self.logIt(str(e), "Error")
+
     def Resize_Upload(self):
         try:
             try:
@@ -180,128 +221,208 @@ class Ui_ConfirmWindow(object):
 
             self.Yes.setEnabled(False)
             self.No.setEnabled(False)
-            self.ftp.set_debuglevel(2)
-            self.ftp.connect(self.IP, int(self.Port))
-            self.ftp.login("", "")
+            try:
+                self.ftp.connect(self.IP, int(self.Port))
+                self.ftp.login("", "")
+            except:
+                self.logIt(e, "Error")
+                self.ui.setupUi(self.window, str(e))
+                self.window.show()
             self.CheckingBar.setProperty("value", 10)
+            img_dir = self.temp_path + "MegaSRX\\"
 
             if self.ConfirmType == "Iconit":
-                IconName = []  # Icon0, Icon0_X (dds and png extension)
-                BackgroundName = []  # Pic0, Pic1 (dds and png extension)
+                if self.sysIconsAlgo:
+                    ###################################################
+                    ###
+                    ### Critical method needs to be accurate 100%
+                    ### messing up with PS4 sys files related to sys icons
+                    ###
+                    ###################################################
 
-                if self.Current_CUSA in self.exGames:
-                    self.ftp.cwd(self.working_dir + "/external/" + self.Current_CUSA)
-                else:
-                    self.ftp.cwd(self.working_dir + "/" + self.Current_CUSA)
+                    self.ftp.cwd("/")
+                    self.ftp.cwd("system_ex/app/" + self.Current_CUSA + "/sce_sys")
+                    sce_sys_dir = []
+                    self.ftp.retrlines("LIST ", sce_sys_dir.append)
+                    files_inside = [x.split(" ")[-1] for x in sce_sys_dir]
+                    self.CheckingBar.setProperty("value", 5)
 
-                self.CheckingBar.setProperty("value", 50)
-                img_dir = self.temp_path + "MegaSRX\\"
+                    iconFound = "icon0.png"
+                    found_4k = False
+                    IconName = [iconFound]
 
-                # Check how many icons in Game directory
-                with open(
-                    self.temp_path + "files_in_dir.dat", "w+", encoding="utf8"
-                ) as files_in_dir:
-                    self.ftp.retrlines("LIST", files_in_dir.write)
-                self.CheckingBar.setProperty("value", 95)
+                    if "icon0_4k.png" in files_inside:
+                        iconFound = "icon0_4k.png"
+                        IconName.append(iconFound)
+                        found_4k = True
 
-                # update v4.65 compatible compression type for PS4 .DDS = DXT1
-                with open(
-                    self.temp_path + "files_in_dir.dat", "r", encoding="utf8"
-                ) as files_in_dir_4_pics:
-                    # v4.65 new implementation for background image feature
-                    content_in_file = files_in_dir_4_pics.read()
+                    self.CheckingBar.setProperty("value", 45)
+                    with open(self.temp_path + "MegaSRX\\icon0.png", "wb") as file:
+                        self.ftp.retrbinary("RETR " + iconFound, file.write)
+
+                    self.backup(sys=True)
                     self.CheckingBar.setProperty("value", 100)
-                    self.ResizingBar.setProperty("value", 1)
+
                     if self.changeIconPath != "" and self.changeIconPath != None:
-                        # Icon has been changed we need to resize and prepare for upload
-
-                        Icon = Image.open(self.changeIconPath)
-                        resizeIcon = Icon.resize((512, 512), PIL.Image.ANTIALIAS)
-
-                        if "icon0.png" in content_in_file:
-                            resizeIcon.save(img_dir + "icon0.png")
-                            IconName.append("icon0.png")
-                        if "icon0.dds" in content_in_file:
-                            self.png2dds(img_dir + "icon0.png", img_dir + "icon0.dds")
-                            IconName.append("icon0.dds")
                         self.ResizingBar.setProperty("value", 10)
+                        Icon = Image.open(self.changeIconPath)
 
-                        img_count = 22
-                        if "icon0_21.png" in content_in_file:
-                            img_count = 42
+                        if found_4k:
+                            minSize = 660
+                            resizeIcon = Icon.resize(
+                                (minSize, minSize), PIL.Image.ANTIALIAS
+                            )
+                            resizeIcon.save(img_dir + "icon0_4k.png")
+                            self.ResizingBar.setProperty("value", 40)
 
-                        # Limit of icons 42
-                        for through_20 in range(1, img_count):
-                            if 10 + through_20 <= 44:
-                                self.ResizingBar.setProperty("value", 20 + through_20)
-                            if through_20 <= 9:
-                                search_png = "icon0_0" + str(through_20) + ".png"
-                                search_dds = "icon0_0" + str(through_20) + ".dds"
+                        self.ResizingBar.setProperty("value", 75)
 
-                                if search_png in content_in_file:
-                                    resizeIcon.save(img_dir + search_png)
-                                    IconName.append(search_png)
+                        minSize = 512
+                        resizeIcon = Icon.resize(
+                            (minSize, minSize), PIL.Image.ANTIALIAS
+                        )
+                        resizeIcon.save(img_dir + "icon0.png")
 
-                                if search_dds in content_in_file:
-                                    # if png exists override it no issue, otherwise
-                                    # create a png, resize it and convert it to dds
-                                    resizeIcon.save(img_dir + search_png)
-                                    self.png2dds(
-                                        img_dir + search_png, img_dir + search_dds
+                        self.ResizingBar.setProperty("value", 100)
+                else:
+                    IconName = []  # Icon0, Icon0_X (dds and png extension)
+                    BackgroundName = []  # Pic0, Pic1 (dds and png extension)
+                    self.ftp.cwd("/")
+                    try:
+                        if self.Current_CUSA in self.exGames:
+                            self.ftp.cwd(
+                                self.working_dir + "/external/" + self.Current_CUSA
+                            )
+                        else:
+                            self.ftp.cwd(self.working_dir + "/" + self.Current_CUSA)
+                    except:
+                        import Message
+
+                        self.window = QtWidgets.QDialog()
+                        self.ui = Message.Ui_Message()
+                        self.ui.setupUi(
+                            self.window,
+                            "Cannot find this icon in your PS4. This might be from an older caching process please delete cache and recache again, other than that you may continue but this icon wont be changed.",
+                        )
+                        self.window.show()
+                        self.CheckingBar.setProperty("value", 50)
+
+                    # Check how many icons in Game directory
+                    with open(
+                        self.temp_path + "files_in_dir.dat", "w+", encoding="utf8"
+                    ) as files_in_dir:
+                        self.ftp.retrlines("LIST", files_in_dir.write)
+                    self.CheckingBar.setProperty("value", 95)
+
+                    # update v4.65 compatible compression type for PS4 .DDS = DXT1
+                    with open(
+                        self.temp_path + "files_in_dir.dat", "r", encoding="utf8"
+                    ) as files_in_dir_4_pics:
+                        # v4.65 new implementation for background image feature
+                        content_in_file = files_in_dir_4_pics.read()
+                        self.CheckingBar.setProperty("value", 100)
+                        self.ResizingBar.setProperty("value", 1)
+                        if self.changeIconPath != "" and self.changeIconPath != None:
+                            self.backup()
+
+                            # Icon has been changed we need to resize and prepare for upload
+                            Icon = Image.open(self.changeIconPath)
+                            resizeIcon = Icon.resize((512, 512), PIL.Image.ANTIALIAS)
+
+                            if "icon0.png" in content_in_file:
+                                resizeIcon.save(img_dir + "icon0.png")
+                                IconName.append("icon0.png")
+
+                            if "icon0.dds" in content_in_file:
+                                self.png2dds(
+                                    img_dir + "icon0.png", img_dir + "icon0.dds"
+                                )
+                                IconName.append("icon0.dds")
+                            self.ResizingBar.setProperty("value", 10)
+
+                            img_count = 22
+                            if "icon0_21.png" in content_in_file:
+                                img_count = 42
+
+                            # Limit of icons 42
+                            for through_20 in range(1, img_count):
+                                if 10 + through_20 <= 44:
+                                    self.ResizingBar.setProperty(
+                                        "value", 20 + through_20
                                     )
-                                    IconName.append(search_dds)
-                            else:
-                                search_png = "icon0_" + str(through_20) + ".png"
-                                search_dds = "icon0_" + str(through_20) + ".dds"
+                                if through_20 <= 9:
+                                    search_png = "icon0_0" + str(through_20) + ".png"
+                                    search_dds = "icon0_0" + str(through_20) + ".dds"
 
-                                if search_png in content_in_file:
-                                    try:
+                                    if search_png in content_in_file:
                                         resizeIcon.save(img_dir + search_png)
                                         IconName.append(search_png)
-                                    except Exception as e:
-                                        self.logIt(str(e), "Warning")
 
-                                if search_dds in content_in_file:
-                                    try:
+                                    if search_dds in content_in_file:
+                                        # if png exists override it no issue, otherwise
+                                        # create a png, resize it and convert it to dds
+                                        resizeIcon.save(img_dir + search_png)
                                         self.png2dds(
                                             img_dir + search_png, img_dir + search_dds
                                         )
                                         IconName.append(search_dds)
-                                    except Exception as e:
-                                        self.logIt(str(e), "Error")
-                    self.ResizingBar.setProperty("value", 45)
+                                else:
+                                    search_png = "icon0_" + str(through_20) + ".png"
+                                    search_dds = "icon0_" + str(through_20) + ".dds"
 
-                    if self.changeBgPath != "" and self.changeBgPath != None:
-                        # Background image has been changed we need to resize and prepare for upload
+                                    if search_png in content_in_file:
+                                        try:
+                                            resizeIcon.save(img_dir + search_png)
+                                            IconName.append(search_png)
+                                        except Exception as e:
+                                            self.logIt(str(e), "Warning")
 
-                        Background = Image.open(self.changeBgPath)
-                        resizeBackground = Background.resize(
-                            (1920, 1080), PIL.Image.ANTIALIAS
-                        )
-                        self.ResizingBar.setProperty("value", 50)
+                                    if search_dds in content_in_file:
+                                        try:
+                                            self.png2dds(
+                                                img_dir + search_png,
+                                                img_dir + search_dds,
+                                            )
+                                            IconName.append(search_dds)
+                                        except Exception as e:
+                                            self.logIt(str(e), "Error")
+                        self.ResizingBar.setProperty("value", 45)
 
-                        # v4.65 background pic0, pic1 implementaion
-                        if "pic0.png" in content_in_file:
-                            resizeBackground.save(img_dir + "pic0.png")
-                            BackgroundName.append("pic0.png")
-                        if "pic1.png" in content_in_file:
-                            resizeBackground.save(img_dir + "pic1.png")
-                            BackgroundName.append("pic1.png")
-                        self.ResizingBar.setProperty("value", 75)
+                        if self.changeBgPath != "" and self.changeBgPath != None:
+                            # Background image has been changed we need to resize and prepare for upload
 
-                        if "pic0.dds" in content_in_file:
-                            self.png2dds(img_dir + "pic0.png", img_dir + "pic0.dds")
-                            BackgroundName.append("pic0.dds")
-                        if "pic1.dds" in content_in_file:
-                            self.png2dds(img_dir + "pic1.png", img_dir + "pic1.dds")
-                            BackgroundName.append("pic1.dds")
+                            Background = Image.open(self.changeBgPath)
+                            resizeBackground = Background.resize(
+                                (1920, 1080), PIL.Image.ANTIALIAS
+                            )
+                            self.ResizingBar.setProperty("value", 50)
+
+                            # v4.65 background pic0, pic1 implementaion
+                            if "pic0.png" in content_in_file:
+                                resizeBackground.save(img_dir + "pic0.png")
+                                BackgroundName.append("pic0.png")
+                            if "pic1.png" in content_in_file:
+                                resizeBackground.save(img_dir + "pic1.png")
+                                BackgroundName.append("pic1.png")
+                            self.ResizingBar.setProperty("value", 75)
+
+                            if "pic0.dds" in content_in_file:
+                                self.png2dds(img_dir + "pic0.png", img_dir + "pic0.dds")
+                                BackgroundName.append("pic0.dds")
+                            if "pic1.dds" in content_in_file:
+                                self.png2dds(img_dir + "pic1.png", img_dir + "pic1.dds")
+                                BackgroundName.append("pic1.dds")
+
+                            for bg in BackgroundName:
+                                with open(img_dir + str(bg), "rb") as save_file:
+                                    self.ftp.storbinary(
+                                        "STOR " + str(bg), save_file, 1024
+                                    )
 
                 self.ResizingBar.setProperty("value", 100)
                 self.UploadingBar.setProperty("value", 1)
                 # v4.65 added background (pic0, pic1) implementation and minimized the code
                 try:
-                    import shutil
-
                     for ic in IconName:
                         # upload the icons to PS4 system
                         with open(img_dir + str(ic), "rb") as save_file:
@@ -313,21 +434,24 @@ class Ui_ConfirmWindow(object):
                                 img_dir + str(ic),
                                 self.temp_path
                                 + "MegaSRX\metadata\\"
+                                + self.modeSelected
+                                + "\\"
                                 + self.Current_CUSA
                                 + ".png",
                             )
-                    for bg in BackgroundName:
-                        with open(img_dir + str(bg), "rb") as save_file:
-                            self.ftp.storbinary("STOR " + str(bg), save_file, 1024)
+
+                    self.UploadingBar.setProperty("value", 100)
+                    self.Statement.setStyleSheet("font: 10pt; color: rgb(5, 255, 20);")
+                    self.Statement.setText(
+                        "You're all set. made with LOVE by @OfficialAhmed0"
+                    )
                 except Exception as e:
                     self.logIt(str(e), "Error")
 
-                self.UploadingBar.setProperty("value", 100)
+                    self.UploadingBar.setProperty("value", 5)
+                    self.Statement.setStyleSheet("font: 10pt; color: rgb(250, 1, 1);")
+                    self.Statement.setText("Sorry! denied try providing Full R/W")
 
-                self.Statement.setStyleSheet("font: 10pt; color: rgb(5, 255, 20);")
-                self.Statement.setText(
-                    "You're all set. made with LOVE by @Officialahmed0"
-                )
                 self.No.hide()
                 self.Yes.hide()
                 self.Ok.raise_()
@@ -395,10 +519,6 @@ class Ui_ConfirmWindow(object):
                     except Exception as e:
                         self.logIt(str(e), "Error")
                 else:
-                    import Message
-
-                    self.window = QtWidgets.QDialog()
-                    self.ui = Message.Ui_Message()
                     self.ui.setupUi(self.window, "Magick image not found")
                     self.window.show()
 

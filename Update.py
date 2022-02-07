@@ -7,7 +7,7 @@
 
 
 def get_update_version():
-    return 4.72
+    return "4.72 beta"
 
 
 def get_update_release_date():

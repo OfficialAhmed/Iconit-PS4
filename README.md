@@ -22,11 +22,17 @@ This application is much convenient than uploading the images manually for many 
 
 * I added a Library (https://all-exhost.github.io/icon%20downloader.html) that has Dozens of icons for you to pick from.
 
-# Update v4.72 (WIP. Not yet compiled for the end-user)
+# Update v4.72
 
-* Ability to change all Homebrews (Note: make sure to enable HB in the settings) (4-letter prefix followed by 5-number suffix format. Exp: LAPY00000)  
+* Ability to change any Homebrew (All homebrews will be detected format:LAPYxxxxx 4-letter prefix followed by 5-number suffix)  
 
-* Ability to change System icons (ATTENTION: This will require extra permissions. Make sure to run FTP with Full R/W mode, as of writing this only Lapy Xplorer offer an option to allow FTP in "Danger mode" => Full R/W permissions by pressing (L2+Triangle). Only allow "Danger mode" when you need to change the system icons disable it afterwards to be in the safe side) 
+* Ability to change System icons (ATTENTION: This will require extra permissions. Make sure to run FTP with Full R/W mode, Lapy Xplorer offer an option to allow FTP in "Danger mode" => Full R/W permissions by pressing (L2+Triangle). SomeTimes Xplorer seem to be allowing Full R/W but its not for some reason, try removing game data for Xplorer and retry) 
+
+* Fixed major bug with caching (used to overwrite the cache meaning old cache is useless. Note: first time running the application might take awhile and may freeze wait for it. The 2nd time you run it would be ~99% faster)
+
+* Game/Pic fully compatible with "GoldHen FTP" (The whole process rely on one connection now)
+
+* Auto backup changed icons (stored in "Your Backup" folder)
 
 * More accurate Game Titles (Less abbreviations shown as the Game title)
 
@@ -34,13 +40,17 @@ This application is much convenient than uploading the images manually for many 
 
 * Better caching performance (used to Write/Read some data from/to Hard Disk now uses the RAM instead)
 
-* Caching size reduced
+* Progress bar now shows realtime progression (used to be static and hard coded)
 
-* Fixed when renaming PSN activated account Deactivates it (Recommended to use it on offline accounts. Use it on online accounts on your own risk this might need more attention as I don't have PSN activated accounts I can't test it, so I can't guarantee for activated accounts SORRY!)
+* Caching size reduced significantly
+
+* Brand new User interface when connecting to PS4 (Modern design less memory usage)
 
 * Fixed when using AvatarChange Error (No such file or directory: Pref.ini)
 
-* Fixed more noob algorithms (now the code is waaaaay much easier to read)
+* Fixed noob algorithms to approach different problems (now the code is waaaaay much easier to read)
+
+* Fixed when renaming PSN activated account Deactivates it (Recommended to use it on offline accounts. Use it on online accounts on your own risk this might need more attention as I don't have PSN activated accounts I can't test it, so I can't guarantee for activated accounts SORRY!)
 
 # Update v4.65
 

@@ -1,3 +1,4 @@
+import time, json
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 import Iconit as main
@@ -20,6 +21,8 @@ class Ui_ChangeIconWindow(object):
         exGames,
         w,
         h,
+        sysGames,
+        modeSelected,
     ):
         self.ChangeIconWindow = ChangeIconWindow
         self.ver = Update.get_update_version()
@@ -33,26 +36,35 @@ class Ui_ChangeIconWindow(object):
         self.userHB = userHB
 
         self.exGames = exGames
+        self.sysGames = sysGames
+
+        self.sysIconsAlgo = False
+        if len(self.sysGames) > 0:
+            self.sysIconsAlgo = True
+
         self.IP = IP
         self.Port = Port
         self.temp_path = main.temp_path
         self.img_dir = main.img_dir
         self.setting_path = main.setting_path
-
+        self.modeSelected = modeSelected
         self.Games = Games
-        temp = self.temp_path + "MegaSRX\\metadata\\"
+        temp = self.temp_path + "MegaSRX\\metadata\\" + self.modeSelected + "\\"
         self.CUSA_img = ""
         for i in temp:
             if i == "\\":
                 self.CUSA_img += "/"
             else:
                 self.CUSA_img += i
-        # Get all icon names from local path
+        # Get all icon names from local path sorted by value(gametitle)
         dirs = os.listdir(temp)
         self.imgs = []
-        for img in dirs:
-            if "png" in img:
-                self.imgs.append(img)
+        for i in self.Games.keys():
+            self.imgs.append(i)
+
+        # for img in dirs:
+        #     if "png" in img:
+        #         self.imgs.append(img)
         self.changeIconPath = ""
         self.changeBgPath = ""
         self.img_limit = len(self.imgs)
@@ -62,6 +74,11 @@ class Ui_ChangeIconWindow(object):
             + self.IP
             + "*</span></p>\n"
         )
+
+        # v4.72
+        if len(self.sysGames) == 0:
+            ReadJson = open("Data\prxUserMeta\MegaSRX\metadata\game\info.json")
+            self.gameInfo = json.load(ReadJson)
 
         # v4.05
         self.prefloc = self.setting_path + "\\Data\\Pref\\"
@@ -621,11 +638,9 @@ class Ui_ChangeIconWindow(object):
         self.Next_btn.setText(_translate("ChangeIconWindow", "Browse Icon ..."))
         self.Prev_btn.setText(_translate("ChangeIconWindow", "Browse Icon ..."))
         self.GameTitle.setText(
-            _translate("ChangeIconWindow", self.Games[self.imgs[self.img_counter][:-4]])
+            _translate("ChangeIconWindow", self.Games[self.imgs[self.img_counter]])
         )
-        self.GameID.setText(
-            _translate("ChangeIconWindow", self.imgs[self.img_counter][:-4])
-        )
+        self.GameID.setText(_translate("ChangeIconWindow", self.imgs[self.img_counter]))
         self.TotalGames.setText(
             _translate(
                 "ChangeIconWindow",
@@ -643,12 +658,17 @@ class Ui_ChangeIconWindow(object):
                 i,
                 _translate(
                     "ChangeIconWindow",
-                    " " * 8 + str(i + 1) + ": " + self.Games[self.imgs[i][:-4]],
+                    " " * 8 + str(i + 1) + ": " + self.Games[self.imgs[i]],
                 ),
             )
+        if len(self.sysGames) > 1:
+            self.homebrewLabel.setText(
+                _translate("ChangeIconWindow", "System icon: Yes")
+            )
+            self.bg_change_browse_btn.hide()
 
-        if self.userHB == "True":
-            if "CUSA" in self.imgs[self.img_counter][:-4]:
+        elif self.userHB == "True":
+            if "CUSA" in self.imgs[self.img_counter]:
                 self.homebrewLabel.setText(
                     _translate("ChangeIconWindow", "Homebrew icon: No")
                 )
@@ -660,7 +680,7 @@ class Ui_ChangeIconWindow(object):
             self.homebrewLabel.setText(
                 _translate("ChangeIconWindow", "Homebrew icon: Turned off")
             )
-        if self.Games[self.imgs[self.img_counter][:-4]] in self.exGames:
+        if self.Games[self.imgs[self.img_counter]] in self.exGames:
             self.Ex_In.setText(_translate("ChangeIconWindow", "External"))
         else:
             self.Ex_In.setText(_translate("ChangeIconWindow", "Internal"))
@@ -726,11 +746,14 @@ class Ui_ChangeIconWindow(object):
     def UpdateInfo(self, CustomImgSelected=False):
         self.Submit_btn.setDisabled(True)
         current_img_path = self.CUSA_img + self.imgs[self.img_counter]
-        GameTitle = self.Games[self.imgs[self.img_counter][:-4]]
-
+        if len(self.sysGames) == 0:
+            GameTitle = self.gameInfo[self.imgs[self.img_counter]]
+        else:
+            GameTitle = self.Games[self.imgs[self.img_counter]]
         self.Icon.setStyleSheet("border-image: url(" + current_img_path + ");")
+
         self.GameTitle.setText(GameTitle)
-        self.GameID.setText(self.imgs[self.img_counter][:-4])
+        self.GameID.setText(self.imgs[self.img_counter])
 
         # If Custom image selected by choosing image manually
         if CustomImgSelected:
@@ -742,15 +765,18 @@ class Ui_ChangeIconWindow(object):
                 str(self.img_counter + 1) + "/" + str(len(self.Games))
             )
 
-        # Check homebrew
-        if self.userHB == "True":
-            if "CUSA" in self.imgs[self.img_counter][:-4]:
+        # Check homebrew/Sys icon label
+        if len(self.sysGames) > 1:
+            self.homebrewLabel.setText("System icon: Yes")
+
+        elif self.userHB == "True":
+            if "CUSA" in self.imgs[self.img_counter]:
                 self.homebrewLabel.setText("Homebrew icon: No")
             else:
                 self.homebrewLabel.setText("Homebrew icon: Yes")
 
         # Change External or Internal
-        if self.imgs[self.img_counter][:-4] in self.exGames:
+        if self.imgs[self.img_counter] in self.exGames:
             self.Ex_In.setText("External")
         else:
             self.Ex_In.setText("Internal")
@@ -947,45 +973,15 @@ class Ui_ChangeIconWindow(object):
             self.changeIconPath = img
 
     def DownloadIcon(self):
-        options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseSheet
-        dialog = QFileDialog()
-        dialog.setOptions(options)
-        dialog.setDirectory(self.userDPath)
+        import Message
 
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(
-            None, "Where to Download?", "Icon.png", "PNG (*.png)", options=options
+        self.window = QtWidgets.QDialog()
+        self.ui = Message.Ui_Message()
+        self.ui.setupUi(
+            self.window,
+            "This feature is no longer available & will be removed next update as icons now auto backup before changing it.",
         )
-        if path:
-            try:
-                import shutil
-
-                styleTagStart = '<p align="center" style="margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style="font-size:10pt; '
-                styleTagEnd = "</span></p>\n"
-
-                shutil.copy(self.CUSA_img + self.imgs[self.img_counter], path)
-                self.logging += (
-                    styleTagStart
-                    + 'color:#55ff00;">[Success] : Downloaded '
-                    + self.Games[self.imgs[self.img_counter][:-4]]
-                    + " Icon"
-                    + styleTagEnd
-                )
-                self.UpdateLogs()
-
-            except Exception as e:
-                styleTagStart + 'color:#e83c3c;">[Error] : ' + self.Games[
-                    self.imgs[self.img_counter][:-4]
-                ] + " | Dev Error " + str(e) + styleTagEnd
-
-                self.logging += (
-                    "Error while Downloading "
-                    + self.Games[self.imgs[self.img_counter][:-4]]
-                    + " "
-                    + str(e)
-                    + " | "
-                )
-                self.UpdateLogs()
+        self.window.show()
 
     def Resize_Upload(self):
         import Confirm
@@ -994,7 +990,7 @@ class Ui_ChangeIconWindow(object):
             self.changeBgPath = ""
 
         self.Submit_btn.setEnabled(False)
-        Current_CUSA = self.imgs[self.img_counter][:-4]
+        Current_CUSA = self.imgs[self.img_counter]
         self.windo = QtWidgets.QWidget()
         self.ui = Confirm.Ui_ConfirmWindow()
         self.ui.setupUi(
@@ -1007,15 +1003,39 @@ class Ui_ChangeIconWindow(object):
             self.exGames,
             None,
             self.changeBgPath,
+            self.modeSelected,
+            self.sysIconsAlgo,
         )
         self.windo.show()
+
+        styleTagStart = '<p align="center" style="margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style="font-size:10pt; '
+        styleTagEnd = "</span></p>\n"
+        self.logging += (
+            styleTagStart
+            + 'color:#55ff00;">[Success] : Auto Backup '
+            + Current_CUSA
+            + " success. Next time you change this icon, Iconit will overwrite it"
+            + styleTagEnd
+        )
+
+        styleTagStart = '<p align="center" style="margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style="font-size:10pt; '
+        styleTagEnd = "</span></p>\n"
+        self.logging += (
+            styleTagStart
+            + 'color:#ffaa00">[Attention]: '
+            + Current_CUSA
+            + " might take sometime to change in both PS4 and Iconit, but everything went good you dont have to reupload"
+            + styleTagEnd
+        )
+
+        self.UpdateLogs()
 
 
 if __name__ == "__main__":
     import sys, os
-    from shared import playSound as play
+    from func import playSound as play
 
-    play(f"{os.getcwd()}/Data/Pref/bgm/home.mp3")
+    play(f"{os.getcwd()}/Data/Pref/bgm/home.@OfficialAhmed0")
 
     app = QtWidgets.QApplication(sys.argv)
     ChangeIconWindow = QtWidgets.QWidget()
