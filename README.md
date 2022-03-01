@@ -1,12 +1,11 @@
 # Iconit
-Latest version 4.65 (Dec 6, 2021)
+Latest version 4.72 (Jan 5, 2022)
 No longer ftp client needed to change PS4 games' icon this tool will do it for you (everything Automated). Works with FTP (PS4 fw "1.74-9.00")
 it's an open source you can clone the repository or download the executable version (exe) down below
 
-# Download from here
-**Iconit v4.65 (85.1Mb)**
-https://github.com/OfficialAhmed/Iconit-PS4/releases/tag/v4.65
-
+# Download
+**Latest Iconit version**
+https://github.com/OfficialAhmed/Iconit-PS4/releases
 
 # About
 
