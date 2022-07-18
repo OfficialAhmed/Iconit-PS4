@@ -105,7 +105,6 @@ Do not hesitate to send me new suggestions and ideas for the application.
 https://twitter.com/OfficialAhmed0
 
 # Pictures 
-![iconit v4.05](https://img.techpowerup.org/200830/1.png)
-![Image of Game icon using iconit v4.05](https://img.techpowerup.org/200830/2.png)
-![Profile avatar using iconit v4.05](https://img.techpowerup.org/200830/3.png)
+![iconit ui](Iconit UI.png)
+![avatar change ui](Iconit UI 2.png)
 
