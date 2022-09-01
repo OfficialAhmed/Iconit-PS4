@@ -1,32 +1,48 @@
+
 # Iconit
+
 Latest version 4.72 (Jan 5, 2022)
+
 No longer ftp client needed to change PS4 games' icon this tool will do it for you (everything Automated). PS4 FTP required (PS4 fw "1.74-9.00").
-Download the executable version (exe) down below and the icons from https://all-exhost.github.io/icon%20downloader.html
 
-# Download
+*Download `icons` from <https://all-exhost.github.io/icon%20downloader.html>*
+
+*Download `masks` from <https://all-exhost.github.io/Masks.html>*
+
+*Download the windows executable version `.exe` down below*
+
+## Download
+
 **Latest Iconit version**
-https://github.com/OfficialAhmed/Iconit-PS4/releases
+<https://github.com/OfficialAhmed/Iconit-PS4/releases>
 
-# About
+## About
 
 This application is much convenient than uploading the icons manually, it automates the following
 
 * Game ID `CUSA` to game title conversion
 
-* Resize images to the required size `512x512` 
+* Resize images to the required size `512x512`
 
 * Icon duplication
 
 * Backup original icons
 
-* Locate game folder on console
+* Locate game folder on console  
 
+## v4.91 Changelog
 
-# v4.72 Changelog
+* Fixed related Errno 2 issues
 
-* Ability to change any Homebrew (All homebrews will be detected format:LAPYxxxxx 4-letter prefix followed by 5-number suffix)  
+> Error Type: [Errno 2] No such file or directory: 'Iconit-PS4\\Data\\prxUserMeta\...`
 
-* Ability to change System icons (ATTENTION: This will require extra permissions. Make sure to run FTP with Full R/W mode, Lapy Xplorer offer an option to allow FTP in "Danger mode" => Full R/W permissions by pressing (L2+Triangle). SomeTimes Xplorer seem to be allowing Full R/W but its not for some reason, try removing game data for Xplorer and retry) 
+* last folder location will be recognized for current session only, will reset on app restart, *Change the default path in the settings otherwise*.
+  
+## v4.72 Changelog
+
+* Ability to change any Homebrew (All homebrews will be detected format:LAPYxxxxx 4-letter prefix followed by 5-number suffix)
+
+* Ability to change System icons (ATTENTION: This will require extra permissions. Make sure to run FTP with Full R/W mode, Lapy Xplorer offer an option to allow FTP in "Danger mode" => Full R/W permissions by pressing (L2+Triangle). SomeTimes Xplorer seem to be allowing Full R/W but its not for some reason, try removing game data for Xplorer and retry)
 
 * Fixed major bug with caching (used to overwrite the cache meaning old cache is useless. Note: first time running the application might take awhile and may freeze wait for it. The 2nd time you run it would be ~99% faster)
 
@@ -52,60 +68,52 @@ This application is much convenient than uploading the icons manually, it automa
 
 * Fixed when renaming PSN activated account Deactivates it (Recommended to use it on offline accounts. Use it on online accounts on your own risk this might need more attention as I don't have PSN activated accounts I can't test it, so I can't guarantee for activated accounts SORRY!)
 
-# v4.65 Changelog
-
-* Added Pic change (you can now change background of any game, that show up when a game launches) => full hd up to 2k dimensions only
-
-* Avatar change now works for both (Offline & Activated accounts) Note: If you have psn games installed, this will disable the games use it on your own risk
-
-* Avatar change works on 64-bit and 32-bit using only "32-bit ImageMagic" (used to yield 550 error for 64-bit windows)
-
-* Added legit png to dds convertion for accurate icons (Dxt1 compression)
-
-* Added more functions under Settings (default IP, restore default settings)
-
-* Added shortcut key (Enter/Return) to Select a game title
-
-* Added Tooltips to better understand each section of the application
-
-* Added numbering along the game title in the Games List
-
-* Added Renaming accounts (used to be visible only on application now will be visible on PS4 system)
-
-* Added more homebrew compatibles with prefix (PKGI, FLTZ, BORC, NPXS, NPXX, PNES)
-
-
-# Older versions
+## Older versions
 
 >Iconit v4.07 (74.1Mb)(Nov 25, 2020)
-https://mega.nz/file/S7h2QIQY#uSgZBu_iET1ihZBJvpTYNXcH1481cLGFg4ZNbG1DIP8
+
+<https://mega.nz/file/S7h2QIQY#uSgZBu_iET1ihZBJvpTYNXcH1481cLGFg4ZNbG1DIP8>
 
 >Iconit v4.05 (131.6Mb)(Aug 30, 2020)
-https://mega.nz/file/Tq4zAB7L#Vm3Cj003CDWUYZzkN5WcQJGuvvwL3f4oJVfamAIuMMI
+
+<https://mega.nz/file/Tq4zAB7L#Vm3Cj003CDWUYZzkN5WcQJGuvvwL3f4oJVfamAIuMMI>
 
 >Iconit v4.01 (91.6Mb)
-https://mega.nz/file/zu43zDiL#yIKFNKVpTwWZpY0_YID0pzf72IxE0ClHsMRaMph7Y8s
+
+<https://mega.nz/file/zu43zDiL#yIKFNKVpTwWZpY0_YID0pzf72IxE0ClHsMRaMph7Y8s>
 
 >Iconit v3.00 (53.6Mb)
-https://mega.nz/file/mv4hyJya#dylV-otTZH_GMptPRafhg7kJd1T6mvARuuZvQF3VTBg
+
+<https://mega.nz/file/mv4hyJya#dylV-otTZH_GMptPRafhg7kJd1T6mvARuuZvQF3VTBg>
 
 >Iconit v1.00 (31Mb)
-https://mega.nz/#!nqQ3RKrD!Tgbu4mp2flfrZPx-wA9_j_MZyBae3Z5xCwf3ZV_Gcw4
+
+<https://mega.nz/#!nqQ3RKrD!Tgbu4mp2flfrZPx-wA9_j_MZyBae3Z5xCwf3ZV_Gcw4>
+
 ________________________________________
 
-# To do list
-- [ ] Render Game ID `CUSAXXXXX` text on icon 
-- [ ] Multiple icon change 
-- [ ] Apply `PSD` cover on icons
-- [ ] Performance++ : save game title as cache on game folder 
+## To do list
 
+* [ ] Apply Masks
 
-# Contribution
+* [ ] Render Game ID `CUSAXXXXX` text on icon
+
+* [ ] Multiple icon change
+
+* [ ] Apply `PSD` cover on icons
+
+* [ ] Performance++ : save game title as cache on game folder
+
+* [ ] Feature : User can edit displayed game title from within cache file
+
+## Contribution
+
 Do not hesitate to send me new suggestions and ideas for the application.
-https://twitter.com/OfficialAhmed0
 
-# Pictures 
+<https://twitter.com/OfficialAhmed0>
+
+## Pictures
+
 ![iconit ui](Iconit UI 2.png)
 
 ![avatar change ui](Iconit UI.png)
-

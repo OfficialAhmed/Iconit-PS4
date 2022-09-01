@@ -1,6 +1,5 @@
 import os  # (Ahm) 505
-import sys, time, json
-import ctypes
+import sys, json
 
 from ftplib import FTP
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -42,7 +41,6 @@ all_CUSA_ex = []
 all_CUSA_sys = []
 
 Game = {}
-
 
 class Ui_IPortWindow(object):
     def setupUi(self, IPortWindow, w, h):
@@ -1039,12 +1037,16 @@ class Ui_IPortWindow(object):
                                 diff_titles = (
                                     []
                                 )  # all different titles for current fetched game
-                                file = minidom.parse(
-                                    temp_path + self.file_name
-                                ).getElementsByTagName("text")
+                                try:
+                                    file = minidom.parse(
+                                        temp_path + self.file_name
+                                    ).getElementsByTagName("text")
 
-                                for name in file:
-                                    diff_titles.append(name.firstChild.data)
+                                    for name in file:
+                                        diff_titles.append(name.firstChild.data)
+                                except Exception as e:
+                                        diff_titles.append("UNKNOWN TITLE")
+
 
                                 GameTitle = ""
                                 for title in diff_titles:

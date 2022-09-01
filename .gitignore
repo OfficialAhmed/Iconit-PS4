@@ -1,6 +1,7 @@
-
 Data/prxUserMeta/pronunciation.xml
 Data/Pref/pref.ini
 *.png
 system icons test.py
 Logs.txt
+__pycache__
+output

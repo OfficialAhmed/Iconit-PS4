@@ -1,4 +1,4 @@
-import time, json
+import json
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 import Iconit as main
@@ -37,6 +37,9 @@ class Ui_ChangeIconWindow(object):
 
         self.exGames = exGames
         self.sysGames = sysGames
+
+        # Temp Settings | every app restart will reset
+        self.last_browse_path = ""
 
         self.sysIconsAlgo = False
         if len(self.sysGames) > 0:
@@ -851,7 +854,7 @@ class Ui_ChangeIconWindow(object):
         img, _ = QtWidgets.QFileDialog.getOpenFileName(
             None,
             "Choose a picture to open when game launches",
-            "",
+            self.last_browse_path,
             "PNG(*.png);; jpg(*.jpg);; Jpeg(*.jpeg)",
             options=options,
         )
@@ -962,7 +965,7 @@ class Ui_ChangeIconWindow(object):
         img, _ = QtWidgets.QFileDialog.getOpenFileName(
             None,
             "Choose the icon to upload",
-            "",
+            self.last_browse_path,
             "PNG(*.png);; jpg(*.jpg);; Jpeg(*.jpeg);; icon(*.ico)",
             options=options,
         )
@@ -971,6 +974,8 @@ class Ui_ChangeIconWindow(object):
             self.Icon.setStyleSheet("border-image: url(" + img + ");")
             self.CheckImg(img)
             self.changeIconPath = img
+            self.last_browse_path = img
+
 
     def DownloadIcon(self):
         import Message
