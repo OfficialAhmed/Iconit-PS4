@@ -24,6 +24,8 @@ This application is much convenient than uploading the icons manually, it automa
 
 * Resize images to the required size `512x512`
 
+* Image format convertion `JPG, ICO ...` to `PNG`
+
 * Icon duplication
 
 * Backup original icons

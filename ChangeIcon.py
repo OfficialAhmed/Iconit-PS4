@@ -38,7 +38,7 @@ class Ui_ChangeIconWindow(object):
         self.exGames = exGames
         self.sysGames = sysGames
 
-        # Temp Settings | every app restart will reset
+        # Temp Settings | every app restart will reset v4.91
         self.last_browse_path = ""
 
         self.sysIconsAlgo = False
@@ -976,7 +976,6 @@ class Ui_ChangeIconWindow(object):
             self.changeIconPath = img
             self.last_browse_path = img
 
-
     def DownloadIcon(self):
         import Message
 
@@ -1022,19 +1021,6 @@ class Ui_ChangeIconWindow(object):
             + " success. Next time you change this icon, Iconit will overwrite it"
             + styleTagEnd
         )
-
-        styleTagStart = '<p align="center" style="margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style="font-size:10pt; '
-        styleTagEnd = "</span></p>\n"
-        self.logging += (
-            styleTagStart
-            + 'color:#ffaa00">[Attention]: '
-            + Current_CUSA
-            + " might take sometime to change in both PS4 and Iconit, but everything went good you dont have to reupload"
-            + styleTagEnd
-        )
-
-        self.UpdateLogs()
-
 
 if __name__ == "__main__":
     import sys, os

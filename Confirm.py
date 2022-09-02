@@ -162,16 +162,22 @@ class Ui_ConfirmWindow(object):
         self.Checking.setText(_translate("ConfirmWindow", "Validation"))
         self.Resizing_label.setText(_translate("ConfirmWindow", "Convertion"))
         self.Uploading_label.setText(_translate("ConfirmWindow", "Sending"))
+
+        styleTagStart = '<p align="center" style="margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style="font-size:10pt; '
+        styleTagEnd = "</span></p>\n"
+        warning_message = f'{styleTagStart} color:#e83c3c">ATTENTION! This will overwrite the backup icon stored in (Your backup). {styleTagEnd}\n"Are sure you want to change the icon?"'
+        
         self.Statement.setText(
-            _translate("ConfirmWindow", "Are sure you want to change the icon?")
+            _translate("ConfirmWindow", warning_message)
         )
 
     def png2dds(self, input_dir, output_dir):
         # implementation added v4.51
         # convert legit png to dds using imageMagic lib (wand)
-        with self.image.Image(filename=input_dir) as img:
-            img.compression = "dxt1"
-            img.save(filename=output_dir)
+        if self.image != None:
+            with self.image.Image(filename=input_dir) as img:
+                img.compression = "dxt1"
+                img.save(filename=output_dir)
 
     def backup(self, sys=False):
         ###################################################
@@ -206,6 +212,7 @@ class Ui_ConfirmWindow(object):
 
     def Resize_Upload(self):
         try:
+            self.image = None
             try:
                 from wand import image
                 import time
@@ -237,6 +244,7 @@ class Ui_ConfirmWindow(object):
                     ###
                     ### Critical method needs to be accurate 100%
                     ### messing up with PS4 sys files related to sys icons
+                    ### Triple check everything here
                     ###
                     ###################################################
 
@@ -450,11 +458,21 @@ class Ui_ConfirmWindow(object):
 
                     self.UploadingBar.setProperty("value", 5)
                     self.Statement.setStyleSheet("font: 10pt; color: rgb(250, 1, 1);")
-                    self.Statement.setText("Sorry! denied try providing Full R/W")
+                    self.Statement.setText("Sorry! PS4 has denied the signal, enable Full R/W")
 
                 self.No.hide()
                 self.Yes.hide()
                 self.Ok.raise_()
+                styleTagStart = '<p align="center" style="margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style="font-size:10pt; '
+                styleTagEnd = "</span></p>\n"
+                self.logging += (
+                    styleTagStart
+                    + 'color:#ffaa00">[Attention]: '
+                    + "Image might take sometime to change in both PS4 and Iconit, but everything went good you dont have to reupload"
+                    + styleTagEnd
+                )
+
+                self.UpdateLogs()
 
             elif self.ConfirmType == "Profileit":
                 sysProfileRoot = "system_data/priv/cache/profile/"
