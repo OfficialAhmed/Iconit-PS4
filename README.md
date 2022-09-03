@@ -98,15 +98,15 @@ ________________________________________
 
 ## To do list
 
-* [ ] Apply Masks
+* [x] Apply `PNG` Masks
+
+* [ ] Apply `PSD` Masks
 
 * [ ] Render Game ID `CUSAXXXXX` text on icon
 
 * [ ] Multiple icon change
 
-* [ ] Apply `PSD` cover on icons
-
-* [ ] Performance++ : save game title as cache on game folder
+* [x] Performance++ : save game title as cache on game folder
 
 * [ ] Feature : User can edit displayed game title from within cache file
 
