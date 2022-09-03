@@ -191,10 +191,10 @@ class Ui_ChangeIconWindow(object):
         )
         self.Icon.setObjectName("Icon")
         self.LeftLayout.addWidget(self.Icon)
-        self.Change_DownloadBtnLayout = QtWidgets.QFormLayout()
-        self.Change_DownloadBtnLayout.setContentsMargins(-1, -1, -1, 0)
-        self.Change_DownloadBtnLayout.setVerticalSpacing(3)
-        self.Change_DownloadBtnLayout.setObjectName("Change_DownloadBtnLayout")
+        self.Change_Mask_btnLayout = QtWidgets.QFormLayout()
+        self.Change_Mask_btnLayout.setContentsMargins(-1, -1, -1, 0)
+        self.Change_Mask_btnLayout.setVerticalSpacing(3)
+        self.Change_Mask_btnLayout.setObjectName("Change_Mask_btnLayout")
         self.ChangeIcon_btn = QtWidgets.QPushButton(ChangeIconWindow)
 
         sizePolicy.setHeightForWidth(
@@ -209,25 +209,25 @@ class Ui_ChangeIconWindow(object):
         self.ChangeIcon_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.ChangeIcon_btn.setStyleSheet("color: rgb(255, 255, 255);")
         self.ChangeIcon_btn.setObjectName("ChangeIcon_btn")
-        self.Change_DownloadBtnLayout.setWidget(
+        self.Change_Mask_btnLayout.setWidget(
             2, QtWidgets.QFormLayout.LabelRole, self.ChangeIcon_btn
         )
-        self.DownloadIcon_btn = QtWidgets.QPushButton(ChangeIconWindow)
+        self.Mask_btn = QtWidgets.QPushButton(ChangeIconWindow)
 
         sizePolicy.setHeightForWidth(
-            self.DownloadIcon_btn.sizePolicy().hasHeightForWidth()
+            self.Mask_btn.sizePolicy().hasHeightForWidth()
         )
-        self.DownloadIcon_btn.setSizePolicy(sizePolicy)
-        self.DownloadIcon_btn.setMinimumSize(QtCore.QSize(0, 35))
+        self.Mask_btn.setSizePolicy(sizePolicy)
+        self.Mask_btn.setMinimumSize(QtCore.QSize(0, 35))
         font.setPointSize(13)
         font.setBold(True)
         font.setWeight(75)
-        self.DownloadIcon_btn.setFont(font)
-        self.DownloadIcon_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.DownloadIcon_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.DownloadIcon_btn.setObjectName("DownloadIcon_btn")
-        self.Change_DownloadBtnLayout.setWidget(
-            2, QtWidgets.QFormLayout.FieldRole, self.DownloadIcon_btn
+        self.Mask_btn.setFont(font)
+        self.Mask_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.Mask_btn.setStyleSheet("color: rgb(255, 255, 255);")
+        self.Mask_btn.setObjectName("Mask_btn")
+        self.Change_Mask_btnLayout.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.Mask_btn
         )
         self.Prev_btn = QtWidgets.QToolButton(ChangeIconWindow)
 
@@ -243,7 +243,7 @@ class Ui_ChangeIconWindow(object):
         self.Prev_btn.setStyleSheet("color: rgb(255, 255, 255);")
         self.Prev_btn.setArrowType(QtCore.Qt.LeftArrow)
         self.Prev_btn.setObjectName("Prev_btn")
-        self.Change_DownloadBtnLayout.setWidget(
+        self.Change_Mask_btnLayout.setWidget(
             0, QtWidgets.QFormLayout.LabelRole, self.Prev_btn
         )
         self.Next_btn = QtWidgets.QToolButton(ChangeIconWindow)
@@ -261,10 +261,10 @@ class Ui_ChangeIconWindow(object):
         self.Next_btn.setArrowType(QtCore.Qt.RightArrow)
         self.Next_btn.setObjectName("Next_btn")
 
-        self.Change_DownloadBtnLayout.setWidget(
+        self.Change_Mask_btnLayout.setWidget(
             0, QtWidgets.QFormLayout.FieldRole, self.Next_btn
         )
-        self.LeftLayout.addLayout(self.Change_DownloadBtnLayout)
+        self.LeftLayout.addLayout(self.Change_Mask_btnLayout)
         self.Submit_btn = QtWidgets.QPushButton(ChangeIconWindow)
 
         sizePolicy.setHeightForWidth(self.Submit_btn.sizePolicy().hasHeightForWidth())
@@ -560,7 +560,7 @@ class Ui_ChangeIconWindow(object):
         self.Icon.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         # buttons back-end
         self.ChangeIcon_btn.clicked.connect(self.BrowseIcon)
-        self.DownloadIcon_btn.clicked.connect(self.DownloadIcon)
+        self.Mask_btn.clicked.connect(self.Mask_btn)
         self.Next_btn.clicked.connect(self.Next)
         self.Prev_btn.clicked.connect(self.Prev)
         self.Submit_btn.clicked.connect(self.Resize_Upload)
@@ -589,8 +589,8 @@ class Ui_ChangeIconWindow(object):
         )
         self.Title_label.setText(_translate("ChangeIconWindow", "Change Game Icon"))
         self.ChangeIcon_btn.setText(_translate("ChangeIconWindow", "Change Icon..."))
-        self.DownloadIcon_btn.setText(
-            _translate("ChangeIconWindow", "Download Icon...")
+        self.Mask_btn.setText(
+            _translate("ChangeIconWindow", "Mask...")
         )
         self.Prev_btn.setText(_translate("ChangeIconWindow", "Previous"))
         self.Next_btn.setText(_translate("ChangeIconWindow", "Next"))
@@ -697,8 +697,8 @@ class Ui_ChangeIconWindow(object):
         self.ChangeIcon_btn.setToolTip(
             self.TTTSS + "Pick an Icon for the game" + self.TTTSE
         )
-        self.DownloadIcon_btn.setToolTip(
-            self.TTTSS + "Grab the Icon from PS4 to your Computer" + self.TTTSE
+        self.Mask_btn.setToolTip(
+            self.TTTSS + "Apply mask to an icon" + self.TTTSE
         )
         self.Submit_btn.setToolTip(
             self.TTTSS
@@ -823,7 +823,7 @@ class Ui_ChangeIconWindow(object):
             self.Prev_btn,
             self.Select_btn,
             self.Submit_btn,
-            self.DownloadIcon_btn,
+            self.Mask_btn,
             self.bg_change_browse_btn,
             self.Logs,
             self.Ex_In,
@@ -976,7 +976,7 @@ class Ui_ChangeIconWindow(object):
             self.changeIconPath = img
             self.last_browse_path = img
 
-    def DownloadIcon(self):
+    def Mask_btn(self):
         import Message
 
         self.window = QtWidgets.QDialog()

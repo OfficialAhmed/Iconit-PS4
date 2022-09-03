@@ -34,11 +34,13 @@ This application is much convenient than uploading the icons manually, it automa
 
 ## v4.91 Changelog
 
+* Folder location will be cached, will reset on app restart, *Change the default path in the settings otherwise*.
+
+* IP & Port will be cached.
+
 * Fixed related Errno 2 issues
 
 > Error Type: [Errno 2] No such file or directory: 'Iconit-PS4\\Data\\prxUserMeta\...`
-
-* last folder location will be recognized for current session only, will reset on app restart, *Change the default path in the settings otherwise*.
   
 ## v4.72 Changelog
 

@@ -7,8 +7,8 @@
 
 
 def get_update_version():
-    return "4.72 beta"
+    return "4.91"
 
 
 def get_update_release_date():
-    return "Jan 3rd, 2022"
+    return "Sept 5th, 2022"

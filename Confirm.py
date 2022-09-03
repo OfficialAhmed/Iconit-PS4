@@ -290,7 +290,6 @@ class Ui_ConfirmWindow(object):
                             (minSize, minSize), PIL.Image.ANTIALIAS
                         )
                         resizeIcon.save(img_dir + "icon0.png")
-
                         self.ResizingBar.setProperty("value", 100)
                 else:
                     IconName = []  # Icon0, Icon0_X (dds and png extension)
@@ -397,7 +396,10 @@ class Ui_ConfirmWindow(object):
                         self.ResizingBar.setProperty("value", 45)
 
                         if self.changeBgPath != "" and self.changeBgPath != None:
-                            # Background image has been changed we need to resize and prepare for upload
+                            
+                            ###################################################################################
+                            ###   Background image has been changed we need to resize and prepare for upload
+                            ###################################################################################
 
                             Background = Image.open(self.changeBgPath)
                             resizeBackground = Background.resize(
@@ -429,14 +431,20 @@ class Ui_ConfirmWindow(object):
 
                 self.ResizingBar.setProperty("value", 100)
                 self.UploadingBar.setProperty("value", 1)
-                # v4.65 added background (pic0, pic1) implementation and minimized the code
+
+                ######################################################################################
+                ###    v4.65 added background (pic0, pic1) implementation and minimized the code
+                ######################################################################################
                 try:
                     for ic in IconName:
                         # upload the icons to PS4 system
                         with open(img_dir + str(ic), "rb") as save_file:
                             self.ftp.storbinary("STOR " + str(ic), save_file, 1024)
 
-                        # meanwhile move the PNG to the local dir. to be updated in the app aswell
+                        ########################################################################
+                        ###         Store icons temp for in-app preview
+                        ########################################################################
+                        
                         if ic == "icon0.png" or ic == "icon0.PNG":
                             shutil.move(
                                 img_dir + str(ic),
@@ -471,13 +479,14 @@ class Ui_ConfirmWindow(object):
                     + "Image might take sometime to change in both PS4 and Iconit, but everything went good you dont have to reupload"
                     + styleTagEnd
                 )
-
                 self.UpdateLogs()
 
             elif self.ConfirmType == "Profileit":
                 sysProfileRoot = "system_data/priv/cache/profile/"
                 try:
-                    # Resize Icon and make copies
+                    ###############################################################
+                    #######          Resize Icon and make copies
+                    ###############################################################
                     required_dds = ("avatar64", "avatar128", "avatar260", "avatar440")
                     ResizeImg = Image.open(self.changeIconPath)
                     avatar = ResizeImg.resize((440, 440), PIL.Image.ANTIALIAS)
@@ -499,8 +508,11 @@ class Ui_ConfirmWindow(object):
                     self.CheckingBar.setProperty("value", 100)
                 except Exception as e:
                     self.logIt(str(e), "error")
+                
+                ################################################################
+                ###                     Convert PNG To DDS
+                ################################################################
 
-                # Convert PNG To DDS
                 if os.path.isfile(
                     "C:\Program Files\ImageMagick-6.9.10-Q16\convert.exe"
                 ) or os.path.isfile(
@@ -540,7 +552,9 @@ class Ui_ConfirmWindow(object):
                     self.ui.setupUi(self.window, "Magick image not found")
                     self.window.show()
 
-                # Upload
+                ################################################################
+                ###                     Upload icons
+                ################################################################
                 self.ftp.cwd(sysProfileRoot + "/" + self.CurrentUser)
                 progress = 20
                 progressed = 20

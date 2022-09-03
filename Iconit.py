@@ -1,4 +1,4 @@
-import os  # (Ahm) 505
+import os
 import sys, json
 
 from ftplib import FTP
@@ -9,6 +9,7 @@ import ChangeAvatar
 import ChangeIcon
 import Message
 import Update
+import func
 
 from xml.dom import minidom  # XML parsing
 
@@ -56,6 +57,7 @@ class Ui_IPortWindow(object):
         #####  Settings
         #####
         #######################################################
+        self.logIt = func.logIt
 
         self.userFont = "Arial"
         self.userPort = "1337"
@@ -105,7 +107,7 @@ class Ui_IPortWindow(object):
 
         self.modeSelected = ""
         self.cached = ""
-
+       
         ######################################################
         #####
         #####           GUI and Signals
@@ -502,13 +504,7 @@ class Ui_IPortWindow(object):
 
         _translate = QtCore.QCoreApplication.translate
         IPortWindow.setWindowTitle(
-            _translate(
-                "IPortWindow",
-                "Iconit v"
-                + str(self.ver)
-                + " ("
-                + str(Update.get_update_release_date())
-                + ")",
+            _translate("IPortWindow", f"Iconit v{self.ver} ({Update.get_update_release_date()})"
             )
         )
         self.TitleLabel_withURL.setText(
@@ -520,7 +516,7 @@ class Ui_IPortWindow(object):
         self.Status.setText(
             _translate(
                 "IPortWindow",
-                '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Waiting Connection ..</span></p></body></html>',
+                '<html><head/><body><p align="center"><span style="font-size:18pt; font-weight:700; color:#f2ae30;">Waiting Connection ..</span></p></body></html>',
             )
         )
         self.SystemIcon.setText(_translate("IPortWindow", "System Icons"))
@@ -596,6 +592,9 @@ class Ui_IPortWindow(object):
         # Keyboard recognition v4.07
         self.Connect_btn.setShortcut("Return")
 
+        # Auto write used IP & port
+        self.connection_history(mode="r")
+
     def Check_IPort(self):
         global IP, Port
         self.Status.setText(
@@ -604,6 +603,7 @@ class Ui_IPortWindow(object):
         try:
             IP = self.IP_input.text()
             Port = self.Port_input.text()
+            self.connection_history(mode="w")
 
             if len(IP) < 8:
                 self.Connect_PS4(False)
@@ -645,11 +645,32 @@ class Ui_IPortWindow(object):
                     + "</span></p></body></html>"
                 )
 
-    # (ed0) Done
+    def connection_history(self, mode: str) -> None:
+        ################################################################
+        ###               Store IP and Port for next session
+        ################################################################
+        file_name = "connection_history.dat"
+        if mode == "r":
+            try:
+                with open(f"{temp_path}\{file_name}", "r") as file:
+                    line = file.readline().strip()
+                    ip, port = line.split(",")
+                    self.IP_input.setText(ip)
+                    self.Port_input.setText(port)
+
+            except Exception as e:
+                self.logIt(str(e), "Warning")
+        else:
+            with open(f"{temp_path}\{file_name}", "w+") as file:
+                ip = self.IP_input.text()
+                port = self.Port_input.text()
+                file.write(f"{ip},{port}")
+
     def Connect_PS4(self, isvalid):
         global ftp, working_dir, IP, Port, local_path, all_CUSA, all_CUSA_ex, temp_path, sys_path, all_CUSA_sys, Game
         self.window = QtWidgets.QDialog()
         self.ui = Message.Ui_Message()
+
         if isvalid:
             ################################################################################
             ###
@@ -1047,7 +1068,6 @@ class Ui_IPortWindow(object):
                                 except Exception as e:
                                         diff_titles.append("UNKNOWN TITLE")
 
-
                                 GameTitle = ""
                                 for title in diff_titles:
                                     if self.file_name in files_in_dir:
@@ -1150,31 +1170,6 @@ class Ui_IPortWindow(object):
             self.ui = ChangeAvatar.Ui_ChangeAvatarWin()
             self.ui.setupUi(self.window, self.userID, IP, Port, self.w, self.h)
             self.window.show()
-
-    def logIt(self, description, Type):
-        import datetime
-
-        try:
-            error_file = open("Logs.txt", "a")
-        except:
-            error_file = open("Logs.txt", "w")
-        if Type == "Warning":
-            error_file.write(
-                str(datetime.datetime.now())
-                + " | "
-                + "_DEV Warning: "
-                + str(description)
-                + "\n"
-            )
-        else:
-            error_file.write(
-                str(datetime.datetime.now())
-                + " | "
-                + "_DEV ERROR: "
-                + str(description)
-                + "\n"
-            )  # (al) to 1
-
 
 if __name__ == "__main__":
     import sys
