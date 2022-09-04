@@ -1,3 +1,4 @@
+import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PIL import Image
@@ -83,28 +84,28 @@ class Ui_mask_maker(object):
         self.verticalLayout_3.addWidget(self.bake_state)
         spacerItem = QtWidgets.QSpacerItem(20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem)
-        self.back_preview_btn = QtWidgets.QPushButton(mask_maker)
-        self.back_preview_btn.setEnabled(False)
+        self.bake_preview_btn = QtWidgets.QPushButton(mask_maker)
+        self.bake_preview_btn.setEnabled(False)
         font = QtGui.QFont()
         font.setFamily("Perpetua")
         font.setPointSize(11)
         font.setBold(True)
         font.setWeight(75)
-        self.back_preview_btn.setFont(font)
-        self.back_preview_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.back_preview_btn.setObjectName("back_preview_btn")
-        self.verticalLayout_3.addWidget(self.back_preview_btn)
-        self.bake_apply_btn = QtWidgets.QPushButton(mask_maker)
-        self.bake_apply_btn.setEnabled(False)
+        self.bake_preview_btn.setFont(font)
+        self.bake_preview_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.bake_preview_btn.setObjectName("bake_preview_btn")
+        self.verticalLayout_3.addWidget(self.bake_preview_btn)
+        self.bake_quit_btn = QtWidgets.QPushButton(mask_maker)
+        self.bake_quit_btn.setEnabled(True)
         font = QtGui.QFont()
         font.setFamily("Perpetua")
         font.setPointSize(11)
         font.setBold(True)
         font.setWeight(75)
-        self.bake_apply_btn.setFont(font)
-        self.bake_apply_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.bake_apply_btn.setObjectName("bake_apply_btn")
-        self.verticalLayout_3.addWidget(self.bake_apply_btn)
+        self.bake_quit_btn.setFont(font)
+        self.bake_quit_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.bake_quit_btn.setObjectName("bake_quit_btn")
+        self.verticalLayout_3.addWidget(self.bake_quit_btn)
         self.download_mask_link = QtWidgets.QLabel(mask_maker)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -232,8 +233,9 @@ class Ui_mask_maker(object):
         mask_maker.setWindowTitle(_translate("mask_maker", "Mask maker by @Officialahmed0"))
         self.bake_btn.setText(_translate("mask_maker", "Bake Mask"))
         self.bake_state.setText(_translate("mask_maker", "Baking process required"))
-        self.back_preview_btn.setText(_translate("mask_maker", "Preview"))
-        self.bake_apply_btn.setText(_translate("mask_maker", "Apply"))        
+        self.bake_preview_btn.setText(_translate("mask_maker", "Preview"))
+        self.bake_quit_btn.setText(_translate("mask_maker", "quit"))        
+        self.bake_quit_btn.hide()
         self.download_mask_link.setText(_translate("mask_maker",'<html><head/><body><p align="center"><a href="https://all-exhost.github.io/Masks.html"><span style="font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#90f542; vertical-align:super;">Download masks<br>https://all-exhost.github.io/Masks.html</span></a></p></body></html>',))
         self.game_icon_label.setText(_translate("mask_maker", "Game Icon"))
         self.game_icon_btn.setText(_translate("mask_maker", "Change..."))
@@ -245,7 +247,9 @@ class Ui_mask_maker(object):
     ###################################################################################
         self.mask_btn.clicked.connect(self.browse_mask)
         self.game_icon_btn.clicked.connect(self.browse_game_icon)
-        self.mask_btn.clicked.connect(self.mask_maker)    
+        self.bake_btn.clicked.connect(self.bake_mask)    
+        self.bake_preview_btn.clicked.connect(self.preview_baked_mask)    
+        self.bake_quit_btn.clicked.connect(self.quit)
         
         self.logs = func.logIt
         self.tmp_location = "Data\\prxUserMeta\\"
@@ -253,6 +257,7 @@ class Ui_mask_maker(object):
         self.game_icon_is_changed = False
         self.game_icon_location = ""
         self.mask_is_changed = False
+        self.is_preview_allowed = False
 
     def browse_game_icon(self) -> None:
         self.game_icon_is_changed = False
@@ -280,7 +285,7 @@ class Ui_mask_maker(object):
                 self.game_icon_is_changed = True
             else:
                 self.bake_state.setText("Game Icon is too small min(512x512)")
-        # self.is_baking_valid()
+        self.is_baking_valid()
                 
     def browse_mask(self) -> None:
         self.mask_is_changed = False
@@ -326,15 +331,53 @@ class Ui_mask_maker(object):
         else:
             self.bake_btn.setEnabled(False)
 
-    def mask_maker(self):
+    def bake_mask(self):
         xmb_icon_size = (512, 512)
-        style = Image.open(f"{self.tmp_location}mask-style.png")
-        icon = Image.open(self.game_icon_location).resize(xmb_icon_size)
-        cover = Image.open(f"{self.tmp_location}mask.jpg").resize(xmb_icon_size).convert("L")
+        try:
+            self.bake_progress.setValue(16)
+            style = Image.open(f"{self.tmp_location}mask-style.png")
+            self.bake_progress.setValue(32)
+            icon = Image.open(self.game_icon_location).resize(xmb_icon_size)
+            self.bake_progress.setValue(48)
+            cover = Image.open(f"{self.tmp_location}mask.jpg").resize(xmb_icon_size).convert("L")
+            self.bake_progress.setValue(64)
+            mask = style.copy()
+            self.bake_progress.setValue(80)
+            mask.paste(icon, (0, 0), cover) # Apply mask on style according to the cover(B&W photo)
+            self.bake_progress.setValue(96)
 
-        mask = style.copy()
-        mask.paste(icon, (0, 0), cover) # Apply mask on style according to the cover(B&W photo)
-        mask.save("mask.png")
+            total = len(os.listdir("Baked masks"))
+            self.last_baked_mask = f"baked_mask{total+1}"
+            mask.save(f"Baked masks\\baked_mask{total+1}.png")
+
+            self.bake_progress.setValue(100)
+            self.bake_state.setText(
+            """
+            Baked icon has been saved in (Baked mask) folder
+            Apply it manually
+            """)
+            self.is_preview_allowed = True
+            
+        except Exception as e:
+            self.bake_state.setText("Error baking mask, read logs.txt")
+            self.logs(str(e), "Error")
+            self.is_preview_allowed = False
+
+        finally:
+            self.bake_preview_btn.setEnabled(self.is_preview_allowed)
+            self.bake_quit_btn.setEnabled(self.is_preview_allowed)
+            self.bake_btn.setEnabled(False)
+    
+    def preview_baked_mask(self):
+        if self.is_preview_allowed:
+            try:
+                location = "Baked masks"
+                self.bake_view.setStyleSheet(f"border-image: url({location}/{self.last_baked_mask}.png);")
+            except Exception as e:
+                self.logs(str(e), "Warning")
+
+    def quit(self):
+        exit()
 
 if __name__ == "__main__":
     import sys

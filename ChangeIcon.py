@@ -560,7 +560,7 @@ class Ui_ChangeIconWindow(object):
         self.Icon.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         # buttons back-end
         self.ChangeIcon_btn.clicked.connect(self.BrowseIcon)
-        self.Mask_btn.clicked.connect(self.Mask_btn)
+        self.Mask_btn.clicked.connect(self.Mask_maker)
         self.Next_btn.clicked.connect(self.Next)
         self.Prev_btn.clicked.connect(self.Prev)
         self.Submit_btn.clicked.connect(self.Resize_Upload)
@@ -590,7 +590,7 @@ class Ui_ChangeIconWindow(object):
         self.Title_label.setText(_translate("ChangeIconWindow", "Change Game Icon"))
         self.ChangeIcon_btn.setText(_translate("ChangeIconWindow", "Change Icon..."))
         self.Mask_btn.setText(
-            _translate("ChangeIconWindow", "Mask...")
+            _translate("ChangeIconWindow", "Mask maker...")
         )
         self.Prev_btn.setText(_translate("ChangeIconWindow", "Previous"))
         self.Next_btn.setText(_translate("ChangeIconWindow", "Next"))
@@ -698,7 +698,7 @@ class Ui_ChangeIconWindow(object):
             self.TTTSS + "Pick an Icon for the game" + self.TTTSE
         )
         self.Mask_btn.setToolTip(
-            self.TTTSS + "Apply mask to an icon" + self.TTTSE
+            self.TTTSS + "Apply mask" + self.TTTSE
         )
         self.Submit_btn.setToolTip(
             self.TTTSS
@@ -976,15 +976,13 @@ class Ui_ChangeIconWindow(object):
             self.changeIconPath = img
             self.last_browse_path = img
 
-    def Mask_btn(self):
-        import Message
+    def Mask_maker(self):
+        import Mask
 
-        self.window = QtWidgets.QDialog()
-        self.ui = Message.Ui_Message()
-        self.ui.setupUi(
-            self.window,
-            "This feature is no longer available & will be removed next update as icons now auto backup before changing it.",
-        )
+        self.Submit_btn.setEnabled(False)
+        self.window = QtWidgets.QWidget()
+        self.ui = Mask.Ui_mask_maker()
+        self.ui.setupUi(self.window)
         self.window.show()
 
     def Resize_Upload(self):

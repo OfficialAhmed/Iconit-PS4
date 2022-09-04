@@ -610,7 +610,6 @@ class Ui_ConfirmWindow(object):
                 + "\n"
             )
 
-
 if __name__ == "__main__":
     import sys
 
