@@ -510,7 +510,7 @@ class Ui_IPortWindow(object):
         self.TitleLabel_withURL.setText(
             _translate(
                 "IPortWindow",
-                '<html><head/><body><p align="center"><a href="https://github.com/OfficialAhmed/Iconit-PS4/releases"><span style=" text-decoration: underline; color:#f250e7;">Iconit v4.72</span></a></p></body></html>',
+                '<html><head/><body><p align="center"><a href="https://github.com/OfficialAhmed/Iconit-PS4/releases"><span style=" text-decoration: underline; color:#f250e7;">Iconit v'+ Update.get_update_version() +'</span></a></p></body></html>',
             )
         )
         self.Status.setText(
@@ -570,7 +570,7 @@ class Ui_IPortWindow(object):
         self.Credits.setText(
             _translate(
                 "MainWindow",
-                '<html><head/><body><p align="center"><a href="https://all-exhost.github.io/icon%20downloader.html"><span style=" font-size:8pt; font-weight:700; font-style:italic; text-decoration: underline; color:#f250e7;">Download Free Icons</span></a></p></body></html>',
+                '<html><head/><body><p align="center"><a href="https://all-exhost.github.io/Icons.html"><span style=" font-size:8pt; font-weight:700; font-style:italic; text-decoration: underline; color:#f250e7;">Download Free Icons</span></a></p></body></html>',
             )
         )
 
