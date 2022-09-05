@@ -550,9 +550,7 @@ class Ui_ChangeIconWindow(object):
         )
 
         # v4.01
-        self.Icon.setStyleSheet(
-            "border-image: url(" + self.CUSA_img + self.imgs[0] + ");"
-        )
+        self.Icon.setStyleSheet("border-image: url(" + self.CUSA_img + self.imgs[0] + ");")
         self.Icon.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.Icon.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.Icon.setLineWidth(2)

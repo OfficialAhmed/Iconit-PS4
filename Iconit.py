@@ -128,9 +128,7 @@ class Ui_IPortWindow(object):
         IPortWindow.setWindowModality(QtCore.Qt.WindowModal)
 
         IPortWindow.resize(720, 521)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(IPortWindow.sizePolicy().hasHeightForWidth())
@@ -142,9 +140,7 @@ class Ui_IPortWindow(object):
         IPortWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
         IPortWindow.setObjectName("IPortWindow")
         IPortWindow.resize(701, 620)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(IPortWindow.sizePolicy().hasHeightForWidth())
@@ -168,14 +164,10 @@ class Ui_IPortWindow(object):
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.mainWidget)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.TitleLabel_withURL = QtWidgets.QLabel(self.mainWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.TitleLabel_withURL.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.TitleLabel_withURL.sizePolicy().hasHeightForWidth())
         self.TitleLabel_withURL.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(22)
@@ -189,14 +181,10 @@ class Ui_IPortWindow(object):
         self.TitleLabel_withURL.setObjectName("TitleLabel_withURL")
         self.verticalLayout_5.addWidget(self.TitleLabel_withURL)
         self.widgetWithRadius = QtWidgets.QWidget(self.mainWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.widgetWithRadius.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.widgetWithRadius.sizePolicy().hasHeightForWidth())
         self.widgetWithRadius.setSizePolicy(sizePolicy)
         self.widgetWithRadius.setMaximumSize(QtCore.QSize(16777212, 16777215))
         self.widgetWithRadius.setStyleSheet(
@@ -216,9 +204,7 @@ class Ui_IPortWindow(object):
         self.verticalLayout_6.addWidget(self.Status)
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
-        spacerItem = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
-        )
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 2, 0, 1, 1)
         self.SystemIcon = QtWidgets.QRadioButton(self.widgetWithRadius)
 
@@ -236,9 +222,7 @@ class Ui_IPortWindow(object):
         self.Port_Label.setAlignment(QtCore.Qt.AlignCenter)
         self.Port_Label.setObjectName("Port_Label")
         self.gridLayout.addWidget(self.Port_Label, 3, 1, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(
-            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem1, 5, 2, 1, 1)
         self.GameIcon = QtWidgets.QRadioButton(self.widgetWithRadius)
         font = QtGui.QFont()
@@ -251,9 +235,7 @@ class Ui_IPortWindow(object):
         self.GameIcon.setObjectName("GameIcon")
         self.gridLayout.addWidget(self.GameIcon, 8, 2, 1, 1)
         self.Port_input = QtWidgets.QLineEdit(self.widgetWithRadius)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.Port_input.sizePolicy().hasHeightForWidth())
@@ -269,17 +251,13 @@ class Ui_IPortWindow(object):
         self.Port_input.setAlignment(QtCore.Qt.AlignCenter)
         self.Port_input.setObjectName("Port_input")
         self.gridLayout.addWidget(self.Port_input, 3, 2, 1, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
-        )
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem2, 2, 3, 1, 1)
         self.SysIcon_Note = QtWidgets.QLabel(self.widgetWithRadius)
         self.SysIcon_Note.setObjectName("SysIcon_Note")
         self.gridLayout.addWidget(self.SysIcon_Note, 11, 2, 1, 1)
         self.IP_input = QtWidgets.QLineEdit(self.widgetWithRadius)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.IP_input.sizePolicy().hasHeightForWidth())
@@ -310,17 +288,13 @@ class Ui_IPortWindow(object):
         self.ChangeAvatar.setStyleSheet("color: rgb(255, 255, 255);")
         self.ChangeAvatar.setObjectName("ChangeAvatar")
         self.gridLayout.addWidget(self.ChangeAvatar, 12, 2, 1, 1)
-        spacerItem3 = QtWidgets.QSpacerItem(
-            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem3, 1, 2, 1, 1)
         self.GameIcon_Note = QtWidgets.QLabel(self.widgetWithRadius)
         self.GameIcon_Note.setAlignment(QtCore.Qt.AlignCenter)
         self.GameIcon_Note.setObjectName("GameIcon_Note")
         self.gridLayout.addWidget(self.GameIcon_Note, 9, 2, 1, 1)
-        spacerItem4 = QtWidgets.QSpacerItem(
-            500, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum
-        )
+        spacerItem4 = QtWidgets.QSpacerItem(500, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem4, 6, 2, 1, 1)
         self.verticalLayout_6.addLayout(self.gridLayout)
         self.gridLayout_2 = QtWidgets.QGridLayout()
@@ -354,22 +328,14 @@ class Ui_IPortWindow(object):
         self.label.setOpenExternalLinks(True)
         self.label.setObjectName("label")
         self.gridLayout_2.addWidget(self.label, 7, 2, 1, 1)
-        spacerItem5 = QtWidgets.QSpacerItem(
-            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem5, 0, 2, 1, 1)
-        spacerItem6 = QtWidgets.QSpacerItem(
-            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        spacerItem6 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem6, 2, 1, 2, 1)
-        spacerItem7 = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
-        )
+        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem7, 2, 0, 1, 1)
         self.Credits = QtWidgets.QLabel(self.widgetWithRadius)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.Credits.sizePolicy().hasHeightForWidth())
@@ -379,9 +345,7 @@ class Ui_IPortWindow(object):
         self.Credits.setObjectName("Credits")
         self.gridLayout_2.addWidget(self.Credits, 6, 2, 1, 1)
         self.Connect_btn = QtWidgets.QPushButton(self.widgetWithRadius)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.Connect_btn.sizePolicy().hasHeightForWidth())
@@ -395,17 +359,11 @@ class Ui_IPortWindow(object):
         self.Connect_btn.setFlat(False)
         self.Connect_btn.setObjectName("Connect_btn")
         self.gridLayout_2.addWidget(self.Connect_btn, 2, 2, 2, 1)
-        spacerItem8 = QtWidgets.QSpacerItem(
-            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        spacerItem8 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem8, 5, 2, 1, 1)
-        spacerItem9 = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
-        )
+        spacerItem9 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem9, 1, 2, 1, 1)
-        spacerItem10 = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
-        )
+        spacerItem10 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem10, 2, 3, 1, 1)
         self.label_2 = QtWidgets.QLabel(self.widgetWithRadius)
         self.label_2.setOpenExternalLinks(True)
@@ -413,9 +371,7 @@ class Ui_IPortWindow(object):
         self.gridLayout_2.addWidget(self.label_2, 8, 2, 1, 1)
         self.verticalLayout_6.addLayout(self.gridLayout_2)
         self.verticalLayout_4.addLayout(self.verticalLayout_6)
-        spacerItem11 = QtWidgets.QSpacerItem(
-            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        spacerItem11 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_4.addItem(spacerItem11)
         self.verticalLayout_5.addWidget(self.widgetWithRadius)
 
@@ -460,13 +416,13 @@ class Ui_IPortWindow(object):
         QtCore.QMetaObject.connectSlotsByName(IPortWindow)
 
         self.Connect_btn.clicked.connect(self.Check_IPort)
-        self.Options.triggered.connect(self.OpenOptions)
+        self.Options.triggered.connect(self.open_options)
         self.About.triggered.connect(self.about)
 
         self.Special_thanks.triggered.connect(self.thanks_2)
-        self.Remove_cache.triggered.connect(self.rmvCache)
+        self.Remove_cache.triggered.connect(self.remove_cache)
 
-    def OpenOptions(self):
+    def open_options(self):
         import OptionsWin
 
         self.window = QtWidgets.QDialog()
@@ -486,7 +442,7 @@ class Ui_IPortWindow(object):
         self.ui.setupUi(self.window, "CUSTOMspecial_thanks")
         self.window.show()
 
-    def rmvCache(self):
+    def remove_cache(self):
         self.window = QtWidgets.QDialog()
         self.ui = Message.Ui_Message()
         cache_dir = "Data\prxUserMeta\MegaSRX\metadata\game"
@@ -505,16 +461,8 @@ class Ui_IPortWindow(object):
         ######################################################
 
         _translate = QtCore.QCoreApplication.translate
-        IPortWindow.setWindowTitle(
-            _translate("IPortWindow", f"Iconit v{self.ver} ({Update.get_update_release_date()})"
-            )
-        )
-        self.TitleLabel_withURL.setText(
-            _translate(
-                "IPortWindow",
-                self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{Update.get_update_version()}", "#f250e7", 18),
-            )
-        )
+        IPortWindow.setWindowTitle(_translate("IPortWindow", f"Iconit v{self.ver} ({Update.get_update_release_date()})"))
+        self.TitleLabel_withURL.setText(_translate("IPortWindow", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{Update.get_update_version()}", "#f250e7", 18),))
         self.Status.setText(_translate("IPortWindow", self.html.span_tag("Awaiting Connection ..", "#f2ae30", 18)))
         self.SystemIcon.setText(_translate("IPortWindow", "System Icons"))
         self.Port_Label.setText( _translate( "IPortWindow", self.html.span_tag("PS4 Port", "#f2ae30", 16)))
@@ -547,9 +495,7 @@ class Ui_IPortWindow(object):
 
     def Check_IPort(self):
         global IP, Port
-        self.Status.setText(
-            '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Connecting...</span></p></body></html>',
-        )
+        self.Status.setText(self.html.span_tag("Connecting...", "#f2ae30", 18))
         try:
             IP = self.IP_input.text()
             Port = self.Port_input.text()
@@ -649,7 +595,6 @@ class Ui_IPortWindow(object):
             ###############################################
             self.Status.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
             if self.GameIcon.isChecked():
-                
                 # v4.72 json for caching
                 jsonPath = "Data\prxUserMeta\MegaSRX\metadata\game\info.json"
                 if os.path.isfile(jsonPath):
@@ -766,7 +711,7 @@ class Ui_IPortWindow(object):
                         if "0x" in line:
                             account_index = line.index("0x")
                             self.userID.append(line[account_index:-1])
-                self.CacheChangeAvatar()
+                self.cache_change_avatar()
         else:
             self.change_colors(False)
             self.ui.setupUi(
@@ -775,7 +720,7 @@ class Ui_IPortWindow(object):
             )
             self.window.show()
 
-    def CacheChangeAvatar(self):
+    def cache_change_avatar(self):
         ###############################################
         #            Prepare Avatars
         ################################################

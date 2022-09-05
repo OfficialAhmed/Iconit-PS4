@@ -34,6 +34,8 @@ This application is much convenient than uploading the icons manually, it automa
 
 ## v4.91 Changelog
 
+* Mask maker has been implemented (Make styled icons)
+
 * Folder location will be cached, will reset on app restart, *Change the default path in the settings otherwise*.
 
 * IP & Port will be cached.
