@@ -58,6 +58,7 @@ class Ui_IPortWindow(object):
         #####  Settings
         #####
         #######################################################
+        self.html = duplicates.html()
         self.logIt = func.logIt
 
         self.userFont = "Arial"
@@ -502,7 +503,6 @@ class Ui_IPortWindow(object):
         ######################################################
         #####           Gui elements init
         ######################################################
-        html = duplicates.html()
 
         _translate = QtCore.QCoreApplication.translate
         IPortWindow.setWindowTitle(
@@ -512,51 +512,24 @@ class Ui_IPortWindow(object):
         self.TitleLabel_withURL.setText(
             _translate(
                 "IPortWindow",
-                html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{Update.get_update_version()}", "#f250e7", 18),
+                self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{Update.get_update_version()}", "#f250e7", 18),
             )
         )
-        self.Status.setText(_translate("IPortWindow", html.span_tag("Awaiting Connection ..", "#f2ae30", 18)))
+        self.Status.setText(_translate("IPortWindow", self.html.span_tag("Awaiting Connection ..", "#f2ae30", 18)))
         self.SystemIcon.setText(_translate("IPortWindow", "System Icons"))
-        self.Port_Label.setText( _translate( "IPortWindow", html.span_tag("PS4 Port", "#f2ae30", 16)))
+        self.Port_Label.setText( _translate( "IPortWindow", self.html.span_tag("PS4 Port", "#f2ae30", 16)))
         self.GameIcon.setText(_translate("IPortWindow", "Game Icon/Pic"))
         self.Port_input.setText(_translate("IPortWindow", self.userPort))
-        self.SysIcon_Note.setText(_translate("IPortWindow", html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8),))
+        self.SysIcon_Note.setText(_translate("IPortWindow", self.html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8),))
         self.IP_input.setPlaceholderText(_translate("IPortWindow", "192.168.XXX.XXX"))
-        self.Change_label.setText(_translate("IPortWindow", html.span_tag("MODE", "#f2ae30", 16)))
-        self.IP_Label.setText(_translate("IPortWindow", html.span_tag("PS4 IP", "#f2ae30", 16)))
+        self.Change_label.setText(_translate("IPortWindow", self.html.span_tag("MODE", "#f2ae30", 16)))
+        self.IP_Label.setText(_translate("IPortWindow", self.html.span_tag("PS4 IP", "#f2ae30", 16)))
         self.ChangeAvatar.setText(_translate("IPortWindow", "Profile Avatar"))
-        self.GameIcon_Note.setText(
-            _translate(
-                "IPortWindow",
-                '<html><head/><body><p align="center"><span style=" font-size:8pt; font-weight:700; color:#f2ae30;">Note: You can enable Homebrew icons in the settings before connecting to the PS4</span></p></body></html>',
-            )
-        )
-        self.Cache_label.setText(
-            _translate(
-                "IPortWindow",
-                '<html><head/><body><p align="center"><span style=" font-size:10pt; color:#f2ae30;">Caching</span></p></body></html>',
-            )
-        )
-        self.label.setText(
-            _translate(
-                "MainWindow",
-                '<html><head/><body><p align="center"><a href="https://www.paypal.com/paypalme/Officialahmed0"><span style=" font-weight:700; font-style:italic; text-decoration: underline; color:#f250e7;">Donate (PayPal)</span></a></p></body></html>',
-            )
-        )
-
-        self.Credits.setText(
-            _translate(
-                "MainWindow",
-                '<html><head/><body><p align="center"><a href="https://all-exhost.github.io/Icons.html"><span style=" font-size:8pt; font-weight:700; font-style:italic; text-decoration: underline; color:#f250e7;">Download Free Icons</span></a></p></body></html>',
-            )
-        )
-
-        self.label_2.setText(
-            _translate(
-                "MainWindow",
-                '<html><head/><body><p align="center"><a href="https://twitter.com/OfficialAhmed0"><span style=" font-weight:700; font-style:italic; text-decoration: underline; color:#f250e7;">Created by @OfficialAhmed0</span></a></p></body></html>',
-            )
-        )
+        self.GameIcon_Note.setText(_translate("IPortWindow", self.html.span_tag("Note: You can enable Homebrew icons in the settings before connecting to the PS4", "#f2ae30", 8)))
+        self.Cache_label.setText(_translate("IPortWindow", self.html.span_tag("Cache", "#f2ae30", 10)))
+        self.label.setText(_translate("MainWindow", self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "Donate (PayPal)", "#f250e7", 8, "font-style:italic")))
+        self.Credits.setText(_translate("MainWindow", self.html.a_tag("https://all-exhost.github.io/Icons.html", "Download Free Icons", "#f250e7", 8)))
+        self.label_2.setText(_translate("MainWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created by @OfficialAhmed0", "#f250e7", 8, "font-style:italic")))
 
         self.Connect_btn.setText(_translate("IPortWindow", "Connect PS4"))
         self.menuSettings.setTitle(_translate("IPortWindow", "Settings"))
@@ -594,33 +567,21 @@ class Ui_IPortWindow(object):
         except Exception as e:
             self.logIt(str(e), "Warning")
 
-    def ChangeColors(self, Connected):
+    def change_colors(self, Connected):
         labels = {
             self.IP_Label: "PS4 IP",
             self.Port_Label: "PS4 Port",
             self.Change_label: "Mode",
-            self.Cache_label: "caching",
+            self.Cache_label: "Cache",
         }
         if Connected:
-            self.Status.setText(
-                '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:rgb(92, 213, 21);">Connected</span></p></body></html>',
-            )
+            self.Status.setText(self.html.span_tag("Connected", "rgb(92, 213, 21)", 18))
         else:
-            self.Status.setText(
-                '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:rgb(255, 0, 0);">Failed to connect</span></p></body></html>',
-            )
+            self.Status.setText(self.html.span_tag("Failed to connect", "rgb(255, 0, 0)", 18))
         for l in labels:
-            l.setText(
-                '<html><head/><body><p align="center"><span style=" font-size:16pt; font-weight:700; color:rgb(255, 0, 0);">'
-                + labels[l]
-                + "</span></p></body></html>",
-            )
+            l.setText(self.html.span_tag(labels[l], "rgb(255, 0, 0)", 16))
             if Connected:
-                l.setText(
-                    '<html><head/><body><p align="center"><span style=" font-size:16pt; font-weight:700; color:rgb(92, 213, 21);">'
-                    + labels[l]
-                    + "</span></p></body></html>"
-                )
+                l.setText(self.html.span_tag(labels[l], "color:rgb(92, 213, 21)", 16))
 
     def connection_history(self, mode: str) -> None:
         ################################################################
@@ -665,7 +626,7 @@ class Ui_IPortWindow(object):
                 ftp.login("", "")
                 ftp.getwelcome()
             except ConnectionRefusedError:
-                self.ChangeColors(False)
+                self.change_colors(False)
                 self.ui.setupUi(
                     self.window,
                     "Cannot make connection with the given IP/Port. DEV| ConnectionRefusedError",
@@ -675,7 +636,7 @@ class Ui_IPortWindow(object):
             except Exception as e:
                 ftp.close()
                 self.logIt(e, "Error")
-                self.ChangeColors(False)
+                self.change_colors(False)
                 self.ui.setupUi(
                     self.window,
                     "Cannot make connection with the given IP/Port. DEV|" + str(e),
@@ -686,10 +647,9 @@ class Ui_IPortWindow(object):
             ##############################################
             ###       User Picked Game Icon
             ###############################################
+            self.Status.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
             if self.GameIcon.isChecked():
-                self.Status.setText(
-                    '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Please wait...</span></p></body></html>'
-                )
+                
                 # v4.72 json for caching
                 jsonPath = "Data\prxUserMeta\MegaSRX\metadata\game\info.json"
                 if os.path.isfile(jsonPath):
@@ -707,7 +667,7 @@ class Ui_IPortWindow(object):
                     if "external" in dir:
                         self.iconDirs.append(working_dir + "/external")
                         break
-                self.ChangeColors(True)
+                self.change_colors(True)
                 self.Connect_btn.setEnabled(False)
                 self.GameIcon.setEnabled(False)
                 self.ChangeAvatar.setEnabled(False)
@@ -747,21 +707,18 @@ class Ui_IPortWindow(object):
                                 else:
                                     all_Games.append(game_id)
                                     all_CUSA.append(game_id)
-                self.CacheGameIcon()
+                self.cache_game_icon()
 
             ##############################################
             ###       User picked Sys icons
             ###############################################
             elif self.SystemIcon.isChecked():
-                self.Status.setText(
-                    '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Please wait...</span></p></body></html>'
-                )
                 ftp.cwd("/")
                 ftp.cwd(sys_path)
 
                 sys_files = self.listDirs()
 
-                self.ChangeColors(True)
+                self.change_colors(True)
                 self.Connect_btn.setEnabled(False)
                 self.GameIcon.setEnabled(False)
                 self.ChangeAvatar.setEnabled(False)
@@ -784,15 +741,12 @@ class Ui_IPortWindow(object):
             ###       User picked Avatar change
             ###############################################
             else:
-                self.Status.setText(
-                    '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Please wait...</span></p></body></html>'
-                )
                 self.sysProfileRoot = "system_data/priv/cache/profile/"
                 ftp.cwd("/")
                 ftp.cwd(self.sysProfileRoot)
                 self.userID = []
 
-                self.ChangeColors(True)
+                self.change_colors(True)
 
                 self.Connect_btn.setEnabled(False)
                 self.GameIcon.setEnabled(False)
@@ -814,7 +768,7 @@ class Ui_IPortWindow(object):
                             self.userID.append(line[account_index:-1])
                 self.CacheChangeAvatar()
         else:
-            self.ChangeColors(False)
+            self.change_colors(False)
             self.ui.setupUi(
                 self.window,
                 "Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection",
@@ -983,7 +937,7 @@ class Ui_IPortWindow(object):
         except Exception as e:
             print(str(e), "(O) go to line 700")
 
-    def CacheGameIcon(self):
+    def cache_game_icon(self):
         ################################################
         #   Internal/External HDD Game Icons
         ################################################
@@ -1083,7 +1037,7 @@ class Ui_IPortWindow(object):
                 print(str(e), "(O) go to line 700")
         except Exception as e:
             self.logIt(e, "Error")
-            self.ChangeColors(False)
+            self.change_colors(False)
             self.ui.setupUi(self.window, str(e))
             self.window.show()
 
@@ -1100,9 +1054,7 @@ class Ui_IPortWindow(object):
         return directories
 
     def fetchData(self, file_name, file_path_with_extension):
-        self.Status.setText(
-            '<html><head/><body><p align="center"><span style=" font-size:18pt; font-weight:700; color:#f2ae30;">Please wait...</span></p></body></html>'
-        )
+        self.Status.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
         with open(
             file_path_with_extension,
             "wb",
