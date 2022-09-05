@@ -5,7 +5,7 @@ Latest version 4.72 (Jan 5, 2022)
 
 No longer ftp client needed to change PS4 games' icon this tool will do it for you (everything Automated). PS4 FTP required (PS4 fw "1.74-9.00").
 
-*Download `icons` from <https://all-exhost.github.io/icon%20downloader.html>*
+*Download `icons` from <https://all-exhost.github.io/Icons.html>*
 
 *Download `masks` from <https://all-exhost.github.io/Masks.html>*
 
