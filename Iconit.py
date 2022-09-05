@@ -10,6 +10,7 @@ import ChangeIcon
 import Message
 import Update
 import func
+import duplicates
 
 from xml.dom import minidom  # XML parsing
 
@@ -501,6 +502,7 @@ class Ui_IPortWindow(object):
         ######################################################
         #####           Gui elements init
         ######################################################
+        html = duplicates.html()
 
         _translate = QtCore.QCoreApplication.translate
         IPortWindow.setWindowTitle(
@@ -510,43 +512,18 @@ class Ui_IPortWindow(object):
         self.TitleLabel_withURL.setText(
             _translate(
                 "IPortWindow",
-                '<html><head/><body><p align="center"><a href="https://github.com/OfficialAhmed/Iconit-PS4/releases"><span style=" text-decoration: underline; color:#f250e7;">Iconit v'+ Update.get_update_version() +'</span></a></p></body></html>',
+                html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{Update.get_update_version()}", "#f250e7", 18),
             )
         )
-        self.Status.setText(
-            _translate(
-                "IPortWindow",
-                '<html><head/><body><p align="center"><span style="font-size:18pt; font-weight:700; color:#f2ae30;">Waiting Connection ..</span></p></body></html>',
-            )
-        )
+        self.Status.setText(_translate("IPortWindow", html.span_tag("Awaiting Connection ..", "#f2ae30", 18)))
         self.SystemIcon.setText(_translate("IPortWindow", "System Icons"))
-        self.Port_Label.setText(
-            _translate(
-                "IPortWindow",
-                '<html><head/><body><p align="center"><span style=" font-size:16pt; font-weight:700; color:#f2ae30;">PS4 Port</span></p></body></html>',
-            )
-        )
+        self.Port_Label.setText( _translate( "IPortWindow", html.span_tag("PS4 Port", "#f2ae30", 16)))
         self.GameIcon.setText(_translate("IPortWindow", "Game Icon/Pic"))
         self.Port_input.setText(_translate("IPortWindow", self.userPort))
-        self.SysIcon_Note.setText(
-            _translate(
-                "IPortWindow",
-                '<html><head/><body><p align="center"><span style=" font-size:8pt; font-weight:700; color:#f2ae30;">Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)</span></p></body></html>',
-            )
-        )
+        self.SysIcon_Note.setText(_translate("IPortWindow", html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8),))
         self.IP_input.setPlaceholderText(_translate("IPortWindow", "192.168.XXX.XXX"))
-        self.Change_label.setText(
-            _translate(
-                "IPortWindow",
-                '<html><head/><body><p align="center"><span style=" font-size:16pt; font-weight:700; color:#f2ae30;">Mode</span></p></body></html>',
-            )
-        )
-        self.IP_Label.setText(
-            _translate(
-                "IPortWindow",
-                '<html><head/><body><p align="center"><span style=" font-size:16pt; font-weight:700; color:#f2ae30;">PS4 IP</span></p></body></html>',
-            )
-        )
+        self.Change_label.setText(_translate("IPortWindow", html.span_tag("MODE", "#f2ae30", 16)))
+        self.IP_Label.setText(_translate("IPortWindow", html.span_tag("PS4 IP", "#f2ae30", 16)))
         self.ChangeAvatar.setText(_translate("IPortWindow", "Profile Avatar"))
         self.GameIcon_Note.setText(
             _translate(
