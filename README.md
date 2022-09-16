@@ -102,13 +102,17 @@ ________________________________________
 
 * [x] Apply `PNG` Masks
 
+* [x] Performance++ : save game title as cache on game folder
+
 * [ ] Apply `PSD` Masks
 
 * [ ] Render Game ID `CUSAXXXXX` text on icon
 
 * [ ] Multiple icon change
 
-* [x] Performance++ : save game title as cache on game folder
+* [ ] Apply mask on all xmb icons at once
+
+* [ ] Utilize 100% CPU usage (Multiprocessing)
 
 * [ ] Feature : User can edit displayed game title from within cache file
 
