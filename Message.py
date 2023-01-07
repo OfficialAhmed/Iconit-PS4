@@ -1,12 +1,15 @@
+from environment import Environment
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
-import Update
 
+class Ui_Message(Environment):
+    def __init__(self) -> None:
+        super().__init__()
 
-class Ui_Message(object):
     def setupUi(self, Message, MessageType):
-        self.ver = Update.get_update_version()
-        self.releaseDate = Update.get_update_release_date()
+        self.ver = self.get_update_version()
+        self.releaseDate = self.get_update_release_date()
         self.copyright = "\nhttps://twitter.com/OfficialAhmed0\nThanks for using Iconit"
 
         self.Type = MessageType

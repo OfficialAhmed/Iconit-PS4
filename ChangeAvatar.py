@@ -1,16 +1,18 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import ctypes
-import Update
 import json
-
+from environment import Environment
 myappid = "mycompany.myproduct.subproduct.version"  # arbitrary string
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
-class Ui_ChangeAvatarWin(object):
+class Ui_ChangeAvatarWin(Environment):
+    def __init__(self) -> None:
+        super().__init__()
+        
     def setupUi(self, ChangeAvatarWin, allUsers, IP, Port, w, h):
-        self.ver = Update.get_update_version()
+        self.ver = self.get_update_version()
         self.screenWidth = w
         self.screenHeight = h
 
@@ -630,7 +632,7 @@ class Ui_ChangeAvatarWin(object):
                 "Change Avatar / Iconit v"
                 + str(self.ver)
                 + " ("
-                + str(Update.get_update_release_date())
+                + str(self.get_update_release_date())
                 + ")",
             )
         )

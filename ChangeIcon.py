@@ -1,33 +1,25 @@
 import json
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-import Iconit as main
 from PIL import Image
 import os
-import Update
+from environment import Environment
 
+class Ui_ChangeIconWindow(Environment):
+    def __init__(self) -> None:
+        super().__init__()
 
-class Ui_ChangeIconWindow(object):
     def setupUi(
         self,
         ChangeIconWindow,
-        IP,
-        Port,
         Games,
         uFont,
         uIPath,
         uDPath,
         userHB,
-        exGames,
-        w,
-        h,
-        sysGames,
         modeSelected,
     ):
         self.ChangeIconWindow = ChangeIconWindow
-        self.ver = Update.get_update_version()
-        self.screenWidth = w
-        self.screenHeight = h
 
         # Settings
         self.userFont = uFont
@@ -35,8 +27,8 @@ class Ui_ChangeIconWindow(object):
         self.userDPath = uDPath
         self.userHB = userHB
 
-        self.exGames = exGames
-        self.sysGames = sysGames
+        self.exGames = self.all_CUSA_ex
+        self.sysGames = self.all_CUSA_sys
 
         # Temp Settings | every app restart will reset v4.91
         self.last_browse_path = ""
@@ -45,29 +37,19 @@ class Ui_ChangeIconWindow(object):
         if len(self.sysGames) > 0:
             self.sysIconsAlgo = True
 
-        self.IP = IP
-        self.Port = Port
-        self.temp_path = main.temp_path
-        self.img_dir = main.img_dir
-        self.setting_path = main.setting_path
         self.modeSelected = modeSelected
         self.Games = Games
         temp = self.temp_path + "MegaSRX\\metadata\\" + self.modeSelected + "\\"
         self.CUSA_img = ""
+
         for i in temp:
             if i == "\\":
                 self.CUSA_img += "/"
             else:
                 self.CUSA_img += i
         # Get all icon names from local path sorted by value(gametitle)
-        dirs = os.listdir(temp)
-        self.imgs = []
-        for i in self.Games.keys():
-            self.imgs.append(i)
+        self.imgs = [i for i in self.Games.keys()]
 
-        # for img in dirs:
-        #     if "png" in img:
-        #         self.imgs.append(img)
         self.changeIconPath = ""
         self.changeBgPath = ""
         self.img_limit = len(self.imgs)
@@ -83,8 +65,7 @@ class Ui_ChangeIconWindow(object):
             ReadJson = open("Data\prxUserMeta\MegaSRX\metadata\game\info.json")
             self.gameInfo = json.load(ReadJson)
 
-        # v4.05
-        self.prefloc = self.setting_path + "\\Data\\Pref\\"
+        self.pref_location = self.setting_path + "\\Data\\Pref\\"
 
         # v4.61
         self.bgImageChanged = False
@@ -92,7 +73,7 @@ class Ui_ChangeIconWindow(object):
         ChangeIconWindow.setObjectName("ChangeIconWindow")
         ChangeIconWindow.resize(1080, 720)
         ChangeIconWindow.setWindowIcon(
-            QtGui.QIcon(self.prefloc + "ic1.@OfficialAhmed0")
+            QtGui.QIcon(self.pref_location + "ic1.@OfficialAhmed0")
         )
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
@@ -104,17 +85,17 @@ class Ui_ChangeIconWindow(object):
         ChangeIconWindow.setMinimumSize(QtCore.QSize(1300, 720))
 
         # Change bg accroding to user Resolution
-        if self.screenWidth <= 1366:
+        if self.screen_w <= 1366:
             self.background = "SDbg.@OfficialAhmed0"
-        elif self.screenWidth <= 1920:
+        elif self.screen_w <= 1920:
             self.background = "HDbg.@OfficialAhmed0"
-        elif self.screenWidth <= 2048:
+        elif self.screen_w <= 2048:
             self.background = "2kbg.@OfficialAhmed0"
         else:
             self.background = "4kbg.@OfficialAhmed0"
         ChangeIconWindow.setStyleSheet(
             "background-image: url("
-            + self.convert2Url(self.prefloc + self.background)
+            + self.convert2Url(self.pref_location + self.background)
             + ");"
         )
 
@@ -166,7 +147,7 @@ class Ui_ChangeIconWindow(object):
         self.whiteBg.setMinimumSize(QtCore.QSize(4000, 1))
         self.whiteBg.setStyleSheet(
             "border-image: url("
-            + self.convert2Url(self.prefloc + "White.@OfficialAhmed0")
+            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
             + ");"
         )
         self.whiteBg.setFrameShadow(QtWidgets.QFrame.Plain)
@@ -186,7 +167,7 @@ class Ui_ChangeIconWindow(object):
         self.Icon.setMinimumSize(QtCore.QSize(340, 370))
         self.Icon.setStyleSheet(
             "border-image: url("
-            + self.convert2Url(self.prefloc + "White.@OfficialAhmed0")
+            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
             + ");"
         )
         self.Icon.setObjectName("Icon")
@@ -326,7 +307,7 @@ class Ui_ChangeIconWindow(object):
         self.line.setMinimumSize(QtCore.QSize(50, 0))
         self.line.setStyleSheet(
             "border-image: url("
-            + self.convert2Url(self.prefloc + "White.@OfficialAhmed0")
+            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
             + ");"
         )
         self.line.setFrameShadow(QtWidgets.QFrame.Plain)
@@ -361,7 +342,7 @@ class Ui_ChangeIconWindow(object):
         self.line_3.setMinimumSize(QtCore.QSize(30, 3))
         self.line_3.setStyleSheet(
             "border-image: url("
-            + self.convert2Url(self.prefloc + "White.@OfficialAhmed0")
+            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
             + ");"
         )
         self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
@@ -392,7 +373,7 @@ class Ui_ChangeIconWindow(object):
         self.line_4.setMinimumSize(QtCore.QSize(100, 3))
         self.line_4.setStyleSheet(
             "border-image: url("
-            + self.convert2Url(self.prefloc + "White.@OfficialAhmed0")
+            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
             + ");"
         )
         self.line_4.setFrameShape(QtWidgets.QFrame.HLine)
@@ -423,7 +404,7 @@ class Ui_ChangeIconWindow(object):
         self.line_5.setMinimumSize(QtCore.QSize(100, 3))
         self.line_5.setStyleSheet(
             "border-image: url("
-            + self.convert2Url(self.prefloc + "White.@OfficialAhmed0")
+            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
             + ");"
         )
         self.line_5.setFrameShape(QtWidgets.QFrame.HLine)
@@ -499,7 +480,7 @@ class Ui_ChangeIconWindow(object):
         self.line_6.setMinimumSize(QtCore.QSize(4000, 0))
         self.line_6.setStyleSheet(
             "border-image: url("
-            + self.convert2Url(self.prefloc + "White.@OfficialAhmed0")
+            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
             + ");"
         )
         self.line_6.setFrameShape(QtWidgets.QFrame.HLine)
@@ -579,9 +560,9 @@ class Ui_ChangeIconWindow(object):
             _translate(
                 "ChangeIconWindow",
                 "Iconit v"
-                + str(self.ver)
+                + str(self.get_update_version())
                 + " ("
-                + str(Update.get_update_release_date())
+                + str(self.get_update_release_date())
                 + ")",
             )
         )
@@ -797,7 +778,7 @@ class Ui_ChangeIconWindow(object):
         self.BackgroundChange()
         self.ChangeIconWindow.setStyleSheet(
             "background-image: url("
-            + self.convert2Url(self.prefloc + self.background)
+            + self.convert2Url(self.pref_location + self.background)
             + ");"
         )
 
@@ -833,7 +814,7 @@ class Ui_ChangeIconWindow(object):
         if self.bgImageChanged:
             style = (
                 "background-image: url("
-                + self.convert2Url(self.prefloc + "Black.@OfficialAhmed0")
+                + self.convert2Url(self.pref_location + "Black.@OfficialAhmed0")
                 + "); color:white"
             )
         else:
@@ -916,7 +897,7 @@ class Ui_ChangeIconWindow(object):
         if size[0] == 512 and size[1] == 512:
             if self.bgImageChanged == True:
                 self.ChangeIconSizeLabel(
-                    "#0aff14;", self.prefloc + "Black.@OfficialAhmed0", str(icon.size)
+                    "#0aff14;", self.pref_location + "Black.@OfficialAhmed0", str(icon.size)
                 )
             else:
                 self.ChangeIconSizeLabel("#0aff14;", size=str(icon.size))
@@ -928,7 +909,7 @@ class Ui_ChangeIconWindow(object):
         ):
             if self.bgImageChanged == True:
                 self.ChangeIconSizeLabel(
-                    "#fa9600;", self.prefloc + "Black.@OfficialAhmed0", str(icon.size)
+                    "#fa9600;", self.pref_location + "Black.@OfficialAhmed0", str(icon.size)
                 )
             else:
                 self.ChangeIconSizeLabel("#fa9600;", size=str(icon.size))
@@ -940,7 +921,7 @@ class Ui_ChangeIconWindow(object):
         else:
             if self.bgImageChanged == True:
                 self.ChangeIconSizeLabel(
-                    "#fa0a14;", self.prefloc + "Black.@OfficialAhmed0", str(icon.size)
+                    "#fa0a14;", self.pref_location + "Black.@OfficialAhmed0", str(icon.size)
                 )
             else:
                 self.ChangeIconSizeLabel("#fa0a14;", size=str(icon.size))

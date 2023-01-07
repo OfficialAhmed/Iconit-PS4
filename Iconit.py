@@ -1,71 +1,39 @@
 import os
-import sys, json
+import json
 
-from ftplib import FTP
+# from ftplib import FTP
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 # Custom mod.
 import ChangeAvatar
 import ChangeIcon
 import Message
-import Update
 import func
-import duplicates
+from environment import Environment
+from environment import html
 
 from xml.dom import minidom  # XML parsing
 
-ftp = FTP()
-working_dir = "user/appmeta"
-local_path = str(os.getcwd())
-temp_path = local_path + "\Data\prxUserMeta\\"
-img_dir = local_path + "\\data\\User\\appmeta"
-
-sys_path = "system_ex/app"
-
-setting_path = ""
-for change in local_path:
-    if change == "\\":
-        setting_path += "/"
-    else:
-        setting_path += change
-
-IP = "not accepted"
-Port = 21
-
-#############################################################
-#####
-#####  Lists store icons and related info for the next window
-#####  to be able to navigate back n forth
-#####
-#############################################################
-all_CUSA = []
-all_CUSA_ex = []
-all_CUSA_sys = []
-
-Game = {}
-
-class Ui_IPortWindow(object):
-    def setupUi(self, IPortWindow, w, h):
-        global local_path, setting_path, temp_path, screenHeight, screenWidth
-        self.ver = Update.get_update_version()
-
-        # screen res
-        self.w = w
-        self.h = h
+class Ui(Environment):
+    def __init__(self) -> None:
+        super().__init__()
+        
+    def setupUi(self, window):
+        self.local_path = self.local_path
 
         #######################################################
         #####
         #####  Settings
         #####
         #######################################################
-        self.html = duplicates.html()
-        self.logIt = func.logIt
+        self.html = html.html()
+        self.logs = func.logs
 
         self.userFont = "Arial"
         self.userPort = "1337"
         self.userIp = ""
-        self.userIPath = local_path
-        self.userDPath = local_path
+        self.userIPath = self.local_path
+        self.userDPath = self.local_path
         self.userHB = "False"
         try:
             with open("Data/Pref/pref.ini") as file:
@@ -77,7 +45,7 @@ class Ui_IPortWindow(object):
                 self.userDPath = content[4][6:-1]
                 self.userHB = content[5][3:].strip()
         except Exception as e:
-            self.logIt(str(e), "Warning")
+            self.logs(str(e), "Warning")
 
         #############################################################
         #####
@@ -92,19 +60,19 @@ class Ui_IPortWindow(object):
         self.Eng = self.Eng1 + self.Eng2
         self.Eng.append(" ")
         self.alphaNum = (
-            "one",  # @
-            "two",  # O
-            "three",  # f
-            "four",  # f
-            "five",  # i
-            "six",  # c
-            "seven",  # i
-            "eight",  # a
-            "nine",  # l
-            "™",  # A
-            "'",  # h
-            "!",  # m
-            "?",  # ed0
+            "one", 
+            "two", 
+            "three",
+            "four", 
+            "five", 
+            "six", 
+            "seven",
+            "eight",
+            "nine",
+            "™",
+            "'",
+            "!",
+            "?",
         )
 
         self.modeSelected = ""
@@ -124,33 +92,33 @@ class Ui_IPortWindow(object):
         font.setItalic(True)
 
         # v4.05 new UI support 2k, 4k res
-        IPortWindow.setObjectName("IPortWindow")
-        IPortWindow.setWindowModality(QtCore.Qt.WindowModal)
+        window.setObjectName("window")
+        window.setWindowModality(QtCore.Qt.WindowModal)
 
-        IPortWindow.resize(720, 521)
+        window.resize(720, 521)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(IPortWindow.sizePolicy().hasHeightForWidth())
-        IPortWindow.setSizePolicy(sizePolicy)
-        IPortWindow.setMinimumSize(QtCore.QSize(720, 512))
-        IPortWindow.setWindowOpacity(1.0)
-        IPortWindow.setStyleSheet("")
-        IPortWindow.setDocumentMode(False)
-        IPortWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
-        IPortWindow.setObjectName("IPortWindow")
-        IPortWindow.resize(701, 620)
+        sizePolicy.setHeightForWidth(window.sizePolicy().hasHeightForWidth())
+        window.setSizePolicy(sizePolicy)
+        window.setMinimumSize(QtCore.QSize(720, 512))
+        window.setWindowOpacity(1.0)
+        window.setStyleSheet("")
+        window.setDocumentMode(False)
+        window.setTabShape(QtWidgets.QTabWidget.Rounded)
+        window.setObjectName("window")
+        window.resize(701, 620)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(IPortWindow.sizePolicy().hasHeightForWidth())
-        IPortWindow.setSizePolicy(sizePolicy)
-        IPortWindow.setMinimumSize(QtCore.QSize(701, 620))
+        sizePolicy.setHeightForWidth(window.sizePolicy().hasHeightForWidth())
+        window.setSizePolicy(sizePolicy)
+        window.setMinimumSize(QtCore.QSize(701, 620))
 
         ######################################################
         #####           Background Design
         ######################################################
-        self.mainWidget = QtWidgets.QWidget(IPortWindow)
+        self.mainWidget = QtWidgets.QWidget(window)
         self.mainWidget.setStyleSheet(
             "QWidget#mainWidget{\n"
             "background-image: url(Data//Pref//IPortWinbg.@OfficialAhmed0);\n"
@@ -378,24 +346,24 @@ class Ui_IPortWindow(object):
         ######################################################
         #####           The Menu/Settings hierarchy
         ######################################################
-        IPortWindow.setCentralWidget(self.mainWidget)
-        self.menubar = QtWidgets.QMenuBar(IPortWindow)
+        window.setCentralWidget(self.mainWidget)
+        self.menubar = QtWidgets.QMenuBar(window)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 701, 22))
         self.menubar.setObjectName("menubar")
         self.menuSettings = QtWidgets.QMenu(self.menubar)
         self.menuSettings.setObjectName("menuSettings")
-        IPortWindow.setMenuBar(self.menubar)
-        self.Options = QtWidgets.QAction(IPortWindow)
+        window.setMenuBar(self.menubar)
+        self.Options = QtWidgets.QAction(window)
         self.Options.setObjectName("Options")
-        self.actionAbout = QtWidgets.QAction(IPortWindow)
+        self.actionAbout = QtWidgets.QAction(window)
         self.actionAbout.setObjectName("actionAbout")
-        self.About = QtWidgets.QAction(IPortWindow)
+        self.About = QtWidgets.QAction(window)
         self.About.setObjectName("About")
-        self.actionRemove_cache = QtWidgets.QAction(IPortWindow)
+        self.actionRemove_cache = QtWidgets.QAction(window)
         self.actionRemove_cache.setObjectName("actionAbout")
-        self.Remove_cache = QtWidgets.QAction(IPortWindow)
+        self.Remove_cache = QtWidgets.QAction(window)
         self.Remove_cache.setObjectName("Remove_cache")
-        self.Special_thanks = QtWidgets.QAction(IPortWindow)
+        self.Special_thanks = QtWidgets.QAction(window)
         self.Special_thanks.setObjectName("Special_thanks")
         self.menuSettings.addAction(self.Options)
         self.menuSettings.addAction(self.Remove_cache)
@@ -404,7 +372,7 @@ class Ui_IPortWindow(object):
         self.menuSettings.addAction(self.Special_thanks)
         self.menubar.addAction(self.menuSettings.menuAction())
 
-        self.retranslateUi(IPortWindow)
+        self.retranslateUi(window)
 
         ######################################################
         #####           Slots and Signals
@@ -413,7 +381,7 @@ class Ui_IPortWindow(object):
         self.SystemIcon.toggled["bool"].connect(self.SysIcon_Note.setVisible)
         self.ChangeAvatar.toggled["bool"].connect(self.SysIcon_Note.hide)
         self.ChangeAvatar.toggled["bool"].connect(self.GameIcon_Note.hide)
-        QtCore.QMetaObject.connectSlotsByName(IPortWindow)
+        QtCore.QMetaObject.connectSlotsByName(window)
 
         self.Connect_btn.clicked.connect(self.Check_IPort)
         self.Options.triggered.connect(self.open_options)
@@ -455,37 +423,33 @@ class Ui_IPortWindow(object):
             self.ui.setupUi(self.window, "PermissionDenied")
         self.window.show()
 
-    def retranslateUi(self, IPortWindow):
-        ######################################################
-        #####           Gui elements init
-        ######################################################
-
+    def retranslateUi(self, window):
         _translate = QtCore.QCoreApplication.translate
-        IPortWindow.setWindowTitle(_translate("IPortWindow", f"Iconit v{self.ver} ({Update.get_update_release_date()})"))
-        self.TitleLabel_withURL.setText(_translate("IPortWindow", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{Update.get_update_version()}", "#f250e7", 18),))
-        self.Status.setText(_translate("IPortWindow", self.html.span_tag("Awaiting Connection ..", "#f2ae30", 18)))
-        self.SystemIcon.setText(_translate("IPortWindow", "System Icons"))
-        self.Port_Label.setText( _translate( "IPortWindow", self.html.span_tag("PS4 Port", "#f2ae30", 16)))
-        self.GameIcon.setText(_translate("IPortWindow", "Game Icon/Pic"))
-        self.Port_input.setText(_translate("IPortWindow", self.userPort))
-        self.SysIcon_Note.setText(_translate("IPortWindow", self.html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8),))
-        self.IP_input.setPlaceholderText(_translate("IPortWindow", "192.168.XXX.XXX"))
-        self.Change_label.setText(_translate("IPortWindow", self.html.span_tag("MODE", "#f2ae30", 16)))
-        self.IP_Label.setText(_translate("IPortWindow", self.html.span_tag("PS4 IP", "#f2ae30", 16)))
-        self.ChangeAvatar.setText(_translate("IPortWindow", "Profile Avatar"))
-        self.GameIcon_Note.setText(_translate("IPortWindow", self.html.span_tag("Note: You can enable Homebrew icons in the settings before connecting to the PS4", "#f2ae30", 8)))
-        self.Cache_label.setText(_translate("IPortWindow", self.html.span_tag("Cache", "#f2ae30", 10)))
+        window.setWindowTitle(_translate("window", f"Iconit v{self.get_update_version()} ({self.get_update_release_date()})"))
+        self.TitleLabel_withURL.setText(_translate("window", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{self.get_update_version()}", "#f250e7", 18),))
+        self.Status.setText(_translate("window", self.html.span_tag("Awaiting Connection ..", "#f2ae30", 18)))
+        self.SystemIcon.setText(_translate("window", "System Icons"))
+        self.Port_Label.setText( _translate( "window", self.html.span_tag("PS4 Port", "#f2ae30", 16)))
+        self.GameIcon.setText(_translate("window", "Game Icon/Pic"))
+        self.Port_input.setText(_translate("window", self.userPort))
+        self.SysIcon_Note.setText(_translate("window", self.html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8),))
+        self.IP_input.setPlaceholderText(_translate("window", "192.168.XXX.XXX"))
+        self.Change_label.setText(_translate("window", self.html.span_tag("MODE", "#f2ae30", 16)))
+        self.IP_Label.setText(_translate("window", self.html.span_tag("PS4 IP", "#f2ae30", 16)))
+        self.ChangeAvatar.setText(_translate("window", "Profile Avatar"))
+        self.GameIcon_Note.setText(_translate("window", self.html.span_tag("Note: You can enable Homebrew icons in the settings before connecting to the PS4", "#f2ae30", 8)))
+        self.Cache_label.setText(_translate("window", self.html.span_tag("Cache", "#f2ae30", 10)))
         self.label.setText(_translate("MainWindow", self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "Donate (PayPal)", "#f250e7", 8, "font-style:italic")))
         self.Credits.setText(_translate("MainWindow", self.html.a_tag("https://all-exhost.github.io/Icons.html", "Download Free Icons", "#f250e7", 8)))
         self.label_2.setText(_translate("MainWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created by @OfficialAhmed0", "#f250e7", 8, "font-style:italic")))
 
-        self.Connect_btn.setText(_translate("IPortWindow", "Connect PS4"))
-        self.menuSettings.setTitle(_translate("IPortWindow", "Settings"))
-        self.Options.setText(_translate("IPortWindow", "Options..."))
-        self.actionAbout.setText(_translate("IPortWindow", "About"))
-        self.About.setText(_translate("IPortWindow", "About"))
-        self.Remove_cache.setText(_translate("IPortWindow", "Remove cache"))
-        self.Special_thanks.setText(_translate("IPortWindow", "Special thanks"))
+        self.Connect_btn.setText(_translate("window", "Connect PS4"))
+        self.menuSettings.setTitle(_translate("window", "Settings"))
+        self.Options.setText(_translate("window", "Options..."))
+        self.actionAbout.setText(_translate("window", "About"))
+        self.About.setText(_translate("window", "About"))
+        self.Remove_cache.setText(_translate("window", "Remove cache"))
+        self.Special_thanks.setText(_translate("window", "Special thanks"))
 
         # Keyboard recognition v4.07
         self.Connect_btn.setShortcut("Return")
@@ -494,24 +458,23 @@ class Ui_IPortWindow(object):
         self.connection_history(mode="r")
 
     def Check_IPort(self):
-        global IP, Port
         self.Status.setText(self.html.span_tag("Connecting...", "#f2ae30", 18))
         try:
-            IP = self.IP_input.text()
-            Port = self.Port_input.text()
+            self.IP = self.IP_input.text()
+            self.Port = self.Port_input.text()
             self.connection_history(mode="w")
 
-            if len(IP) < 8:
+            if len(self.IP) < 8:
                 self.Connect_PS4(False)
             else:
                 valid = True
-                for i in IP + str(Port):
+                for i in self.IP + str(self.Port):
                     if i.isalpha():
                         valid = False
                         break
                 self.Connect_PS4(valid)
         except Exception as e:
-            self.logIt(str(e), "Warning")
+            self.logs(str(e), "Warning")
 
     def change_colors(self, Connected):
         labels = {
@@ -536,41 +499,37 @@ class Ui_IPortWindow(object):
         file_name = "connection_history.dat"
         if mode == "r":
             try:
-                with open(f"{temp_path}\{file_name}", "r") as file:
+                with open(f"{self.temp_path}\{file_name}", "r") as file:
                     line = file.readline().strip()
                     ip, port = line.split(",")
                     self.IP_input.setText(ip)
                     self.Port_input.setText(port)
 
             except Exception as e:
-                self.logIt(str(e), "Warning")
+                self.logs(str(e), "Warning")
         else:
-            with open(f"{temp_path}\{file_name}", "w+") as file:
+            with open(f"{self.temp_path}\{file_name}", "w+") as file:
                 ip = self.IP_input.text()
                 port = self.Port_input.text()
                 file.write(f"{ip},{port}")
 
     def Connect_PS4(self, isvalid):
-        global ftp, working_dir, IP, Port, local_path, all_CUSA, all_CUSA_ex, temp_path, sys_path, all_CUSA_sys, Game
         self.window = QtWidgets.QDialog()
         self.ui = Message.Ui_Message()
 
         if isvalid:
-            ################################################################################
-            ###
-            ###                     Naive Approach  ;)
-            ###         Solution for one connection only (GoldHen FTP)
-            ###     *Try to connect otherwise, try to close the connection
-            ###            might not been closed properly before.
-            ###      *Never close connection until we move to the next window
-            ### *Avoid reconnceting to step back to root dir, Change dir manually (/)
-            ###
-            ################################################################################
+            """
+                    Naive Approach  ;)
+                Solution for one connection only (GoldHen FTP)
+                *Try to connect, otherwise, try to close the connection might not been closed properly before.
+                *Never close connection until we move to the next window
+                *Avoid reconnceting to step back to root dir, Change dir manually (/)
+            """
             try:
-                ftp.set_debuglevel(0)
-                ftp.connect(IP, int(Port))
-                ftp.login("", "")
-                ftp.getwelcome()
+                self.ftp.set_debuglevel(0)
+                self.ftp.connect(self.IP, int(self.Port))
+                self.ftp.login("", "")
+                self.ftp.getwelcome()
             except ConnectionRefusedError:
                 self.change_colors(False)
                 self.ui.setupUi(
@@ -580,8 +539,8 @@ class Ui_IPortWindow(object):
                 self.window.show()
                 return
             except Exception as e:
-                ftp.close()
-                self.logIt(e, "Error")
+                self.ftp.close()
+                self.logs(e, "Error")
                 self.change_colors(False)
                 self.ui.setupUi(
                     self.window,
@@ -602,15 +561,15 @@ class Ui_IPortWindow(object):
                     Game = json.load(ReadJson)
 
                 self.modeSelected = "game"
-                self.iconDirs = [working_dir]
-                ftp.cwd("/")
-                ftp.cwd("user/appmeta")
+                self.iconDirs = [self.working_dir]
+                self.ftp.cwd("/")
+                self.ftp.cwd("user/appmeta")
 
                 directories = []
-                ftp.retrlines("LIST ", directories.append)
+                self.ftp.retrlines("LIST ", directories.append)
                 for dir in directories:
                     if "external" in dir:
-                        self.iconDirs.append(working_dir + "/external")
+                        self.iconDirs.append(self.working_dir + "/external")
                         break
                 self.change_colors(True)
                 self.Connect_btn.setEnabled(False)
@@ -618,13 +577,13 @@ class Ui_IPortWindow(object):
                 self.ChangeAvatar.setEnabled(False)
 
                 for dir in self.iconDirs:
-                    ftp.cwd("/")
+                    self.ftp.cwd("/")
                     try:
-                        ftp.cwd(dir)
+                        self.ftp.cwd(dir)
                     except Exception as e:
-                        self.logIt(str(e), "Warning")
+                        self.logs(str(e), "Warning")
                     directories = []
-                    ftp.retrlines("LIST ", directories.append)
+                    self.ftp.retrlines("LIST ", directories.append)
 
                     game_ids = [line.split(" ")[-1] for line in directories]
                     all_Games = []
@@ -648,18 +607,18 @@ class Ui_IPortWindow(object):
                             if accept:
                                 if "external" in dir:
                                     all_Games.append(game_id)
-                                    all_CUSA_ex.append(game_id)
+                                    self.all_CUSA_sys.append(game_id)
                                 else:
                                     all_Games.append(game_id)
-                                    all_CUSA.append(game_id)
+                                    self.all_CUSA.append(game_id)
                 self.cache_game_icon()
 
             ##############################################
             ###       User picked Sys icons
             ###############################################
             elif self.SystemIcon.isChecked():
-                ftp.cwd("/")
-                ftp.cwd(sys_path)
+                self.ftp.cwd("/")
+                self.ftp.cwd(self.sys_path)
 
                 sys_files = self.listDirs()
 
@@ -670,16 +629,16 @@ class Ui_IPortWindow(object):
 
                 for sys_game in sys_files:
                     if len(sys_game) == len("CUSA00000"):
-                        ftp.cwd(sys_game)
+                        self.ftp.cwd(sys_game)
                         folders_inside = self.listDirs()
                         if "sce_sys" in folders_inside:
-                            ftp.cwd("sce_sys")
+                            self.ftp.cwd("sce_sys")
                             files_inside = self.listDirs()
                             if "icon0.png" in files_inside:
-                                all_CUSA_sys.append(sys_game)
+                                self.all_CUSA_sys.append(sys_game)
 
-                    ftp.cwd("/")
-                    ftp.cwd(sys_path)
+                    self.ftp.cwd("/")
+                    self.ftp.cwd(self.sys_path)
 
                 self.CacheSysIcon()
             ##############################################
@@ -687,8 +646,8 @@ class Ui_IPortWindow(object):
             ###############################################
             else:
                 self.sysProfileRoot = "system_data/priv/cache/profile/"
-                ftp.cwd("/")
-                ftp.cwd(self.sysProfileRoot)
+                self.ftp.cwd("/")
+                self.ftp.cwd(self.sysProfileRoot)
                 self.userID = []
 
                 self.change_colors(True)
@@ -697,15 +656,15 @@ class Ui_IPortWindow(object):
                 self.GameIcon.setEnabled(False)
                 self.ChangeAvatar.setEnabled(False)
                 directories = []
-                ftp.retrlines("LIST ", directories.append)
+                self.ftp.retrlines("LIST ", directories.append)
 
                 with open(
-                    temp_path + "directories in system.dat", "w+"
+                    self.temp_path + "directories in system.dat", "w+"
                 ) as all_directories_in_system:
                     for line in directories:
                         all_directories_in_system.write(line + "\n")
 
-                with open(temp_path + "directories in system.dat") as file:
+                with open(self.temp_path + "directories in system.dat") as file:
                     lines = file.readlines()
                     for line in lines:
                         if "0x" in line:
@@ -726,7 +685,7 @@ class Ui_IPortWindow(object):
         ################################################
 
         fileName = "online.json"
-        dir = temp_path + "MegaSRX\metaprodata\\"
+        dir = self.temp_path + "MegaSRX\metaprodata\\"
         # Remove old data
         if len(os.listdir(dir)) != 0:
             data = os.listdir(dir)
@@ -734,27 +693,27 @@ class Ui_IPortWindow(object):
                 for i in data:
                     os.remove(dir + i)
             except Exception as e:
-                self.logIt(str(e), "Warning")
+                self.logs(str(e), "Warning")
 
         progress = int(100 / len(self.userID))
         progressed = 0
         self.CacheBar.setProperty("value", 1)
 
         for user in self.userID:
-            ftp.cwd("/")
-            ftp.cwd(self.sysProfileRoot + "/" + user)
+            self.ftp.cwd("/")
+            self.ftp.cwd(self.sysProfileRoot + "/" + user)
 
             with open(dir + "\\" + user + ".png", "wb") as file:
                 # cache avatar if available
                 try:
-                    ftp.retrbinary("RETR " + "avatar.png", file.write, 1024)
+                    self.ftp.retrbinary("RETR " + "avatar.png", file.write, 1024)
                 except Exception as e:
-                    self.logIt(str(e), "Warning")
+                    self.logs(str(e), "Warning")
             with open(dir + "\\" + user + ".json", "wb") as file:
                 # Fix (v4.07) make a fake one if online json not found
                 # fix (json not found) v4.51
                 try:
-                    ftp.retrbinary("RETR " + fileName, file.write, 1024)
+                    self.ftp.retrbinary("RETR " + fileName, file.write, 1024)
                 except Exception as e:
                     print(str(e))
 
@@ -774,7 +733,7 @@ class Ui_IPortWindow(object):
                         json.dump(data, jsonFile, indent=4)
 
                     with open(dir + "\\" + user + ".json", "rb") as json:
-                        ftp.storbinary("STOR online.json", json, 1024)
+                        self.ftp.storbinary("STOR online.json", json, 1024)
 
             # Download original Profile Icon from Sony server
             import requests as req
@@ -801,7 +760,7 @@ class Ui_IPortWindow(object):
                         origIcon.write(img.content)
 
             except Exception as e:
-                self.logIt(str(e), "Warning")
+                self.logs(str(e), "Warning")
 
             for i in range(1, progress):
                 self.CacheBar.setProperty("value", progressed + i)
@@ -820,12 +779,12 @@ class Ui_IPortWindow(object):
         global all_CUSA_sys
         GameWeightInFraction = (1 / len(all_CUSA_sys)) * 100
         percentage = 0
-        ftp.set_debuglevel(0)
-        ftp.cwd("/")
-        ftp.cwd(sys_path)
+        self.ftp.set_debuglevel(0)
+        self.ftp.cwd("/")
+        self.ftp.cwd(self.sys_path)
 
         for sysIcon in all_CUSA_sys:
-            ftp.cwd(sysIcon + "/sce_sys")
+            self.ftp.cwd(sysIcon + "/sce_sys")
             inside_sce_sys = self.listDirs()
             icon_2_fetch = "icon0.png"
 
@@ -835,13 +794,13 @@ class Ui_IPortWindow(object):
 
             self.fetchData(
                 icon_2_fetch,
-                f"{temp_path}MegaSRX\metadata\\{sysIcon}.png",
+                f"{self.temp_path}MegaSRX\metadata\\{sysIcon}.png",
             )
             if self.file_name in inside_sce_sys:
-                self.fetchData(self.file_name, temp_path + self.file_name)
+                self.fetchData(self.file_name, self.temp_path + self.file_name)
 
                 diff_titles = []  # all different titles for current fetched game
-                file = minidom.parse(temp_path + self.file_name).getElementsByTagName(
+                file = minidom.parse(self.temp_path + self.file_name).getElementsByTagName(
                     "text"
                 )
 
@@ -870,8 +829,8 @@ class Ui_IPortWindow(object):
                 else:
                     Game[sysIcon] = f"Cannot find title for {sysIcon}"
 
-            ftp.cwd("/")
-            ftp.cwd(sys_path)
+            self.ftp.cwd("/")
+            self.ftp.cwd(self.sys_path)
             percentage += GameWeightInFraction
             self.CacheBar.setProperty(
                 "value", str(percentage)[: str(percentage).index(".")]
@@ -886,27 +845,25 @@ class Ui_IPortWindow(object):
         ################################################
         #   Internal/External HDD Game Icons
         ################################################
-        global all_CUSA, all_CUSA_ex, ftp, temp_path, working_dir, IP, Port, Game, all_CUSA_sys
 
-        # (FF) (go to 900)
         try:
-            self.cached = os.listdir(f"{temp_path}MegaSRX\metadata\\game")
-            numGames = len(all_CUSA + all_CUSA_ex)
+            self.cached = os.listdir(f"{self.temp_path}MegaSRX\metadata\\game")
+            numGames = len(self.all_CUSA + self.all_CUSA_sys)
             GameWeightInFraction = (1 / numGames) * 100
             percentage = 0
 
             for dir in self.iconDirs:
-                ftp.cwd("/")
-                ftp.cwd(dir)
+                self.ftp.cwd("/")
+                self.ftp.cwd(dir)
                 counter = 0
 
                 if "external" in dir:
-                    currentDir = all_CUSA_ex
+                    currentDir = self.all_CUSA_sys
                 else:
-                    currentDir = all_CUSA
+                    currentDir = self.all_CUSA
 
                 for i in currentDir:
-                    ftp.cwd(i)
+                    self.ftp.cwd(i)
                     gameId = currentDir[counter]
 
                     if gameId not in Game:
@@ -924,19 +881,19 @@ class Ui_IPortWindow(object):
                             ):
                                 if self.file_name in content_in_file:
                                     self.fetchData(
-                                        self.file_name, temp_path + self.file_name
+                                        self.file_name, self.temp_path + self.file_name
                                     )
                                 if self.icon_name in content_in_file:
                                     self.fetchData(
                                         self.icon_name,
-                                        f"{temp_path}MegaSRX\metadata\\game\\{gameId}.png",
+                                        f"{self.temp_path}MegaSRX\metadata\\game\\{gameId}.png",
                                     )
                                 diff_titles = (
                                     []
                                 )  # all different titles for current fetched game
                                 try:
                                     file = minidom.parse(
-                                        temp_path + self.file_name
+                                        self.temp_path + self.file_name
                                     ).getElementsByTagName("text")
 
                                     for name in file:
@@ -965,12 +922,12 @@ class Ui_IPortWindow(object):
                                         break
 
                     # Get back to root directory
-                    ftp.cwd("/")
+                    self.ftp.cwd("/")
 
                     if "external" in dir:
-                        ftp.cwd(dir)
+                        self.ftp.cwd(dir)
                     else:
-                        ftp.cwd(working_dir)
+                        self.ftp.cwd(self.working_dir)
                     counter += 1
                     percentage += GameWeightInFraction
                     self.CacheBar.setProperty(
@@ -979,9 +936,9 @@ class Ui_IPortWindow(object):
             try:
                 self.OpenWindow("GameIcon")
             except Exception as e:
-                print(str(e), "(O) go to line 700")
+                print(str(e))
         except Exception as e:
-            self.logIt(e, "Error")
+            self.logs(e, "Error")
             self.change_colors(False)
             self.ui.setupUi(self.window, str(e))
             self.window.show()
@@ -993,7 +950,7 @@ class Ui_IPortWindow(object):
         ######################################################
 
         dir_with_info = []
-        ftp.retrlines("LIST ", dir_with_info.append)
+        self.ftp.retrlines("LIST ", dir_with_info.append)
 
         directories = [x.split(" ")[-1] for x in dir_with_info]
         return directories
@@ -1004,58 +961,38 @@ class Ui_IPortWindow(object):
             file_path_with_extension,
             "wb",
         ) as downloaded_file:
-            ftp.retrbinary("RETR " + file_name, downloaded_file.write)
+            self.ftp.retrbinary("RETR " + file_name, downloaded_file.write)
 
     def OpenWindow(self, WinType):
-        global IP, Port, Game, all_CUSA_sys
+        global Game
         sorted_Games = {k: v for k, v in sorted(Game.items(), key=lambda item: item[1])}
-        ftp.close()
+        self.ftp.close()
 
         if WinType == "GameIcon":
             # store games in json for cache if not IconSys
-            if len(all_CUSA_sys) == 0:
+            if len(self.all_CUSA_sys) == 0:
                 with open(
                     "Data\prxUserMeta\MegaSRX\metadata\game\info.json", "w+"
                 ) as jsonFile:
                     json.dump(sorted_Games, jsonFile)
 
-            IPortWindow.hide()
+            # window.hide()
             self.window = QtWidgets.QWidget()
             self.ui = ChangeIcon.Ui_ChangeIconWindow()
             self.ui.setupUi(
                 self.window,
-                IP,
-                Port,
                 sorted_Games,
                 self.userFont,
                 self.userIPath,
                 self.userDPath,
                 self.userHB,
-                all_CUSA_ex,
-                self.w,
-                self.h,
-                all_CUSA_sys,
                 self.modeSelected,
             )
             self.window.show()
         else:
-            IPortWindow.hide()
+            # window.hide()
             self.window = QtWidgets.QWidget()
             self.ui = ChangeAvatar.Ui_ChangeAvatarWin()
-            self.ui.setupUi(self.window, self.userID, IP, Port, self.w, self.h)
+            self.ui.setupUi(self.window, self.userID, self.IP, self.Port, self.w, self.h)
             self.window.show()
 
-if __name__ == "__main__":
-    import sys
-    from func import playSound as play
-
-    play(f"{local_path}/Data/Pref/bgm/home.@OfficialAhmed0")
-
-    app = QtWidgets.QApplication(sys.argv)
-    screenResolution = app.desktop().screenGeometry()
-    screenWidth, screenHeight = screenResolution.width(), screenResolution.height()
-    IPortWindow = QtWidgets.QMainWindow()
-    ui = Ui_IPortWindow()  # (ici) line 890
-    ui.setupUi(IPortWindow, screenWidth, screenHeight)
-    IPortWindow.show()
-    sys.exit(app.exec_())

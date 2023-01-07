@@ -252,7 +252,7 @@ class Ui_mask_maker(object):
         self.bake_preview_btn.clicked.connect(self.preview_baked_mask)    
         self.bake_quit_btn.clicked.connect(self.quit)
         
-        self.logs = func.logIt
+        self.logs = func.logs
         self.tmp_location = "Data\\prxUserMeta\\"
         self.last_browse_path = ""
         self.game_icon_is_changed = False
