@@ -1,3 +1,10 @@
+"""
+    Environment: class share common methods and attributes
+    across different software windows (Inherite to use)
+
+    html: class holds repeated html tags and styling for the UI
+"""
+
 import os
 from ftplib import FTP
 
@@ -38,6 +45,25 @@ class Environment:
         self.screen_w = w
         self.screen_h = h
 
+    def get_settings(self) -> None:
+        self.userFont = "Arial"
+        self.userPort = "1337"
+        self.userIp = ""
+        self.userIPath = self.local_path
+        self.userDPath = self.local_path
+        self.userHB = "False"
+        try:
+            with open("Data/Pref/pref.ini") as file:
+                content = file.readlines()
+                self.userFont = content[0][2:-1]
+                self.userPort = content[1][2:-1]
+                self.userIp = content[2][3:-1]
+                self.userIPath = content[3][6:-1]
+                self.userDPath = content[4][6:-1]
+                self.userHB = content[5][3:].strip()
+        except Exception as e:
+            self.logs(str(e), "Warning")
+
 class html:
     def __init__(self) -> None:
         self.start = "<html><head/><body>"
@@ -54,7 +80,6 @@ class html:
         ####             HTML Text
         ##############################################
         return f'{self.start}<p align="{align}"><span style=" font-size:{size}pt; font-weight:{weight}; color:{color};">{txt}</span>{self.end}'
-
 
 # class User_Prefrence(Environment):
 #     # user settings and prefs here

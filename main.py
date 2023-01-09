@@ -1,4 +1,7 @@
-import Iconit
+
+#  BUG:port caching not working
+
+import Interface.Iconit as Iconit
 from environment import Environment
 from func import playSound
 

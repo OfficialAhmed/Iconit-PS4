@@ -4,7 +4,7 @@ import os
 import sys
 from PIL import Image
 from ftplib import FTP
-import Message
+import Interface.Alerts as Alerts
 import shutil
 
 
@@ -44,7 +44,7 @@ class Ui_ConfirmWindow(object):
         self.sysIconsAlgo = sysIconsAlgo
 
         self.window = QtWidgets.QDialog()
-        self.ui = Message.Ui_Message()
+        self.ui = Alerts.Ui_Message()
 
         self.centralwidget = QtWidgets.QWidget(ConfirmWindow)
         self.centralwidget.setObjectName("ConfirmWindow")
@@ -303,10 +303,10 @@ class Ui_ConfirmWindow(object):
                         else:
                             self.ftp.cwd(self.working_dir + "/" + self.Current_CUSA)
                     except:
-                        import Message
+                        import Interface.Alerts as Alerts
 
                         self.window = QtWidgets.QDialog()
-                        self.ui = Message.Ui_Message()
+                        self.ui = Alerts.Ui_Message()
                         self.ui.setupUi(
                             self.window,
                             "Cannot find this icon in your PS4. This might be from an older caching process please delete cache and recache again, other than that you may continue but this icon wont be changed.",

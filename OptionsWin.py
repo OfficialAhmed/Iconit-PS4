@@ -222,9 +222,6 @@ class Ui_OptionsWin(object):
         if len(DownloadPath) == 0:
             DownloadPath = self.userDPath
 
-        print(IconPath)
-        print(DownloadPath)
-
         with open("Data/Pref/pref.ini", "w+") as file:
             file.write(
                 "F:"
