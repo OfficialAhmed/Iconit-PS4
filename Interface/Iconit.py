@@ -1,10 +1,7 @@
-
+from environment import html
 from Module.Iconit import Main as Iconit
 
-# from ftplib import FTP
 from PyQt5 import QtCore, QtGui, QtWidgets
-
-from environment import html
 
 class Ui(Iconit):
     def __init__(self) -> None:
@@ -15,8 +12,18 @@ class Ui(Iconit):
 
         self.html = html()
 
-        # init user prefrences and settings
-        self.get_settings()
+        # init user prefrences & settings
+        settings_elems = [
+            self.userFont,
+            self.userPort,
+            self.userIp,
+            self.userIPath,
+            self.userDPath,
+            self.userHB
+        ]
+        user_setting_cache = self.settings.get_cache()
+        for indx, val in enumerate(user_setting_cache):
+            settings_elems[indx] = val
 
         font = QtGui.QFont()
         font.setFamily(self.userFont)

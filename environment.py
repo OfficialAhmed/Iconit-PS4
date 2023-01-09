@@ -1,17 +1,18 @@
 """
-    Environment: class share common methods and attributes
+    Common: class share common methods and attributes
     across different software windows (Inherite to use)
 
     html: class holds repeated html tags and styling for the UI
 """
+from Module.Settings import Main as Settings
 
-import os
+import os, datetime
 from ftplib import FTP
 
-class Environment:
+class Common:
     def __init__(self) -> None:
-        self.app_version = "5.02"
-        self.app_release_date = "Sept 5th, 2022"
+        self.app_version = "5.05"
+        self.app_release_date = "Jan 21st, 2023"
 
         self.screen_w = 0
         self.screen_h = 0
@@ -19,13 +20,12 @@ class Environment:
         self.ftp = FTP()
         self.working_dir = "user/appmeta"
         self.local_path = str(os.getcwd())
+        self.local_path = self.local_path.replace("\\", "/")
         self.temp_path = self.local_path + "\Data\prxUserMeta\\"
         self.img_dir = self.local_path + "\\data\\User\\appmeta"
 
         self.sys_path = "system_ex/app"
-
         self.setting_path = ""
-        self.local_path = self.local_path.replace("\\", "/")
 
         self.IP = "not accepted"
         self.Port = 21
@@ -34,6 +34,14 @@ class Environment:
         self.all_CUSA_ex = []
         self.all_CUSA_sys = []
         self.Game = {}
+
+        self.userFont = "Arial"
+        self.userPort = "1337"
+        self.userIp = ""
+        self.userIPath = self.local_path
+        self.userDPath = self.local_path
+        self.userHB = "False"
+        self.settings = Settings()
     
     def get_update_release_date(self) -> None:
         return self.app_release_date
@@ -45,24 +53,38 @@ class Environment:
         self.screen_w = w
         self.screen_h = h
 
-    def get_settings(self) -> None:
-        self.userFont = "Arial"
-        self.userPort = "1337"
-        self.userIp = ""
-        self.userIPath = self.local_path
-        self.userDPath = self.local_path
-        self.userHB = "False"
+    def playSound(self, path):
         try:
-            with open("Data/Pref/pref.ini") as file:
-                content = file.readlines()
-                self.userFont = content[0][2:-1]
-                self.userPort = content[1][2:-1]
-                self.userIp = content[2][3:-1]
-                self.userIPath = content[3][6:-1]
-                self.userDPath = content[4][6:-1]
-                self.userHB = content[5][3:].strip()
+            import pygame
+
+            pygame.mixer.init()
+            pygame.mixer.music.load(path)
+            pygame.mixer.music.play(loops=-1)
         except Exception as e:
-            self.logs(str(e), "Warning")
+            pass
+
+    def logs(self, description, Type):
+        try:
+            error_file = open("Logs.txt", "a")
+        except:
+            error_file = open("Logs.txt", "w")
+
+        if Type == "Warning":
+            error_file.write(
+                str(datetime.datetime.now())
+                + " | "
+                + "_DEV Warning: "
+                + str(description)
+                + "\n"
+            )
+        else:
+            error_file.write(
+                str(datetime.datetime.now())
+                + " | "
+                + "_DEV ERROR: "
+                + str(description)
+                + "\n"
+            )
 
 class html:
     def __init__(self) -> None:

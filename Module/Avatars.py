@@ -5,12 +5,12 @@
 
 """
 
-from environment import Environment
+from environment import Common
 
 from PyQt5 import QtWidgets
 import json, os
 
-class Main(Environment):
+class Main(Common):
     def __init__(self) -> None:
         super().__init__()
 
@@ -264,7 +264,7 @@ class Main(Environment):
             self.logit(str(e), "error")
 
     def resizeUpload(self):
-        import Confirm
+        import Interface.Upload as Upload
         import shutil
 
         try:
@@ -302,7 +302,7 @@ class Main(Environment):
                 self.ChangeAvatar.setStyleSheet("border-image: url(" + path + ");")
 
             self.windo = QtWidgets.QWidget()
-            self.ui = Confirm.Ui_ConfirmWindow()
+            self.ui = Upload.Ui()
             self.ui.setupUi(
                 self.windo,
                 self.avatar,

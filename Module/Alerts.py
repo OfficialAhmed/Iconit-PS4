@@ -1,6 +1,6 @@
-from environment import Environment
+from environment import Common
 
-class Main(Environment):
+class Main(Common):
     def  __init__(self) -> None:
         super().__init__()
 

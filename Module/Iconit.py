@@ -4,23 +4,19 @@
     the class inherits 'Environment'
 
 """
-
-from environment import Environment
 import Interface.Icons as Icons
 import Interface.Avatars as Avatars
+import Interface.Alerts as Alerts
+import Interface.Settings as Settings
 
-import Interface.Alerts as Alerts, func
+from environment import Common
 
 from PyQt5 import QtWidgets
 from xml.dom import minidom  # XML parsing
 
-import os
-import json
+import os, json
 
-import OptionsWin
-
-
-class Main(Environment):
+class Main(Common):
     def __init__(self) -> None:
         super().__init__()
 
@@ -49,11 +45,9 @@ class Main(Environment):
         self.modeSelected = ""
         self.cached = ""
 
-        self.logs = func.logs
-
     def open_options(self):
         self.window = QtWidgets.QDialog()
-        self.ui = OptionsWin.Ui_OptionsWin()
+        self.ui = Settings.Ui()
         self.ui.setupUi(self.window)
         self.window.show()
 
@@ -611,8 +605,7 @@ class Main(Environment):
         else:
             self.window.hide()
             self.window = QtWidgets.QWidget()
-            self.ui = ChangeAvatar.Ui_ChangeAvatarWin()
+            self.ui = Avatars.Ui()
             self.ui.setupUi(self.window, self.userID, self.IP, self.Port, self.w, self.h)
             self.window.show()
-            
 

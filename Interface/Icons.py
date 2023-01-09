@@ -697,15 +697,15 @@ class Ui(Icons):
             + self.TTTSE
         )
 
-if __name__ == "__main__":
-    import sys, os
-    from func import playSound as play
+# if __name__ == "__main__":
+#     import sys, os
+#     from func import playSound as play
 
-    play(f"{os.getcwd()}/Data/Pref/bgm/home.@OfficialAhmed0")
+#     play(f"{os.getcwd()}/Data/Pref/bgm/home.@OfficialAhmed0")
 
-    app = QtWidgets.QApplication(sys.argv)
-    ChangeIconWindow = QtWidgets.QWidget()
-    ui = Ui()
-    ui.setupUi(ChangeIconWindow)
-    ChangeIconWindow.show()
-    sys.exit(app.exec_())
+#     app = QtWidgets.QApplication(sys.argv)
+#     ChangeIconWindow = QtWidgets.QWidget()
+#     ui = Ui()
+#     ui.setupUi(ChangeIconWindow)
+#     ChangeIconWindow.show()
+#     sys.exit(app.exec_())

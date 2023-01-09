@@ -4,14 +4,16 @@
 
 """
 
-from environment import Environment
+from environment import Common
 
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5 import QtGui, QtWidgets
-
 from PIL import Image
 
-class Main(Environment):
+import Interface.Upload as Upload
+import Interface.Mask as Mask
+
+class Main(Common):
     def __init__(self) -> None:
         super().__init__()
 
@@ -263,29 +265,23 @@ class Main(Environment):
             self.last_browse_path = img
 
     def Mask_maker(self):
-        import Mask
-
         self.Submit_btn.setEnabled(False)
         self.window = QtWidgets.QWidget()
-        self.ui = Mask.Ui_mask_maker()
+        self.ui = Mask.Ui()
         self.ui.setupUi(self.window)
         self.window.show()
 
     def Resize_Upload(self):
-        import Confirm
-
         if self.bgImageChanged == False:
             self.changeBgPath = ""
 
         self.Submit_btn.setEnabled(False)
         Current_CUSA = self.imgs[self.img_counter]
         self.windo = QtWidgets.QWidget()
-        self.ui = Confirm.Ui_ConfirmWindow()
+        self.ui = Upload.Ui()
         self.ui.setupUi(
             self.windo,
             self.changeIconPath,
-            self.IP,
-            self.Port,
             Current_CUSA,
             "Iconit",
             self.exGames,
