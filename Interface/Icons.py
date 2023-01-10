@@ -51,10 +51,8 @@ class Ui(Icons):
 
         # v4.72
         if len(self.sysGames) == 0:
-            ReadJson = open("Data\prxUserMeta\MegaSRX\metadata\game\info.json")
+            ReadJson = open(self.info_json_path)
             self.gameInfo = json.load(ReadJson)
-
-        self.pref_location = self.setting_path + "\\Data\\Pref\\"
 
         # v4.61
         self.bgImageChanged = False
@@ -83,9 +81,7 @@ class Ui(Icons):
         else:
             self.background = "4kbg.@OfficialAhmed0"
         ChangeIconWindow.setStyleSheet(
-            "background-image: url("
-            + self.convert2Url(self.pref_location + self.background)
-            + ");"
+            f"background-image: url({self.pref_location + self.background});"
         )
 
         self.formLayout = QtWidgets.QFormLayout(ChangeIconWindow)
@@ -135,9 +131,7 @@ class Ui(Icons):
         self.whiteBg = QtWidgets.QFrame(ChangeIconWindow)
         self.whiteBg.setMinimumSize(QtCore.QSize(4000, 1))
         self.whiteBg.setStyleSheet(
-            "border-image: url("
-            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
-            + ");"
+            f"background-image: url({self.pref_location}/White.@OfficialAhmed0);"
         )
         self.whiteBg.setFrameShadow(QtWidgets.QFrame.Plain)
         self.whiteBg.setLineWidth(1)
@@ -155,9 +149,7 @@ class Ui(Icons):
         self.Icon.setSizePolicy(sizePolicy)
         self.Icon.setMinimumSize(QtCore.QSize(340, 370))
         self.Icon.setStyleSheet(
-            "border-image: url("
-            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
-            + ");"
+            f"background-image: url({self.pref_location}/White.@OfficialAhmed0);"
         )
         self.Icon.setObjectName("Icon")
         self.LeftLayout.addWidget(self.Icon)
@@ -295,9 +287,7 @@ class Ui(Icons):
         self.line.setSizePolicy(sizePolicy)
         self.line.setMinimumSize(QtCore.QSize(50, 0))
         self.line.setStyleSheet(
-            "border-image: url("
-            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
-            + ");"
+            f"background-image: url({self.pref_location}/White.@OfficialAhmed0);"
         )
         self.line.setFrameShadow(QtWidgets.QFrame.Plain)
         self.line.setLineWidth(0)
@@ -330,9 +320,7 @@ class Ui(Icons):
         self.line_3 = QtWidgets.QFrame(ChangeIconWindow)
         self.line_3.setMinimumSize(QtCore.QSize(30, 3))
         self.line_3.setStyleSheet(
-            "border-image: url("
-            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
-            + ");"
+            f"background-image: url({self.pref_location}/White.@OfficialAhmed0);"
         )
         self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -361,9 +349,7 @@ class Ui(Icons):
         self.line_4 = QtWidgets.QFrame(ChangeIconWindow)
         self.line_4.setMinimumSize(QtCore.QSize(100, 3))
         self.line_4.setStyleSheet(
-            "border-image: url("
-            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
-            + ");"
+            f"background-image: url({self.pref_location}/White.@OfficialAhmed0);"
         )
         self.line_4.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -392,9 +378,7 @@ class Ui(Icons):
         self.line_5 = QtWidgets.QFrame(ChangeIconWindow)
         self.line_5.setMinimumSize(QtCore.QSize(100, 3))
         self.line_5.setStyleSheet(
-            "border-image: url("
-            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
-            + ");"
+            f"background-image: url({self.pref_location}/White.@OfficialAhmed0);"
         )
         self.line_5.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -468,9 +452,7 @@ class Ui(Icons):
         self.line_6.setSizePolicy(sizePolicy)
         self.line_6.setMinimumSize(QtCore.QSize(4000, 0))
         self.line_6.setStyleSheet(
-            "border-image: url("
-            + self.convert2Url(self.pref_location + "White.@OfficialAhmed0")
-            + ");"
+            f"background-image: url({self.pref_location}/White.@OfficialAhmed0);"
         )
         self.line_6.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)

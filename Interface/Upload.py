@@ -153,19 +153,8 @@ class Ui(Upload):
 
         styleTagStart = '<p align="center" style="margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style="font-size:10pt; '
         styleTagEnd = "</span></p>\n"
-        warning_message = f'{styleTagStart} color:#e83c3c">ATTENTION! This will overwrite the backup icon stored in (Your backup). {styleTagEnd}\n"Are sure you want to change the icon?"'
+        warning_message = f'{styleTagStart} color:#e83c3c">ATTENTION! This will overwrite the backup icon stored in (My backup). {styleTagEnd}\n"Are sure you want to change the icon?"'
         
         self.Statement.setText(
             _translate("ConfirmWindow", warning_message)
         )
-
-
-# if __name__ == "__main__":
-#     import sys
-
-#     app = QtWidgets.QApplication(sys.argv)
-#     ConfirmWindow = QtWidgets.QDialog()
-#     ui = Ui()
-#     ui.setupUi(ConfirmWindow)
-#     ConfirmWindow.show()
-#     sys.exit(app.exec_())

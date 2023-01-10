@@ -8,8 +8,6 @@ class Ui(Iconit):
         super().__init__()
         
     def setupUi(self, window):
-        self.local_path = self.local_path
-
         self.html = html()
 
         # init user prefrences & settings

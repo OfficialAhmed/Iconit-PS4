@@ -84,6 +84,7 @@ class Main(Common):
             self.IP = self.IP_input.text()
             self.Port = self.Port_input.text()
             self.connection_history(mode="w")
+            self.set_ip_port(self.IP, self.Port) 
 
             if len(self.IP) < 8:
                 self.Connect_PS4(False)
@@ -122,9 +123,9 @@ class Main(Common):
             try:
                 with open(f"{self.temp_path}\{file_name}", "r") as file:
                     line = file.readline().strip()
-                    ip, port = line.split(",")
-                    self.IP_input.setText(ip)
-                    self.Port_input.setText(port)
+                    self.IP, self.Port = line.split(",")
+                    self.IP_input.setText(self.IP)
+                    self.Port_input.setText(self.Port)
 
             except Exception as e:
                 self.logs(str(e), "Warning")
@@ -173,10 +174,9 @@ class Main(Common):
             self.Status.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
             if self.GameIcon.isChecked():
                 # v4.72 json for caching
-                jsonPath = "Data\prxUserMeta\MegaSRX\metadata\game\info.json"
-                if os.path.isfile(jsonPath):
-                    ReadJson = open(jsonPath)
-                    Game = json.load(ReadJson)
+                if os.path.isfile(self.info_json_path):
+                    ReadJson = open(self.info_json_path)
+                    self.Game = json.load(ReadJson)
 
                 self.modeSelected = "game"
                 self.iconDirs = [self.working_dir]
@@ -218,7 +218,7 @@ class Main(Common):
                                 if "CUSA" not in game_id:
                                     accept = False
                                     try:
-                                        Game.pop(game_id)
+                                        self.Game.pop(game_id)
                                     except:
                                         pass
 
@@ -430,7 +430,7 @@ class Main(Common):
                     for alpha in self.alphaNum:
                         if alpha in title or alpha.title() in title:
                             GameTitle = title
-                            Game[sysIcon] = GameTitle
+                            self.Game[sysIcon] = GameTitle
                         else:
                             for char in title:
                                 if char not in self.Eng:
@@ -438,12 +438,12 @@ class Main(Common):
                                     break
                     if english:
                         GameTitle = title
-                        Game[sysIcon] = GameTitle
+                        self.Game[sysIcon] = GameTitle
             else:
                 if "NPXS" in sysIcon:
-                    Game[sysIcon] = 'Unknown system icon "Sony didn\'t provide one :)"'
+                    self.Game[sysIcon] = 'Unknown system icon "Sony didn\'t provide one :)"'
                 else:
-                    Game[sysIcon] = f"Cannot find title for {sysIcon}"
+                    self.Game[sysIcon] = f"Cannot find title for {sysIcon}"
 
             self.ftp.cwd("/")
             self.ftp.cwd(self.sys_path)
@@ -482,7 +482,7 @@ class Main(Common):
                     self.ftp.cwd(i)
                     gameId = currentDir[counter]
 
-                    if gameId not in Game:
+                    if gameId not in self.Game:
                         ######################################################
                         ###  Fetch icons only if its not it the cache => info.json
                         ###  impl. v4.72
@@ -521,10 +521,10 @@ class Main(Common):
                                 for title in diff_titles:
                                     if self.file_name in files_in_dir:
                                         GameTitle = title
-                                        Game[gameId] = GameTitle
+                                        self.Game[gameId] = GameTitle
                                     else:
                                         GameTitle = "Unknown"
-                                        Game[gameId] = GameTitle
+                                        self.Game[gameId] = GameTitle
                                         break
                                     english = True
 
@@ -534,7 +534,7 @@ class Main(Common):
                                             break
                                     if english:
                                         GameTitle = title
-                                        Game[gameId] = GameTitle
+                                        self.Game[gameId] = GameTitle
                                         break
 
                     # Get back to root directory
@@ -580,17 +580,16 @@ class Main(Common):
             self.ftp.retrbinary("RETR " + file_name, downloaded_file.write)
 
     def OpenWindow(self, win_type):
-        global Game
-        sorted_Games = {k: v for k, v in sorted(Game.items(), key=lambda item: item[1])}
+        sorted_Games = {k: v for k, v in sorted(self.Game.items(), key=lambda item: item[1])}
         self.ftp.close()
 
         if win_type == "GameIcon":
             # store games in json for cache if not IconSys
-            if len(self.all_CUSA_sys) == 0:
-                with open(
-                    "Data\prxUserMeta\MegaSRX\metadata\game\info.json", "w+"
-                ) as jsonFile:
-                    json.dump(sorted_Games, jsonFile)
+            # if len(self.all_CUSA_sys) == 0:
+            with open(
+                self.info_json_path, "w+"
+            ) as jsonFile:
+                json.dump(sorted_Games, jsonFile)
 
             self.window.hide()
             self.window = QtWidgets.QWidget()

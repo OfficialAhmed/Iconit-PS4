@@ -17,15 +17,6 @@ class Main(Common):
     def __init__(self) -> None:
         super().__init__()
 
-    def convert2Url(self, path):
-        result = ""
-        for i in path:
-            if i == "\\":
-                result += "/"
-            else:
-                result += i
-        return result
-
     def UpdateLogs(self):
         self.Logs.setHtml(
             '<p align="center" style=" margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;">'
@@ -86,9 +77,7 @@ class Main(Common):
         self.ChangeIconSizeLabel()
         self.BackgroundChange()
         self.ChangeIconWindow.setStyleSheet(
-            "background-image: url("
-            + self.convert2Url(self.pref_location + self.background)
-            + ");"
+            f"background-image: url({self.pref_location}/{self.background});"
         )
 
     def BackgroundChange(self):
@@ -121,11 +110,7 @@ class Main(Common):
 
         # if bg image changed change labels bg to black
         if self.bgImageChanged:
-            style = (
-                "background-image: url("
-                + self.convert2Url(self.pref_location + "Black.@OfficialAhmed0")
-                + "); color:white"
-            )
+            style = f"background-image: url({self.pref_location}/Black.@OfficialAhmed0); color:white"
         else:
             style = "color:white"
 
@@ -158,9 +143,7 @@ class Main(Common):
                 if size[1] >= 1080 and size[1] <= 2048:
                     self.Submit_btn.setDisabled(False)
                     self.changeBgPath = img
-                    self.ChangeIconWindow.setStyleSheet(
-                        "background-image: url(" + img + ");"
-                    )
+                    self.ChangeIconWindow.setStyleSheet(f"background-image: url({img});")
                     self.bgImageChanged = True
                     self.BackgroundChange()
                 else:
@@ -206,7 +189,7 @@ class Main(Common):
         if size[0] == 512 and size[1] == 512:
             if self.bgImageChanged == True:
                 self.ChangeIconSizeLabel(
-                    "#0aff14;", self.pref_location + "Black.@OfficialAhmed0", str(icon.size)
+                    "#0aff14;", f"{self.pref_location}/Black.@OfficialAhmed0", str(icon.size)
                 )
             else:
                 self.ChangeIconSizeLabel("#0aff14;", size=str(icon.size))
@@ -218,7 +201,7 @@ class Main(Common):
         ):
             if self.bgImageChanged == True:
                 self.ChangeIconSizeLabel(
-                    "#fa9600;", self.pref_location + "Black.@OfficialAhmed0", str(icon.size)
+                    "#fa9600;", f"{self.pref_location}/Black.@OfficialAhmed0", str(icon.size)
                 )
             else:
                 self.ChangeIconSizeLabel("#fa9600;", size=str(icon.size))
@@ -230,7 +213,7 @@ class Main(Common):
         else:
             if self.bgImageChanged == True:
                 self.ChangeIconSizeLabel(
-                    "#fa0a14;", self.pref_location + "Black.@OfficialAhmed0", str(icon.size)
+                    "#0aff14;", f"{self.pref_location}/Black.@OfficialAhmed0", str(icon.size)
                 )
             else:
                 self.ChangeIconSizeLabel("#fa0a14;", size=str(icon.size))

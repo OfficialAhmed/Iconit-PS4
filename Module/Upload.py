@@ -67,8 +67,8 @@ class Main(Common):
             try:
                 self.ftp.connect(self.IP, int(self.Port))
                 self.ftp.login("", "")
-            except:
-                self.logIt(e, "Error")
+            except Exception as e:
+                self.logIt(str(e), "Error")
                 self.ui.setupUi(self.window, str(e))
                 self.window.show()
             self.CheckingBar.setProperty("value", 10)
