@@ -7,7 +7,7 @@
 from environment import Common
 
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtWidgets, QtGui
 from PIL import Image
 
 import Interface.Upload as Upload
@@ -17,25 +17,18 @@ class Main(Common):
     def __init__(self) -> None:
         super().__init__()
 
-    def UpdateLogs(self):
-        self.Logs.setHtml(
-            '<p align="center" style=" margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;">'
-            + self.logging
-            + "</span></p>\n"
-        )
-        self.Logs.moveCursor(QtGui.QTextCursor.End)
-
     def UpdateInfo(self, CustomImgSelected=False):
         self.Submit_btn.setDisabled(True)
-        current_img_path = self.CUSA_img + self.imgs[self.img_counter]
+        current_img_path = self.CUSA_img + self.game_icons[self.img_counter]
+
         if len(self.sysGames) == 0:
-            GameTitle = self.gameInfo[self.imgs[self.img_counter]]
+            GameTitle = self.gameInfo[self.game_icons[self.img_counter]]
         else:
-            GameTitle = self.Games[self.imgs[self.img_counter]]
+            GameTitle = self.Games[self.game_icons[self.img_counter]]
         self.Icon.setStyleSheet("border-image: url(" + current_img_path + ");")
 
         self.GameTitle.setText(GameTitle)
-        self.GameID.setText(self.imgs[self.img_counter])
+        self.GameID.setText(self.game_icons[self.img_counter])
 
         # If Custom image selected by choosing image manually
         if CustomImgSelected:
@@ -52,13 +45,13 @@ class Main(Common):
             self.homebrewLabel.setText("System icon: Yes")
 
         elif self.userHB == "True":
-            if "CUSA" in self.imgs[self.img_counter]:
+            if "CUSA" in self.game_icons[self.img_counter]:
                 self.homebrewLabel.setText("Homebrew icon: No")
             else:
                 self.homebrewLabel.setText("Homebrew icon: Yes")
 
         # Change External or Internal
-        if self.imgs[self.img_counter] in self.exGames:
+        if self.game_icons[self.img_counter] in self.exGames:
             self.Ex_In.setText("External")
         else:
             self.Ex_In.setText("Internal")
@@ -76,7 +69,7 @@ class Main(Common):
         self.bgImageChanged = False  # Reset bg image
         self.ChangeIconSizeLabel()
         self.BackgroundChange()
-        self.ChangeIconWindow.setStyleSheet(
+        self.window.setStyleSheet(
             f"background-image: url({self.pref_location}/{self.background});"
         )
 
@@ -109,10 +102,9 @@ class Main(Common):
         )
 
         # if bg image changed change labels bg to black
+        style = "color:white"
         if self.bgImageChanged:
             style = f"background-image: url({self.pref_location}/Black.@OfficialAhmed0); color:white"
-        else:
-            style = "color:white"
 
         for bg in label_bg:
             bg.setStyleSheet(style)
@@ -143,7 +135,7 @@ class Main(Common):
                 if size[1] >= 1080 and size[1] <= 2048:
                     self.Submit_btn.setDisabled(False)
                     self.changeBgPath = img
-                    self.ChangeIconWindow.setStyleSheet(f"background-image: url({img});")
+                    self.window.setStyleSheet(f"background-image: url({img});")
                     self.bgImageChanged = True
                     self.BackgroundChange()
                 else:
@@ -259,7 +251,7 @@ class Main(Common):
             self.changeBgPath = ""
 
         self.Submit_btn.setEnabled(False)
-        Current_CUSA = self.imgs[self.img_counter]
+        Current_CUSA = self.game_icons[self.img_counter]
         self.windo = QtWidgets.QWidget()
         self.ui = Upload.Ui()
         self.ui.setupUi(
@@ -284,3 +276,12 @@ class Main(Common):
             + " success. Next time you change this icon, Iconit will overwrite it"
             + styleTagEnd
         )
+        self.UpdateLogs()
+
+    def UpdateLogs(self):
+        self.Logs.setHtml(
+            '<p align="center" style=" margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;">'
+            + self.logging
+            + "</span></p>\n"
+        )
+        self.Logs.moveCursor(QtGui.QTextCursor.End)

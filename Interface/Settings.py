@@ -4,6 +4,7 @@ from Module.Settings import Main as Settings
 class Ui(Settings):
     def __init__(self) -> None:
         super().__init__()
+        self.get_cache()
 
     def setupUi(self, OptionsWin):
         OptionsWin.setObjectName("OptionsWin")
@@ -23,8 +24,6 @@ class Ui(Settings):
         )
         self.Window_btn.setObjectName("Window_btn")
 
-        self.Window_btn.accepted.connect(self.SaveOptions)
-        self.Window_btn.rejected.connect(OptionsWin.close)
 
         self.Default_btn = QtWidgets.QDialogButtonBox(OptionsWin)
         self.Default_btn.setGeometry(QtCore.QRect(25, 210, 110, 23))
@@ -130,6 +129,18 @@ class Ui(Settings):
         self.plainTextEdit.setReadOnly(True)
         self.plainTextEdit.setObjectName("plainTextEdit")
 
+        self.Window_btn.accepted.connect(
+            lambda: self.SaveOptions(
+                self.Font.currentText(),
+                self.IconPath.text(),
+                self.DownloadPath.text(),
+                str(self.Yes.isChecked()),
+                self.Port.text(),
+                self.IP.text()
+            )
+        )
+        self.Window_btn.rejected.connect(OptionsWin.close)
+
         self.IconPath.raise_()
         self.Window_btn.raise_()
         self.Default_btn.raise_()
@@ -177,14 +188,3 @@ class Ui(Settings):
                 "Allow Homebrew / Apps icons\n to be detected(This will take longer to cache)",
             )
         )
-
-
-# if __name__ == "__main__":
-#     import sys
-
-#     app = QtWidgets.QApplication(sys.argv)
-#     OptionsWin = QtWidgets.QDialog()
-#     ui = Ui()
-#     ui.setupUi(OptionsWin)
-#     OptionsWin.show()
-#     sys.exit(app.exec_())

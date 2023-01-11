@@ -16,10 +16,6 @@ Pure Python implementation of an automated software to change PS4 xmb icons, pic
 **Latest Iconit version**
 <https://github.com/OfficialAhmed/Iconit-PS4/releases>
 
-**Iconit v4.07 (74.1Mb)(Nov 25, 2020)**
-
-<https://mega.nz/file/S7h2QIQY#uSgZBu_iET1ihZBJvpTYNXcH1481cLGFg4ZNbG1DIP8>
-
 ## About
 
 This application is much convenient than uploading the icons manually, it automates the following
@@ -30,33 +26,25 @@ This application is much convenient than uploading the icons manually, it automa
 
 * Image format convertion `JPG, ICO ...` to `PNG`
 
-* Icon duplication
+* Image to textures convertion `PNG` to `DDS`
+
+* Icon duplication 
 
 * Backup original icons
 
-* Locate game folder on console  
-
-## Older versions
-
->Iconit v4.07 (74.1Mb)(Nov 25, 2020)
-
-<https://mega.nz/file/S7h2QIQY#uSgZBu_iET1ihZBJvpTYNXcH1481cLGFg4ZNbG1DIP8>
-
->Iconit v4.05 (131.6Mb)(Aug 30, 2020)
-
-<https://mega.nz/file/Tq4zAB7L#Vm3Cj003CDWUYZzkN5WcQJGuvvwL3f4oJVfamAIuMMI>
-
->Iconit v4.01 (91.6Mb)
-
-<https://mega.nz/file/zu43zDiL#yIKFNKVpTwWZpY0_YID0pzf72IxE0ClHsMRaMph7Y8s>
+* Upload and overwrite icons to the PS4  
 
 ________________________________________
 
+## What's new
+
+* Better performance & less memory usage `OOP implementation`
+
+* Game ID now shown next to the game title `Games List`
+
+* Change between modes without restarting the program
+
 ## To do list
-
-* [x] Apply `PNG` Masks
-
-* [x] Performance++ : save game title as cache on game folder
 
 * [ ] Apply `PSD` Masks
 
@@ -66,9 +54,13 @@ ________________________________________
 
 * [ ] Apply mask on all xmb icons at once
 
-* [ ] Utilize 100% CPU usage (Multiprocessing)
+* [ ] Utilize 100% CPU usage `Multiprocessing`
 
-* [ ] Feature : User can edit displayed game title from within cache file
+* [ ] Feature : User can edit displayed game title through cache file
+
+## Credits
+
+* Sound Effect from Pixabay
 
 ## Contribution
 

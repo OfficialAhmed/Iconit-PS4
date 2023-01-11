@@ -19,6 +19,7 @@ import os, json
 class Main(Common):
     def __init__(self) -> None:
         super().__init__()
+        self.settings.get_cache()
 
         self.file_name = "pronunciation.xml"
         self.icon_name = "icon0.png"
@@ -95,24 +96,31 @@ class Main(Common):
                         valid = False
                         break
                 self.Connect_PS4(valid)
+
         except Exception as e:
             self.logs(str(e), "Warning")
 
-    def change_colors(self, Connected):
+    def change_colors(self, Connected: bool) -> None:
         labels = {
             self.IP_Label: "PS4 IP",
             self.Port_Label: "PS4 Port",
             self.Change_label: "Mode",
             self.Cache_label: "Cache",
         }
+
+        success = "rgb(92, 213, 21)"
+        fail = "rgb(255, 0, 0)"
+        
         if Connected:
-            self.Status.setText(self.html.span_tag("Connected", "rgb(92, 213, 21)", 18))
+            self.Status.setText(self.html.span_tag("Connected", success, 18))
         else:
-            self.Status.setText(self.html.span_tag("Failed to connect", "rgb(255, 0, 0)", 18))
+            self.Status.setText(self.html.span_tag("Failed to connect", fail, 18))
+            
         for l in labels:
-            l.setText(self.html.span_tag(labels[l], "rgb(255, 0, 0)", 16))
             if Connected:
-                l.setText(self.html.span_tag(labels[l], "color:rgb(92, 213, 21)", 16))
+                l.setText(self.html.span_tag(labels[l], success, 14))
+            else:
+                l.setText(self.html.span_tag(labels[l], fail, 14))
 
     def connection_history(self, mode: str) -> None:
         ################################################################
@@ -161,7 +169,7 @@ class Main(Common):
                 return
             except Exception as e:
                 self.ftp.close()
-                self.logs(e, "Error")
+                self.logs(str(e), "Error")
                 self.change_colors(False)
                 self.ui.setupUi(self.window)
                 self.ui.alert(f"Cannot make connection with the given IP/Port. DEV|{str(e)}")
@@ -190,9 +198,6 @@ class Main(Common):
                         self.iconDirs.append(self.working_dir + "/external")
                         break
                 self.change_colors(True)
-                self.Connect_btn.setEnabled(False)
-                self.GameIcon.setEnabled(False)
-                self.ChangeAvatar.setEnabled(False)
 
                 for dir in self.iconDirs:
                     self.ftp.cwd("/")
@@ -241,9 +246,6 @@ class Main(Common):
                 sys_files = self.listDirs()
 
                 self.change_colors(True)
-                self.Connect_btn.setEnabled(False)
-                self.GameIcon.setEnabled(False)
-                self.ChangeAvatar.setEnabled(False)
 
                 for sys_game in sys_files:
                     if len(sys_game) == len("CUSA00000"):
@@ -270,9 +272,6 @@ class Main(Common):
 
                 self.change_colors(True)
 
-                self.Connect_btn.setEnabled(False)
-                self.GameIcon.setEnabled(False)
-                self.ChangeAvatar.setEnabled(False)
                 directories = []
                 self.ftp.retrlines("LIST ", directories.append)
 
@@ -290,6 +289,7 @@ class Main(Common):
                             self.userID.append(line[account_index:-1])
                 self.cache_change_avatar()
         else:
+            self.window = QtWidgets.QDialog()
             self.change_colors(False)
             self.ui.setupUi(self.window)
             self.ui.alert("Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection")
@@ -582,6 +582,7 @@ class Main(Common):
     def OpenWindow(self, win_type):
         sorted_Games = {k: v for k, v in sorted(self.Game.items(), key=lambda item: item[1])}
         self.ftp.close()
+        self.window = QtWidgets.QWidget()
 
         if win_type == "GameIcon":
             # store games in json for cache if not IconSys
@@ -591,9 +592,6 @@ class Main(Common):
             ) as jsonFile:
                 json.dump(sorted_Games, jsonFile)
 
-            self.window.hide()
-            self.window = QtWidgets.QWidget()
-            
             self.ui = Icons.Ui()
             self.ui.setupUi(
                 self.window,
@@ -602,8 +600,6 @@ class Main(Common):
             )
             self.window.show()
         else:
-            self.window.hide()
-            self.window = QtWidgets.QWidget()
             self.ui = Avatars.Ui()
             self.ui.setupUi(self.window, self.userID, self.IP, self.Port, self.w, self.h)
             self.window.show()

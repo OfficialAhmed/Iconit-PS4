@@ -1,35 +1,43 @@
-"""
-    The only class from Module that doest inherit from Common
-    So we can call methods from Common without polymorphism
-"""
-
 from PyQt5 import QtWidgets
-
 import os
 
-class Main():
-    def __init__(self) -> None:
-        self.appPath = str(os.getcwd())
-        self.tempPath = self.appPath + "\Data\prxUserMeta\\"
-        
-        self.userFont = "Arial"
-        self.userPort = "1337"
-        self.userIp = ""
-        self.userIPath = self.appPath
-        self.userDPath = self.appPath
-        self.userHB = "False"
+class Main:
+    """
+        The only class from Module that doest inherit from Common
+        So we can call the methods from Common without polymorphism
+
+        * local attributes can be called without inheritence
+    """
+    userHB = None
+    userIp = None
+    userFont = None
+    userPort = None
+    userIPath = None
+    userDPath = None
+
+    pref_location = None
+    location_path = None
+
+    def set_defaults(self, Ip, HB, Font, Port, IPath, DPath, pref, loc) -> None:
+        Main.userIp, self.userIp = Ip, Ip
+        Main.userHB, self.userHB = HB, HB
+        Main.userFont, self.userFont = Font, Font
+        Main.userPort, self.userPort = Port, Port
+        Main.userIPath, self.userIPath = IPath, IPath
+        Main.userDPath, self.userDPath = DPath, DPath
+        Main.pref_location, self.pref_location = pref, pref
+        Main.location_path, self.location_path = loc, loc
 
     def get_cache(self) -> tuple:
         try:
-            with open("Data/Pref/pref.ini") as file:
+            with open(f"{self.pref_location}pref.ini") as file:
                 content = file.readlines()
-                self.userFont = content[0][2:-1]
-                self.userPort = content[1][2:-1]
-                self.userIp = content[2][3:-1]
-                self.userIPath = content[3][6:-1]
-                self.userDPath = content[4][6:-1]
-                self.userHB = content[5][3:].strip()
-
+                Main.userFont, self.userFont = content[0][2:-1], content[0][2:-1]
+                Main.userPort, self.userPort = content[1][2:-1], content[1][2:-1]
+                Main.userIp, self.userIp = content[2][3:-1], content[2][3:-1]
+                Main.userIPath, self.userIPath = content[3][6:-1], content[3][6:-1]
+                Main.userDPath, self.userDPath = content[4][6:-1], content[4][6:-1]
+                Main.userHB, self.userHB = content[5][3:].strip(), content[5][3:].strip()
         except:
             pass
 
@@ -45,42 +53,35 @@ class Main():
 
     def ResetDefaults(self):
         try:
-            with open("Data/Pref/pref.ini", "w+") as file:
-                file.write("Set to default")
+            with open(f"{self.pref_location}pref.ini", "w+") as file:
+                file.write(
+                    f"F:Arial\nP:21\nIP:\nIPath:{os.getcwd()}\nDPath:{os.getcwd()}\nHB:False"
+                )
+            self.get_cache()
         except:
             pass
+        self.OptionsWin.close()
 
-    def SaveOptions(self):
-        Font = self.Font.currentText()
-        IconPath = self.IconPath.text()
-        DownloadPath = self.DownloadPath.text()
-        ShowHB = str(self.Yes.isChecked())
-        Port = self.Port.text()
-        IP = self.IP.text()
+    def SaveOptions(self, font, icon_path, download_path, hb, port, ip):
+        selected_font = font
+        selected_icon_path = icon_path
+        selected_download_path = download_path
+        selected_hb = hb
+        selected_port = port
+        selected_ip = ip
 
-        if len(Port) == 0:
-            Port = self.userPort
-        if len(IP) == 0:
-            IP = self.userIp
-        if len(IconPath) == 0:
-            IconPath = self.userIPath
-        if len(DownloadPath) == 0:
-            DownloadPath = self.userDPath
+        if len(selected_port) == 0:
+            selected_port = self.userPort
+        if len(selected_ip) == 0:
+            selected_ip = self.userIp
+        if len(selected_icon_path) == 0:
+            selected_icon_path = self.userIPath
+        if len(selected_download_path) == 0:
+            selected_download_path = self.userDPath
 
-        with open("Data/Pref/pref.ini", "w+") as file:
+        with open(f"{self.pref_location}pref.ini", "w+") as file:
             file.write(
-                "F:"
-                + Font
-                + "\nP:"
-                + str(Port)
-                + "\nIP:"
-                + IP
-                + "\nIPath:"
-                + IconPath
-                + "\nDPath:"
-                + DownloadPath
-                + "\nHB:"
-                + ShowHB
+                f"F:{selected_font}\nP:{selected_port}\nIP:{selected_ip}\nIPath:{selected_icon_path}\nDPath:{selected_download_path}\nHB:{selected_hb}"
             )
         self.OptionsWin.close()
 
@@ -91,9 +92,9 @@ class Main():
         opt |= QtWidgets.QFileDialog.DontUseSheet
         dialog = QFileDialog()
         dialog.setOptions(opt)
-        dialog.setDirectory(self.appPath)
+        dialog.setDirectory(self.location_path)
         path = QtWidgets.QFileDialog.getExistingDirectory(
-            None, "Default Download Directory...", self.appPath, options=opt
+            None, "Default Download Directory...", self.location_path, options=opt
         )
         if path:
             self.DownloadPath.setText(path)
@@ -105,9 +106,9 @@ class Main():
         opt |= QtWidgets.QFileDialog.DontUseSheet
         dialog = QFileDialog()
         dialog.setOptions(opt)
-        dialog.setDirectory(self.appPath)
+        dialog.setDirectory(self.location_path)
         path = QtWidgets.QFileDialog.getExistingDirectory(
-            None, "Default Icon Directory...", self.appPath, options=opt
+            None, "Default Icon Directory...", self.location_path, options=opt
         )
         if path:
             self.IconPath.setText(path)

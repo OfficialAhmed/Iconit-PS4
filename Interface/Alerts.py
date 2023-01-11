@@ -1,5 +1,6 @@
 from Module.Alerts import Main as Alerts
 from PyQt5 import QtCore, QtGui, QtWidgets
+import sys
 
 class Ui(Alerts):
     def __init__(self) -> None:

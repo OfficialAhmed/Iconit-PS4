@@ -1,7 +1,7 @@
 from environment import Common
+
 from PIL import Image
 from PyQt5 import QtWidgets
-
 import time, os, shutil, PIL
 
 class Main(Common):
@@ -273,7 +273,7 @@ class Main(Common):
                 ######################################################################################
                 try:
                     for ic in IconName:
-                        # upload the icons to PS4 system
+                        # upload the icons to PS4
                         with open(img_dir + str(ic), "rb") as save_file:
                             self.ftp.storbinary("STOR " + str(ic), save_file, 1024)
 
@@ -297,6 +297,8 @@ class Main(Common):
                     self.Statement.setText(
                         "You're all set. made with LOVE by @OfficialAhmed0"
                     )
+                    self.play_sound(f"{self.pref_location}bgm/success.@OfficialAhmed0")
+                    self.play_sound(f"{self.pref_location}bgm/home.@OfficialAhmed0", True)
                 except Exception as e:
                     self.logIt(str(e), "Error")
 
@@ -307,15 +309,6 @@ class Main(Common):
                 self.No.hide()
                 self.Yes.hide()
                 self.Ok.raise_()
-                styleTagStart = '<p align="center" style="margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style="font-size:10pt; '
-                styleTagEnd = "</span></p>\n"
-                self.logging += (
-                    styleTagStart
-                    + 'color:#ffaa00">[Attention]: '
-                    + "Image might take sometime to change in both PS4 and Iconit, but everything went good you dont have to reupload"
-                    + styleTagEnd
-                )
-                self.UpdateLogs()
 
             elif self.ConfirmType == "Profileit":
                 sysProfileRoot = "system_data/priv/cache/profile/"

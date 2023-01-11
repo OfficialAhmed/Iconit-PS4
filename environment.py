@@ -5,9 +5,10 @@
     html: class holds repeated html tags and styling for the UI
 """
 from Module.Settings import Main as Settings
+from ftplib import FTP
 
 import os, datetime
-from ftplib import FTP
+import pygame
 
 class Common:
     """
@@ -30,7 +31,7 @@ class Common:
 
     # default settings
     userFont = "Arial"
-    userPort = "1337"
+    userPort = "21"
     userIp = ""
     userIPath = os.getcwd()
     userDPath = os.getcwd()
@@ -39,6 +40,27 @@ class Common:
     def __init__(self) -> None:
         self.app_version = "5.05"
         self.app_release_date = "Jan 21st, 2023"
+
+        self.all_CUSA = []
+        self.all_CUSA_ex = []
+        self.all_CUSA_sys = []
+        self.Game = {}
+
+        self.IP = Common.IP
+        self.Port = Common.Port
+        self.userIp = Common.userIp
+        self.userHB = Common.userHB
+        self.userFont = Common.userFont
+        self.userPort = Common.userPort
+        self.userIPath = Common.userIPath
+        self.userDPath = Common.userDPath
+        
+        self.screen_w = Common.screen_w
+        self.screen_h = Common.screen_h
+
+        self.logging = (
+            f'<p align="center" style=" margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;">*Connected to PS4: {self.IP}*</span></p>\n'
+        )
 
         self.ftp = FTP()
         self.working_dir = "user/appmeta"
@@ -52,22 +74,18 @@ class Common:
         self.sys_path = "system_ex/app"
         self.setting_path = ""
         self.settings = Settings()
+        self.settings.set_defaults(
+            self.userIp,
+            self.userHB,
+            self.userFont,
+            self.userPort,
+            self.userIPath,
+            self.userDPath,
+            self.pref_location,
+            self.local_path
+        )
 
-        self.all_CUSA = []
-        self.all_CUSA_ex = []
-        self.all_CUSA_sys = []
-        self.Game = {}
-
-        self.IP = Common.IP
-        self.Port = Common.Port
-        self.userIp = Common.userIp
-        self.userHB = Common.userHB
-        self.userFont = Common.userFont
-        self.userPort = Common.userPort
-        self.screen_w = Common.screen_w
-        self.screen_h = Common.screen_h
-        self.userIPath = Common.userIPath
-        self.userDPath = Common.userDPath
+        pygame.mixer.init()
 
     def set_ip_port(self, ip, port) -> None:
         self.IP = ip
@@ -101,13 +119,13 @@ class Common:
     def get_update_version(self) -> None:
         return self.app_version
 
-    def playSound(self, path):
+    def play_sound(self, location, loop=False) -> None:
         try:
-            import pygame
-
-            pygame.mixer.init()
-            pygame.mixer.music.load(path)
-            pygame.mixer.music.play(loops=-1)
+            pygame.mixer.music.load(location)
+            if loop:
+                pygame.mixer.music.play(loops=-1)
+            else:
+                pygame.mixer.music.play()
         except:
             pass
 
@@ -117,23 +135,11 @@ class Common:
         except:
             error_file = open("Logs.txt", "w")
 
-        if Type == "Warning":
-            error_file.write(
-                str(datetime.datetime.now())
-                + " | "
-                + "_DEV Warning: "
-                + str(description)
-                + "\n"
-            )
-        else:
-            error_file.write(
-                str(datetime.datetime.now())
-                + " | "
-                + "_DEV ERROR: "
-                + str(description)
-                + "\n"
-            )
-
+        error_file.write(
+            f"{str(datetime.datetime.now())}\
+        | _DEV {Type}: {str(description)} \n"
+        )
+    
 class html:
     def __init__(self) -> None:
         self.start = "<html><head/><body>"
@@ -143,9 +149,9 @@ class html:
         ##############################################
         ####             HTML Link
         ##############################################
-        return f'{self.start}<p align="{align};"><a href="{href}"><span style="text-decoration: underline; font-size:{size}pt; color:{color}; {cstm_style}">{txt}</span></a>{self.end}'
+        return f'{self.start}<p align="{align}"><a href="{href}"><span style="text-decoration: underline; font-size:{size}pt; color:{color}; {cstm_style}">{txt}</span></a>{self.end}'
 
-    def span_tag(self, txt: str, color: str, size: int, align="center", weight=700) -> str:
+    def span_tag(self, txt: str, color: str, size: int, align: str = "center", weight = 700) -> str:
         ##############################################
         ####             HTML Text
         ##############################################
