@@ -4,7 +4,7 @@ from Module.Settings import Main as Settings
 class Ui(Settings):
     def __init__(self) -> None:
         super().__init__()
-        self.get_cache()
+        # self.get_cache(self.pref_location)
 
     def setupUi(self, OptionsWin):
         OptionsWin.setObjectName("OptionsWin")

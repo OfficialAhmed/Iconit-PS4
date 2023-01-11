@@ -63,17 +63,25 @@ class Common:
         )
 
         self.ftp = FTP()
+        self.html = html()
         self.working_dir = "user/appmeta"
         self.local_path = str(os.getcwd())
         self.local_path = self.local_path.replace("\\", "/")
         self.temp_path = self.local_path + "\Data\prxUserMeta\\"
         self.img_dir = self.local_path + "\\data\\User\\appmeta"
-        self.info_json_path = self.local_path + "\Data\prxUserMeta\MegaSRX\metadata\game\info.json"
+        self.metadata_location = "\Data\prxUserMeta\MegaSRX\metadata\\"
+        self.info_json_path = f"{self.local_path}\{self.metadata_location}game\info.json"
         self.pref_location = self.local_path + "/Data/Pref/"
 
         self.sys_path = "system_ex/app"
         self.setting_path = ""
+
         self.settings = Settings()
+        self.update_pref()
+
+        pygame.mixer.init()
+
+    def update_pref(self):
         self.settings.set_defaults(
             self.userIp,
             self.userHB,
@@ -84,9 +92,16 @@ class Common:
             self.pref_location,
             self.local_path
         )
+        settings_cache = self.settings.get_cache(self.pref_location)
 
-        pygame.mixer.init()
-
+        font = settings_cache[0]
+        port = settings_cache[1]
+        ip = settings_cache[2]
+        Ipath = settings_cache[3]
+        Dpath = settings_cache[4]
+        hb = settings_cache[5]
+        self.set_user_pref(ip, port, font, Ipath, Dpath, hb)
+        
     def set_ip_port(self, ip, port) -> None:
         self.IP = ip
         self.Port = port
@@ -99,7 +114,7 @@ class Common:
         Common.screen_w = w
         Common.screen_h = h
 
-    def set_user_prefrence(self, ip, port, font, i_path, d_path, hb):
+    def set_user_pref(self, ip, port, font, i_path, d_path, hb):
         self.userIp = ip
         self.userHB = hb
         self.userFont = font
@@ -145,14 +160,23 @@ class html:
         self.start = "<html><head/><body>"
         self.end = "</p></body></html>"
 
-    def a_tag(self, href: str, txt: str, color: str, size: int, cstm_style: str = "", align: str = "center") -> str:
+    def a_tag(self, href: str, txt: str, color: str, size: int, cstm_style: str = "", align: str = "center", font="Arial") -> str:
         ##############################################
         ####             HTML Link
         ##############################################
-        return f'{self.start}<p align="{align}"><a href="{href}"><span style="text-decoration: underline; font-size:{size}pt; color:{color}; {cstm_style}">{txt}</span></a>{self.end}'
+        return f'{self.start}<p align="{align}"><a href="{href}"><span style="text-decoration: underline; font-size:{size}pt; color:{color}; {cstm_style}; font-family: {font}">{txt}</span></a>{self.end}'
 
-    def span_tag(self, txt: str, color: str, size: int, align: str = "center", weight = 700) -> str:
+    def span_tag(self, txt: str, color: str, size: int, align: str = "center", weight = 700, font="Arial") -> str:
         ##############################################
         ####             HTML Text
         ##############################################
-        return f'{self.start}<p align="{align}"><span style=" font-size:{size}pt; font-weight:{weight}; color:{color};">{txt}</span>{self.end}'
+        return f'{self.start}<p align="{align}"><span style=" font-size:{size}pt; font-weight:{weight}; color:{color}; font-family: {font}">{txt}</span>{self.end}'
+
+    def tooltip_tag(self, txt):
+        ##############################################
+        ####        Styling for tooltips
+        ##############################################
+        start = "<p style='color:Black'>"
+        end = "</p>"  
+
+        return f"{start}{txt}{end}"

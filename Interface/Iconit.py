@@ -10,19 +10,6 @@ class Ui(Iconit):
     def setupUi(self, window):
         self.html = html()
 
-        # init user prefrences & settings
-        settings_elems = [
-            self.userFont,
-            self.userPort,
-            self.userIp,
-            self.userIPath,
-            self.userDPath,
-            self.userHB
-        ]
-        user_setting_cache = self.settings.get_cache()
-        for indx, val in enumerate(user_setting_cache):
-            settings_elems[indx] = val
-
         font = QtGui.QFont()
         font.setFamily(self.userFont)
         font.setPointSize(13)
@@ -80,6 +67,7 @@ class Ui(Iconit):
         font.setBold(True)
         font.setItalic(False)
         font.setUnderline(False)
+        font.setFamily(self.userFont)
         self.TitleLabel_withURL.setFont(font)
         self.TitleLabel_withURL.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.TitleLabel_withURL.setAlignment(QtCore.Qt.AlignCenter)
@@ -120,6 +108,7 @@ class Ui(Iconit):
         font = QtGui.QFont()
         font.setPointSize(14)
         font.setItalic(True)
+        font.setFamily(self.userFont)
         self.SystemIcon.setFont(font)
         self.SystemIcon.setStyleSheet("color: rgb(255, 255, 255);")
         self.SystemIcon.setObjectName("SystemIcon")
@@ -134,6 +123,7 @@ class Ui(Iconit):
         font = QtGui.QFont()
         font.setPointSize(14)
         font.setItalic(True)
+        font.setFamily(self.userFont)
         self.GameIcon.setFont(font)
         self.GameIcon.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.GameIcon.setStyleSheet("color: rgb(255, 255, 255);")
@@ -150,6 +140,7 @@ class Ui(Iconit):
         font.setPointSize(13)
         font.setBold(False)
         font.setItalic(True)
+        font.setFamily(self.userFont)
         self.Port_input.setFont(font)
         self.Port_input.setStyleSheet("border-radius: 10px;")
         self.Port_input.setText(self.userPort)
@@ -172,6 +163,7 @@ class Ui(Iconit):
         font.setPointSize(13)
         font.setBold(False)
         font.setItalic(True)
+        font.setFamily(self.userFont)
         self.IP_input.setFont(font)
         self.IP_input.setStyleSheet("border-radius: 10px;")
         self.IP_input.setText(self.userIp)
@@ -189,6 +181,7 @@ class Ui(Iconit):
         self.ChangeAvatar = QtWidgets.QRadioButton(self.widgetWithRadius)
         font = QtGui.QFont()
         font.setPointSize(14)
+        font.setFamily(self.userFont)
         self.ChangeAvatar.setFont(font)
         self.ChangeAvatar.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.ChangeAvatar.setStyleSheet("color: rgb(255, 255, 255);")
@@ -260,6 +253,7 @@ class Ui(Iconit):
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
+        font.setFamily(self.userFont)
         self.Connect_btn.setFont(font)
         self.Connect_btn.setStyleSheet("color: rgb(42, 44, 89);")
         self.Connect_btn.setCheckable(False)
@@ -332,22 +326,22 @@ class Ui(Iconit):
     def retranslateUi(self, window):
         _translate = QtCore.QCoreApplication.translate
         window.setWindowTitle(_translate("window", f"Iconit v{self.get_update_version()} ({self.get_update_release_date()})"))
-        self.TitleLabel_withURL.setText(_translate("window", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{self.get_update_version()}", "#f250e7", 18),))
-        self.Status.setText(_translate("window", self.html.span_tag("Awaiting Connection ..", "#f2ae30", 18)))
+        self.TitleLabel_withURL.setText(_translate("window", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{self.get_update_version()}", "#f250e7", 18, font=self.userFont),))
+        self.Status.setText(_translate("window", self.html.span_tag("Awaiting Connection ..", "#f2ae30", 18, font=self.userFont)))
         self.SystemIcon.setText(_translate("window", "System Icons"))
-        self.Port_Label.setText( _translate( "window", self.html.span_tag("PS4 Port", "#f2ae30", 16)))
+        self.Port_Label.setText( _translate( "window", self.html.span_tag("PS4 Port", "#f2ae30", 16, font=self.userFont)))
         self.GameIcon.setText(_translate("window", "Game Icon/Pic"))
         self.Port_input.setText(_translate("window", self.userPort))
-        self.SysIcon_Note.setText(_translate("window", self.html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8),))
+        self.SysIcon_Note.setText(_translate("window", self.html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8, font=self.userFont),))
         self.IP_input.setPlaceholderText(_translate("window", "192.168.XXX.XXX"))
-        self.Change_label.setText(_translate("window", self.html.span_tag("MODE", "#f2ae30", 16)))
-        self.IP_Label.setText(_translate("window", self.html.span_tag("PS4 IP", "#f2ae30", 16)))
+        self.Change_label.setText(_translate("window", self.html.span_tag("MODE", "#f2ae30", 16, font=self.userFont)))
+        self.IP_Label.setText(_translate("window", self.html.span_tag("PS4 IP", "#f2ae30", 16, font=self.userFont)))
         self.ChangeAvatar.setText(_translate("window", "Profile Avatar"))
-        self.GameIcon_Note.setText(_translate("window", self.html.span_tag("Note: You can enable Homebrew icons in the settings before connecting to the PS4", "#f2ae30", 8)))
-        self.Cache_label.setText(_translate("window", self.html.span_tag("Cache", "#f2ae30", 10)))
-        self.label.setText(_translate("MainWindow", self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "Donate (PayPal)", "#f250e7", 8, "font-style:italic")))
-        self.Credits.setText(_translate("MainWindow", self.html.a_tag("https://all-exhost.github.io/Icons.html", "Download Free Icons", "#f250e7", 8)))
-        self.label_2.setText(_translate("MainWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created by @OfficialAhmed0", "#f250e7", 8, "font-style:italic")))
+        self.GameIcon_Note.setText(_translate("window", self.html.span_tag("Note: You can enable Homebrew icons in the settings before connecting to the PS4", "#f2ae30", 8, font=self.userFont)))
+        self.Cache_label.setText(_translate("window", self.html.span_tag("Cache", "#f2ae30", 10, font=self.userFont)))
+        self.label.setText(_translate("MainWindow", self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "Donate (PayPal)", "#f250e7", 8, f"font-style:{self.userFont}")))
+        self.Credits.setText(_translate("MainWindow", self.html.a_tag("https://all-exhost.github.io/Icons.html", "Download Free Icons", "#f250e7", 8, font=self.userFont)))
+        self.label_2.setText(_translate("MainWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created by @OfficialAhmed0", "#f250e7", 8, f"font-style:{self.userFont}")))
 
         self.Connect_btn.setText(_translate("window", "Connect PS4"))
         self.menuSettings.setTitle(_translate("window", "Settings"))

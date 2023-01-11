@@ -105,6 +105,7 @@ class Ui(Icons):
         font.setBold(True)
         font.setUnderline(False)
         font.setWeight(75)
+        font.setFamily(self.userFont)
         self.homebrewLabel.setFont(font)
         self.homebrewLabel.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.homebrewLabel.setStyleSheet("color: rgb(255, 255, 255);")
@@ -152,6 +153,7 @@ class Ui(Icons):
         font.setPointSize(13)
         font.setBold(True)
         font.setWeight(75)
+        font.setFamily(self.userFont)
         self.ChangeIcon_btn.setFont(font)
         self.ChangeIcon_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.ChangeIcon_btn.setStyleSheet("color: rgb(255, 255, 255);")
@@ -169,6 +171,7 @@ class Ui(Icons):
         font.setPointSize(13)
         font.setBold(True)
         font.setWeight(75)
+        font.setFamily(self.userFont)
         self.Mask_btn.setFont(font)
         self.Mask_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Mask_btn.setStyleSheet("color: rgb(255, 255, 255);")
@@ -184,6 +187,7 @@ class Ui(Icons):
         font.setPointSize(13)
         font.setBold(True)
         font.setWeight(75)
+        font.setFamily(self.userFont)
         self.Prev_btn.setFont(font)
         self.Prev_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Prev_btn.setAutoFillBackground(False)
@@ -201,6 +205,7 @@ class Ui(Icons):
         font.setPointSize(13)
         font.setBold(True)
         font.setWeight(75)
+        font.setFamily(self.userFont)
         self.Next_btn.setFont(font)
         self.Next_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Next_btn.setStyleSheet("color: rgb(255, 255, 255);")
@@ -220,6 +225,7 @@ class Ui(Icons):
         font.setPointSize(17)
         font.setBold(True)
         font.setWeight(75)
+        font.setFamily(self.userFont)
         self.Submit_btn.setFont(font)
         self.Submit_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Submit_btn.setStyleSheet("color: rgb(255, 255, 255);")
@@ -233,6 +239,7 @@ class Ui(Icons):
         font.setPointSize(22)
         font.setBold(True)
         font.setWeight(75)
+        font.setFamily(self.userFont)
         self.GameTitle.setFont(font)
         self.GameTitle.setMinimumHeight(45)
         self.GameTitle.setStyleSheet("color:rgb(255,255,255);")
@@ -245,6 +252,7 @@ class Ui(Icons):
         self.GameID_label = QtWidgets.QLabel(window)
         self.GameID_label.setMinimumSize(QtCore.QSize(190, 40))
         font.setPointSize(15)
+        font.setFamily(self.userFont)
         self.GameID_label.setFont(font)
         self.GameID_label.setStyleSheet("color:rgb(255, 255, 255);")
         self.GameID_label.setFrameShape(QtWidgets.QFrame.Box)
@@ -255,6 +263,7 @@ class Ui(Icons):
         )
         self.GameID = QtWidgets.QLabel(window)
         font.setPointSize(16)
+        font.setFamily(self.userFont)
         self.GameID.setFont(font)
         self.GameID.setStyleSheet("color:rgb(255, 255, 255);")
         self.GameID.setAlignment(
@@ -287,6 +296,7 @@ class Ui(Icons):
         font.setPointSize(15)
         font.setBold(False)
         font.setWeight(50)
+        font.setFamily(self.userFont)
         self.Ex_In_label.setFont(font)
         self.Ex_In_label.setStyleSheet("color:rgb(255, 255, 255);")
         self.Ex_In_label.setFrameShape(QtWidgets.QFrame.Box)
@@ -295,6 +305,7 @@ class Ui(Icons):
         self.RightLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.Ex_In_label)
         self.Ex_In = QtWidgets.QLabel(window)
         font.setPointSize(16)
+        font.setFamily(self.userFont)
         self.Ex_In.setFont(font)
         self.Ex_In.setStyleSheet("color:rgb(255, 255, 255);")
         self.Ex_In.setAlignment(
@@ -314,6 +325,7 @@ class Ui(Icons):
         self.TotalGames_label = QtWidgets.QLabel(window)
         self.TotalGames_label.setMinimumSize(QtCore.QSize(190, 40))
         font.setPointSize(15)
+        font.setFamily(self.userFont)
         self.TotalGames_label.setFont(font)
         self.TotalGames_label.setStyleSheet("color:rgb(255, 255, 255);")
         self.TotalGames_label.setFrameShape(QtWidgets.QFrame.Box)
@@ -324,6 +336,7 @@ class Ui(Icons):
         )
         self.TotalGames = QtWidgets.QLabel(window)
         font.setPointSize(16)
+        font.setFamily(self.userFont)
         self.TotalGames.setFont(font)
         self.TotalGames.setStyleSheet("color:rgb(255, 255, 255);")
         self.TotalGames.setAlignment(
@@ -343,6 +356,7 @@ class Ui(Icons):
         self.IconSize_label = QtWidgets.QLabel(window)
         self.IconSize_label.setMinimumSize(QtCore.QSize(190, 40))
         font.setPointSize(13)
+        font.setFamily(self.userFont)
         self.IconSize_label.setFont(font)
         self.IconSize_label.setStyleSheet("color:rgb(255, 255, 255);")
         self.IconSize_label.setFrameShape(QtWidgets.QFrame.Box)
@@ -353,6 +367,7 @@ class Ui(Icons):
         )
         self.IconSize = QtWidgets.QLabel(window)
         font.setPointSize(16)
+        font.setFamily(self.userFont)
         self.IconSize.setFont(font)
         self.IconSize.setStyleSheet("color:rgb(255, 255, 255);")
         self.IconSize.setAlignment(
@@ -381,6 +396,7 @@ class Ui(Icons):
         self.Select_btn.setSizePolicy(sizePolicy)
         self.Select_btn.setMinimumSize(QtCore.QSize(190, 0))
         font.setPointSize(20)
+        font.setFamily(self.userFont)
         self.Select_btn.setFont(font)
         self.Select_btn.setStyleSheet("color:rgb(255, 255, 255);")
         self.Select_btn.setObjectName("Select_btn")
@@ -393,15 +409,18 @@ class Ui(Icons):
         self.GameTitles.setSizePolicy(sizePolicy)
         self.GameTitles.setMinimumSize(QtCore.QSize(0, 30))
         font.setPointSize(15)
+        font.setFamily(self.userFont)
         self.GameTitles.setFont(font)
         self.GameTitles.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.GameTitles.setDuplicatesEnabled(True)
         self.GameTitles.setStyleSheet("color: rgb(0, 0, 0);")
         self.GameTitles.setObjectName("GameTitles")
         font.setPointSize(12)
+        font.setFamily(self.userFont)
         self.RightLayout.setWidget(11, QtWidgets.QFormLayout.FieldRole, self.GameTitles)
 
         font.setPointSize(15)
+        font.setFamily(self.userFont)
         self.bg_change_browse_btnLayout = QtWidgets.QFormLayout()
         self.bg_change_browse_btnLayout.setContentsMargins(200, 0, 200, -1)
         self.bg_change_browse_btnLayout.setObjectName("bg_change_browse_btnLayout")
@@ -419,6 +438,7 @@ class Ui(Icons):
         self.bg_change_browse_btn.setFont(font)
 
         font.setPointSize(12)
+        font.setFamily(self.userFont)
         self.Logs = QtWidgets.QTextEdit(window)
         self.Logs.setReadOnly(True)
         self.Logs.setObjectName("Logs")
@@ -514,12 +534,8 @@ class Ui(Icons):
         _translate = QtCore.QCoreApplication.translate
         IconsWindow.setWindowTitle(
             _translate(
-                "IconsWindow",
-                "Iconit v"
-                + str(self.get_update_version())
-                + " ("
-                + str(self.get_update_release_date())
-                + ")",
+                "IconsWindow", 
+                f"Iconit v{self.get_update_version()} ({self.get_update_release_date()})"
             )
         )
         self.Title_label.setText(_translate("IconsWindow", "Change Game Icon"))
@@ -537,16 +553,10 @@ class Ui(Icons):
         self.Ex_In.setText(_translate("IconsWindow", "TextLabel"))
         self.TotalGames_label.setText(_translate("IconsWindow", "Total Games"))
         self.TotalGames.setText(_translate("IconsWindow", "TextLabel"))
-        self.IconSize_label.setText(
-            _translate("IconsWindow", "Min. Icon Size(512x512)")
-        )
-        self.IconSize.setText(
-            _translate("IconsWindow", "Current Icon size(512x512)")
-        )
+        self.IconSize_label.setText(_translate("IconsWindow", "Min. Icon Size(512x512)"))
+        self.IconSize.setText(_translate("IconsWindow", "Current Icon size(512x512)"))
         self.Select_btn.setText(_translate("IconsWindow", "Select"))
-        self.bg_change_browse_btn.setText(
-            _translate("IconsWindow", "Change Game Pic...")
-        )
+        self.bg_change_browse_btn.setText(_translate("IconsWindow", "Change Game Pic..."))
         self.Logs.setHtml(
             _translate(
                 "IconsWindow",
@@ -563,27 +573,20 @@ class Ui(Icons):
         self.Title_label_2.setText(
             _translate(
                 "IconsWindow",
-                '<html><head/><body><p align="center"><a href="https://twitter.com/OfficialAhmed0"><span style="font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#90f542; vertical-align:super;">Created By @OfficialAhmed0</span></a></p></body></html>',
+                self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created By @OfficialAhmed0", "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.userFont)
             )
         )
         self.SupportMe.setText(
             _translate("IconsWindow",
-                '<html><head/><body><p align="center"><a href=""><span style="font-family:\'verdana\'; font-size:14pt; text-decoration: underline; color:#90f542; vertical-align:super;">PayPal</span></a></p></body></html>',
+                self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "PayPal", "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.userFont)
             )
         )
 
         self.Next_btn.setText(_translate("IconsWindow", "Browse Icon ..."))
         self.Prev_btn.setText(_translate("IconsWindow", "Browse Icon ..."))
-        self.GameTitle.setText(
-            _translate("IconsWindow", self.Games[self.game_icons[self.img_counter]])
-        )
+        self.GameTitle.setText(_translate("IconsWindow", self.Games[self.game_icons[self.img_counter]]))
         self.GameID.setText(_translate("IconsWindow", self.game_icons[self.img_counter]))
-        self.TotalGames.setText(
-            _translate(
-                "IconsWindow",
-                str(self.img_counter + 1) + "/" + str(len(self.Games)),
-            )
-        )
+        self.TotalGames.setText(_translate("IconsWindow", str(self.img_counter + 1) + "/" + str(len(self.Games)),))
 
         # Keyboard recognition v4.07
         self.Next_btn.setShortcut("Right")
@@ -610,13 +613,9 @@ class Ui(Icons):
             else:
                 enabled = "Yes"
 
-            self.homebrewLabel.setText(
-                _translate("IconsWindow", f"Homebrew icon: {enabled}")
-            )
+            self.homebrewLabel.setText(_translate("IconsWindow", f"Homebrew icon: {enabled}"))
         else:
-            self.homebrewLabel.setText(
-                _translate("IconsWindow", "Homebrew icon: Turned off")
-            )
+            self.homebrewLabel.setText(_translate("IconsWindow", "Homebrew icon: Turned off"))
 
         if self.Games[self.game_icons[self.img_counter]] in self.exGames:
             self.Ex_In.setText(_translate("IconsWindow", "External"))
@@ -624,44 +623,14 @@ class Ui(Icons):
             self.Ex_In.setText(_translate("IconsWindow", "Internal"))
 
         # Tool tips update v4.61
-        self.TTTSS = "<p style='color:Black'>"  # TTTSS = ToolTipTagStyleStart
-        self.TTTSE = "</p>"  # TTTSE = ToolTipTagStyleEnd
-
-        self.Next_btn.setToolTip(self.TTTSS + "Next Game" + self.TTTSE)
-        self.Prev_btn.setToolTip(self.TTTSS + "Previous Game" + self.TTTSE)
-        self.ChangeIcon_btn.setToolTip(
-            self.TTTSS + "Pick an Icon for the game" + self.TTTSE
-        )
-        self.Mask_btn.setToolTip(
-            self.TTTSS + "Apply mask" + self.TTTSE
-        )
-        self.Submit_btn.setToolTip(
-            self.TTTSS
-            + "Upload the Icon and Pic after you change at least one of them"
-            + self.TTTSE
-        )
-        self.Select_btn.setToolTip(
-            self.TTTSS
-            + "Click this to select the game from the games list"
-            + self.TTTSE
-        )
-        self.Ex_In.setToolTip(
-            self.TTTSS
-            + "This is the location where the game is located on your PS4"
-            + self.TTTSE
-        )
-        self.bg_change_browse_btn.setToolTip(
-            self.TTTSS + "Pick a background to launch when the game starts" + self.TTTSE
-        )
-        self.GameTitle.setToolTip(
-            self.TTTSS
-            + "Some game titles are unknown because they're not legit (homebrews/PS2 converted games etc.)"
-            + self.TTTSE
-        )
-        self.homebrewLabel.setToolTip(
-            self.TTTSS
-            + "Turned on = Homebrew will be visible and can be changed (turn it on/off from the settings)"
-            + self.TTTSE
-        )
-
+        self.Next_btn.setToolTip(self.html.tooltip_tag("Next Game"))
+        self.Prev_btn.setToolTip(self.html.tooltip_tag("Previous Game"))
+        self.ChangeIcon_btn.setToolTip(self.html.tooltip_tag("Pick an Icon for the game"))
+        self.Mask_btn.setToolTip(self.html.tooltip_tag("Apply Mask"))
+        self.Submit_btn.setToolTip(self.html.tooltip_tag("Upload the Icon and Pic after you change at least one of them"))
+        self.Select_btn.setToolTip(self.html.tooltip_tag("Click this to select the game from the games list"))
+        self.Ex_In.setToolTip(self.html.tooltip_tag("This is the location where the game is located on your PS4"))
+        self.bg_change_browse_btn.setToolTip(self.html.tooltip_tag("Pick a background to launch when the game starts"))
+        self.GameTitle.setToolTip(self.html.tooltip_tag("Some game titles are unknown because they're not legit (homebrews/PS2 converted games etc.)"))
+        self.homebrewLabel.setToolTip(self.html.tooltip_tag("Turned on = Homebrew will be visible and can be changed (turn it on/off from the settings)"))
 

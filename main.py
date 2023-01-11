@@ -1,10 +1,9 @@
-#  BUG:port caching not working
 #  BUG:Remove cache from options not working
-#  FIXME:settings (check if data used from the cached settings)
+#  FIXME:Homebrew aren't detected
 
 import Interface.Iconit as Iconit
 from environment import Common
-
+ 
 import sys
 from PyQt5 import QtWidgets
 

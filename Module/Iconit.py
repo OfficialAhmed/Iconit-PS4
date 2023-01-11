@@ -19,7 +19,6 @@ import os, json
 class Main(Common):
     def __init__(self) -> None:
         super().__init__()
-        self.settings.get_cache()
 
         self.file_name = "pronunciation.xml"
         self.icon_name = "icon0.png"
@@ -79,7 +78,7 @@ class Main(Common):
             self.ui.setupUi(self.window, "PermissionDenied")
         self.window.show()
 
-    def Check_IPort(self):
+    def Check_IPort(self) -> None:
         self.Status.setText(self.html.span_tag("Connecting...", "#f2ae30", 18))
         try:
             self.IP = self.IP_input.text()

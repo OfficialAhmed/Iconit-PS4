@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QFileDialog
 import os
 
 class Main:
@@ -16,8 +17,8 @@ class Main:
     userDPath = None
 
     pref_location = None
-    location_path = None
-
+    application_location = None
+    
     def set_defaults(self, Ip, HB, Font, Port, IPath, DPath, pref, loc) -> None:
         Main.userIp, self.userIp = Ip, Ip
         Main.userHB, self.userHB = HB, HB
@@ -26,11 +27,12 @@ class Main:
         Main.userIPath, self.userIPath = IPath, IPath
         Main.userDPath, self.userDPath = DPath, DPath
         Main.pref_location, self.pref_location = pref, pref
-        Main.location_path, self.location_path = loc, loc
+        Main.application_location, self.application_location = loc, loc
 
-    def get_cache(self) -> tuple:
+    def get_cache(self, pref_location) -> tuple:
+        """ Update local and global attributes from cached file"""
         try:
-            with open(f"{self.pref_location}pref.ini") as file:
+            with open(f"{pref_location}pref.ini") as file:
                 content = file.readlines()
                 Main.userFont, self.userFont = content[0][2:-1], content[0][2:-1]
                 Main.userPort, self.userPort = content[1][2:-1], content[1][2:-1]
@@ -40,7 +42,7 @@ class Main:
                 Main.userHB, self.userHB = content[5][3:].strip(), content[5][3:].strip()
         except:
             pass
-
+            
         finally:
             return (
                 self.userFont, 
@@ -57,7 +59,7 @@ class Main:
                 file.write(
                     f"F:Arial\nP:21\nIP:\nIPath:{os.getcwd()}\nDPath:{os.getcwd()}\nHB:False"
                 )
-            self.get_cache()
+            self.get_cache(self.pref_location)
         except:
             pass
         self.OptionsWin.close()
@@ -84,31 +86,28 @@ class Main:
                 f"F:{selected_font}\nP:{selected_port}\nIP:{selected_ip}\nIPath:{selected_icon_path}\nDPath:{selected_download_path}\nHB:{selected_hb}"
             )
         self.OptionsWin.close()
+        self.get_cache(self.pref_location)
 
     def GetDownloadPath(self):
-        from PyQt5.QtWidgets import QFileDialog, QDialog
-
         opt = QtWidgets.QFileDialog.Options()
         opt |= QtWidgets.QFileDialog.DontUseSheet
         dialog = QFileDialog()
         dialog.setOptions(opt)
-        dialog.setDirectory(self.location_path)
+        dialog.setDirectory(self.application_location)
         path = QtWidgets.QFileDialog.getExistingDirectory(
-            None, "Default Download Directory...", self.location_path, options=opt
+            None, "Default Download Directory...", self.application_location, options=opt
         )
         if path:
             self.DownloadPath.setText(path)
 
     def GetIconPath(self):
-        from PyQt5.QtWidgets import QFileDialog, QDialog
-
         opt = QtWidgets.QFileDialog.Options()
         opt |= QtWidgets.QFileDialog.DontUseSheet
         dialog = QFileDialog()
         dialog.setOptions(opt)
-        dialog.setDirectory(self.location_path)
+        dialog.setDirectory(self.application_location)
         path = QtWidgets.QFileDialog.getExistingDirectory(
-            None, "Default Icon Directory...", self.location_path, options=opt
+            None, "Default Icon Directory...", self.application_location, options=opt
         )
         if path:
             self.IconPath.setText(path)
