@@ -4,7 +4,6 @@ Data/Pref/pref.ini
 system icons test.py
 Logs.txt
 __pycache__
-output
 Logs.txt
 Data/prxUserMeta/connection_history.dat
 Data/prxUserMeta/connection_history.dat
@@ -12,5 +11,8 @@ env
 GUI
 output
 output/Data
+output/READ ME.txt
 test.py
+Data/prxUserMeta/MegaSRX/metadata/game/info.json
+Data/prxUserMeta/MegaSRX/icon0.dds
 Data/prxUserMeta/MegaSRX/metadata/game/info.json

@@ -29,10 +29,10 @@ class Common:
     screen_w = 0
     screen_h = 0
 
-    # default settings
+    # if pref.ini not found use these
     userFont = "Arial"
     userPort = "21"
-    userIp = ""
+    userIp = "192.168.1.1"
     userIPath = os.getcwd()
     userDPath = os.getcwd()
     userHB = "False"
@@ -65,20 +65,20 @@ class Common:
         self.ftp = FTP()
         self.html = html()
         self.working_dir = "user/appmeta"
-        self.local_path = str(os.getcwd())
-        self.local_path = self.local_path.replace("\\", "/")
-        self.temp_path = self.local_path + "\Data\prxUserMeta\\"
-        self.img_dir = self.local_path + "\\data\\User\\appmeta"
-        self.metadata_location = "\Data\prxUserMeta\MegaSRX\metadata\\"
-        self.info_json_path = f"{self.local_path}\{self.metadata_location}game\info.json"
-        self.pref_location = self.local_path + "/Data/Pref/"
-
         self.sys_path = "system_ex/app"
+
         self.setting_path = ""
+
+        self.app_root_path = f"{os.getcwd()}\\"
+        self.temp_path = f"{self.app_root_path}Data\\prxUserMeta\\"
+        self.appmeta_path = f"{self.app_root_path}data\\User\\appmeta\\"
+        self.metadata_path = f"{self.temp_path}MegaSRX\\metadata\\"
+        self.pref_path = f"{self.app_root_path}Data\\Pref\\"
+
+        self.game_cached_file = f"{self.metadata_path}game\\info.json"
 
         self.settings = Settings()
         self.update_pref()
-
         pygame.mixer.init()
 
     def update_pref(self):
@@ -89,10 +89,10 @@ class Common:
             self.userPort,
             self.userIPath,
             self.userDPath,
-            self.pref_location,
-            self.local_path
+            self.pref_path,
+            self.app_root_path
         )
-        settings_cache = self.settings.get_cache(self.pref_location)
+        settings_cache = self.settings.get_cache(self.pref_path)
 
         font = settings_cache[0]
         port = settings_cache[1]
@@ -103,6 +103,7 @@ class Common:
         self.set_user_pref(ip, port, font, Ipath, Dpath, hb)
         
     def set_ip_port(self, ip, port) -> None:
+        """ Make Ip and Port sharable between classes """
         self.IP = ip
         self.Port = port
         Common.IP = ip

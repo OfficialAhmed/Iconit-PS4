@@ -40,7 +40,7 @@ class Ui(Upload):
         font.setPointSize(12)
         font.setItalic(True)
         upload_window.setWindowIcon(
-            QtGui.QIcon(self.local_path + "\Data\Pref\ic1.@OfficialAhmed0")
+            QtGui.QIcon(self.app_root_path + "\Data\Pref\ic1.@OfficialAhmed0")
         )
 
         self.Yes = QtWidgets.QPushButton(upload_window)

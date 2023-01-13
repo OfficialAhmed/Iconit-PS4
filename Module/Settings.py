@@ -30,7 +30,7 @@ class Main:
         Main.application_location, self.application_location = loc, loc
 
     def get_cache(self, pref_location) -> tuple:
-        """ Update local and global attributes from cached file"""
+        """ Update and return local and global attributes from cached file"""
         try:
             with open(f"{pref_location}pref.ini") as file:
                 content = file.readlines()
@@ -64,28 +64,26 @@ class Main:
             pass
         self.OptionsWin.close()
 
-    def SaveOptions(self, font, icon_path, download_path, hb, port, ip):
-        selected_font = font
-        selected_icon_path = icon_path
-        selected_download_path = download_path
-        selected_hb = hb
-        selected_port = port
-        selected_ip = ip
+    def SaveOptions(self, font:str = "", icon_path:str = "", download_path:str = "", hb:str = "", port:str = "", ip:str = "") -> None:
+        """ Cache information to pref.ini"""
 
-        if len(selected_port) == 0:
-            selected_port = self.userPort
-        if len(selected_ip) == 0:
-            selected_ip = self.userIp
-        if len(selected_icon_path) == 0:
-            selected_icon_path = self.userIPath
-        if len(selected_download_path) == 0:
-            selected_download_path = self.userDPath
+        if port == "": port = self.userPort
+        if ip == "": ip = self.userIp
+        if icon_path == "": icon_path = self.userIPath
+        if download_path == "": download_path = self.userDPath
+        if font == "": font = self.userFont
+        if hb == "": hb = self.userHB
 
         with open(f"{self.pref_location}pref.ini", "w+") as file:
             file.write(
-                f"F:{selected_font}\nP:{selected_port}\nIP:{selected_ip}\nIPath:{selected_icon_path}\nDPath:{selected_download_path}\nHB:{selected_hb}"
+                f"F:{font}\nP:{port}\nIP:{ip}\nIPath:{icon_path}\nDPath:{download_path}\nHB:{hb}"
             )
-        self.OptionsWin.close()
+        try:
+            self.OptionsWin.close()
+        except:
+            # skip closing, calling this func not from options window
+            pass
+
         self.get_cache(self.pref_location)
 
     def GetDownloadPath(self):

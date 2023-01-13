@@ -16,6 +16,8 @@ import Interface.Mask as Mask
 class Main(Common):
     def __init__(self) -> None:
         super().__init__()
+        # setStyleSheet Url works only with forward slash (/)
+        self.pref_path = self.pref_path.replace("\\", "/")
 
     def UpdateInfo(self, CustomImgSelected=False):
         self.Submit_btn.setDisabled(True)
@@ -70,7 +72,7 @@ class Main(Common):
         self.ChangeIconSizeLabel()
         self.BackgroundChange()
         self.window.setStyleSheet(
-            f"background-image: url({self.pref_location}/{self.background});"
+            f"background-image: url({self.pref_path}/{self.background});"
         )
 
     def BackgroundChange(self):
@@ -104,7 +106,7 @@ class Main(Common):
         # if bg image changed change labels bg to black
         style = "color:white"
         if self.bgImageChanged:
-            style = f"background-image: url({self.pref_location}/Black.@OfficialAhmed0); color:white"
+            style = f"background-image: url({self.pref_path}/Black.@OfficialAhmed0); color:white"
 
         for bg in label_bg:
             bg.setStyleSheet(style)
@@ -181,7 +183,7 @@ class Main(Common):
         if size[0] == 512 and size[1] == 512:
             if self.bgImageChanged == True:
                 self.ChangeIconSizeLabel(
-                    "#0aff14;", f"{self.pref_location}/Black.@OfficialAhmed0", str(icon.size)
+                    "#0aff14;", f"{self.pref_path}/Black.@OfficialAhmed0", str(icon.size)
                 )
             else:
                 self.ChangeIconSizeLabel("#0aff14;", size=str(icon.size))
@@ -193,7 +195,7 @@ class Main(Common):
         ):
             if self.bgImageChanged == True:
                 self.ChangeIconSizeLabel(
-                    "#fa9600;", f"{self.pref_location}/Black.@OfficialAhmed0", str(icon.size)
+                    "#fa9600;", f"{self.pref_path}/Black.@OfficialAhmed0", str(icon.size)
                 )
             else:
                 self.ChangeIconSizeLabel("#fa9600;", size=str(icon.size))
@@ -205,7 +207,7 @@ class Main(Common):
         else:
             if self.bgImageChanged == True:
                 self.ChangeIconSizeLabel(
-                    "#0aff14;", f"{self.pref_location}/Black.@OfficialAhmed0", str(icon.size)
+                    "#0aff14;", f"{self.pref_path}/Black.@OfficialAhmed0", str(icon.size)
                 )
             else:
                 self.ChangeIconSizeLabel("#fa0a14;", size=str(icon.size))

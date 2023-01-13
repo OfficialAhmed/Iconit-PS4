@@ -83,7 +83,8 @@ class Main(Common):
         try:
             self.IP = self.IP_input.text()
             self.Port = self.Port_input.text()
-            self.connection_history(mode="w")
+            
+            self.settings.SaveOptions(ip = self.IP, port = self.Port)
             self.set_ip_port(self.IP, self.Port) 
 
             if len(self.IP) < 8:
@@ -120,27 +121,6 @@ class Main(Common):
                 l.setText(self.html.span_tag(labels[l], success, 14))
             else:
                 l.setText(self.html.span_tag(labels[l], fail, 14))
-
-    def connection_history(self, mode: str) -> None:
-        ################################################################
-        ###               Store IP and Port for next session
-        ################################################################
-        file_name = "connection_history.dat"
-        if mode == "r":
-            try:
-                with open(f"{self.temp_path}\{file_name}", "r") as file:
-                    line = file.readline().strip()
-                    self.IP, self.Port = line.split(",")
-                    self.IP_input.setText(self.IP)
-                    self.Port_input.setText(self.Port)
-
-            except Exception as e:
-                self.logs(str(e), "Warning")
-        else:
-            with open(f"{self.temp_path}\{file_name}", "w+") as file:
-                ip = self.IP_input.text()
-                port = self.Port_input.text()
-                file.write(f"{ip},{port}")
 
     def Connect_PS4(self, isvalid):
         self.window = QtWidgets.QDialog()
@@ -181,8 +161,8 @@ class Main(Common):
             self.Status.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
             if self.GameIcon.isChecked():
                 # v4.72 json for caching
-                if os.path.isfile(self.info_json_path):
-                    ReadJson = open(self.info_json_path)
+                if os.path.isfile(self.game_cached_file):
+                    ReadJson = open(self.game_cached_file)
                     self.Game = json.load(ReadJson)
 
                 self.modeSelected = "game"
@@ -587,7 +567,7 @@ class Main(Common):
             # store games in json for cache if not IconSys
             # if len(self.all_CUSA_sys) == 0:
             with open(
-                self.info_json_path, "w+"
+                self.game_cached_file, "w+"
             ) as jsonFile:
                 json.dump(sorted_Games, jsonFile)
 

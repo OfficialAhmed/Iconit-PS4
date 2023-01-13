@@ -354,5 +354,8 @@ class Ui(Iconit):
         # Keyboard shortcuts v4.07
         self.Connect_btn.setShortcut("Return")
 
-        # Autofill cached IP & port
-        self.connection_history(mode="r")
+        # Autofill cached IP & port from pref.ini
+        cache = self.settings.get_cache(self.pref_path)
+        
+        self.Port_input.setText(cache[1])
+        self.IP_input.setText(cache[2])

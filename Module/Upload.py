@@ -297,8 +297,8 @@ class Main(Common):
                     self.Statement.setText(
                         "You're all set. made with LOVE by @OfficialAhmed0"
                     )
-                    self.play_sound(f"{self.pref_location}bgm/success.@OfficialAhmed0")
-                    self.play_sound(f"{self.pref_location}bgm/home.@OfficialAhmed0", True)
+                    self.play_sound(f"{self.pref_path}bgm/success.@OfficialAhmed0")
+                    self.play_sound(f"{self.pref_path}bgm/home.@OfficialAhmed0", True)
                 except Exception as e:
                     self.logIt(str(e), "Error")
 
