@@ -1,18 +1,20 @@
+__pycache__
+
+Data/prxUserMeta/MegaSRX/metadata/game/info.json
+Data/prxUserMeta/MegaSRX/icon0.dds
+Data/prxUserMeta/files_in_dir.dat
 Data/prxUserMeta/pronunciation.xml
 Data/Pref/pref.ini
-*.png
-system icons test.py
-Logs.txt
-__pycache__
-Logs.txt
-Data/prxUserMeta/connection_history.dat
-Data/prxUserMeta/connection_history.dat
+output/Data
+output/READ ME.txt
+
 env
 GUI
 output
-output/Data
-output/READ ME.txt
+
+system icons test.py
+Logs.txt
+
 test.py
-Data/prxUserMeta/MegaSRX/metadata/game/info.json
-Data/prxUserMeta/MegaSRX/icon0.dds
-Data/prxUserMeta/MegaSRX/metadata/game/info.json
+*.dds
+*.png

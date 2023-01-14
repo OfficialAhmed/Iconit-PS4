@@ -67,15 +67,18 @@ class Main(Common):
 
     def remove_cache(self):
         self.window = QtWidgets.QDialog()
-        self.ui = Alerts.Ui()
-        cache_dir = "Data\prxUserMeta\MegaSRX\metadata\game"
-        all = os.listdir(cache_dir)
+        ui = Alerts.Ui()
+        ui.setupUi(self.window)
         try:
-            for i in all:
-                os.remove(cache_dir + "\\" + i)
-            self.ui.setupUi(self.window, "CUSTOMdoneRmvCache")
-        except:
-            self.ui.setupUi(self.window, "PermissionDenied")
+            all = os.listdir(self.cache_path)
+            for game in all:
+                os.remove(f"{self.cache_path}{game}")
+            ui.alert("CUSTOMdoneRmvCache")
+        except PermissionError:
+            ui.alert("PermissionDenied")
+        except Exception as e:
+            ui.alert(str(e))
+
         self.window.show()
 
     def Check_IPort(self) -> None:
@@ -84,7 +87,7 @@ class Main(Common):
             self.IP = self.IP_input.text()
             self.Port = self.Port_input.text()
             
-            self.settings.SaveOptions(ip = self.IP, port = self.Port)
+            self.settings.save_cache(ip = self.IP, port = self.Port)
             self.set_ip_port(self.IP, self.Port) 
 
             if len(self.IP) < 8:

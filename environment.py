@@ -71,11 +71,12 @@ class Common:
 
         self.app_root_path = f"{os.getcwd()}\\"
         self.temp_path = f"{self.app_root_path}Data\\prxUserMeta\\"
+        self.pref_path = f"{self.app_root_path}Data\\Pref\\"
         self.appmeta_path = f"{self.app_root_path}data\\User\\appmeta\\"
         self.metadata_path = f"{self.temp_path}MegaSRX\\metadata\\"
-        self.pref_path = f"{self.app_root_path}Data\\Pref\\"
+        self.cache_path = f"{self.metadata_path}game\\"
 
-        self.game_cached_file = f"{self.metadata_path}game\\info.json"
+        self.game_cached_file = f"{self.cache_path}info.json"
 
         self.settings = Settings()
         self.update_pref()
@@ -92,7 +93,7 @@ class Common:
             self.pref_path,
             self.app_root_path
         )
-        settings_cache = self.settings.get_cache(self.pref_path)
+        settings_cache = self.settings.update_cache(self.pref_path)
 
         font = settings_cache[0]
         port = settings_cache[1]
