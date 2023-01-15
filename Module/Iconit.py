@@ -1,7 +1,7 @@
 """
 
     Methods for the main screen 'Iconit window'
-    the class inherits 'Environment'
+    the class inherits 'Common'
 
 """
 import Interface.Icons as Icons
@@ -51,14 +51,14 @@ class Main(Common):
         self.ui.setupUi(self.window)
         self.window.show()
 
-    def about(self):
+    def open_about(self):
         self.window = QtWidgets.QDialog()
         self.ui = Alerts.Ui()
         self.ui.setupUi(self.window)
         self.ui.alert("About")
         self.window.show()
 
-    def thanks_2(self):
+    def open_credits(self):
         self.window = QtWidgets.QDialog()
         self.ui = Alerts.Ui()
         self.ui.setupUi(self.window)
@@ -82,10 +82,10 @@ class Main(Common):
         self.window.show()
 
     def Check_IPort(self) -> None:
-        self.Status.setText(self.html.span_tag("Connecting...", "#f2ae30", 18))
+        self.StatusLabel.setText(self.html.span_tag("Connecting...", "#f2ae30", 18))
         try:
-            self.IP = self.IP_input.text()
-            self.Port = self.Port_input.text()
+            self.IP = self.IpInput.text()
+            self.Port = self.PortInput.text()
             
             self.settings.save_cache(ip = self.IP, port = self.Port)
             self.set_ip_port(self.IP, self.Port) 
@@ -93,43 +93,43 @@ class Main(Common):
             if len(self.IP) < 8:
                 self.Connect_PS4(False)
             else:
-                valid = True
+                is_valid = True
                 for i in self.IP + str(self.Port):
                     if i.isalpha():
-                        valid = False
+                        is_valid = False
                         break
-                self.Connect_PS4(valid)
+                self.Connect_PS4(is_valid)
 
         except Exception as e:
             self.logs(str(e), "Warning")
 
-    def change_colors(self, Connected: bool) -> None:
+    def change_colors(self, connected: bool) -> None:
         labels = {
-            self.IP_Label: "PS4 IP",
-            self.Port_Label: "PS4 Port",
-            self.Change_label: "Mode",
-            self.Cache_label: "Cache",
+            self.IpLabel: "PS4 IP",
+            self.PortLabel: "PS4 Port",
+            self.ModeLabel: "Mode",
+            self.CacheLabel: "Cache",
         }
 
         success = "rgb(92, 213, 21)"
         fail = "rgb(255, 0, 0)"
         
-        if Connected:
-            self.Status.setText(self.html.span_tag("Connected", success, 18))
+        if connected:
+            self.StatusLabel.setText(self.html.span_tag("Connected", success, 18))
         else:
-            self.Status.setText(self.html.span_tag("Failed to connect", fail, 18))
+            self.StatusLabel.setText(self.html.span_tag("Failed to connect", fail, 18))
             
         for l in labels:
-            if Connected:
+            if connected:
                 l.setText(self.html.span_tag(labels[l], success, 14))
             else:
                 l.setText(self.html.span_tag(labels[l], fail, 14))
 
-    def Connect_PS4(self, isvalid):
+    def Connect_PS4(self, is_valid):
         self.window = QtWidgets.QDialog()
         self.ui = Alerts.Ui()
 
-        if isvalid:
+        if is_valid:
             """
                     Naive Approach  ;)
                 Solution for one connection only (GoldHen FTP)
@@ -161,8 +161,8 @@ class Main(Common):
             ##############################################
             ###       User Picked Game Icon
             ###############################################
-            self.Status.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
-            if self.GameIcon.isChecked():
+            self.StatusLabel.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
+            if self.GameIconsRadio.isChecked():
                 # v4.72 json for caching
                 if os.path.isfile(self.game_cached_file):
                     ReadJson = open(self.game_cached_file)
@@ -171,13 +171,13 @@ class Main(Common):
                 self.modeSelected = "game"
                 self.iconDirs = [self.working_dir]
                 self.ftp.cwd("/")
-                self.ftp.cwd("user/appmeta")
+                self.ftp.cwd(self.working_dir)
 
                 directories = []
                 self.ftp.retrlines("LIST ", directories.append)
                 for dir in directories:
                     if "external" in dir:
-                        self.iconDirs.append(self.working_dir + "/external")
+                        self.iconDirs.append(f"{self.working_dir}/external")
                         break
                 self.change_colors(True)
 
@@ -194,8 +194,8 @@ class Main(Common):
                     all_Games = []
 
                     for game_id in game_ids:
-                        if len(game_id) == len("CUSA00000"):
-                            accept = True
+                        if len(game_id) == 9:
+                            is_accepted = True
 
                             """
                             If HB is on
@@ -203,13 +203,13 @@ class Main(Common):
                             """
                             if self.userHB != "True":
                                 if "CUSA" not in game_id:
-                                    accept = False
+                                    is_accepted = False
                                     try:
                                         self.Game.pop(game_id)
                                     except:
                                         pass
 
-                            if accept:
+                            if is_accepted:
                                 if "external" in dir:
                                     all_Games.append(game_id)
                                     self.all_CUSA_sys.append(game_id)
@@ -221,7 +221,7 @@ class Main(Common):
             ##############################################
             ###       User picked Sys icons
             ###############################################
-            elif self.SystemIcon.isChecked():
+            elif self.SystemIconsRadio.isChecked():
                 self.ftp.cwd("/")
                 self.ftp.cwd(self.sys_path)
 
@@ -230,7 +230,7 @@ class Main(Common):
                 self.change_colors(True)
 
                 for sys_game in sys_files:
-                    if len(sys_game) == len("CUSA00000"):
+                    if len(sys_game) == 9:
                         self.ftp.cwd(sys_game)
                         folders_inside = self.listDirs()
                         if "sce_sys" in folders_inside:
@@ -554,7 +554,7 @@ class Main(Common):
         return directories
 
     def fetchData(self, file_name, file_path_with_extension):
-        self.Status.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
+        self.StatusLabel.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
         with open(
             file_path_with_extension,
             "wb",

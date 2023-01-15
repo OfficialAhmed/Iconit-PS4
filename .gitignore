@@ -18,3 +18,4 @@ Logs.txt
 test.py
 *.dds
 *.png
+*.json
