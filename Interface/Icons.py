@@ -6,54 +6,20 @@ from Module.Icons import Main as Icons
 class Ui(Icons):
     def __init__(self) -> None:
         super().__init__()
-
-    def setupUi(self, window, Games, modeSelected):
-        self.window = window
-
-        self.exGames = self.all_CUSA_ex
-        self.sysGames = self.all_CUSA_sys
+        self.icons = self.get_icons()
+        self.is_bg_image_changed = False
+        self.selected_mode = self.get_selected_mode()
+        self.icon_names = tuple(i for i in self.icons.keys())
+        self.icon_path = f"{self.metadata_path}{self.selected_mode}/".replace("\\", "/")
 
         # Temp Settings | reset on app restart (v4.91)
         self.last_browse_path = ""
 
-        self.sysIconsAlgo = False
-        if len(self.sysGames) > 0:
-            self.sysIconsAlgo = True
-
-        self.modeSelected = modeSelected
-        self.Games = Games
-        temp = self.temp_path + "MegaSRX\\metadata\\" + self.modeSelected + "\\"
-        self.CUSA_img = temp.replace("\\", "/")
-
-        # Get all icon names from local path sorted by value(game title)
-        self.game_icons = tuple(i for i in self.Games.keys())
-
-        self.changeIconPath = ""
-        self.changeBgPath = ""
-        self.img_limit = len(self.game_icons)
-        self.img_counter = 0
-
-        # v4.72
-        if len(self.sysGames) == 0:
-            ReadJson = open(self.game_cached_file)
-            self.gameInfo = json.load(ReadJson)
-
-        # v4.61
-        self.bgImageChanged = False
-
-        window.setObjectName("IconsWindow")
-        window.resize(1080, 720)
-        window.setWindowIcon(
-            QtGui.QIcon(self.pref_path + "ic1.@OfficialAhmed0")
-        )
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(window.sizePolicy().hasHeightForWidth())
-        window.setSizePolicy(sizePolicy)
-        window.setMinimumSize(QtCore.QSize(1300, 720))
+        # FIXME:These 2 lines are always empty -> reading from init as empty
+        # FIX: init them as class attr for 'Common' class. Access through getters
+        self.exGames = self.all_CUSA_ex
+        self.sysGames = self.all_CUSA_sys
+        self.current_game_id = self.icon_names[self.img_counter]
 
         # Change bg accroding to screen resolution
         if self.screen_w <= 1366:
@@ -65,572 +31,324 @@ class Ui(Icons):
         else:
             self.background = "4kbg.@OfficialAhmed0"
 
-        window.setStyleSheet(
-            f"background-image: url({self.pref_path + self.background});"
-        )
+    def setupUi(self, window):
+        self.window = window
 
-        self.formLayout = QtWidgets.QFormLayout(window)
-        self.formLayout.setObjectName("formLayout")
-        self.TopLayout = QtWidgets.QFormLayout()
-        self.TopLayout.setContentsMargins(20, 20, 20, -1)
-        self.TopLayout.setObjectName("TopLayout")
-        self.Title_label = QtWidgets.QLabel(window)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Title_label.sizePolicy().hasHeightForWidth())
-        self.Title_label.setSizePolicy(sizePolicy)
-        self.Title_label.setMinimumSize(QtCore.QSize(300, 50))
+        self.sysIconsAlgo = False
+        if self.sysGames: # If not empty
+            self.sysIconsAlgo = True
+
+        if not self.sysGames:
+            read_json = open(self.game_cached_file)
+            self.game_info = json.load(read_json)
+
         font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
         font.setPointSize(25)
-        font.setBold(True)
         font.setFamily(self.userFont)
-        font.setWeight(75)
-        self.Title_label.setFont(font)
-        self.Title_label.setStyleSheet("color: rgb(255, 255, 255);")
-        self.Title_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.Title_label.setObjectName("Title_label")
-        self.TopLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.Title_label)
-        self.homebrewLabel = QtWidgets.QLabel(window)
-        self.homebrewLabel.setEnabled(False)
 
-        sizePolicy.setHeightForWidth(
-            self.homebrewLabel.sizePolicy().hasHeightForWidth()
-        )
-        self.homebrewLabel.setSizePolicy(sizePolicy)
-        self.homebrewLabel.setMinimumSize(QtCore.QSize(200, 0))
-        font.setPointSize(20)
-        font.setBold(True)
-        font.setUnderline(False)
-        font.setWeight(75)
-        font.setFamily(self.userFont)
-        self.homebrewLabel.setFont(font)
-        self.homebrewLabel.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        self.homebrewLabel.setStyleSheet("color: rgb(255, 255, 255);")
-        self.homebrewLabel.setAlignment(
-            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
-        )
-        self.homebrewLabel.setObjectName("homebrewLabel")
-        self.TopLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.homebrewLabel)
-        self.whiteBg = QtWidgets.QFrame(window)
-        self.whiteBg.setMinimumSize(QtCore.QSize(4000, 1))
-        self.whiteBg.setStyleSheet(
-            f"background-image: url({self.pref_path}/White.@OfficialAhmed0);"
-        )
-        self.whiteBg.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.whiteBg.setLineWidth(1)
-        self.whiteBg.setFrameShape(QtWidgets.QFrame.HLine)
-        self.whiteBg.setObjectName("whiteBg")
-        self.TopLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.whiteBg)
-        self.formLayout.setLayout(1, QtWidgets.QFormLayout.SpanningRole, self.TopLayout)
-        self.LeftLayout = QtWidgets.QVBoxLayout()
-        self.LeftLayout.setContentsMargins(20, 30, -1, 10)
-        self.LeftLayout.setSpacing(5)
-        self.LeftLayout.setObjectName("LeftLayout")
-        self.Icon = QtWidgets.QGraphicsView(window)
+        # ______________    WINDOW SPECS    _________________ # 
+        window.resize(1080, 720)
+        window.setObjectName("IconsWindow")
+        window.setMinimumSize(QtCore.QSize(1300, 720))
+        window.setWindowIcon(QtGui.QIcon(f"{self.pref_path}ic1.@OfficialAhmed0"))
+        window.setStyleSheet(f"background-image: url({self.pref_path}{self.background});")
+        window.setWindowTitle(f"Iconit v{self.get_update_version()} ({self.get_update_release_date()})")
 
-        sizePolicy.setHeightForWidth(self.Icon.sizePolicy().hasHeightForWidth())
-        self.Icon.setSizePolicy(sizePolicy)
-        self.Icon.setMinimumSize(QtCore.QSize(340, 370))
-        self.Icon.setStyleSheet(
-            f"background-image: url({self.pref_path}/White.@OfficialAhmed0);"
-        )
-        self.Icon.setObjectName("Icon")
-        self.LeftLayout.addWidget(self.Icon)
-        self.Change_Mask_btnLayout = QtWidgets.QFormLayout()
-        self.Change_Mask_btnLayout.setContentsMargins(-1, -1, -1, 0)
-        self.Change_Mask_btnLayout.setVerticalSpacing(3)
-        self.Change_Mask_btnLayout.setObjectName("Change_Mask_btnLayout")
-        self.ChangeIcon_btn = QtWidgets.QPushButton(window)
+        # ______________    LABELS    _________________ # 
+        self.GameTitleLabel = QtWidgets.QLabel(window)
+        self.TitleLabel = QtWidgets.QLabel(window)
+        self.HomebrewLabel = QtWidgets.QLabel(window)
 
-        sizePolicy.setHeightForWidth(
-            self.ChangeIcon_btn.sizePolicy().hasHeightForWidth()
-        )
-        self.ChangeIcon_btn.setSizePolicy(sizePolicy)
-        self.ChangeIcon_btn.setMinimumSize(QtCore.QSize(170, 35))
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setWeight(75)
-        font.setFamily(self.userFont)
-        self.ChangeIcon_btn.setFont(font)
-        self.ChangeIcon_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.ChangeIcon_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.ChangeIcon_btn.setObjectName("ChangeIcon_btn")
-        self.Change_Mask_btnLayout.setWidget(
-            2, QtWidgets.QFormLayout.LabelRole, self.ChangeIcon_btn
-        )
-        self.Mask_btn = QtWidgets.QPushButton(window)
-
-        sizePolicy.setHeightForWidth(
-            self.Mask_btn.sizePolicy().hasHeightForWidth()
-        )
-        self.Mask_btn.setSizePolicy(sizePolicy)
-        self.Mask_btn.setMinimumSize(QtCore.QSize(0, 35))
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setWeight(75)
-        font.setFamily(self.userFont)
-        self.Mask_btn.setFont(font)
-        self.Mask_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Mask_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.Mask_btn.setObjectName("Mask_btn")
-        self.Change_Mask_btnLayout.setWidget(
-            2, QtWidgets.QFormLayout.FieldRole, self.Mask_btn
-        )
-        self.Prev_btn = QtWidgets.QToolButton(window)
-
-        sizePolicy.setHeightForWidth(self.Prev_btn.sizePolicy().hasHeightForWidth())
-        self.Prev_btn.setSizePolicy(sizePolicy)
-        self.Prev_btn.setMinimumSize(QtCore.QSize(170, 30))
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setWeight(75)
-        font.setFamily(self.userFont)
-        self.Prev_btn.setFont(font)
-        self.Prev_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Prev_btn.setAutoFillBackground(False)
-        self.Prev_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.Prev_btn.setArrowType(QtCore.Qt.LeftArrow)
-        self.Prev_btn.setObjectName("Prev_btn")
-        self.Change_Mask_btnLayout.setWidget(
-            0, QtWidgets.QFormLayout.LabelRole, self.Prev_btn
-        )
-        self.Next_btn = QtWidgets.QToolButton(window)
-
-        sizePolicy.setHeightForWidth(self.Next_btn.sizePolicy().hasHeightForWidth())
-        self.Next_btn.setSizePolicy(sizePolicy)
-        self.Next_btn.setMinimumSize(QtCore.QSize(0, 25))
-        font.setPointSize(13)
-        font.setBold(True)
-        font.setWeight(75)
-        font.setFamily(self.userFont)
-        self.Next_btn.setFont(font)
-        self.Next_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Next_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.Next_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
-        self.Next_btn.setArrowType(QtCore.Qt.RightArrow)
-        self.Next_btn.setObjectName("Next_btn")
-
-        self.Change_Mask_btnLayout.setWidget(
-            0, QtWidgets.QFormLayout.FieldRole, self.Next_btn
-        )
-        self.LeftLayout.addLayout(self.Change_Mask_btnLayout)
-        self.Submit_btn = QtWidgets.QPushButton(window)
-
-        sizePolicy.setHeightForWidth(self.Submit_btn.sizePolicy().hasHeightForWidth())
-        self.Submit_btn.setSizePolicy(sizePolicy)
-        self.Submit_btn.setMinimumSize(QtCore.QSize(0, 50))
-        font.setPointSize(17)
-        font.setBold(True)
-        font.setWeight(75)
-        font.setFamily(self.userFont)
-        self.Submit_btn.setFont(font)
-        self.Submit_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Submit_btn.setStyleSheet("color: rgb(255, 255, 255);")
-        self.Submit_btn.setObjectName("Submit_btn")
-        self.LeftLayout.addWidget(self.Submit_btn)
-        self.formLayout.setLayout(2, QtWidgets.QFormLayout.LabelRole, self.LeftLayout)
-        self.RightLayout = QtWidgets.QFormLayout()
-        self.RightLayout.setContentsMargins(-1, 60, 20, -1)
-        self.RightLayout.setObjectName("RightLayout")
-        self.GameTitle = QtWidgets.QLabel(window)
         font.setPointSize(22)
-        font.setBold(True)
-        font.setWeight(75)
-        font.setFamily(self.userFont)
-        self.GameTitle.setFont(font)
-        self.GameTitle.setMinimumHeight(45)
-        self.GameTitle.setStyleSheet("color:rgb(255,255,255);")
-        self.GameTitle.setFrameShape(QtWidgets.QFrame.Box)
-        self.GameTitle.setAlignment(QtCore.Qt.AlignCenter)
-        self.GameTitle.setObjectName("GameTitle")
-        self.RightLayout.setWidget(
-            0, QtWidgets.QFormLayout.SpanningRole, self.GameTitle
-        )
-        self.GameID_label = QtWidgets.QLabel(window)
-        self.GameID_label.setMinimumSize(QtCore.QSize(190, 40))
-        font.setPointSize(15)
-        font.setFamily(self.userFont)
-        self.GameID_label.setFont(font)
-        self.GameID_label.setStyleSheet("color:rgb(255, 255, 255);")
-        self.GameID_label.setFrameShape(QtWidgets.QFrame.Box)
-        self.GameID_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.GameID_label.setObjectName("GameID_label")
-        self.RightLayout.setWidget(
-            1, QtWidgets.QFormLayout.LabelRole, self.GameID_label
-        )
-        self.GameID = QtWidgets.QLabel(window)
-        font.setPointSize(16)
-        font.setFamily(self.userFont)
-        self.GameID.setFont(font)
-        self.GameID.setStyleSheet("color:rgb(255, 255, 255);")
-        self.GameID.setAlignment(
-            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
-        )
-        self.GameID.setObjectName("GameID")
-        self.RightLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.GameID)
-        self.line = QtWidgets.QFrame(window)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line.sizePolicy().hasHeightForWidth())
-        self.line.setSizePolicy(sizePolicy)
-        self.line.setMinimumSize(QtCore.QSize(50, 0))
-        self.line.setStyleSheet(
-            f"background-image: url({self.pref_path}/White.@OfficialAhmed0);"
-        )
-        self.line.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.line.setLineWidth(0)
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setObjectName("line")
-        self.RightLayout.setWidget(2, QtWidgets.QFormLayout.SpanningRole, self.line)
-        self.Ex_In_label = QtWidgets.QLabel(window)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
 
-        sizePolicy.setHeightForWidth(self.Ex_In_label.sizePolicy().hasHeightForWidth())
-        self.Ex_In_label.setSizePolicy(sizePolicy)
-        self.Ex_In_label.setMinimumSize(QtCore.QSize(190, 40))
+        labels = (self.GameTitleLabel, self.TitleLabel, self.HomebrewLabel)
+        for label in labels:
+            label.setFont(font)
+            label.setMinimumSize(QtCore.QSize(200, 40))
+            label.setStyleSheet("color:rgb(255,255,255)")
+            label.setFrameShape(QtWidgets.QFrame.Box)
+            label.setAlignment(QtCore.Qt.AlignCenter)
+            sizePolicy.setHeightForWidth(label.sizePolicy().hasHeightForWidth())
+            label.setSizePolicy(sizePolicy)
+
+        self.GameIdLabel = QtWidgets.QLabel(window)
+        self.IconLocationLabel = QtWidgets.QLabel(window)
+        self.TotalGamesLabel = QtWidgets.QLabel(window)
+        self.IconSizeLabel = QtWidgets.QLabel(window)
+        
         font.setPointSize(15)
         font.setBold(False)
-        font.setWeight(50)
-        font.setFamily(self.userFont)
-        self.Ex_In_label.setFont(font)
-        self.Ex_In_label.setStyleSheet("color:rgb(255, 255, 255);")
-        self.Ex_In_label.setFrameShape(QtWidgets.QFrame.Box)
-        self.Ex_In_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.Ex_In_label.setObjectName("Ex_In_label")
-        self.RightLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.Ex_In_label)
-        self.Ex_In = QtWidgets.QLabel(window)
-        font.setPointSize(16)
-        font.setFamily(self.userFont)
-        self.Ex_In.setFont(font)
-        self.Ex_In.setStyleSheet("color:rgb(255, 255, 255);")
-        self.Ex_In.setAlignment(
-            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
-        )
-        self.Ex_In.setObjectName("Ex_In")
-        self.RightLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.Ex_In)
-        self.line_3 = QtWidgets.QFrame(window)
-        self.line_3.setMinimumSize(QtCore.QSize(30, 3))
-        self.line_3.setStyleSheet(
-            f"background-image: url({self.pref_path}/White.@OfficialAhmed0);"
-        )
-        self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_3.setObjectName("line_3")
-        self.RightLayout.setWidget(4, QtWidgets.QFormLayout.SpanningRole, self.line_3)
-        self.TotalGames_label = QtWidgets.QLabel(window)
-        self.TotalGames_label.setMinimumSize(QtCore.QSize(190, 40))
-        font.setPointSize(15)
-        font.setFamily(self.userFont)
-        self.TotalGames_label.setFont(font)
-        self.TotalGames_label.setStyleSheet("color:rgb(255, 255, 255);")
-        self.TotalGames_label.setFrameShape(QtWidgets.QFrame.Box)
-        self.TotalGames_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.TotalGames_label.setObjectName("TotalGames_label")
-        self.RightLayout.setWidget(
-            5, QtWidgets.QFormLayout.LabelRole, self.TotalGames_label
-        )
-        self.TotalGames = QtWidgets.QLabel(window)
-        font.setPointSize(16)
-        font.setFamily(self.userFont)
-        self.TotalGames.setFont(font)
-        self.TotalGames.setStyleSheet("color:rgb(255, 255, 255);")
-        self.TotalGames.setAlignment(
-            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
-        )
-        self.TotalGames.setObjectName("TotalGames")
-        self.RightLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.TotalGames)
-        self.line_4 = QtWidgets.QFrame(window)
-        self.line_4.setMinimumSize(QtCore.QSize(100, 3))
-        self.line_4.setStyleSheet(
-            f"background-image: url({self.pref_path}/White.@OfficialAhmed0);"
-        )
-        self.line_4.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_4.setObjectName("line_4")
-        self.RightLayout.setWidget(6, QtWidgets.QFormLayout.SpanningRole, self.line_4)
-        self.IconSize_label = QtWidgets.QLabel(window)
-        self.IconSize_label.setMinimumSize(QtCore.QSize(190, 40))
+        labels = (self.GameIdLabel, self.IconLocationLabel, self.TotalGamesLabel, self.IconSizeLabel)
+        for label in labels:
+            label.setFont(font)
+            label.setMinimumSize(QtCore.QSize(230, 40))
+            label.setStyleSheet("color:rgb(255, 255, 255);")
+            label.setFrameShape(QtWidgets.QFrame.Box)
+            label.setAlignment(QtCore.Qt.AlignCenter)
+
+        # Unallocate memory
+        del labels
+
+        # ______________    BUTTONS    _________________ # 
         font.setPointSize(13)
-        font.setFamily(self.userFont)
-        self.IconSize_label.setFont(font)
-        self.IconSize_label.setStyleSheet("color:rgb(255, 255, 255);")
-        self.IconSize_label.setFrameShape(QtWidgets.QFrame.Box)
-        self.IconSize_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.IconSize_label.setObjectName("IconSize_label")
-        self.RightLayout.setWidget(
-            7, QtWidgets.QFormLayout.LabelRole, self.IconSize_label
-        )
-        self.IconSize = QtWidgets.QLabel(window)
+        font.setBold(True)
+        self.SelectBtn = QtWidgets.QPushButton(window)
+        self.SelectBtn.setFont(font)
+        self.SelectBtn.setMinimumSize(QtCore.QSize(230, 40))
+        self.SelectBtn.setStyleSheet("color:rgb(255, 255, 255);")
+        self.SelectBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+
+        font.setBold(False)
+        self.MaskBtn = QtWidgets.QPushButton(window)
+        self.ChangeIconBtn = QtWidgets.QPushButton(window)
+
+        btns = (self.MaskBtn, self.ChangeIconBtn)
+        for btn in btns:
+            btn.setFont(font)
+            btn.setMinimumSize(QtCore.QSize(170, 35))
+            btn.setStyleSheet("color: rgb(255, 255, 255);")
+            btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+            sizePolicy.setHeightForWidth(btn.sizePolicy().hasHeightForWidth())
+            btn.setSizePolicy(sizePolicy)
+
+        self.PreviousBtn = QtWidgets.QToolButton(window)
+        self.NextBtn = QtWidgets.QToolButton(window)
+
+        btns = (self.PreviousBtn, self.NextBtn)
+        for index, btn in enumerate(btns):
+            btn.setArrowType(QtCore.Qt.RightArrow)
+            if index == 0:
+                btn.setArrowType(QtCore.Qt.LeftArrow)
+
+            btn.setFont(font)
+            btn.setMinimumSize(QtCore.QSize(170, 30))
+            btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+            btn.setStyleSheet("color: rgb(255, 255, 255);")
+            sizePolicy.setHeightForWidth(btn.sizePolicy().hasHeightForWidth())
+            btn.setSizePolicy(sizePolicy)
+        del btns # remove memory allocation 
+
+        font.setPointSize(15)
+        self.ChangeBgBtn = QtWidgets.QPushButton(window)
+        self.ChangeBgBtn.setFont(font)
+        self.ChangeBgBtn.setMinimumSize(QtCore.QSize(0, 35))
+        self.ChangeBgBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.ChangeBgBtn.setStyleSheet("color:rgb(255, 255, 255);")
+
+        font.setPointSize(17)
+        self.SubmitBtn = QtWidgets.QPushButton(window)
+        self.SubmitBtn.setFont(font)
+        self.SubmitBtn.setEnabled(False)
+        self.SubmitBtn.setMinimumSize(QtCore.QSize(200, 60))
+        self.SubmitBtn.setMaximumSize(QtCore.QSize(1000, 60))
+        self.SubmitBtn.setStyleSheet("color: rgb(255, 255, 255);")
+        self.SubmitBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+
+        # ______________    TEXT    _________________ # 
         font.setPointSize(16)
-        font.setFamily(self.userFont)
-        self.IconSize.setFont(font)
-        self.IconSize.setStyleSheet("color:rgb(255, 255, 255);")
-        self.IconSize.setAlignment(
-            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
-        )
-        self.IconSize.setObjectName("IconSize")
-        self.RightLayout.setWidget(7, QtWidgets.QFormLayout.FieldRole, self.IconSize)
-        self.line_5 = QtWidgets.QFrame(window)
-        self.line_5.setMinimumSize(QtCore.QSize(100, 3))
-        self.line_5.setStyleSheet(
-            f"background-image: url({self.pref_path}/White.@OfficialAhmed0);"
-        )
-        self.line_5.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_5.setObjectName("line_5")
-        self.RightLayout.setWidget(8, QtWidgets.QFormLayout.SpanningRole, self.line_5)
+        self.GameIdTxt = QtWidgets.QLabel(window)
+        self.IconSizeTxt = QtWidgets.QLabel(window)
+        self.TotalGamesTxt = QtWidgets.QLabel(window)
+        self.IconLocationTxt = QtWidgets.QLabel(window)
+        
+        texts = (self.GameIdTxt, self.IconSizeTxt, self.TotalGamesTxt, self.IconLocationTxt)
+        for txt in texts:
+            txt.setFont(font)
+            txt.setStyleSheet("color:rgb(255, 255, 255);")
+            txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
 
-        self.Select_btn = QtWidgets.QPushButton(window)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Select_btn.sizePolicy().hasHeightForWidth())
+        font.setPointSize(12)
+        self.LogsTxt = QtWidgets.QTextEdit(window)
+        self.LogsTxt.setReadOnly(True)
 
-        self.Select_btn.setSizePolicy(sizePolicy)
-        self.Select_btn.setMinimumSize(QtCore.QSize(190, 0))
-        font.setPointSize(20)
-        font.setFamily(self.userFont)
-        self.Select_btn.setFont(font)
-        self.Select_btn.setStyleSheet("color:rgb(255, 255, 255);")
-        self.Select_btn.setObjectName("Select_btn")
-        self.Select_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        del texts
+        # ______________    LINES    ___________________ # 
+        self.Line2 = QtWidgets.QFrame(window)
+        self.Line3 = QtWidgets.QFrame(window)
+        self.Line4 = QtWidgets.QFrame(window)
+        self.Line5 = QtWidgets.QFrame(window)
 
-        self.RightLayout.setWidget(11, QtWidgets.QFormLayout.LabelRole, self.Select_btn)
+        lines = (self.Line2, self.Line3, self.Line4, self.Line5)
+        for line in lines:
+            line.setMinimumSize(QtCore.QSize(10, 3))
+            line.setStyleSheet(f"background-image: url({self.pref_path}White.@OfficialAhmed0);")
+            line.setFrameShape(QtWidgets.QFrame.HLine)
+            line.setFrameShadow(QtWidgets.QFrame.Sunken)
+
+        del lines
+        # ______________    LINKS    _________________ # 
+        self.TwitterLink = QtWidgets.QLabel(window)
+        self.PaypalLink = QtWidgets.QLabel(window)
+
+        links = (self.TwitterLink, self.PaypalLink)
+        for link in links:
+            link.setLineWidth(1)
+            link.setOpenExternalLinks(True)
+            link.setFrameShape(QtWidgets.QFrame.Box)
+            link.setMinimumSize(QtCore.QSize(200, 20))
+            link.setMaximumSize(QtCore.QSize(200, 20))
+            link.setFrameShadow(QtWidgets.QFrame.Plain)
+            link.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+            link.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+            sizePolicy.setHeightForWidth(link.sizePolicy().hasHeightForWidth())
+            link.setSizePolicy(sizePolicy)
+
+        del links 
+        # ______________    SIGNALS    _________________ # 
+        self.NextBtn.clicked.connect(self.Next)
+        self.SelectBtn.clicked.connect(self.Select)
+        self.PreviousBtn.clicked.connect(self.Prev)
+        self.MaskBtn.clicked.connect(self.Mask_maker)
+        self.ChangeBgBtn.clicked.connect(self.BrowseBg)
+        self.SubmitBtn.clicked.connect(self.Resize_Upload)
+        self.ChangeIconBtn.clicked.connect(self.BrowseIcon)
+
+        # ______________    GAME TITLES    _________________ # 
+        font.setPointSize(15)
         self.GameTitles = QtWidgets.QComboBox(window)
-
+        self.GameTitles.setFont(font)
+        self.GameTitles.setDuplicatesEnabled(True)
+        self.GameTitles.setMinimumSize(QtCore.QSize(0, 30))
+        self.GameTitles.setStyleSheet("color: rgb(255,255,255);")
+        self.GameTitles.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         sizePolicy.setHeightForWidth(self.GameTitles.sizePolicy().hasHeightForWidth())
         self.GameTitles.setSizePolicy(sizePolicy)
-        self.GameTitles.setMinimumSize(QtCore.QSize(0, 30))
-        font.setPointSize(15)
-        font.setFamily(self.userFont)
-        self.GameTitles.setFont(font)
-        self.GameTitles.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.GameTitles.setDuplicatesEnabled(True)
-        self.GameTitles.setStyleSheet("color: rgb(0, 0, 0);")
-        self.GameTitles.setObjectName("GameTitles")
-        font.setPointSize(12)
-        font.setFamily(self.userFont)
-        self.RightLayout.setWidget(11, QtWidgets.QFormLayout.FieldRole, self.GameTitles)
 
-        font.setPointSize(15)
-        font.setFamily(self.userFont)
+        for index, current_game_id in enumerate(self.icons):
+            self.GameTitles.addItem(f"{index + 1}: {self.icons[self.icon_names[index]]} [{current_game_id}]")
+        # ______________    ICONS    _________________ # 
+        self.Icon = QtWidgets.QGraphicsView(window)
+        self.Icon.setMinimumSize(QtCore.QSize(340, 370))
+        self.Icon.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.Icon.setStyleSheet(f"border-image: url('{self.icon_path}{self.icon_names[0]}')")
+        sizePolicy.setHeightForWidth(self.Icon.sizePolicy().hasHeightForWidth())
+        self.Icon.setSizePolicy(sizePolicy)
+
+        # ______________    LAYOUTS    _________________ # 
+        self.TopLayout = QtWidgets.QFormLayout()
+        self.TopLayout.setContentsMargins(20, 20, 20, -1)
+        self.TopLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.TitleLabel)
+        self.TopLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.HomebrewLabel)
+
+        self.Change_Mask_btnLayout = QtWidgets.QFormLayout()
+        self.Change_Mask_btnLayout.setVerticalSpacing(3)
+        self.Change_Mask_btnLayout.setContentsMargins(-1, -1, -1, 0)
+        self.Change_Mask_btnLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.PreviousBtn)
+        self.Change_Mask_btnLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.NextBtn)
+        self.Change_Mask_btnLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.MaskBtn)
+        self.Change_Mask_btnLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.ChangeIconBtn)
+
         self.bg_change_browse_btnLayout = QtWidgets.QFormLayout()
         self.bg_change_browse_btnLayout.setContentsMargins(200, 0, 200, -1)
-        self.bg_change_browse_btnLayout.setObjectName("bg_change_browse_btnLayout")
-        self.bg_change_browse_btn = QtWidgets.QPushButton(window)
-        self.bg_change_browse_btn.setMinimumSize(QtCore.QSize(0, 35))
-        self.bg_change_browse_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.bg_change_browse_btn.setStyleSheet("color:rgb(255, 255, 255);")
-        self.bg_change_browse_btn.setObjectName("bg_change_browse_btn")
-        self.bg_change_browse_btnLayout.setWidget(
-            0, QtWidgets.QFormLayout.FieldRole, self.bg_change_browse_btn
-        )
-        self.RightLayout.setLayout(
-            12, QtWidgets.QFormLayout.FieldRole, self.bg_change_browse_btnLayout
-        )
-        self.bg_change_browse_btn.setFont(font)
+        self.bg_change_browse_btnLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.ChangeBgBtn)
 
-        font.setPointSize(12)
-        font.setFamily(self.userFont)
-        self.Logs = QtWidgets.QTextEdit(window)
-        self.Logs.setReadOnly(True)
-        self.Logs.setObjectName("Logs")
-        self.RightLayout.setWidget(13, QtWidgets.QFormLayout.FieldRole, self.Logs)
-        self.formLayout.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.RightLayout)
-        self.BottomLayout = QtWidgets.QVBoxLayout()
-        self.BottomLayout.setContentsMargins(20, 10, 20, 0)
-        self.BottomLayout.setObjectName("BottomLayout")
-        self.line_6 = QtWidgets.QFrame(window)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line_6.sizePolicy().hasHeightForWidth())
-        self.line_6.setSizePolicy(sizePolicy)
-        self.line_6.setMinimumSize(QtCore.QSize(4000, 0))
-        self.line_6.setStyleSheet(
-            f"background-image: url({self.pref_path}/White.@OfficialAhmed0);"
-        )
-        self.line_6.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_6.setObjectName("line_6")
-        self.BottomLayout.addWidget(self.line_6)
+        self.LeftLayout = QtWidgets.QVBoxLayout()
+        self.LeftLayout.setSpacing(5)
+        self.LeftLayout.addWidget(self.Icon)
+        self.LeftLayout.addWidget(self.SubmitBtn)
+        self.LeftLayout.setContentsMargins(20, 30, -1, 10)
+        self.LeftLayout.addLayout(self.Change_Mask_btnLayout)
+
+        self.RightLayout = QtWidgets.QFormLayout()
+        self.RightLayout.setContentsMargins(-1, 60, 20, -1)
+        self.RightLayout.setWidget(0, QtWidgets.QFormLayout.SpanningRole, self.GameTitleLabel)
+        self.RightLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.GameIdLabel)
+        self.RightLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.GameIdTxt)
+        self.RightLayout.setWidget(2, QtWidgets.QFormLayout.SpanningRole, self.Line2)
+        self.RightLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.IconLocationLabel)
+        self.RightLayout.setWidget(4, QtWidgets.QFormLayout.SpanningRole, self.Line3)
+        self.RightLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.TotalGamesLabel)
+        self.RightLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.IconLocationTxt)
+        self.RightLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.TotalGamesTxt)
+        self.RightLayout.setWidget(6, QtWidgets.QFormLayout.SpanningRole, self.Line4)
+        self.RightLayout.setWidget(7, QtWidgets.QFormLayout.LabelRole, self.IconSizeLabel)
+        self.RightLayout.setWidget(7, QtWidgets.QFormLayout.FieldRole, self.IconSizeTxt)
+        self.RightLayout.setWidget(8, QtWidgets.QFormLayout.SpanningRole, self.Line5)
+        self.RightLayout.setWidget(11, QtWidgets.QFormLayout.FieldRole, self.GameTitles)
+        self.RightLayout.setWidget(11, QtWidgets.QFormLayout.LabelRole, self.SelectBtn)
+        self.RightLayout.setLayout(12, QtWidgets.QFormLayout.FieldRole, self.bg_change_browse_btnLayout)
+        self.RightLayout.setWidget(13, QtWidgets.QFormLayout.FieldRole, self.LogsTxt)
+
         self.CreditsLayout = QtWidgets.QVBoxLayout()
-        self.CreditsLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.CreditsLayout.setContentsMargins(500, 0, 0, -1)
         self.CreditsLayout.setSpacing(5)
-        self.CreditsLayout.setObjectName("CreditsLayout")
-        self.Title_label_2 = QtWidgets.QLabel(window)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.Title_label_2.sizePolicy().hasHeightForWidth()
-        )
-        self.Title_label_2.setSizePolicy(sizePolicy)
-        self.Title_label_2.setMinimumSize(QtCore.QSize(10, 0))
-        self.Title_label_2.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.Title_label_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Title_label_2.setFrameShape(QtWidgets.QFrame.Box)
-        self.Title_label_2.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.Title_label_2.setLineWidth(1)
-        self.Title_label_2.setOpenExternalLinks(True)
-        self.Title_label_2.setObjectName("Title_label_2")
-        self.CreditsLayout.addWidget(self.Title_label_2)
-        self.SupportMe = QtWidgets.QLabel(window)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.SupportMe.sizePolicy().hasHeightForWidth())
-        self.SupportMe.setSizePolicy(sizePolicy)
-        self.SupportMe.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.SupportMe.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.SupportMe.setFrameShape(QtWidgets.QFrame.Box)
-        self.SupportMe.setOpenExternalLinks(True)
-        self.SupportMe.setObjectName("SupportMe")
-        self.CreditsLayout.addWidget(self.SupportMe)
+        self.CreditsLayout.addWidget(self.PaypalLink)
+        self.CreditsLayout.addWidget(self.TwitterLink)
+        self.CreditsLayout.setContentsMargins(500, 0, 0, -1)
+        self.CreditsLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
+
+        self.BottomLayout = QtWidgets.QVBoxLayout()
         self.BottomLayout.addLayout(self.CreditsLayout)
-        self.formLayout.setLayout(
-            3, QtWidgets.QFormLayout.SpanningRole, self.BottomLayout
-        )
+        self.BottomLayout.setContentsMargins(20, 10, 20, 0)
 
-        # v4.01
-        self.Icon.setStyleSheet("border-image: url(" + self.CUSA_img + self.game_icons[0] + ");")
-        self.Icon.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.Icon.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.Icon.setLineWidth(2)
-        self.Icon.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.Icon.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        # buttons back-end
-        self.ChangeIcon_btn.clicked.connect(self.BrowseIcon)
-        self.Mask_btn.clicked.connect(self.Mask_maker)
-        self.Next_btn.clicked.connect(self.Next)
-        self.Prev_btn.clicked.connect(self.Prev)
-        self.Submit_btn.clicked.connect(self.Resize_Upload)
-        self.Select_btn.clicked.connect(self.Select)
-        self.bg_change_browse_btn.clicked.connect(self.BrowseBg)
+        self.formLayout = QtWidgets.QFormLayout(window)
+        self.formLayout.setLayout(1, QtWidgets.QFormLayout.SpanningRole, self.TopLayout)
+        self.formLayout.setLayout(2, QtWidgets.QFormLayout.LabelRole, self.LeftLayout)
+        self.formLayout.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.RightLayout)
+        self.formLayout.setLayout(3, QtWidgets.QFormLayout.SpanningRole, self.BottomLayout)
 
-        # add items the number of games that are found without renaming them
-        for _ in range(len(self.Games)):
-            self.GameTitles.addItem("select")
-
-        self.retranslateUi(window)
+        self.retranslateUi()
         self.GameTitles.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(window)
 
-    def retranslateUi(self, IconsWindow):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        IconsWindow.setWindowTitle(
-            _translate(
-                "IconsWindow", 
-                f"Iconit v{self.get_update_version()} ({self.get_update_release_date()})"
+        self.NextBtn.setText(_translate("IconsWindow", "NEXT"))
+        self.SelectBtn.setText(_translate("IconsWindow", "SELECT GAME"))
+        self.GameIdLabel.setText(_translate("IconsWindow", "GAME ID"))
+        self.MaskBtn.setText(_translate("IconsWindow", "MASK MAKER..."))
+        self.TitleLabel.setText(_translate("IconsWindow", "GAME ICONS"))
+        self.TotalGamesLabel.setText(_translate("IconsWindow", "TOTAL GAMES"))
+        self.SubmitBtn.setText(_translate("IconsWindow", "SEND ICON"))
+        self.ChangeIconBtn.setText(_translate("IconsWindow", "CHANGE..."))
+        self.ChangeBgBtn.setText(_translate("IconsWindow", "GAME PICTURE..."))
+        self.IconLocationLabel.setText(_translate("IconsWindow", "ICON LOCATION"))
+        self.IconSizeLabel.setText(_translate("IconsWindow", "DIMENSIONS"))
+        self.IconSizeTxt.setText(_translate("IconsWindow", "CURRENT ICON (512x512)"))
+        self.GameIdTxt.setText(_translate("IconsWindow", self.current_game_id))
+        self.GameTitleLabel.setText(_translate("IconsWindow", self.icons[self.current_game_id]))
+        self.TotalGamesTxt.setText(_translate("IconsWindow", str(self.img_counter + 1) + "/" + str(len(self.icons)),))
+        self.TwitterLink.setText(_translate("IconsWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created By @OfficialAhmed0", "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.userFont)))
+        self.PaypalLink.setText(_translate("IconsWindow",self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "PayPal", "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.userFont)))
+        self.LogsTxt.setHtml(_translate("IconsWindow",
+                f"""
+                    {self.html.p_tag(f"margin: 0px; -qt-block-indent:0; text-indent:0px")}
+                    {self.html.span_tag(f"*Connected to PS4: {self.IP}*", "#ffffff", 12)}
+                    {self.html.p_tag(f"-qt-paragraph-type:empty; margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;")}
+                """
             )
         )
-        self.Title_label.setText(_translate("IconsWindow", "Change Game Icon"))
-        self.ChangeIcon_btn.setText(_translate("IconsWindow", "Change Icon..."))
-        self.Mask_btn.setText(
-            _translate("IconsWindow", "Mask maker...")
-        )
-        self.Prev_btn.setText(_translate("IconsWindow", "Previous"))
-        self.Next_btn.setText(_translate("IconsWindow", "Next"))
-        self.Submit_btn.setText(_translate("IconsWindow", "Resize && Upload"))
-        self.GameTitle.setText(_translate("IconsWindow", "Game Title Here"))
-        self.GameID_label.setText(_translate("IconsWindow", "Game ID:"))
-        self.GameID.setText(_translate("IconsWindow", "TextLabel"))
-        self.Ex_In_label.setText(_translate("IconsWindow", "External / Internal"))
-        self.Ex_In.setText(_translate("IconsWindow", "TextLabel"))
-        self.TotalGames_label.setText(_translate("IconsWindow", "Total Games"))
-        self.TotalGames.setText(_translate("IconsWindow", "TextLabel"))
-        self.IconSize_label.setText(_translate("IconsWindow", "Min. Icon Size(512x512)"))
-        self.IconSize.setText(_translate("IconsWindow", "Current Icon size(512x512)"))
-        self.Select_btn.setText(_translate("IconsWindow", "Select"))
-        self.bg_change_browse_btn.setText(_translate("IconsWindow", "Change Game Pic..."))
-        self.Logs.setHtml(
-            _translate(
-                "IconsWindow",
-                '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n'
-                '<html><head><meta name="qrichtext" content="1" /><style type="text/css">\n'
-                "p, li { white-space: pre-wrap; }\n"
-                "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                '<p align="center" style=" margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;">*Connected to PS4: '
-                + self.IP
-                + "*</span></p>\n"
-                '<p align="center" style="-qt-paragraph-type:empty; margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;"><br /></p>\n',
-            )
-        )
-        self.Title_label_2.setText(
-            _translate(
-                "IconsWindow",
-                self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created By @OfficialAhmed0", "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.userFont)
-            )
-        )
-        self.SupportMe.setText(
-            _translate("IconsWindow",
-                self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "PayPal", "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.userFont)
-            )
-        )
-
-        self.Next_btn.setText(_translate("IconsWindow", "Browse Icon ..."))
-        self.Prev_btn.setText(_translate("IconsWindow", "Browse Icon ..."))
-        self.GameTitle.setText(_translate("IconsWindow", self.Games[self.game_icons[self.img_counter]]))
-        self.GameID.setText(_translate("IconsWindow", self.game_icons[self.img_counter]))
-        self.TotalGames.setText(_translate("IconsWindow", str(self.img_counter + 1) + "/" + str(len(self.Games)),))
 
         # Keyboard recognition v4.07
-        self.Next_btn.setShortcut("Right")
-        self.Prev_btn.setShortcut("Left")
-        self.Select_btn.setShortcut("return")
-
-        for indx, current_game_id in enumerate(self.Games):
-            self.GameTitles.setItemText(
-                indx, _translate(
-                    "IconsWindow",
-                    f"{indx + 1}: {self.Games[self.game_icons[indx]]} [{current_game_id}]",
-                ),
-            )
+        self.NextBtn.setShortcut("Right")
+        self.PreviousBtn.setShortcut("Left")
+        self.SelectBtn.setShortcut("return")
 
         if len(self.sysGames) > 1:
-            self.homebrewLabel.setText(
-                _translate("IconsWindow", "System icon: Yes")
-            )
-            self.bg_change_browse_btn.hide()
-
+            self.HomebrewLabel.setText(_translate("IconsWindow", "System icon: Yes"))
+            # self.ChangeBgBtn.hide()
         elif self.userHB == "True":
-            if "CUSA" in self.game_icons[self.img_counter]:
+            enabled = "Yes"
+            if "CUSA" in self.current_game_id:
                 enabled = "No"
-            else:
-                enabled = "Yes"
-
-            self.homebrewLabel.setText(_translate("IconsWindow", f"Homebrew icon: {enabled}"))
         else:
-            self.homebrewLabel.setText(_translate("IconsWindow", "Homebrew icon: Turned off"))
+            enabled = "Turned off"
+        self.HomebrewLabel.setText(_translate("IconsWindow", f"Homebrew icon: {enabled}"))
 
-        if self.Games[self.game_icons[self.img_counter]] in self.exGames:
-            self.Ex_In.setText(_translate("IconsWindow", "External"))
-        else:
-            self.Ex_In.setText(_translate("IconsWindow", "Internal"))
+        self.IconLocationTxt.setText(_translate("IconsWindow", "Internal"))
+        if self.icons[self.current_game_id] in self.exGames:
+            self.IconLocationTxt.setText(_translate("IconsWindow", "External"))
 
-        # Tool tips update v4.61
-        self.Next_btn.setToolTip(self.html.tooltip_tag("Next Game"))
-        self.Prev_btn.setToolTip(self.html.tooltip_tag("Previous Game"))
-        self.ChangeIcon_btn.setToolTip(self.html.tooltip_tag("Pick an Icon for the game"))
-        self.Mask_btn.setToolTip(self.html.tooltip_tag("Apply Mask"))
-        self.Submit_btn.setToolTip(self.html.tooltip_tag("Upload the Icon and Pic after you change at least one of them"))
-        self.Select_btn.setToolTip(self.html.tooltip_tag("Click this to select the game from the games list"))
-        self.Ex_In.setToolTip(self.html.tooltip_tag("This is the location where the game is located on your PS4"))
-        self.bg_change_browse_btn.setToolTip(self.html.tooltip_tag("Pick a background to launch when the game starts"))
-        self.GameTitle.setToolTip(self.html.tooltip_tag("Some game titles are unknown because they're not legit (homebrews/PS2 converted games etc.)"))
-        self.homebrewLabel.setToolTip(self.html.tooltip_tag("Turned on = Homebrew will be visible and can be changed (turn it on/off from the settings)"))
-
+        self.NextBtn.setToolTip(self.html.tooltip_tag("Next Game"))
+        self.MaskBtn.setToolTip(self.html.tooltip_tag("Apply Mask"))
+        self.PreviousBtn.setToolTip(self.html.tooltip_tag("Previous Game"))
+        self.ChangeIconBtn.setToolTip(self.html.tooltip_tag("Pick an Icon for the game"))
+        self.SelectBtn.setToolTip(self.html.tooltip_tag("Click this to select the game from the games list"))
+        self.ChangeBgBtn.setToolTip(self.html.tooltip_tag("Pick a background to launch when the game starts"))
+        self.SubmitBtn.setToolTip(self.html.tooltip_tag("Upload the Icon and Pic after you change at least one of them"))
+        self.IconLocationTxt.setToolTip(self.html.tooltip_tag("This is the location where the game is located on your PS4"))
+        self.HomebrewLabel.setToolTip(self.html.tooltip_tag("Turned on = Homebrew will be visible and can be changed (turn it on/off from the settings)"))
+        self.GameTitleLabel.setToolTip(self.html.tooltip_tag("Some game titles are unknown because they're not legit (homebrews/PS2 converted games etc.)"))

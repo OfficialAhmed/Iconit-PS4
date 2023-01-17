@@ -42,7 +42,6 @@ class Main(Common):
             "?",
         )
 
-        self.modeSelected = ""
         self.cached = ""
 
     def open_options(self):
@@ -81,24 +80,23 @@ class Main(Common):
 
         self.window.show()
 
-    def Check_IPort(self) -> None:
+    def check_ip_port(self) -> None:
         self.StatusLabel.setText(self.html.span_tag("Connecting...", "#f2ae30", 18))
         try:
-            self.IP = self.IpInput.text()
-            self.Port = self.PortInput.text()
+            self.ip = self.IpInput.text()
+            self.port = self.PortInput.text()
             
-            self.settings.save_cache(ip = self.IP, port = self.Port)
-            self.set_ip_port(self.IP, self.Port) 
+            self.settings.save_cache(ip = self.ip, port = self.port)
+            self.set_ip_port(self.ip, self.port) 
 
-            if len(self.IP) < 8:
-                self.Connect_PS4(False)
-            else:
-                is_valid = True
-                for i in self.IP + str(self.Port):
+            is_valid = False
+            if len(self.ip) > 8:
+                for i in f"{self.ip}{self.port}":
                     if i.isalpha():
-                        is_valid = False
                         break
-                self.Connect_PS4(is_valid)
+                else:
+                    is_valid = True
+            self.connect_ps4(is_valid)
 
         except Exception as e:
             self.logs(str(e), "Warning")
@@ -125,7 +123,7 @@ class Main(Common):
             else:
                 l.setText(self.html.span_tag(labels[l], fail, 14))
 
-    def Connect_PS4(self, is_valid):
+    def connect_ps4(self, is_valid):
         self.window = QtWidgets.QDialog()
         self.ui = Alerts.Ui()
 
@@ -140,7 +138,7 @@ class Main(Common):
             
             try:
                 self.ftp.set_debuglevel(0)
-                self.ftp.connect(self.IP, int(self.Port))
+                self.ftp.connect(self.ip, int(self.port))
                 self.ftp.login("", "")
                 self.ftp.getwelcome()
             except ConnectionRefusedError:
@@ -154,7 +152,7 @@ class Main(Common):
                 self.logs(str(e), "Error")
                 self.change_colors(False)
                 self.ui.setupUi(self.window)
-                self.ui.alert(f"Cannot make connection with the given IP/Port. DEV|{str(e)}")
+                self.ui.alert(f"Double check IP and PORT. DEV|{str(e)}")
                 self.window.show()
                 return
 
@@ -168,7 +166,7 @@ class Main(Common):
                     ReadJson = open(self.game_cached_file)
                     self.Game = json.load(ReadJson)
 
-                self.modeSelected = "game"
+                self.set_selected_mode("game")
                 self.iconDirs = [self.working_dir]
                 self.ftp.cwd("/")
                 self.ftp.cwd(self.working_dir)
@@ -366,7 +364,7 @@ class Main(Common):
             progressed += progress
 
         self.CacheBar.setProperty("value", 100)
-        self.OpenWindow("ChangeAvatar")
+        self.render_window("ChangeAvatar")
 
     def CacheSysIcon(self):
 
@@ -435,7 +433,7 @@ class Main(Common):
             )
 
         try:
-            self.OpenWindow("GameIcon")
+            self.render_window("GameIcon")
         except Exception as e:
             print(str(e))
 
@@ -532,7 +530,7 @@ class Main(Common):
                         "value", str(percentage)[: str(percentage).index(".")]
                     )
             try:
-                self.OpenWindow("GameIcon")
+                self.render_window("GameIcon")
             except Exception as e:
                 print(str(e))
         except Exception as e:
@@ -561,8 +559,10 @@ class Main(Common):
         ) as downloaded_file:
             self.ftp.retrbinary("RETR " + file_name, downloaded_file.write)
 
-    def OpenWindow(self, win_type):
-        sorted_Games = {k: v for k, v in sorted(self.Game.items(), key=lambda item: item[1])}
+    def render_window(self, win_type):
+        icons = {k: v for k, v in sorted(self.Game.items(), key=lambda item: item[1])}
+        self.set_icons(icons)
+
         self.ftp.close()
         self.window = QtWidgets.QWidget()
 
@@ -572,17 +572,12 @@ class Main(Common):
             with open(
                 self.game_cached_file, "w+"
             ) as jsonFile:
-                json.dump(sorted_Games, jsonFile)
+                json.dump(icons, jsonFile)
 
             self.ui = Icons.Ui()
-            self.ui.setupUi(
-                self.window,
-                sorted_Games,
-                self.modeSelected,
-            )
+            self.ui.setupUi(self.window)
             self.window.show()
         else:
             self.ui = Avatars.Ui()
-            self.ui.setupUi(self.window, self.userID, self.IP, self.Port, self.w, self.h)
+            self.ui.setupUi(self.window, self.userID, self.ip, self.port, self.w, self.h)
             self.window.show()
-

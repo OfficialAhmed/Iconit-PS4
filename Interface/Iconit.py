@@ -257,7 +257,7 @@ class Ui(Iconit):
         QtCore.QMetaObject.connectSlotsByName(window)
 
         self.About.triggered.connect(self.open_about)
-        self.ConnectBtn.clicked.connect(self.Check_IPort)
+        self.ConnectBtn.clicked.connect(self.check_ip_port)
         self.Options.triggered.connect(self.open_options)
         self.Special_thanks.triggered.connect(self.open_credits)
         self.Remove_cache.triggered.connect(self.remove_cache)

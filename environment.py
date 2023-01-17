@@ -37,6 +37,9 @@ class Common:
     userDPath = os.getcwd()
     userHB = "False"
     
+    all_icons = {}
+    selected_mode = None
+
     def __init__(self) -> None:
         self.app_version = "5.05"
         self.app_release_date = "Jan 21st, 2023"
@@ -81,6 +84,22 @@ class Common:
         self.settings = Settings()
         self.update_pref()
         pygame.mixer.init()
+
+    def set_icons(self, icons):
+        """ make all_icons a public class attribute """
+        Common.all_icons = icons
+
+    def get_icons(self):
+        """ return all_icons attribute """
+        return Common.all_icons
+
+    def set_selected_mode(self, mode):
+        """ make all_icons a public class attribute """
+        Common.selected_mode = mode
+
+    def get_selected_mode(self):
+        """ return all_icons attribute """
+        return Common.selected_mode
 
     def update_pref(self):
         self.settings.set_defaults(
@@ -162,12 +181,15 @@ class html:
         self.start = "<html><head/><body>"
         self.end = "</p></body></html>"
 
+    def p_tag(self, cstm_style):
+        return f'<p align="center" style="{cstm_style}"></p>'
+
     def a_tag(self, href: str, txt: str, color: str, size: int, cstm_style: str = "", align: str = "center", font="Arial") -> str:
         ##############################################
         ####             HTML Link
         ##############################################
         return f'{self.start}<p align="{align}"><a href="{href}"><span style="text-decoration: underline; font-size:{size}pt; color:{color}; {cstm_style}; font-family: {font}">{txt}</span></a>{self.end}'
-
+        
     def span_tag(self, txt: str, color: str, size: int, align: str = "center", weight = 700, font="Arial") -> str:
         ##############################################
         ####             HTML Text
