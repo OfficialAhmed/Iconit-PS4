@@ -12,7 +12,7 @@ class Ui(Avatars):
         super().__init__()
         
     def setupUi(self, ChangeAvatarWin, allUsers, IP, Port, w, h):
-        self.ver = self.get_update_version()
+        self.ver = self.app_version
         self.screenWidth = w
         self.screenHeight = h
 
@@ -619,7 +619,7 @@ class Ui(Avatars):
                 "Change Avatar / Iconit v"
                 + str(self.ver)
                 + " ("
-                + str(self.get_update_release_date())
+                + str(self.app_release_date)
                 + ")",
             )
         )
@@ -665,14 +665,3 @@ class Ui(Avatars):
         self.Next_btn.setShortcut("Right")
         self.Prev_btn.setShortcut("Left")
 
- 
-
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    ChangeAvatarWin = QtWidgets.QWidget()
-    ui = Ui_ChangeAvatarWin()
-    ui.setupUi(ChangeAvatarWin)
-    ChangeAvatarWin.show()
-    sys.exit(app.exec_())

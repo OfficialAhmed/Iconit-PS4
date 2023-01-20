@@ -18,100 +18,92 @@ class Main(Common):
         super().__init__()
         # setStyleSheet Url works only with forward slash (/)
         self.pref_path = self.pref_path.replace("\\", "/")
+        self.img_counter = 0
+        self.icons_limit = len(self.all_game_ids)
+    
+    def update_info(self, is_from_dropdown_list:bool = False):
+        self.SendBtn.setDisabled(True)
+        self.current_game_id = self.icon_names[self.img_counter]
+        current_img_path = f"{self.icon_path}{self.current_game_id}"
+        game_title = self.icons[self.current_game_id]
 
-    def UpdateInfo(self, CustomImgSelected=False):
-        self.Submit_btn.setDisabled(True)
-        current_img_path = self.CUSA_img + self.game_icons[self.img_counter]
+        if len(self.sys_game_ids) == 0:
+            game_title = self.game_info[self.current_game_id]
 
-        if len(self.sysGames) == 0:
-            GameTitle = self.gameInfo[self.game_icons[self.img_counter]]
-        else:
-            GameTitle = self.Games[self.game_icons[self.img_counter]]
-        self.Icon.setStyleSheet("border-image: url(" + current_img_path + ");")
+        game_num = f"{self.img_counter+1}/{self.icons_limit}"
+        if is_from_dropdown_list:
+            game_num = f"{self.GameTitles.currentIndex() + 1}/{self.icons_limit}"
 
-        self.GameTitle.setText(GameTitle)
-        self.GameID.setText(self.game_icons[self.img_counter])
+        loc = "INTERNAL"
+        if self.current_game_id in self.external_game_ids:
+            loc = "EXTERNAL"
 
-        # If Custom image selected by choosing image manually
-        if CustomImgSelected:
-            self.TotalGames.setText(
-                str(self.GameTitles.currentIndex() + 1) + "/" + str(len(self.Games))
-            )
-        else:
-            self.TotalGames.setText(
-                str(self.img_counter + 1) + "/" + str(len(self.Games))
-            )
-
-        # Check homebrew/Sys icon label
-        if len(self.sysGames) > 1:
-            self.homebrewLabel.setText("System icon: Yes")
+        if len(self.sys_game_ids) > 1:
+            hb = "SYSTEM ICON: YES"
 
         elif self.userHB == "True":
-            if "CUSA" in self.game_icons[self.img_counter]:
-                self.homebrewLabel.setText("Homebrew icon: No")
+            if "CUSA" in self.current_game_id:
+                hb = "HOMEBREW ICON: NO"
             else:
-                self.homebrewLabel.setText("Homebrew icon: Yes")
-
-        # Change External or Internal
-        if self.game_icons[self.img_counter] in self.exGames:
-            self.Ex_In.setText("External")
+                hb = "HOMEBREW ICON: YES"
         else:
-            self.Ex_In.setText("Internal")
+            hb = "HOMEBREW ICON: TURNED OFF"
 
-    def ChangeIconSizeLabel(self, color="white", bg_image="", size="(512, 512)"):
-        self.IconSize.setText("Current Icon size" + size + "")
+        self.HomebrewLabel.setText(hb)
+        self.IconLocationTxt.setText(loc)
+        self.TotalGamesTxt.setText(game_num)
+        self.GameTitleLabel.setText(game_title)
+        self.GameIdTxt.setText(self.current_game_id)
+        self.Icon.setStyleSheet(self.html.border_image(current_img_path))
+
+    def change_icon_size_label(self, color="white", bg_image="", size="(512, 512)"):
+        self.IconSizeTxt.setText(f"Current Icon dimension {size}")
         if bg_image != "":
-            self.IconSize.setStyleSheet(
-                "background-image: url(" + bg_image + "); color:" + color
-            )
+            self.IconSizeTxt.setStyleSheet(f"{self.html.bg_image(bg_image)} color:{color}")
         else:
-            self.IconSize.setStyleSheet("color:" + color)
+            self.IconSizeTxt.setStyleSheet(f"color: {color};")
 
-    def backgroundImage2Original(self):
-        self.bgImageChanged = False  # Reset bg image
-        self.ChangeIconSizeLabel()
-        self.BackgroundChange()
-        self.window.setStyleSheet(
-            f"background-image: url({self.pref_path}/{self.background});"
-        )
+    def bg_image_to_original(self):
+        self.is_bg_image_changed = False  # Reset bg image
+        self.change_icon_size_label()
+        self.change_bg()
+        self.window.setStyleSheet(self.html.bg_image(f"{self.pref_path}{self.background}"))
 
-    def BackgroundChange(self):
+    def change_bg(self):
         label_bg = (
-            self.Ex_In_label,
-            self.Title_label,
-            self.Title_label_2,
-            self.GameID_label,
-            self.homebrewLabel,
-            self.IconSize_label,
-            self.TotalGames_label,
-            self.TotalGames_label,
-            self.Title_label,
+            self.NextBtn,
+            self.MaskBtn,
+            self.LogsTxt,
+            self.SelectBtn,
+            self.SendBtn,
+            self.GameIdTxt,
             self.GameTitles,
-            self.GameTitle,
-            self.GameID,
-            self.TotalGames,
-            self.ChangeIcon_btn,
-            self.Next_btn,
-            self.Prev_btn,
-            self.Select_btn,
-            self.Submit_btn,
-            self.Mask_btn,
-            self.bg_change_browse_btn,
-            self.Logs,
-            self.Ex_In,
-            self.IconSize,
-            self.SupportMe,
+            self.TitleLabel,
+            self.PaypalLink,
+            self.GameIdLabel,
+            self.PreviousBtn,
+            self.ChangeBgBtn,
+            self.TwitterLink,
+            self.IconSizeTxt,
+            self.ChangeIconBtn,
+            self.TotalGamesTxt,
+            self.HomebrewLabel,
+            self.IconSizeLabel,
+            self.GameTitleLabel,
+            self.TotalGamesLabel,
+            self.IconLocationTxt,
+            self.IconLocationLabel,
         )
 
-        # if bg image changed change labels bg to black
         style = "color:white"
-        if self.bgImageChanged:
-            style = f"background-image: url({self.pref_path}/Black.@OfficialAhmed0); color:white"
+        if self.is_bg_image_changed:
+            path = f"{self.pref_path}Black.@OfficialAhmed0"
+            style = f"{self.html.bg_image(path)} {style}"
 
         for bg in label_bg:
             bg.setStyleSheet(style)
 
-    def BrowseBg(self):
+    def get_image_browser(self):
         options = QtWidgets.QFileDialog.Options()
         options |= QtWidgets.QFileDialog.DontUseSheet
         dialog = QFileDialog()
@@ -127,100 +119,77 @@ class Main(Common):
         )
 
         if img:
-            bg = Image.open(img)
-            size = bg.size
-
-            StyleTagStart = '<p align="center" style="margin: 0px; -qt-block-indent:0; text-indent:0px"><span style="font-size:10pt; color:#e83c3c">[Error] : '
-            StyleTagEnd = "</span></p></body></html>"
-
+            size = Image.open(img).size
+            self.browsed_bg_img_path = ""
+            err = "is too small or too large atleast (1920x1080) atmost (2048x2048)"
+            
             if size[0] >= 1920 and size[0] <= 2048:
                 if size[1] >= 1080 and size[1] <= 2048:
-                    self.Submit_btn.setDisabled(False)
-                    self.changeBgPath = img
-                    self.window.setStyleSheet(f"background-image: url({img});")
-                    self.bgImageChanged = True
-                    self.BackgroundChange()
+                    self.SendBtn.setDisabled(False)
+                    self.window.setStyleSheet(self.html.bg_image(img))
+                    self.is_bg_image_changed = True
+                    self.browsed_bg_img_path = img
+                    self.set_browsed_bg_img_path(img)
+                    self.change_bg()
                 else:
-                    self.logging += (
-                        StyleTagStart
-                        + "Image height is too small or too large atleast (1920x1080) atmost (2048x2048)"
-                        + StyleTagEnd
-                    )
-                    self.UpdateLogs()
+                    self.logging += self.html.internal_log_msg("error", f"[Image heigh] {err}")
             else:
-                self.logging += (
-                    StyleTagStart
-                    + "Image width is too small or too large atleast (1920x1080) atmost (2048x2048)"
-                    + StyleTagEnd
-                )
-                self.UpdateLogs()
+                self.logging += self.html.internal_log_msg("error", f"[Image width] {err}")
+            self.update_internal_logs()
 
-    def Next(self):
-        self.backgroundImage2Original()
-        if self.img_counter < self.img_limit - 1:
-            self.img_counter += 1
-            if self.img_counter < self.img_limit and self.img_counter >= 0:
-                self.UpdateInfo()
+    def is_img_valid(self, img_path):
+        required_dimension = self.constant.PS4_ICON_SIZE
+        img_size = Image.open(img_path).size
+        background = f"{self.pref_path}Black.@OfficialAhmed0"
 
-    def Prev(self):
-        self.backgroundImage2Original()
-        if self.img_counter > 0 and self.img_counter <= self.img_limit:
-            self.img_counter -= 1
-            self.UpdateInfo()
+        if img_size == required_dimension:
+            if not self.is_bg_image_changed:
+                background = ""
+            self.change_icon_size_label(self.constant.get_color("green"), background, size=str(img_size))
 
-    def Select(self):
-        self.backgroundImage2Original()
-        self.img_counter = self.GameTitles.currentIndex()
-        self.UpdateInfo(CustomImgSelected=True)
+        elif img_size[0] < required_dimension[0] or img_size[1] < required_dimension[1]:
+            clr = self.constant.get_color("green")
 
-    def CheckImg(self, path):
-        icon = Image.open(path)
-        size = icon.size
-        logStyleStart = "<p align='center' style='margin:0px; -qt-block-indent:0; text-indent:0px'><span style='font-size:10pt; color:#ffaa00'>[Warning] : "
-        logStyleEnd = "</span></p></body></html>"
+            if not self.is_bg_image_changed:
+                background = ""
+                clr = self.constant.get_color("red")
 
-        # check if bg image changed then change label of current size image accordingly
-        if size[0] == 512 and size[1] == 512:
-            if self.bgImageChanged == True:
-                self.ChangeIconSizeLabel(
-                    "#0aff14;", f"{self.pref_path}/Black.@OfficialAhmed0", str(icon.size)
-                )
-            else:
-                self.ChangeIconSizeLabel("#0aff14;", size=str(icon.size))
+            self.change_icon_size_label(clr, background, str(img_size))
 
-        elif (
-            (size[0] > 512 and size[1] > 512)
-            or (size[0] == 512 and size[1] > 512)
-            or (size[0] > 512 and size[1] == 512)
-        ):
-            if self.bgImageChanged == True:
-                self.ChangeIconSizeLabel(
-                    "#fa9600;", f"{self.pref_path}/Black.@OfficialAhmed0", str(icon.size)
-                )
-            else:
-                self.ChangeIconSizeLabel("#fa9600;", size=str(icon.size))
-
-            self.logging += (
-                logStyleStart + "Image will be resized (Too large)" + logStyleEnd
-            )
-            self.UpdateLogs()
+            self.SendBtn.setDisabled(True)
+            self.logging += self.html.internal_log_msg("error", "Image cannot be used nor resized (Too Small)")
+            self.update_internal_logs()
         else:
-            if self.bgImageChanged == True:
-                self.ChangeIconSizeLabel(
-                    "#0aff14;", f"{self.pref_path}/Black.@OfficialAhmed0", str(icon.size)
-                )
-            else:
-                self.ChangeIconSizeLabel("#fa0a14;", size=str(icon.size))
+            if not self.is_bg_image_changed:
+                background = ""
+            self.change_icon_size_label(self.constant.get_color("orange"), size=str(img_size))
 
-            self.Submit_btn.setDisabled(True)
-            self.logging += (
-                logStyleStart
-                + "Image cannot be used nor resized (Too Small)"
-                + logStyleEnd
-            )
-            self.UpdateLogs()
+            self.logging += self.html.internal_log_msg("warning", "Image will be resized (Too large)")
+            self.update_internal_logs()
 
-    def BrowseIcon(self):
+    def next(self):
+        self.bg_image_to_original()
+        self.img_counter += 1
+        if self.img_counter == self.icons_limit :
+            # Go back to head, if tail's been reached
+            self.img_counter = 0
+        self.update_info()
+
+    def previous(self):
+        self.bg_image_to_original()
+        if self.img_counter == 0:
+            # Go back to Tail, if head's been reached
+            self.img_counter = self.icons_limit - 1
+        else:
+            self.img_counter -= 1
+        self.update_info()
+
+    def select(self):
+        self.bg_image_to_original()
+        self.img_counter = self.GameTitles.currentIndex()
+        self.update_info(is_from_dropdown_list=True)
+
+    def render_browse_icon_window(self):
         options = QtWidgets.QFileDialog.Options()
         options |= QtWidgets.QFileDialog.DontUseSheet
         dialog = QFileDialog()
@@ -235,55 +204,39 @@ class Main(Common):
             options=options,
         )
         if img:
-            self.Submit_btn.setDisabled(False)
-            self.Icon.setStyleSheet("border-image: url(" + img + ");")
-            self.CheckImg(img)
-            self.changeIconPath = img
+            self.SendBtn.setDisabled(False)
+            self.Icon.setStyleSheet(self.html.border_image(img))
+            self.is_img_valid(img)
+            self.browsed_icon_path = img
             self.last_browse_path = img
 
-    def Mask_maker(self):
-        self.Submit_btn.setEnabled(False)
+            self.set_browsed_icon_path(img)
+
+    def render_mask_maker_window(self):
+        self.SendBtn.setEnabled(False)
         self.window = QtWidgets.QWidget()
         self.ui = Mask.Ui()
         self.ui.setupUi(self.window)
         self.window.show()
 
-    def Resize_Upload(self):
-        if self.bgImageChanged == False:
-            self.changeBgPath = ""
+    def render_upload_window(self):
+        self.SendBtn.setEnabled(False)
+        if self.is_bg_image_changed == False:
+            self.browsed_bg_img_path = ""
+            self.set_browsed_bg_img_path("")
 
-        self.Submit_btn.setEnabled(False)
-        Current_CUSA = self.game_icons[self.img_counter]
-        self.windo = QtWidgets.QWidget()
+        self.set_current_game_id(self.current_game_id)
+        self.set_upload_type("Iconit")
+        
+        self.window = QtWidgets.QWidget()
         self.ui = Upload.Ui()
-        self.ui.setupUi(
-            self.windo,
-            self.changeIconPath,
-            Current_CUSA,
-            "Iconit",
-            self.exGames,
-            None,
-            self.changeBgPath,
-            self.modeSelected,
-            self.sysIconsAlgo,
-        )
-        self.windo.show()
+        self.ui.setupUi(self.window)
+        self.window.show()
 
-        styleTagStart = '<p align="center" style="margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style="font-size:10pt; '
-        styleTagEnd = "</span></p>\n"
-        self.logging += (
-            styleTagStart
-            + 'color:#55ff00;">[Success] : Auto Backup '
-            + Current_CUSA
-            + " success. Next time you change this icon, Iconit will overwrite it"
-            + styleTagEnd
-        )
-        self.UpdateLogs()
+        self.logging += self.html.internal_log_msg("success", f"Auto Backup {self.current_game_id} success.")
+        self.update_internal_logs()
 
-    def UpdateLogs(self):
-        self.Logs.setHtml(
-            '<p align="center" style=" margin: 0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;">'
-            + self.logging
-            + "</span></p>\n"
-        )
-        self.Logs.moveCursor(QtGui.QTextCursor.End)
+    def update_internal_logs(self):
+        """ overwrite logs with the new lines """
+        self.LogsTxt.setHtml(self.logging)
+        self.LogsTxt.moveCursor(QtGui.QTextCursor.End)

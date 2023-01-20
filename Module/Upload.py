@@ -1,4 +1,5 @@
 from environment import Common
+import Interface.Alerts as Alerts
 
 from PIL import Image
 from PyQt5 import QtWidgets
@@ -7,41 +8,40 @@ import time, os, shutil, PIL
 class Main(Common):
     def __init__(self) -> None:
         super().__init__()
+        self.is_sys_icon = self.get_is_sys_icon()
+        self.current_game_id = self.get_current_game_id()
+        self.browsed_icon_path = self.get_browsed_icon_path()
+        self.browsed_bg_img_path = self.get_browsed_bg_img_path()
 
-    def png2dds(self, input_dir, output_dir):
-        # implementation added v4.51
-        # convert legit png to dds using imageMagic lib (wand)
+        
+    def png2dds(self, input_dir, output_dir) -> None:
+        """ convert legit png to dds using imageMagic lib (wand) """
         if self.image != None:
             with self.image.Image(filename=input_dir) as img:
                 img.compression = "dxt1"
                 img.save(filename=output_dir)
 
     def backup(self):
-        """
-                     backup impl. v4.72
-               Move icon to 'My Backup' folder
-        """
-
         backup = []
         try:
             backup = os.listdir("My Backup")
         except:
             os.mkdir("My Backup")
 
-        if self.Current_CUSA + ".png" in backup:
+        if self.current_game_id + ".png" in backup:
             try:
-                os.remove("My Backup\\" + self.Current_CUSA + ".png")
+                os.remove("My Backup\\" + self.current_game_id + ".png")
             except Exception as e:
                 self.logIt(str(e), "Error")
 
         try:
             shutil.copyfile(
                 "Data\prxUserMeta\MegaSRX\metadata\\"
-                + self.modeSelected
+                + self.selected_mode
                 + "\\"
-                + self.Current_CUSA
+                + self.current_game_id
                 + ".png",
-                "My Backup\\" + self.Current_CUSA + ".png",
+                "My Backup\\" + self.current_game_id + ".png",
             )
 
         except Exception as e:
@@ -74,8 +74,8 @@ class Main(Common):
             self.CheckingBar.setProperty("value", 10)
             img_dir = self.temp_path + "MegaSRX\\"
 
-            if self.ConfirmType == "Iconit":
-                if self.sysIconsAlgo:
+            if self.upload_type == "Iconit":
+                if self.is_sys_icon:
                     ###################################################
                     ###
                     ### Critical method needs to be accurate 100%
@@ -85,7 +85,7 @@ class Main(Common):
                     ###################################################
 
                     self.ftp.cwd("/")
-                    self.ftp.cwd("system_ex/app/" + self.Current_CUSA + "/sce_sys")
+                    self.ftp.cwd("system_ex/app/" + self.current_game_id + "/sce_sys")
                     sce_sys_dir = []
                     self.ftp.retrlines("LIST ", sce_sys_dir.append)
                     files_inside = [x.split(" ")[-1] for x in sce_sys_dir]
@@ -107,9 +107,9 @@ class Main(Common):
                     self.backup(sys=True)
                     self.CheckingBar.setProperty("value", 100)
 
-                    if self.changeIconPath != "" and self.changeIconPath != None:
+                    if self.browsed_icon_path != "" and self.browsed_icon_path != None:
                         self.ResizingBar.setProperty("value", 10)
-                        Icon = Image.open(self.changeIconPath)
+                        Icon = Image.open(self.browsed_icon_path)
 
                         if found_4k:
                             minSize = 660
@@ -132,20 +132,16 @@ class Main(Common):
                     BackgroundName = []  # Pic0, Pic1 (dds and png extension)
                     self.ftp.cwd("/")
                     try:
-                        if self.Current_CUSA in self.exGames:
-                            self.ftp.cwd(
-                                self.working_dir + "/external/" + self.Current_CUSA
-                            )
+                        if self.current_game_id in self.external_game_ids:
+                            self.ftp.cwd(f"{self.ps4_internal_icons_dir}/external/{self.current_game_id}")
                         else:
-                            self.ftp.cwd(self.working_dir + "/" + self.Current_CUSA)
+                            self.ftp.cwd(self.ps4_internal_icons_dir + "/" + self.current_game_id)
                     except:
-                        import Interface.Alerts as Alerts
-
                         self.window = QtWidgets.QDialog()
-                        self.ui = Alerts.Ui_Message()
+                        self.ui = Alerts.Ui()
                         self.ui.setupUi(
                             self.window,
-                            "Cannot find this icon in your PS4. This might be from an older caching process please delete cache and recache again, other than that you may continue but this icon wont be changed.",
+                            "Cannot find this icon in your PS4. This might be from an older caching process please delete cache and recache again, other than that you may continue but this icon wont be changed."
                         )
                         self.window.show()
                         self.CheckingBar.setProperty("value", 50)
@@ -165,11 +161,11 @@ class Main(Common):
                         content_in_file = files_in_dir_4_pics.read()
                         self.CheckingBar.setProperty("value", 100)
                         self.ResizingBar.setProperty("value", 1)
-                        if self.changeIconPath != "" and self.changeIconPath != None:
+                        if self.browsed_icon_path != "" and self.browsed_icon_path != None:
                             self.backup()
 
                             # Icon has been changed we need to resize and prepare for upload
-                            Icon = Image.open(self.changeIconPath)
+                            Icon = Image.open(self.browsed_icon_path)
                             resizeIcon = Icon.resize((512, 512), PIL.Image.ANTIALIAS)
 
                             if "icon0.png" in content_in_file:
@@ -231,13 +227,13 @@ class Main(Common):
                                             self.logIt(str(e), "Error")
                         self.ResizingBar.setProperty("value", 45)
 
-                        if self.changeBgPath != "" and self.changeBgPath != None:
+                        if self.browsed_bg_img_path != "" and self.browsed_bg_img_path != None:
                             
                             ###################################################################################
                             ###   Background image has been changed we need to resize and prepare for upload
                             ###################################################################################
 
-                            Background = Image.open(self.changeBgPath)
+                            Background = Image.open(self.browsed_bg_img_path)
                             resizeBackground = Background.resize(
                                 (1920, 1080), PIL.Image.ANTIALIAS
                             )
@@ -286,38 +282,35 @@ class Main(Common):
                                 img_dir + str(ic),
                                 self.temp_path
                                 + "MegaSRX\metadata\\"
-                                + self.modeSelected
+                                + self.selected_mode
                                 + "\\"
-                                + self.Current_CUSA
+                                + self.current_game_id
                                 + ".png",
                             )
 
                     self.UploadingBar.setProperty("value", 100)
-                    self.Statement.setStyleSheet("font: 10pt; color: rgb(5, 255, 20);")
-                    self.Statement.setText(
-                        "You're all set. made with LOVE by @OfficialAhmed0"
-                    )
-                    self.play_sound(f"{self.pref_path}bgm/success.@OfficialAhmed0")
-                    self.play_sound(f"{self.pref_path}bgm/home.@OfficialAhmed0", True)
+                    self.msg.setStyleSheet("font: 10pt; color: rgb(5, 255, 20);")
+                    self.msg.setText("Success. Icons will take time to change in both the PS4 & Iconit")
+             
                 except Exception as e:
                     self.logIt(str(e), "Error")
 
                     self.UploadingBar.setProperty("value", 5)
-                    self.Statement.setStyleSheet("font: 10pt; color: rgb(250, 1, 1);")
-                    self.Statement.setText("Sorry! PS4 has denied the signal, enable Full R/W")
+                    self.msg.setStyleSheet("font: 10pt; color: rgb(250, 1, 1);")
+                    self.msg.setText("Sorry! PS4 has denied the signal, enable Full R/W")
 
                 self.No.hide()
                 self.Yes.hide()
                 self.Ok.raise_()
 
-            elif self.ConfirmType == "Profileit":
+            elif self.upload_type == "Profileit":
                 sysProfileRoot = "system_data/priv/cache/profile/"
                 try:
                     ###############################################################
                     #######          Resize Icon and make copies
                     ###############################################################
                     required_dds = ("avatar64", "avatar128", "avatar260", "avatar440")
-                    ResizeImg = Image.open(self.changeIconPath)
+                    ResizeImg = Image.open(self.browsed_icon_path)
                     avatar = ResizeImg.resize((440, 440), PIL.Image.ANTIALIAS)
                     avatar.save(self.temp_path + "avatar.png")
                     self.CheckingBar.setProperty("value", 20)
@@ -364,10 +357,10 @@ class Main(Common):
                             progressed += progress
                             os.remove(self.temp_path + dds + ".png")
                         self.ResizingBar.setProperty("value", 100)
-                        self.Statement.setStyleSheet(
+                        self.msg.setStyleSheet(
                             "font: 10pt; color: rgb(5, 255, 20);"
                         )
-                        self.Statement.setText(
+                        self.msg.setText(
                             "Done. Give it some time & the avatar will change."
                         )
                         self.Ok.setEnabled(False)
@@ -414,6 +407,10 @@ class Main(Common):
 
         except Exception as e:
             self.logIt(str(e), "Error")
+
+        finally:
+            self.set_browsed_icon_path("")
+            self.set_browsed_bg_img_path("")
 
     def logIt(self, description, Type):
         import datetime

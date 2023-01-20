@@ -244,14 +244,3 @@ class Ui(Mask):
         self.bake_btn.clicked.connect(self.bake_mask)    
         self.bake_preview_btn.clicked.connect(self.preview_baked_mask)    
         self.bake_quit_btn.clicked.connect(self.quit)
-
-
-# if __name__ == "__main__":
-#     import sys
-
-#     app = QtWidgets.QApplication(sys.argv)
-#     mask_maker_window = QtWidgets.QDialog()
-#     ui = Ui()
-#     ui.setupUi(mask_maker_window)
-#     mask_maker_window.show()
-#     sys.exit(app.exec_())

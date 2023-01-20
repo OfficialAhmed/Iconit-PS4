@@ -19,7 +19,7 @@ class Ui(Iconit):
         pointing_hand_cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
 
         # ______________   WINDOW SPECS   _____________________ #
-        window.setWindowTitle(f"Iconit v{self.get_update_version()} ({self.get_update_release_date()})")
+        window.setWindowTitle(f"Iconit v{self.app_version} ({self.app_release_date})")
 
         window.resize(720, 620)
         window.setMinimumSize(QtCore.QSize(720, 620))
@@ -257,7 +257,7 @@ class Ui(Iconit):
         QtCore.QMetaObject.connectSlotsByName(window)
 
         self.About.triggered.connect(self.open_about)
-        self.ConnectBtn.clicked.connect(self.Check_IPort)
+        self.ConnectBtn.clicked.connect(self.check_ip_port)
         self.Options.triggered.connect(self.open_options)
         self.Special_thanks.triggered.connect(self.open_credits)
         self.Remove_cache.triggered.connect(self.remove_cache)
@@ -281,7 +281,7 @@ class Ui(Iconit):
         self.TwitterLink.setText(_translate("window", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created by @OfficialAhmed0", "#f250e7", 8, font=self.userFont)))
         self.SysIconsInfo.setText(_translate("window", self.html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8, font=self.userFont),))
         self.GameIconsInfo.setText(_translate("window", self.html.span_tag("Note: You can enable Homebrew icons in the settings before connecting to the PS4", "#f2ae30", 8, font=self.userFont)))
-        self.TitleLink.setText(_translate("window", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{self.get_update_version()}", "#f250e7", 18, font=self.userFont),))
+        self.TitleLink.setText(_translate("window", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{self.app_version}", "#f250e7", 18, font=self.userFont),))
 
         self.About.setText(_translate("window", "About"))
         self.actionAbout.setText(_translate("window", "About"))

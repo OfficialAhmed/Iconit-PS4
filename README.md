@@ -1,3 +1,7 @@
+# Main bugs after the new structure implementation
+
+FIXME: Avatars & sys icons needs a fix patch after this implemetation
+
 
 # Iconit
 
@@ -38,11 +42,14 @@ ________________________________________
 
 ## What's new
 
-* Better performance & less memory usage `OOP implementation`
+* `Circular icon scrolling` When the last icon reached, it'll begin again from the start and vice versa. 
 
 * Game ID now shown next to the game title `Games List`
 
+* Better performance & less memory usage `OOP implementation`
+
 * Change between modes without restarting the program
+
 
 ## To do list
 

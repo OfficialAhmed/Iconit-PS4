@@ -110,7 +110,7 @@ class Main(Common):
             self.bake_progress.setValue(100)
             self.bake_state.setText(
             """
-            Baked icon has been saved in (Baked mask) folder
+            Baked icon has been saved in (Baked masks) folder
             Apply it manually
             """)
             self.is_preview_allowed = True

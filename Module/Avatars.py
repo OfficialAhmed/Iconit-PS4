@@ -321,6 +321,6 @@ class Main(Common):
         import Interface.Alerts as Alerts
 
         self.window = QtWidgets.QDialog()
-        self.ui = Alerts.Ui_Message()
+        self.ui = Alerts.Ui()
         self.ui.setupUi(self.window, Type)
         self.window.show()
