@@ -1,7 +1,7 @@
-# Main bugs after the new structure implementation
+# Main bugs
 
 FIXME: Avatars & sys icons needs a fix patch after this implemetation
-
+BUG: Multiproccessing techniques reimplementation
 
 # Iconit
 
