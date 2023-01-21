@@ -21,7 +21,9 @@ class Main(Common):
         super().__init__()
 
         self.icon_name = "icon0.png"
-        self.file_name = self.constant.PS4_PRONOUNCIATION_FILE
+        self.id_and_location = []
+        self.game_title_file_path = f"{self.temp_path}{self.constant.PS4_PRONOUNCIATION_FILE}"
+        self.game_title_file = self.constant.PS4_PRONOUNCIATION_FILE
         self.Eng1 = [chr(x) for x in range(ord("a"), ord("a") + 26)]  # a - z
         self.Eng2 = [chr(x) for x in range(ord("A"), ord("A") + 26)]  # A - Z
         self.Eng = self.Eng1 + self.Eng2
@@ -43,9 +45,8 @@ class Main(Common):
         )
 
         self.cached = ""
-        self.game_cache = {}
         self.unchecked_game_ids = []
-        self.is_external_icons_found = False
+        self.is_external_icons_found = True
 
     def open_options(self):
         self.window = QtWidgets.QDialog()
@@ -137,7 +138,7 @@ class Main(Common):
             ReadJson = open(self.game_cache_file)
             result = json.load(ReadJson)
         return result
-
+        
     def filter_game_ids(self):
         def get_game_id(line):
             """
@@ -153,14 +154,14 @@ class Main(Common):
                 if "CUSA" not in game_id:
                     is_accepted = False
                     try:
-                        self.game_cache.pop(game_id)
+                        self.game_ids.pop(game_id)
                     except:
                         pass
 
             if is_accepted:
                 self.unchecked_game_ids.append(game_id)
 
-        for dir in self.dirs:
+        for dir in self.icon_directories:
             self.ftp.cwd(f"/{dir}")
 
             """
@@ -171,6 +172,7 @@ class Main(Common):
             self.ftp.retrlines("LIST ", lambda line: get_game_id(line)
                 if len(line.split(" ")[-1]) >= 8 
                 and line[0].lower() == "d" 
+                and line.split(" ")[-1] not in self.game_ids
                 else None
             )
            
@@ -185,29 +187,22 @@ class Main(Common):
                 
                 if self.constant.PS4_PRONOUNCIATION_FILE in game_files:
                     location = "External" if "external" in dir else "Internal"
-                    self.game_ids.append((id, location))
+                    self.game_ids[id] = {"location":location}
 
             self.unchecked_game_ids.clear()
-        self.set_game_ids(self.game_ids)
 
     def connect_ps4(self, is_valid):
-        self.window = QtWidgets.QDialog()
         self.ui = Alerts.Ui()
+        self.window = QtWidgets.QDialog()
+        self.StatusLabel.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
 
         if is_valid:
-            """
-                    Naive Approach  ;)
-                Solution for one connection only (GoldHen FTP)
-                *Try to connect, otherwise, try to close the connection might not been closed properly before.
-                *Never close connection until we move to the next window
-                *Avoid reconnceting to step back to root dir, Change dir manually (/)
-            """
-            
             try:
                 self.ftp.set_debuglevel(0)
                 self.ftp.connect(self.ip, int(self.port))
                 self.ftp.login("", "")
                 self.ftp.getwelcome()
+                self.change_colors(True)
             except ConnectionRefusedError:
                 self.change_colors(False)
                 self.ui.setupUi(self.window)
@@ -216,37 +211,38 @@ class Main(Common):
                 return
             except Exception as e:
                 self.ftp.close()
-                self.logs(str(e), "Error")
                 self.change_colors(False)
+                self.logs(str(e), "Error")
                 self.ui.setupUi(self.window)
                 self.ui.alert(f"Double check IP and PORT. DEV|{str(e)}")
                 self.window.show()
                 return
 
-            ##############################################
-            ###       User Picked Game Icon
-            ###############################################
-            self.StatusLabel.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
             if self.GameIconsRadio.isChecked():
-                # v4.72 json for caching
-                self.game_cache = self.get_cache()
-
+                """
+                #####################################################
+                            User Picked Game Icon
+                #####################################################
+                """
                 self.set_selected_mode("game")
+                
+                self.game_ids = self.get_cache()
                 self.ftp.cwd(self.ps4_internal_icons_dir)
+                self.icon_directories = (self.ps4_internal_icons_dir, self.ps4_external_icons_dir)
                 if "external" not in self.get_server_directories():
-                    self.dirs = (self.ps4_internal_icons_dir, )
-                else:
-                    self.is_external_icons_found = True
-                    self.dirs = (self.ps4_internal_icons_dir, self.ps4_external_icons_dir)
+                    self.icon_directories = (self.ps4_internal_icons_dir, )
+                    self.is_external_icons_found = False
 
                 self.filter_game_ids()
-                self.change_colors(True)
-                self.cache_game_icon() 
+                self.cache_game_icons() 
 
-            ##############################################
-            ###       User picked Sys icons
-            ###############################################
             elif self.SystemIconsRadio.isChecked():
+                """
+                #####################################################
+                            User picked Sys icons
+                #####################################################
+                """
+                self.set_selected_mode("system")
                 self.ftp.cwd("/")
                 self.ftp.cwd(self.ps4_system_icons_dir)
 
@@ -267,11 +263,15 @@ class Main(Common):
                     self.ftp.cwd("/")
                     self.ftp.cwd(self.ps4_system_icons_dir)
 
-                self.CacheSysIcon()
-            ##############################################
-            ###       User picked Avatar change
-            ###############################################
+                self.cache_system_icons()
             else:
+                """
+                #####################################################
+                            User picked Avatar change
+                #####################################################
+                """
+                self.set_selected_mode("avatars")
+
                 self.sysProfileRoot = "system_data/priv/cache/profile/"
                 self.ftp.cwd("/")
                 self.ftp.cwd(self.sysProfileRoot)
@@ -294,7 +294,7 @@ class Main(Common):
                         if "0x" in line:
                             account_index = line.index("0x")
                             self.userID.append(line[account_index:-1])
-                self.cache_change_avatar()
+                self.cache_avatar_icons()
         else:
             self.window = QtWidgets.QDialog()
             self.change_colors(False)
@@ -302,11 +302,11 @@ class Main(Common):
             self.ui.alert("Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection")
             self.window.show()
 
-    def cache_change_avatar(self):
+    def cache_avatar_icons(self):
         ###############################################
         #            Prepare Avatars
         ################################################
-
+        
         fileName = "online.json"
         dir = self.temp_path + "MegaSRX\metaprodata\\"
         # Remove old data
@@ -391,9 +391,9 @@ class Main(Common):
             progressed += progress
 
         self.CacheBar.setProperty("value", 100)
-        self.render_window("ChangeAvatar")
+        self.render_window()
 
-    def CacheSysIcon(self):
+    def cache_system_icons(self):
 
         ###############################################
         #            Sys Icons impl v4.72
@@ -415,15 +415,15 @@ class Main(Common):
             if "icon0_4k.png" in inside_sce_sys:
                 icon_2_fetch = "icon0_4k.png"
 
-            self.fetch_data_from_server(
+            self.download_data_from_server(
                 icon_2_fetch,
                 f"{self.temp_path}MegaSRX\metadata\\{sysIcon}.png",
             )
-            if self.file_name in inside_sce_sys:
-                self.fetch_data_from_server(self.file_name, self.temp_path + self.file_name)
+            if self.game_title_file in inside_sce_sys:
+                self.download_data_from_server(self.game_title_file, self.temp_path + self.game_title_file)
 
                 diff_titles = []  # all different titles for current fetched game
-                file = minidom.parse(self.temp_path + self.file_name).getElementsByTagName(
+                file = minidom.parse(self.temp_path + self.game_title_file).getElementsByTagName(
                     "text"
                 )
 
@@ -460,35 +460,28 @@ class Main(Common):
             )
 
         try:
-            self.render_window("GameIcon")
+            self.render_window()
         except Exception as e:
             print(str(e))
 
-    def merge_game_id_and_title(self) -> None:
-        result = {}
-
-        for id, location in self.game_ids:
-            result[id] = {"title":self.game_cache.get(id), "location":location}
-
-        self.game_ids = result
-        self.set_game_ids(result)
-        self.set_cache()
-
-    def cache_game_icon(self):
-        ################################################
-        #   Internal/External HDD Game Icons
-        ################################################
-
+    def cache_game_icons(self):
         try:
+            self.StatusLabel.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
             self.cached = os.listdir(self.cache_path)
-            numGames = len(self.game_ids + self.sys_game_ids)
+            numGames = len(self.game_ids)
             GameWeightInFraction = (1 / numGames) * 100
             percentage = 0
+            game_ids_with_hb = self.game_ids.copy()
 
-            for game_info in self.game_ids:
-                game_id = game_info[0]
-                game_location = game_info[1]
+            for game_id in game_ids_with_hb:
+                if self.userHB == "False": 
+                    #skip homebrew
+                    if "CUSA" not in game_id:
+                        self.game_ids.pop(game_id)
+                        continue
 
+                game_location = self.game_ids.get(game_id).get("location")
+                
                 current_directory = self.ps4_internal_icons_dir
                 if game_location == "External":
                     current_directory = self.ps4_external_icons_dir
@@ -496,42 +489,38 @@ class Main(Common):
                 self.ftp.cwd(f"/{current_directory}/{game_id}")
                 files = self.get_server_directories()
                 
-                if game_id not in self.game_cache:
-                    # BUG: overwriting the cache mess up the whole dataset
+                if self.game_ids.get(game_id).get("title") == None:
                     
                     """
-                    ###################################################
-                        Fetch Game Title from server if not in cache
-                    ###################################################
+                    #######################################################
+                        Fetch Game Title from server if title not in cache
+                    #######################################################
                     """
 
-                    if (self.file_name in files or self.icon_name in files):
-                        if self.file_name in files:
-                            self.fetch_data_from_server(self.file_name, f"{self.temp_path}{self.file_name}")
+                    if (self.game_title_file in files or self.icon_name in files):
+                        if self.game_title_file in files:
+                            self.download_data_from_server(self.game_title_file, self.game_title_file_path)
                         if self.icon_name in files:
-                            self.fetch_data_from_server(self.icon_name, f"{self.cache_path}{game_id}.png",)
+                            self.download_data_from_server(self.icon_name, f"{self.cache_path}{game_id}.png",)
                         diff_titles = (
                             []
-                        )  # all different titles for current fetched game
+                        ) 
 
                         try:
-                            files = minidom.parse(
-                                self.temp_path + self.file_name
-                            ).getElementsByTagName("text")
-
-                            for name in files:
+                            tags = minidom.parse(self.game_title_file_path).getElementsByTagName("text")
+                            for name in tags:
                                 diff_titles.append(name.firstChild.data)
                         except Exception as e:
                                 diff_titles.append("UNKNOWN TITLE")
 
-                        GameTitle = ""
+                        game_title = ""
                         for title in diff_titles:
-                            if self.file_name in files:
-                                GameTitle = title
-                                self.game_cache[game_id] = GameTitle
+                            if self.game_title_file in files:
+                                game_title = title
+                                self.game_ids[game_id]["title"] = game_title
                             else:
-                                GameTitle = "Unknown"
-                                self.game_cache[game_id] = GameTitle
+                                game_title = "Unknown"
+                                self.game_ids[game_id]["title"] = game_title
                                 break
                             english = True
 
@@ -539,39 +528,36 @@ class Main(Common):
                                 if char not in self.Eng:
                                     english = False
                                     break
+
                             if english:
-                                GameTitle = title
-                                self.game_cache[game_id] = GameTitle
+                                game_title = title
+                                self.game_ids[game_id]["title"] = game_title
                                 break
 
                     percentage += GameWeightInFraction
                     self.CacheBar.setProperty("value", str(percentage)[: str(percentage).index(".")])
 
-            self.merge_game_id_and_title()
+            self.set_game_ids(self.game_ids)
+            self.set_cache()
+
             try:
-                self.render_window("GameIcon")
+                self.render_window()
             except Exception as e:
                 print(str(e))
         except Exception as e:
-            self.logs(e, "Error")
+            self.logs(str(e), "Error")
             self.change_colors(False)
-            self.ui.setupUi(self.window, str(e))
+            self.ui.setupUi(self.window)
+            self.ui.alert(f"_DEV|{str(e)}")
             self.window.show()
 
-    def fetch_data_from_server(self, file_name, file_path_with_extension):
-        self.StatusLabel.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
-        with open(file_path_with_extension, "wb") as downloaded_file:
-            self.ftp.retrbinary("RETR " + file_name, downloaded_file.write)
-
-    def render_window(self, win_type):
+    def render_window(self):
         self.window = QtWidgets.QWidget()
 
-        if win_type == "GameIcon":
-            # FIXME: CANNOT OPEN ICONS WINDOW
-            # self.ui = Icons.Ui()
-            # self.ui.setupUi(self.window)
-            # self.window.show()
-            pass
+        if self.selected_mode != "avatars":
+            self.ui = Icons.Ui()
+            self.ui.setupUi(self.window)
+            self.window.show()
         else:
             self.ui = Avatars.Ui()
             self.ui.setupUi(self.window, self.userID, self.ip, self.port, self.w, self.h)
