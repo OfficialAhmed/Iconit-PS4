@@ -100,6 +100,10 @@ class Common:
         self.ftp.retrlines("LIST ", lambda line : result.append(line.split(" ")[-1]))
         return result
 
+    def download_data_from_server(self, file_name, file_path_with_extension) -> None:
+        with open(file_path_with_extension, "wb") as downloaded_file:
+            self.ftp.retrbinary("RETR " + file_name, downloaded_file.write)
+
     def set_browsed_bg_img_path(self, path:str):
         Common.browsed_bg_img_path = path
 
@@ -130,8 +134,10 @@ class Common:
     def get_browsed_icon_path(self):
         return Common.browsed_icon_path
 
-    def set_game_ids(self, ids):
-        Common.all_game_ids = ids
+    def set_game_ids(self, ids:dict):
+        if ids:
+            sorted_ids = sorted(ids.items(), key=lambda data: data[1].get("title"))
+        Common.all_game_ids = dict(sorted_ids)
 
     def get_all_game_ids(self):
         return Common.all_game_ids

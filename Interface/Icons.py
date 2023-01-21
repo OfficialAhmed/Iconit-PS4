@@ -18,7 +18,7 @@ class Ui(Icons):
         # FIX: init them as class attr for 'Common' class. Access through getters
         self.sys_games = self.sys_game_ids
         self.external_games = self.external_game_ids
-        self.current_game_id = self.icon_names[self.img_counter]
+        self.current_game_id = self.icon_names[0]
 
         # Change bg accroding to screen resolution
         if self.screen_w <= 1366:
@@ -34,9 +34,10 @@ class Ui(Icons):
         self.window = window
 
         is_sys_icon = False
-        if self.sys_game_ids: # If not empty
+        if self.get_selected_mode() == "system": # If not empty
             is_sys_icon = True
         self.set_is_sys_icon(is_sys_icon)
+            
 
         # if not self.sys_game_ids:
         #     try:
@@ -223,7 +224,7 @@ class Ui(Icons):
         self.GameTitles.setSizePolicy(sizePolicy)
 
         for index, current_game_id in enumerate(self.game_ids):
-            self.GameTitles.addItem(f"{index + 1}: {self.game_ids[self.icon_names[index]]} [{current_game_id}]")
+            self.GameTitles.addItem(f"{index + 1}: {self.game_ids.get(current_game_id).get('title')} [{current_game_id}]")
 
         # ______________    ICONS    _________________ # 
         self.Icon = QtWidgets.QGraphicsView(window)
@@ -314,8 +315,8 @@ class Ui(Icons):
         self.GameIdTxt.setText(_translate("IconsWindow", self.current_game_id))
         self.IconLocationLabel.setText(_translate("IconsWindow", "ICON LOCATION"))
         self.IconSizeTxt.setText(_translate("IconsWindow", "Current icon dimension(512x512)"))
-        self.GameTitleLabel.setText(_translate("IconsWindow", self.game_ids[self.current_game_id]))
-        self.TotalGamesTxt.setText(_translate("IconsWindow", str(self.img_counter + 1) + "/" + str(len(self.game_ids)),))
+        self.GameTitleLabel.setText(_translate("IconsWindow", self.game_ids.get(self.current_game_id).get("title")))
+        self.TotalGamesTxt.setText(_translate("IconsWindow", f"1/{len(self.game_ids)}"))
         self.TwitterLink.setText(_translate("IconsWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created By @OfficialAhmed0", "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.userFont)))
         self.PaypalLink.setText(_translate("IconsWindow",self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "PayPal", "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.userFont)))
         self.LogsTxt.setHtml(_translate("IconsWindow",

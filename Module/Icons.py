@@ -19,24 +19,20 @@ class Main(Common):
         # setStyleSheet Url works only with forward slash (/)
         self.pref_path = self.pref_path.replace("\\", "/")
         self.img_counter = 0
-        self.icons_limit = len(self.all_game_ids)
-    
+        self.game_ids = self.get_all_game_ids()
+        self.icons_limit = len(self.game_ids)
+
     def update_info(self, is_from_dropdown_list:bool = False):
         self.SendBtn.setDisabled(True)
         self.current_game_id = self.icon_names[self.img_counter]
         current_img_path = f"{self.icon_path}{self.current_game_id}"
-        game_title = self.icons[self.current_game_id]
-
-        if len(self.sys_game_ids) == 0:
-            game_title = self.game_info[self.current_game_id]
+        game_title = self.game_ids.get(self.current_game_id).get("title")
 
         game_num = f"{self.img_counter+1}/{self.icons_limit}"
         if is_from_dropdown_list:
             game_num = f"{self.GameTitles.currentIndex() + 1}/{self.icons_limit}"
 
-        loc = "INTERNAL"
-        if self.current_game_id in self.external_game_ids:
-            loc = "EXTERNAL"
+        loc = self.game_ids.get(self.current_game_id).get("location").upper()
 
         if len(self.sys_game_ids) > 1:
             hb = "SYSTEM ICON: YES"
