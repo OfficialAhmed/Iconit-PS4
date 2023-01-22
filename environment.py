@@ -6,6 +6,7 @@
     constant: class holds constant vars. Only getters
 """
 from Module.Settings import Main as Settings
+from Module.Widget.Shared import Widget
 from ftplib import FTP
 
 import os, datetime
@@ -38,6 +39,8 @@ class Common:
     Port = 21
     screen_w = 0
     screen_h = 0
+    ui = None
+    win = None
 
     all_game_ids = {}
     selected_mode = None
@@ -73,6 +76,7 @@ class Common:
         self.ftp = FTP()
         self.html = html()
         self.constant = Constant()
+        self.widgets = Widget()
 
         self.ps4_internal_icons_dir = self.constant.PS4_INT_ICONS
         self.ps4_external_icons_dir = self.constant.PS4_EXT_ICONS
@@ -93,6 +97,18 @@ class Common:
         self.settings = Settings()
         self.update_pref()
         pygame.mixer.init()
+   
+    def get_win(self):
+        return Common.win
+
+    def set_win(self, ptr):
+        Common.win = ptr
+
+    def set_ui(self, ptr):
+        Common.ui = ptr
+
+    def get_ui(self):
+        return Common.ui
 
     def get_server_directories(self) -> list:
         " This is a solution since PS4 ftp doesnt support nlst()."
@@ -175,6 +191,12 @@ class Common:
         self.Port = port
         Common.IP = ip
         Common.Port = port
+
+    def get_ip(self):
+        return Common.IP
+
+    def get_port(self):
+        return int(Common.Port)
         
     def set_screen_size(self, w, h) -> None:
         self.screen_w = w
@@ -263,6 +285,8 @@ class Constant:
     PS4_SYS_ICONS = "system_ex/app"
     PS4_ICON_SIZE = (512, 512)
     PS4_PRONOUNCIATION_FILE = "pronunciation.xml"
+
+    ICONS_BACKUP_NAME = "Backup"
     HASH_COLOR = {
         "red":"#e83c3c",
         "green":"#55ff00",

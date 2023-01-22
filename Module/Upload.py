@@ -24,13 +24,13 @@ class Main(Common):
     def backup(self):
         backup = []
         try:
-            backup = os.listdir("My Backup")
+            backup = os.listdir(self.constant.ICONS_BACKUP_NAME)
         except:
-            os.mkdir("My Backup")
+            os.mkdir(self.constant.ICONS_BACKUP_NAME)
 
         if self.current_game_id + ".png" in backup:
             try:
-                os.remove("My Backup\\" + self.current_game_id + ".png")
+                os.remove(self.constant.ICONS_BACKUP_NAME + "\\" + self.current_game_id + ".png")
             except Exception as e:
                 self.logIt(str(e), "Error")
 
@@ -41,7 +41,7 @@ class Main(Common):
                 + "\\"
                 + self.current_game_id
                 + ".png",
-                "My Backup\\" + self.current_game_id + ".png",
+                self.constant.ICONS_BACKUP_NAME+"\\" + self.current_game_id + ".png",
             )
 
         except Exception as e:

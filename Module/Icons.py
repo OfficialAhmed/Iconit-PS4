@@ -21,6 +21,8 @@ class Main(Common):
         self.img_counter = 0
         self.game_ids = self.get_all_game_ids()
         self.icons_limit = len(self.game_ids)
+        self.ui = self.get_ui()
+        self.window = self.get_win()
 
     def update_info(self, is_from_dropdown_list:bool = False):
         self.SendBtn.setDisabled(True)
@@ -166,7 +168,7 @@ class Main(Common):
     def next(self):
         self.bg_image_to_original()
         self.img_counter += 1
-        if self.img_counter == self.icons_limit :
+        if self.img_counter == self.icons_limit:
             # Go back to head, if tail's been reached
             self.img_counter = 0
         self.update_info()

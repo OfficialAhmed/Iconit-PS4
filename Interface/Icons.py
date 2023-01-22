@@ -31,21 +31,12 @@ class Ui(Icons):
             self.background = "4kbg.@OfficialAhmed0"
 
     def setupUi(self, window):
-        self.window = window
+        self.window = window # for next window
 
         is_sys_icon = False
         if self.get_selected_mode() == "system": # If not empty
             is_sys_icon = True
         self.set_is_sys_icon(is_sys_icon)
-            
-
-        # if not self.sys_game_ids:
-        #     try:
-        #         read_json = open(self.game_cache_file)
-        #         self.game_info = json.load(read_json)
-        #     except:
-        #         # FIXME: pass info to logs.txt
-        #         pass
 
         font = QtGui.QFont()
         font.setBold(True)
@@ -211,7 +202,7 @@ class Ui(Icons):
         self.ChangeBgBtn.clicked.connect(self.get_image_browser)
         self.SendBtn.clicked.connect(self.render_upload_window)
         self.ChangeIconBtn.clicked.connect(self.render_browse_icon_window)
-
+        
         # ______________    GAME TITLES    _________________ # 
         font.setPointSize(15)
         self.GameTitles = QtWidgets.QComboBox(window)
@@ -357,3 +348,5 @@ class Ui(Icons):
         self.IconLocationTxt.setToolTip(self.html.tooltip_tag("This is the location where the game is located on your PS4"))
         self.HomebrewLabel.setToolTip(self.html.tooltip_tag("Turned on = Homebrew will be visible and can be changed (turn it on/off from the settings)"))
         self.GameTitleLabel.setToolTip(self.html.tooltip_tag("Some game titles are unknown because they're not legit (homebrews/PS2 converted games etc.)"))
+    
+  

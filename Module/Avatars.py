@@ -13,6 +13,8 @@ import json, os
 class Main(Common):
     def __init__(self) -> None:
         super().__init__()
+        self.fileName = "online.json"
+        self.dir = self.temp_path + "MegaSRX\metaprodata\\"
 
     def logIt(self, description, Type):
         import datetime
@@ -316,6 +318,95 @@ class Main(Common):
             self.windo.show()
         except Exception as e:
             self.logit(str(e), "error")
+    
+    def start_cache(self):
+        ###############################################
+        #            Prepare Avatars
+        ################################################
+        
+        # Remove old data
+        if len(os.listdir(self.dir)) != 0:
+            data = os.listdir(self.dir)
+            try:
+                for i in data:
+                    os.remove(dir + i)
+            except Exception as e:
+                self.logs(str(e), "Warning")
+
+        progress = int(100 / len(self.userID))
+        progressed = 0
+        self.CacheBar.setProperty("value", 1)
+
+        for user in self.userID:
+            self.ftp.cwd("/")
+            self.ftp.cwd(self.sysProfileRoot + "/" + user)
+
+            with open(self.dir + "\\" + user + ".png", "wb") as file:
+                # cache avatar if available
+                try:
+                    self.ftp.retrbinary("RETR " + "avatar.png", file.write, 1024)
+                except Exception as e:
+                    self.logs(str(e), "Warning")
+            with open(self.dir + "\\" + user + ".json", "wb") as file:
+                # Fix (v4.07) make a fake one if online json not found
+                # fix (json not found) v4.51
+                try:
+                    self.ftp.retrbinary("RETR " + self.fileName, file.write, 1024)
+                except Exception as e:
+                    print(str(e))
+
+                    import json
+
+                    data = {
+                        "avatarUrl": "http://static-resource.np.community.playstation.net/a/vatar_xl/WWS_E/E0012_XL.png",
+                        "firstName": "Unknown",
+                        "lastName": "username",
+                        "pictureUrl": "https://image.api.np.km.playstation.net/images/?format=png&w=440&h=440&image=https%3A%2F%2Fkfscdn.api.np.km.playstation.net%2F00000000000008%2F000000000000003.png&sign=blablabla019501",
+                        "trophySummary": '{"level":1,"progress":0,"earnedTrophies":{"platinum":0,"gold":0,"silver":0,"bronze":0}}',
+                        "isOfficiallyVerified": "true",
+                        "aboutMe": "Temporary file created by Iconit app by @OfficialAhmed0",
+                    }
+
+                    with open(self.dir + "\\" + user + ".json", "w+") as jsonFile:
+                        json.dump(data, jsonFile, indent=4)
+
+                    with open(self.dir + "\\" + user + ".json", "rb") as json:
+                        self.ftp.storbinary("STOR online.json", json, 1024)
+
+            # Download original Profile Icon from Sony server
+            import requests as req
+
+            try:
+                with open(self.dir + "\\" + user + ".json") as file:
+                    # Extract Icon url from json file
+                    read = file.read()
+                    url = read[
+                        read.find("avatarUrl")
+                        + len("avatarUrl")
+                        + 3 : read.find(".png")
+                        + len(".png")
+                    ]
+                    cont = url.split("\/")
+                    link = ""
+
+                    for i in cont:
+                        if i != "":
+                            link += i + "//"
+                    img = req.get(link[:-2])
+
+                    with open(self.dir + "\\" + user + "Original.png", "wb") as origIcon:
+                        origIcon.write(img.content)
+
+            except Exception as e:
+                self.logs(str(e), "Warning")
+
+            for i in range(1, progress):
+                self.CacheBar.setProperty("value", progressed + i)
+
+            progressed += progress
+
+        self.CacheBar.setProperty("value", 100)
+        self.render_window()
 
     def Error(self, Type):
         import Interface.Alerts as Alerts

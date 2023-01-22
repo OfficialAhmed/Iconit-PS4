@@ -1,8 +1,8 @@
-# Main bugs
+# Current implementation Main bugs 
 
-FIXME: Avatars & sys icons needs a fix patch after this implemetation
+Avatars & sys icons needs a fix patch after this implemetation
 
-BUG: Multiproccessing techniques reimplementation
+Circuler gallary patch
 
 # Iconit
 

@@ -297,4 +297,18 @@ class Ui(Iconit):
         cache = self.settings.update_cache(self.pref_path)
         self.PortInput.setText(cache[1])
         self.IpInput.setText(cache[2])
-        
+
+        """
+        ###########################################
+                Share pointers of the widgets 
+        ###########################################
+        """
+        self.widgets.set_ip_input(self.IpInput)
+        self.widgets.set_ip_label(self.IpLabel)
+        self.widgets.set_port_input(self.PortInput)
+        self.widgets.set_port_label(self.PortLabel)
+        self.widgets.set_mode_label(self.ModeLabel)
+        self.widgets.set_cache_label(self.CacheLabel)
+        self.widgets.set_status_label(self.StatusLabel)
+        self.widgets.set_game_icon_radio(self.GameIconsRadio)
+        self.widgets.set_cache_bar(self.CacheBar)
