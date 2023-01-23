@@ -5,14 +5,13 @@
 
 """
 import Interface.Icons as Icons
-import Interface.Avatars as Avatars
 import Interface.Alerts as Alerts
-import Interface.Settings as Settings
+import Interface.Avatars as Avatars
 
-from environment import Common, Widget
+from environment import Common
 
 from PyQt5 import QtWidgets
-from xml.dom import minidom  # XML parsing
+from xml.dom import minidom
 
 import os, json
 
@@ -22,7 +21,7 @@ class Main(Common):
 
         self.cached = ""
         self.ui = self.get_ui()
-        self.window = self.get_win()
+        self.window = self.get_window()
         self.unchecked_game_ids = []
         self.is_external_icons_found = True
 
@@ -30,13 +29,13 @@ class Main(Common):
         """ Prepare shared attrs """
         self.ip_input = self.widgets.get_ip_input()
         self.ip_label = self.widgets.get_ip_label()
+        self.cache_bar = self.widgets.get_cache_bar()
         self.port_label = self.widgets.get_port_label()
         self.mode_label = self.widgets.get_mode_label()
         self.port_input = self.widgets.get_port_input()
         self.cache_label = self.widgets.get_cache_label()
         self.status_label = self.widgets.get_status_label()
         self.game_icon_radio = self.widgets.get_game_icon_radio()
-        self.cache_bar = self.widgets.get_cache_bar()
 
     def check_ip_port(self) -> None:
         self.fetch_sharables()
@@ -45,8 +44,8 @@ class Main(Common):
             self.ip = self.ip_input.text()
             self.port = self.port_input.text()
             
-            self.settings.save_cache(ip = self.ip, port = self.port)
             self.set_ip_port(self.ip, self.port) 
+            self.settings.save_cache(ip = self.ip, port = self.port)
 
             is_valid = False
             if len(self.ip) > 8:
@@ -55,6 +54,7 @@ class Main(Common):
                         break
                 else:
                     is_valid = True
+
             self.connect_ps4(is_valid)
 
         except Exception as e:
@@ -83,6 +83,8 @@ class Main(Common):
                 l.setText(self.html.span_tag(labels[l], fail, 14))
 
     def set_cache(self) -> None:
+        # match self.get_selected_mode():
+        #     case "game":
         if self.get_selected_mode() == "game":
             with open(self.game_cache_file, "w+") as jsonFile:
                 json.dump(self.game_ids, jsonFile)
@@ -148,7 +150,7 @@ class Main(Common):
         self.ui = Alerts.Ui()
         self.window = QtWidgets.QDialog()
         self.set_ui(self.ui)
-        self.set_win(self.window)
+        self.set_window(self.window)
 
         if is_valid:
             try:
@@ -156,7 +158,6 @@ class Main(Common):
                 self.ftp.connect(self.ip, int(self.port))
                 self.ftp.login("", "")
                 self.ftp.getwelcome()
-                # self.ftp.close()
                 self.chage_state(True)
             except ConnectionRefusedError:
                 self.chage_state(False)
@@ -174,65 +175,39 @@ class Main(Common):
 
             self.status_label.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
             self.set_ui(self.ui)
-            self.set_win(self.window)
+            self.set_window(self.window)
             self.ftp.close()
             if self.game_icon_radio.isChecked():
                 """
                 #####################################################
-                            User Picked Game Icon
+                            User Picked Game icons
                 #####################################################
                 """
                 self.set_selected_mode("game")
-                game_obj = Game()
-                game_obj.start_cache()
-                try:
-                    self.render_window()
-                except Exception as e:
-                    print(str(e))
+                is_cached = Game().start_cache()
 
             elif self.SystemIconsRadio.isChecked():
                 """
                 #####################################################
-                            User picked Sys icons
+                            User picked system icons
                 #####################################################
                 """
-                #FIXME: Import class required
+                #FIXME: reimplement a patch
                 self.set_selected_mode("system")
                 is_cached = System().start_cache()
                 
             else:
                 """
                 #####################################################
-                            User picked Avatar change
+                            User picked Avatar icons
                 #####################################################
                 """
-                #FIXME: Import class required
+                #FIXME: reimplement a patch
                 self.set_selected_mode("avatars")
-                is_cached = None
+                is_cached = Avatar().start_cache()
 
-                self.sysProfileRoot = "system_data/priv/cache/profile/"
-                self.ftp.cwd("/")
-                self.ftp.cwd(self.sysProfileRoot)
-                self.userID = []
-
-                self.chage_state(True)
-
-                directories = []
-                self.ftp.retrlines("LIST ", directories.append)
-
-                with open(
-                    self.temp_path + "directories in system.dat", "w+"
-                ) as all_directories_in_system:
-                    for line in directories:
-                        all_directories_in_system.write(line + "\n")
-
-                with open(self.temp_path + "directories in system.dat") as file:
-                    lines = file.readlines()
-                    for line in lines:
-                        if "0x" in line:
-                            account_index = line.index("0x")
-                            self.userID.append(line[account_index:-1])
-                self.cache_avatar_icons()
+            if is_cached : 
+                self.render_window()
         else:
             self.window = QtWidgets.QDialog()
             self.chage_state(False)
@@ -240,46 +215,10 @@ class Main(Common):
             self.ui.alert("Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection")
             self.window.show()
 
-    def open_options(self):
-        self.window = QtWidgets.QDialog()
-        self.ui = Settings.Ui()
-        self.ui.setupUi(self.window)
-        self.window.show()
-
-    def open_about(self):
-        self.window = QtWidgets.QDialog()
-        self.ui = Alerts.Ui()
-        self.ui.setupUi(self.window)
-        self.ui.alert("About")
-        self.window.show()
-
-    def open_credits(self):
-        self.window = QtWidgets.QDialog()
-        self.ui = Alerts.Ui()
-        self.ui.setupUi(self.window)
-        self.ui.alert("CUSTOMspecial_thanks")
-        self.window.show()
-
-    def remove_cache(self):
-        self.window = QtWidgets.QDialog()
-        ui = Alerts.Ui()
-        ui.setupUi(self.window)
-        try:
-            all = os.listdir(self.cache_path)
-            for game in all:
-                os.remove(f"{self.cache_path}{game}")
-            ui.alert("CUSTOMdoneRmvCache")
-        except PermissionError:
-            ui.alert("PermissionDenied")
-        except Exception as e:
-            ui.alert(str(e))
-
-        self.window.show()
-
     def render_window(self):
         self.window = QtWidgets.QWidget()
         self.set_ui(self.ui)
-        self.set_win(self.window)
+        self.set_window(self.window)
 
         if self.selected_mode != "avatars":
             self.ui = Icons.Ui()
@@ -291,6 +230,12 @@ class Main(Common):
             self.window.show()
 
 class Game(Main, Common):
+    """
+    ########################################################
+        Class resposible for caching PS4 xmb game icons 
+        from PS4 'appmeta' to 'Data' folder
+    ########################################################
+    """
     def __init__(self) -> None:
         super().__init__()
         self.widgets = self.fetch_sharables()
@@ -304,14 +249,41 @@ class Game(Main, Common):
         self.Eng = self.Eng1 + self.Eng2 + tuple(" ")
         self.alphaNum = ("one",  "two",  "three", "four",  "five",  "six",  "seven", "eight", "nine", "™", "'", "!", "?")
 
-    def start_cache(self):
-        self.chage_state(True)
+    def fetch_game_title_from_server(self, server_files, game_id):
+        game_title = "UNKNOWN TITLE"
+        if self.game_title_file in server_files:
+            self.download_data_from_server(self.game_title_file, self.game_title_file_path)
+            try:
+                tags = minidom.parse(self.game_title_file_path).getElementsByTagName("text")
+                for name in tags:
+                    game_title = name.firstChild.data
+                    
+                    english = True
+                    for char in game_title:
+                        if char not in self.Eng:
+                            english = False
+                            break
 
+                    if english:
+                        break
+            except:
+                    pass
+            finally:
+                self.game_ids[game_id]["title"] = game_title
+        else:
+            self.game_ids[game_id]["title"] = game_title
+
+    def fetch_game_title_from_db(self, game_id):
+        # FIXME:
+        pass
+
+    def start_cache(self) -> bool:
         try:
             self.game_ids = self.get_cache()
             self.ftp.set_debuglevel(0)
             self.ftp.connect(self.get_ip(), self.get_port())
             self.ftp.login("", "")
+            self.chage_state(True)
             self.ftp.cwd(f"/{self.ps4_internal_icons_dir}")
 
             self.icon_directories = (self.ps4_internal_icons_dir, self.ps4_external_icons_dir)
@@ -329,7 +301,6 @@ class Game(Main, Common):
 
             for game_id in game_ids_with_hb:
                 if self.userHB == "False": 
-                    #skip homebrew
                     if "CUSA" not in game_id:
                         self.game_ids.pop(game_id)
                         continue
@@ -350,49 +321,26 @@ class Game(Main, Common):
                     #######################################################
                     """
 
-                    if (self.game_title_file in files or self.icon_name in files):
-                        if self.game_title_file in files:
-                            self.download_data_from_server(self.game_title_file, self.game_title_file_path)
-                        if self.icon_name in files:
-                            self.download_data_from_server(self.icon_name, f"{self.cache_path}{game_id}.png",)
-                        diff_titles = (
-                            []
-                        ) 
-
+                    if self.game_title_file in files:
+                        """
+                            Try: to fetch from local database
+                            Else: download from PS4
+                        """
                         try:
-                            tags = minidom.parse(self.game_title_file_path).getElementsByTagName("text")
-                            for name in tags:
-                                diff_titles.append(name.firstChild.data)
-                        except Exception as e:
-                                diff_titles.append("UNKNOWN TITLE")
-
-                        game_title = ""
-                        for title in diff_titles:
-                            if self.game_title_file in files:
-                                game_title = title
-                                self.game_ids[game_id]["title"] = game_title
-                            else:
-                                game_title = "Unknown"
-                                self.game_ids[game_id]["title"] = game_title
-                                break
-                            english = True
-
-                            for char in title:
-                                if char not in self.Eng:
-                                    english = False
-                                    break
-
-                            if english:
-                                game_title = title
-                                self.game_ids[game_id]["title"] = game_title
-                                break
+                            # self.fetch_game_title_from_db(game_id)
+                            pass
+                        except:
+                            self.fetch_game_title_from_server(game_id, files)
+                            
+                    if self.icon_name in files:
+                        self.download_data_from_server(self.icon_name, f"{self.cache_path}{game_id}.png",)
 
                     percentage += GameWeightInFraction
-
                     self.cache_bar.setProperty("value", str(percentage)[: str(percentage).index(".")])
 
             self.set_game_ids(self.game_ids)
             self.set_cache()
+            return True
 
         except Exception as e:
             self.logs(str(e), "Error")
@@ -402,6 +350,12 @@ class Game(Main, Common):
             self.window.show()
 
 class System(Main):
+    """
+    ########################################################
+        Class resposible for caching PS4 xmb system app 
+        icons from PS4 'appmeta' to 'Data' folder
+    ########################################################
+    """
     def __init__(self) -> None:
         super().__init__()
 
@@ -440,7 +394,7 @@ class System(Main):
 
             self.download_data_from_server(
                 icon_2_fetch,
-                f"{self.temp_path}MegaSRX\metadata\\{sysIcon}.png",
+                f"{self.temp_path}Icons\metadata\\{sysIcon}.png",
             )
             if self.game_title_file in inside_sce_sys:
                 self.download_data_from_server(self.game_title_file, self.temp_path + self.game_title_file)
@@ -486,3 +440,37 @@ class System(Main):
             self.render_window()
         except Exception as e:
             print(str(e))
+
+class Avatar(Main):
+    """
+    ########################################################
+        Class resposible for caching PS4 profile avatars 
+        from PS4 'cache/profile' to 'Data' folder
+    ########################################################
+    """
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.sysProfileRoot = "system_data/priv/cache/profile/"
+        self.ftp.cwd("/")
+        self.ftp.cwd(self.sysProfileRoot)
+        self.userID = []
+
+        self.chage_state(True)
+
+    def start_cache(self):
+        directories = []
+        self.ftp.retrlines("LIST ", directories.append)
+
+        with open(
+            self.temp_path + "directories in system.dat", "w+"
+        ) as all_directories_in_system:
+            for line in directories:
+                all_directories_in_system.write(line + "\n")
+
+        with open(self.temp_path + "directories in system.dat") as file:
+            lines = file.readlines()
+            for line in lines:
+                if "0x" in line:
+                    account_index = line.index("0x")
+                    self.userID.append(line[account_index:-1])
