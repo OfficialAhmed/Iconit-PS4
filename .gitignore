@@ -18,5 +18,5 @@ Logs.txt
 test.py
 *.dds
 *.png
-*.json
 Data/prxUserMeta/files_in_dir.dat
+Data/Cache/Icons/metadata/game/games.json

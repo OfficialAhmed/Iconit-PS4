@@ -2,13 +2,13 @@ class Widget:
     """ Sharable pointers for ui widgets, to access them anywhere """
     ip_label = None
     ip_input = None
+    CacheBar = None
     port_input = None
     port_label = None
     mode_label = None
     cache_label = None
     StatusLabel = None
     GameIconsRadio = None
-    CacheBar = None
 
     def __init__(self) -> None:
         pass

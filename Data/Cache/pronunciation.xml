@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<gamePackage>
+  <language id="00" modified="0">
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>y uL ch uL b u</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>y uL t uL b u</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>y uL t y uL b u</pronunciation>
+    </speechRecognitionWords>
+  </language>
+  <language id="01" modified="0">
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>y uw t uw b</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>y uw t y uw b</pronunciation>
+    </speechRecognitionWords>
+  </language>
+  <language id="02" modified="0">
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>j u t y b</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>j u t [ j ] u b</pronunciation>
+    </speechRecognitionWords>
+  </language>
+  <language id="03" modified="0">
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>jj u t [ j ] u B</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>j u t u b</pronunciation>
+    </speechRecognitionWords>
+  </language>
+  <language id="04" modified="0">
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>j u t u b</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>j u t u b ae</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>j u t y b</pronunciation>
+    </speechRecognitionWords>
+  </language>
+  <language id="05" modified="0">
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>i u t u b</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>j u t [ j ] u b</pronunciation>
+    </speechRecognitionWords>
+  </language>
+  <language id="08" modified="0">
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>Z u t u b</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>j u t [ j ] u b</pronunciation>
+    </speechRecognitionWords>
+  </language>
+  <language id="16" modified="0">
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>Z u t u b</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>j u t [ j ] u b</pronunciation>
+    </speechRecognitionWords>
+  </language>
+  <language id="18" modified="0">
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>y uw t y uw b</pronunciation>
+    </speechRecognitionWords>
+    <speechRecognitionWords>
+      <text display="1">YouTube</text>
+      <pronunciation>y uw t uw b</pronunciation>
+    </speechRecognitionWords>
+  </language>
+</gamePackage>

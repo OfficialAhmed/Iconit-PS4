@@ -14,7 +14,7 @@ class Main(Common):
     def __init__(self) -> None:
         super().__init__()
         self.fileName = "online.json"
-        self.dir = self.temp_path + "MegaSRX\metaprodata\\"
+        self.dir = self.temp_path + "Icons\Avatars\\"
 
     def logIt(self, description, Type):
         import datetime
@@ -63,7 +63,7 @@ class Main(Common):
                 ln = "Username"
             file = (
                 self.AppSettingDir
-                + "prxUserMeta\\MegaSRX\\metaprodata\\"
+                + "Cache\\Icons\\Avatars\\"
                 + self.user[self.currentUserCounter]
                 + ".json"
             )
@@ -104,7 +104,7 @@ class Main(Common):
         try:
             jsonFile = open(
                 self.AppSettingDir
-                + "prxUserMeta\MegaSRX\metaprodata\\"
+                + "Cache\Icons\Avatars\\"
                 + self.user[self.currentUserCounter]
                 + ".json",
                 "r",
@@ -121,14 +121,14 @@ class Main(Common):
         try:
             if os.path.isfile(
                 self.dataPath
-                + "prxUserMeta//MegaSRX//metaprodata//"
+                + "Cache//Icons//Avatars//"
                 + self.user[self.currentUserCounter]
                 + "Original.png"
             ):
                 self.Originalcon.setStyleSheet(
                     "border-image: url("
                     + self.dataPath
-                    + "prxUserMeta//MegaSRX//metaprodata//"
+                    + "Cache//Icons//Avatars//"
                     + self.user[self.currentUserCounter]
                     + "Original.png);"
                 )
@@ -137,7 +137,7 @@ class Main(Common):
                 self.Revert_btn.setEnabled(True)
                 self.avatar = (
                     self.dataPath
-                    + "prxUserMeta//MegaSRX//metaprodata//"
+                    + "Cache//Icons//Avatars//"
                     + self.user[self.currentUserCounter]
                     + "Original.png"
                 )
@@ -154,7 +154,7 @@ class Main(Common):
             self.ChangeAvatar.setStyleSheet(
                 "border-image: url("
                 + self.dataPath
-                + "prxUserMeta//MegaSRX//metaprodata//"
+                + "Cache//Icons//Avatars//"
                 + self.user[self.currentUserCounter]
                 + ".png);"
             )
@@ -211,7 +211,7 @@ class Main(Common):
 
                 shutil.copyfile(
                     self.AppSettingDir
-                    + "prxUserMeta\\MegaSRX\\metaprodata\\"
+                    + "Cache\\Icons\\Avatars\\"
                     + self.user[self.currentUserCounter]
                     + ".png",
                     path,
@@ -276,21 +276,21 @@ class Main(Common):
                 shutil.copyfile(
                     self.avatar,
                     self.AppSettingDir
-                    + "prxUserMeta\MegaSRX\metaprodata\\"
+                    + "Cache\Icons\Avatars\\"
                     + self.user[self.currentUserCounter]
                     + ".png",
                 )
             elif self.CheckAvatar == True:
                 self.avatar = (
                     self.AppSettingDir
-                    + "prxUserMeta\MegaSRX\metaprodata\\"
+                    + "Cache\Icons\Avatars\\"
                     + self.user[self.currentUserCounter]
                     + "Original.png"
                 )
                 shutil.copyfile(
                     self.avatar,
                     self.AppSettingDir
-                    + "prxUserMeta\MegaSRX\metaprodata\\"
+                    + "Cache\Icons\Avatars\\"
                     + self.user[self.currentUserCounter]
                     + ".png",
                 )

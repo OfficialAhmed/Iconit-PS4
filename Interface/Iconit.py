@@ -1,7 +1,12 @@
+import os
 from environment import html
 from Module.Iconit import Main as Iconit
 
+from Module.Database.Generate import Database
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+import Interface.Settings as Settings
+import Interface.Alerts as Alerts
 
 class Ui(Iconit):
     def __init__(self) -> None:
@@ -240,10 +245,12 @@ class Ui(Iconit):
         self.actionAbout = QtWidgets.QAction(window)
         self.Remove_cache = QtWidgets.QAction(window)
         self.Special_thanks = QtWidgets.QAction(window)
+        self.DownloadDatabase = QtWidgets.QAction(window)
         self.actionRemove_cache = QtWidgets.QAction(window)
 
         self.menuSettings.addAction(self.Options)
         self.menuSettings.addAction(self.Remove_cache)
+        self.menuSettings.addAction(self.DownloadDatabase)
         self.menuSettings.addSeparator()
         self.menuSettings.addAction(self.About)
         self.menuSettings.addAction(self.Special_thanks)
@@ -257,10 +264,11 @@ class Ui(Iconit):
         QtCore.QMetaObject.connectSlotsByName(window)
 
         self.About.triggered.connect(self.open_about)
-        self.ConnectBtn.clicked.connect(self.check_ip_port)
         self.Options.triggered.connect(self.open_options)
-        self.Special_thanks.triggered.connect(self.open_credits)
+        self.ConnectBtn.clicked.connect(self.check_ip_port)
         self.Remove_cache.triggered.connect(self.remove_cache)
+        self.Special_thanks.triggered.connect(self.open_credits)
+        self.DownloadDatabase.triggered.connect(self.download_database)
 
         self.retranslateUi()
 
@@ -290,6 +298,7 @@ class Ui(Iconit):
         self.menuSettings.setTitle(_translate("window", "Settings"))
         self.Remove_cache.setText(_translate("window", "Remove cache"))
         self.Special_thanks.setText(_translate("window", "Special thanks"))
+        self.DownloadDatabase.setText(_translate("window", "Download/Update Database"))
 
         self.ConnectBtn.setShortcut("Return")
 
@@ -305,10 +314,58 @@ class Ui(Iconit):
         """
         self.widgets.set_ip_input(self.IpInput)
         self.widgets.set_ip_label(self.IpLabel)
+        self.widgets.set_cache_bar(self.CacheBar)
         self.widgets.set_port_input(self.PortInput)
         self.widgets.set_port_label(self.PortLabel)
         self.widgets.set_mode_label(self.ModeLabel)
         self.widgets.set_cache_label(self.CacheLabel)
         self.widgets.set_status_label(self.StatusLabel)
         self.widgets.set_game_icon_radio(self.GameIconsRadio)
-        self.widgets.set_cache_bar(self.CacheBar)
+
+    def open_options(self):
+        self.window = QtWidgets.QDialog()
+        self.ui = Settings.Ui()
+        self.ui.setupUi(self.window)
+        self.window.show()
+
+    def open_about(self):
+        self.window = QtWidgets.QDialog()
+        self.ui = Alerts.Ui()
+        self.ui.setupUi(self.window)
+        self.ui.alert("About")
+        self.window.show()
+
+    def open_credits(self):
+        self.window = QtWidgets.QDialog()
+        self.ui = Alerts.Ui()
+        self.ui.setupUi(self.window)
+        self.ui.alert("CUSTOMspecial_thanks")
+        self.window.show()
+
+    def download_database(self):
+        self.window = QtWidgets.QDialog()
+        ui = Alerts.Ui()
+        ui.setupUi(self.window)
+
+        data = Database()
+        if data.generate_db():
+            ui.alert("db success")
+        else:
+            ui.alert("db fail")
+        self.window.show()
+        
+    def remove_cache(self):
+        self.window = QtWidgets.QDialog()
+        ui = Alerts.Ui()
+        ui.setupUi(self.window)
+        try:
+            all = os.listdir(self.cache_path)
+            for game in all:
+                os.remove(f"{self.cache_path}{game}")
+            ui.alert("CUSTOMdoneRmvCache")
+        except PermissionError:
+            ui.alert("PermissionDenied")
+        except Exception as e:
+            ui.alert(str(e))
+
+        self.window.show()

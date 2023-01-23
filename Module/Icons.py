@@ -22,7 +22,7 @@ class Main(Common):
         self.game_ids = self.get_all_game_ids()
         self.icons_limit = len(self.game_ids)
         self.ui = self.get_ui()
-        self.window = self.get_win()
+        self.window = self.get_window()
 
     def update_info(self, is_from_dropdown_list:bool = False):
         self.SendBtn.setDisabled(True)

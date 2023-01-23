@@ -36,7 +36,7 @@ class Main(Common):
 
         try:
             shutil.copyfile(
-                "Data\prxUserMeta\MegaSRX\metadata\\"
+                "Data\Cache\Icons\metadata\\"
                 + self.selected_mode
                 + "\\"
                 + self.current_game_id
@@ -72,7 +72,7 @@ class Main(Common):
                 self.ui.setupUi(self.window, str(e))
                 self.window.show()
             self.CheckingBar.setProperty("value", 10)
-            img_dir = self.temp_path + "MegaSRX\\"
+            img_dir = self.temp_path + "Icons\\"
 
             if self.upload_type == "Iconit":
                 if self.is_sys_icon:
@@ -101,7 +101,7 @@ class Main(Common):
                         found_4k = True
 
                     self.CheckingBar.setProperty("value", 45)
-                    with open(self.temp_path + "MegaSRX\\icon0.png", "wb") as file:
+                    with open(self.temp_path + "Icons\\icon0.png", "wb") as file:
                         self.ftp.retrbinary("RETR " + iconFound, file.write)
 
                     self.backup(sys=True)
@@ -281,7 +281,7 @@ class Main(Common):
                             shutil.move(
                                 img_dir + str(ic),
                                 self.temp_path
-                                + "MegaSRX\metadata\\"
+                                + "Icons\metadata\\"
                                 + self.selected_mode
                                 + "\\"
                                 + self.current_game_id

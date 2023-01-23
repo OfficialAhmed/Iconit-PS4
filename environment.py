@@ -40,7 +40,7 @@ class Common:
     screen_w = 0
     screen_h = 0
     ui = None
-    win = None
+    window = None
 
     all_game_ids = {}
     selected_mode = None
@@ -53,8 +53,8 @@ class Common:
     is_sys_icon = False
 
     def __init__(self) -> None:
-        self.app_version = "5.05"
-        self.app_release_date = "Jan 21st, 2023"
+        self.app_version = "5.06"
+        self.app_release_date = "Jan 24th, 2023"
 
         self.game = {}
         self.game_ids = []
@@ -75,34 +75,34 @@ class Common:
 
         self.ftp = FTP()
         self.html = html()
-        self.constant = Constant()
         self.widgets = Widget()
+        self.constant = Constant()
 
         self.ps4_internal_icons_dir = self.constant.PS4_INT_ICONS
         self.ps4_external_icons_dir = self.constant.PS4_EXT_ICONS
         self.ps4_system_icons_dir = self.constant.PS4_SYS_ICONS
 
-        self.setting_path = ""
-        self.logging = self.html.internal_log_msg("ps4", self.IP, 12, "font-weight:600; font-style:italic;")
-
         self.app_root_path = f"{os.getcwd()}\\"
-        self.temp_path = f"{self.app_root_path}Data\\prxUserMeta\\"
         self.pref_path = f"{self.app_root_path}Data\\Pref\\"
+        self.temp_path = f"{self.app_root_path}Data\\Cache\\"
+        self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
         self.appmeta_path = f"{self.app_root_path}data\\User\\appmeta\\"
-        self.metadata_path = f"{self.temp_path}MegaSRX\\metadata\\"
         self.cache_path = f"{self.metadata_path}game\\"
+        self.setting_path = ""
 
+        self.database_file = f"{self.temp_path}Title\\database.json"
         self.game_cache_file = f"{self.cache_path}games.json"
+        self.logging = self.html.internal_log_msg("ps4", self.IP, 12, "font-weight:600; font-style:italic;")
 
         self.settings = Settings()
         self.update_pref()
         pygame.mixer.init()
    
-    def get_win(self):
-        return Common.win
+    def get_window(self):
+        return Common.window
 
-    def set_win(self, ptr):
-        Common.win = ptr
+    def set_window(self, ptr):
+        Common.window = ptr
 
     def set_ui(self, ptr):
         Common.ui = ptr

@@ -36,7 +36,7 @@ class Ui(Avatars):
         self.iconPath = ""
         self.originalAvatar = (
             self.AppSettingDir
-            + "prxUserMeta\MegaSRX\metaprodata\\"
+            + "Cache\Icons\Avatars\\"
             + self.user[self.currentUserCounter]
             + "Original.png"
         )
@@ -107,7 +107,7 @@ class Ui(Avatars):
         self.ChangeAvatar.setStyleSheet(
             "border-image: url("
             + self.dataPath
-            + "prxUserMeta//MegaSRX//metaprodata//"
+            + "Cache//Icons//Avatars//"
             + str(self.user[0])
             + ".png);"
         )
@@ -570,7 +570,7 @@ class Ui(Avatars):
         try:
             jsonFile = open(
                 self.AppSettingDir
-                + "prxUserMeta\MegaSRX\metaprodata\\"
+                + "Cache\Icons\Avatars\\"
                 + self.user[self.currentUserCounter]
                 + ".json",
                 "r",
@@ -584,14 +584,14 @@ class Ui(Avatars):
         # Original Icon
         if os.path.isfile(
             self.dataPath
-            + "prxUserMeta//MegaSRX//metaprodata//"
+            + "Cache//Icons//Avatars//"
             + self.user[self.currentUserCounter]
             + "Original.png"
         ):
             self.Originalcon.setStyleSheet(
                 "border-image: url("
                 + self.dataPath
-                + "prxUserMeta//MegaSRX//metaprodata//"
+                + "Cache//Icons//Avatars//"
                 + self.user[self.currentUserCounter]
                 + "Original.png);"
             )
