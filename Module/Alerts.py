@@ -9,9 +9,7 @@ class Main(Common):
         if type == "About":
             msg = f"Iconit is an automated Windows application for jailbroken PS4 consoles to change xmb icons and profile avatars with the help of FTP payload.\n\nApp version v{self.app_version} [{self.app_release_date}]\n Thank you for using Iconit"
         elif type == "db success":
-            msg = f"Successfully downloaded database."
-        elif type == "db fail":
-            msg = f"Something went wrong. Cannot download/update the database. Please Read the logs.txt and contact the developer."
+            msg = f"Successfully downloaded aprox. 300kb database, caching games will be faster now."
         elif type == "CUSTOMspecial_thanks":
             msg = "Special Thanks:-\n@Lapy05575948\n\nTesters:-\n@laz305\n@maxtinion\n@_deejay87_\n@PS__TRICKS\n\nThanks to all the devs in the scene who made this possible"
         elif type == "CUSTOMdoneRmvCache":
@@ -29,6 +27,6 @@ class Main(Common):
         elif type == "Magick image not found":
             msg = f"ImageMagick not installed in the required path. Reinstall it to the default path please\n{self.copyright}"
         else:
-            msg = f"Error Type:{type}. \n{self.copyright}"
+            msg = f"{type}. \n{self.copyright}"
             
         self.Message.setPlainText(msg)

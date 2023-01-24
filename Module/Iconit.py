@@ -14,6 +14,7 @@ from PyQt5 import QtWidgets
 from xml.dom import minidom
 
 import os, json
+import cProfile, pstats # profiling performance
 
 class Main(Common):
     def __init__(self) -> None:
@@ -153,25 +154,24 @@ class Main(Common):
         self.set_window(self.window)
 
         if is_valid:
+            is_connected = False
             try:
                 self.ftp.set_debuglevel(0)
                 self.ftp.connect(self.ip, int(self.port))
                 self.ftp.login("", "")
-                self.ftp.getwelcome()
                 self.chage_state(True)
+                is_connected = True
             except ConnectionRefusedError:
-                self.chage_state(False)
-                self.ui.setupUi(self.window)
-                self.ui.alert("Cannot make connection with the given IP/Port. DEV| ConnectionRefusedError")
-                self.window.show()
-                return
+                txt = "Cannot make connection with the given IP/Port. DEV| ConnectionRefusedError"
             except Exception as e:
-                self.chage_state(False)
-                self.logs(str(e), "Error")
-                self.ui.setupUi(self.window)
-                self.ui.alert(f"Double check IP and PORT. DEV|{str(e)}")
-                self.window.show()
-                return
+                txt = f"Something went wrong. DEV| {str(e)}"
+            finally:
+                if not is_connected:
+                    self.chage_state(False)
+                    self.ui.setupUi(self.window)
+                    self.ui.alert(txt)
+                    self.window.show()
+                    return
 
             self.status_label.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
             self.set_ui(self.ui)
@@ -185,7 +185,7 @@ class Main(Common):
                 """
                 self.set_selected_mode("game")
                 is_cached = Game().start_cache()
-
+ 
             elif self.SystemIconsRadio.isChecked():
                 """
                 #####################################################
@@ -249,7 +249,7 @@ class Game(Main, Common):
         self.Eng = self.Eng1 + self.Eng2 + tuple(" ")
         self.alphaNum = ("one",  "two",  "three", "four",  "five",  "six",  "seven", "eight", "nine", "™", "'", "!", "?")
 
-    def fetch_game_title_from_server(self, server_files, game_id):
+    def fetch_game_title_from_server(self, game_id, server_files):
         game_title = "UNKNOWN TITLE"
         if self.game_title_file in server_files:
             self.download_data_from_server(self.game_title_file, self.game_title_file_path)
@@ -266,16 +266,39 @@ class Game(Main, Common):
 
                     if english:
                         break
-            except:
-                    pass
+
+            except: pass
             finally:
                 self.game_ids[game_id]["title"] = game_title
         else:
             self.game_ids[game_id]["title"] = game_title
 
-    def fetch_game_title_from_db(self, game_id):
-        # FIXME:
-        pass
+    def fetch_game_title_from_db(self, game_id) -> bool:
+        respons = self.database.fetch_game_title(game_id)
+        if respons[0] == True:
+            self.game_ids[game_id]["title"] = respons[1]
+            return True
+        else:
+            self.logs(respons[1], "Wrning")
+            return False
+
+    def save_undetected_game(self, game_id):
+        title = \
+        "Hi this is Iconit I generated this file while I was reading the database\n" +\
+        "The following game ids weren't found in the database, when caching them\n" +\
+        "I decided to fetch the game from the PS4 directly, which was much slower.\n" +\
+        "If you don't mind please share the game ids with @Officialahmed0\n" +\
+        "so we can add them to the database.\n" +\
+        "To make the caching faster for everyone. Thank you!" 
+        txt = ""
+        if os.path.isfile(self.undetected_games_file):
+            file = open(self.undetected_games_file, "a")
+            txt = f"{game_id}\n"
+        else:
+            file = open(self.undetected_games_file, "w")
+            txt = f"{title}\n\n{game_id}\n"
+        with file as f:
+            f.write(txt)
 
     def start_cache(self) -> bool:
         try:
@@ -293,60 +316,64 @@ class Game(Main, Common):
 
             self.filter_game_ids()
             
-            self.cached = os.listdir(self.cache_path)
-            numGames = len(self.game_ids)
-            GameWeightInFraction = (1 / numGames) * 100
             percentage = 0
-            game_ids_with_hb = self.game_ids.copy()
+            self.cached = os.listdir(self.cache_path)
+            process_weight_fraction = (1 / len(self.game_ids)) * 100
 
+            is_new_game_found = False
+            game_ids_with_hb = self.game_ids.copy()
             for game_id in game_ids_with_hb:
-                if self.userHB == "False": 
+                if self.userHB == "False":
                     if "CUSA" not in game_id:
                         self.game_ids.pop(game_id)
                         continue
 
-                game_location = self.game_ids.get(game_id).get("location")
-                
-                current_directory = self.ps4_internal_icons_dir
-                if game_location == "External":
-                    current_directory = self.ps4_external_icons_dir
-
-                self.ftp.cwd(f"/{current_directory}/{game_id}")
-                files = self.get_server_directories()
-                
                 if self.game_ids.get(game_id).get("title") == None:
                     """
                     #######################################################
-                        Fetch Game Title from server if title not in cache
+                        if the game was not found in the cache
                     #######################################################
                     """
+                    is_new_game_found = True
+                    current_directory = self.ps4_internal_icons_dir
+                    game_location = self.game_ids.get(game_id).get("location")
+
+                    if game_location == "External":
+                        current_directory = self.ps4_external_icons_dir
+
+                    self.ftp.cwd(f"/{current_directory}/{game_id}")
+                    files = self.get_server_directories()
+
 
                     if self.game_title_file in files:
                         """
-                            Try: to fetch from local database
-                            Else: download from PS4
+                        #######################################################
+                            Fetch Game Title from server if title not in cache
+                        #######################################################
                         """
-                        try:
-                            # self.fetch_game_title_from_db(game_id)
-                            pass
-                        except:
+                        # O(n)
+                        if not self.fetch_game_title_from_db(game_id):
+                            self.save_undetected_game(game_id)
+                            # O(n^2)
                             self.fetch_game_title_from_server(game_id, files)
                             
                     if self.icon_name in files:
                         self.download_data_from_server(self.icon_name, f"{self.cache_path}{game_id}.png",)
 
-                    percentage += GameWeightInFraction
-                    self.cache_bar.setProperty("value", str(percentage)[: str(percentage).index(".")])
+                percentage += process_weight_fraction
+                self.cache_bar.setProperty("value", f"{int(percentage)}")
+            
+            self.set_game_ids(self.game_ids, is_new_game_found)
 
-            self.set_game_ids(self.game_ids)
-            self.set_cache()
+            if is_new_game_found:
+                self.set_cache()
             return True
 
         except Exception as e:
             self.logs(str(e), "Error")
             self.chage_state(False)
             self.ui.setupUi(self.window)
-            self.ui.alert(f"_DEV|{str(e)}")
+            self.ui.alert(f"Error occured |_DEV {str(e)}")
             self.window.show()
 
 class System(Main):

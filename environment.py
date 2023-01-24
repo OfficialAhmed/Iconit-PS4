@@ -5,12 +5,13 @@
     html: class holds repeated html tags and styling for the UI
     constant: class holds constant vars. Only getters
 """
-from Module.Settings import Main as Settings
-from Module.Widget.Shared import Widget
+import pygame
+import os, datetime
 from ftplib import FTP
 
-import os, datetime
-import pygame
+from Module.Database.Generate import Database
+from Module.Settings import Main as Settings
+from Module.Widget.Shared import Widget
 
 class Common:
     """
@@ -60,6 +61,8 @@ class Common:
         self.game_ids = []
         self.sys_game_ids = []
         self.external_game_ids = []
+        self.screen_w = Common.screen_w
+        self.screen_h = Common.screen_h
 
         self.IP = Common.IP
         self.Port = Common.Port
@@ -69,18 +72,6 @@ class Common:
         self.userPort = Common.userPort
         self.userIPath = Common.userIPath
         self.userDPath = Common.userDPath
-        
-        self.screen_w = Common.screen_w
-        self.screen_h = Common.screen_h
-
-        self.ftp = FTP()
-        self.html = html()
-        self.widgets = Widget()
-        self.constant = Constant()
-
-        self.ps4_internal_icons_dir = self.constant.PS4_INT_ICONS
-        self.ps4_external_icons_dir = self.constant.PS4_EXT_ICONS
-        self.ps4_system_icons_dir = self.constant.PS4_SYS_ICONS
 
         self.app_root_path = f"{os.getcwd()}\\"
         self.pref_path = f"{self.app_root_path}Data\\Pref\\"
@@ -88,13 +79,24 @@ class Common:
         self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
         self.appmeta_path = f"{self.app_root_path}data\\User\\appmeta\\"
         self.cache_path = f"{self.metadata_path}game\\"
+        self.game_cache_file = f"{self.cache_path}games.json"
+        self.database_file = f"{self.temp_path}Title\\database.json"
+        self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
 
-        self.database_file = f"{self.temp_path}Title\\database.json"
-        self.game_cache_file = f"{self.cache_path}games.json"
+        self.ftp = FTP()
+        self.html = html()
+        self.widgets = Widget()
+        self.constant = Constant()
+        self.settings = Settings()
+        self.database = Database(self.database_file)
+
+        self.ps4_internal_icons_dir = self.constant.PS4_INT_ICONS
+        self.ps4_external_icons_dir = self.constant.PS4_EXT_ICONS
+        self.ps4_system_icons_dir = self.constant.PS4_SYS_ICONS
+
         self.logging = self.html.internal_log_msg("ps4", self.IP, 12, "font-weight:600; font-style:italic;")
 
-        self.settings = Settings()
         self.update_pref()
         pygame.mixer.init()
    
@@ -150,10 +152,12 @@ class Common:
     def get_browsed_icon_path(self):
         return Common.browsed_icon_path
 
-    def set_game_ids(self, ids:dict):
-        if ids:
+    def set_game_ids(self, ids:dict, is_new_game_found:bool):
+        if ids and is_new_game_found:
             sorted_ids = sorted(ids.items(), key=lambda data: data[1].get("title"))
-        Common.all_game_ids = dict(sorted_ids)
+            Common.all_game_ids = dict(sorted_ids)
+        else:
+            Common.all_game_ids = ids
 
     def get_all_game_ids(self):
         return Common.all_game_ids

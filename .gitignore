@@ -1,9 +1,9 @@
 __pycache__
 
-Data/prxUserMeta/MegaSRX/metadata/game/info.json
-Data/prxUserMeta/MegaSRX/icon0.dds
-Data/prxUserMeta/files_in_dir.dat
-Data/prxUserMeta/pronunciation.xml
+Data/Cache/MegaSRX/metadata/game/info.json
+Data/Cache/MegaSRX/icon0.dds
+Data/Cache/files_in_dir.dat
+Data/Cache/pronunciation.xml
 Data/Pref/pref.ini
 output/Data
 output/READ ME.txt
@@ -18,5 +18,9 @@ Logs.txt
 test.py
 *.dds
 *.png
-Data/prxUserMeta/files_in_dir.dat
+Data/Cache/files_in_dir.dat
 Data/Cache/Icons/metadata/game/games.json
+Performance.txt
+performance.txt
+GAMES MADE CACHING SLOWER.txt
+Data/Cache/pronunciation.xml

@@ -1,8 +1,6 @@
 import os
 from environment import html
 from Module.Iconit import Main as Iconit
-
-from Module.Database.Generate import Database
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import Interface.Settings as Settings
@@ -347,11 +345,11 @@ class Ui(Iconit):
         ui = Alerts.Ui()
         ui.setupUi(self.window)
 
-        data = Database()
-        if data.generate_db():
+        data = self.database.save()
+        if data[0] == True:
             ui.alert("db success")
         else:
-            ui.alert("db fail")
+            ui.alert(data[1])
         self.window.show()
         
     def remove_cache(self):
