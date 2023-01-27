@@ -8,8 +8,6 @@ class Ui(Upload):
         super().__init__()
 
     def setupUi(self, window):
-        self.exGames = [] # FIXME: not connected to any -> always empty
-
         self.upload_type = self.get_upload_type()
         self.selected_mode = self.get_selected_mode()
         self.browsed_icon_path = self.get_browsed_icon_path()
@@ -104,7 +102,7 @@ class Ui(Upload):
         #_________________    SIGNALS    ________________#
         self.Ok.clicked.connect(window.close)
         self.No.clicked.connect(window.close)
-        self.Yes.clicked.connect(self.Resize_Upload)
+        self.Yes.clicked.connect(self.resize_upload)
 
         #_________________    VISIBILITY    ________________#
         self.graphicsView.raise_()

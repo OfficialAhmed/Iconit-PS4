@@ -1,3 +1,4 @@
+import datetime
 from environment import Common
 import Interface.Alerts as Alerts
 
@@ -8,58 +9,72 @@ import time, os, shutil, PIL
 class Main(Common):
     def __init__(self) -> None:
         super().__init__()
+        self.game_ids = self.get_all_game_ids()
         self.is_sys_icon = self.get_is_sys_icon()
         self.current_game_id = self.get_current_game_id()
         self.browsed_icon_path = self.get_browsed_icon_path()
         self.browsed_bg_img_path = self.get_browsed_bg_img_path()
 
-        
-    def png2dds(self, input_dir, output_dir) -> None:
-        """ convert legit png to dds using imageMagic lib (wand) """
+    def png_to_dds_test(self, input_dir, output_dir) -> None:
+        """ 
+            A method could solve the need of an external program installation to convert png to dds 
+            * Check on PS4 * 
+        """
+        import pydds
+        from PIL import Image
+
+        im = Image.open("image.png")
+
+        # Convert the image to a numpy array
+        data = pydds.to_numpy(im)
+
+        # Save the image as DDS with DXT1 compression
+        pydds.save("image.dds", data, format="DXT1")
+
+
+    def png_to_dds(self, input_dir, output_dir) -> None:
+        """ 
+            convert legit png to dds using imageMagic lib (wand) 
+            [technique requires imagemagic to be installed]
+        """
         if self.image != None:
             with self.image.Image(filename=input_dir) as img:
                 img.compression = "dxt1"
                 img.save(filename=output_dir)
 
-    def backup(self):
+
+    def backup_icon(self):
         backup = []
         try:
-            backup = os.listdir(self.constant.ICONS_BACKUP_NAME)
-        except:
-            os.mkdir(self.constant.ICONS_BACKUP_NAME)
+            icon_name = f"{self.current_game_id}.png"
+            backup = os.listdir(self.backup_path)
 
-        if self.current_game_id + ".png" in backup:
-            try:
-                os.remove(self.constant.ICONS_BACKUP_NAME + "\\" + self.current_game_id + ".png")
-            except Exception as e:
-                self.logIt(str(e), "Error")
+            if icon_name in backup:
+                try: os.remove(f"{self.backup_path}{icon_name}")
+                except Exception as e: self.log_to_external_file(str(e), "Error")
+        except:
+            os.mkdir(self.backup_path.replace("\\", ""))
+
 
         try:
             shutil.copyfile(
-                "Data\Cache\Icons\metadata\\"
-                + self.selected_mode
-                + "\\"
-                + self.current_game_id
-                + ".png",
-                self.constant.ICONS_BACKUP_NAME+"\\" + self.current_game_id + ".png",
+                f"{self.metadata_path}{self.selected_mode}\\{icon_name}",
+                f"{self.backup_path}{icon_name}"
             )
-
         except Exception as e:
-            self.logIt(str(e), "Error")
+            self.log_to_external_file(str(e), "Error")
 
-    def Resize_Upload(self):
+
+    def resize_upload(self):
         try:
             self.image = None
             try:
                 from wand import image
-
                 self.image = image
-
             except Exception as e:
-                self.logIt(
-                    str(e)
-                    + " | DEV module wand cannot be found, something related to imageMagic",
-                    "Warning",
+                self.log_to_external_file( 
+                    f"{e} | DEV module wand cannot be found, something related to imageMagic",
+                    "Error"
                 )
 
             self.Yes.setEnabled(False)
@@ -68,7 +83,7 @@ class Main(Common):
                 self.ftp.connect(self.IP, int(self.Port))
                 self.ftp.login("", "")
             except Exception as e:
-                self.logIt(str(e), "Error")
+                self.log_to_external_file(str(e), "Error")
                 self.ui.setupUi(self.window, str(e))
                 self.window.show()
             self.CheckingBar.setProperty("value", 10)
@@ -104,7 +119,7 @@ class Main(Common):
                     with open(self.temp_path + "Icons\\icon0.png", "wb") as file:
                         self.ftp.retrbinary("RETR " + iconFound, file.write)
 
-                    self.backup(sys=True)
+                    self.backup_icon(sys=True)
                     self.CheckingBar.setProperty("value", 100)
 
                     if self.browsed_icon_path != "" and self.browsed_icon_path != None:
@@ -132,17 +147,15 @@ class Main(Common):
                     BackgroundName = []  # Pic0, Pic1 (dds and png extension)
                     self.ftp.cwd("/")
                     try:
-                        if self.current_game_id in self.external_game_ids:
+                        if self.game_ids.get(self.current_game_id).get("location") == "External":
                             self.ftp.cwd(f"{self.ps4_internal_icons_dir}/external/{self.current_game_id}")
                         else:
-                            self.ftp.cwd(self.ps4_internal_icons_dir + "/" + self.current_game_id)
-                    except:
+                            self.ftp.cwd(f"{self.ps4_internal_icons_dir}{self.current_game_id}")
+                    except Exception as e:
                         self.window = QtWidgets.QDialog()
                         self.ui = Alerts.Ui()
-                        self.ui.setupUi(
-                            self.window,
-                            "Cannot find this icon in your PS4. This might be from an older caching process please delete cache and recache again, other than that you may continue but this icon wont be changed."
-                        )
+                        self.ui.setupUi(self.window)
+                        self.ui.alert(f"Couldn't change directory file DEV|{e}")
                         self.window.show()
                         self.CheckingBar.setProperty("value", 50)
 
@@ -162,7 +175,7 @@ class Main(Common):
                         self.CheckingBar.setProperty("value", 100)
                         self.ResizingBar.setProperty("value", 1)
                         if self.browsed_icon_path != "" and self.browsed_icon_path != None:
-                            self.backup()
+                            self.backup_icon()
 
                             # Icon has been changed we need to resize and prepare for upload
                             Icon = Image.open(self.browsed_icon_path)
@@ -173,7 +186,7 @@ class Main(Common):
                                 IconName.append("icon0.png")
 
                             if "icon0.dds" in content_in_file:
-                                self.png2dds(
+                                self.png_to_dds(
                                     img_dir + "icon0.png", img_dir + "icon0.dds"
                                 )
                                 IconName.append("icon0.dds")
@@ -201,7 +214,7 @@ class Main(Common):
                                         # if png exists override it no issue, otherwise
                                         # create a png, resize it and convert it to dds
                                         resizeIcon.save(img_dir + search_png)
-                                        self.png2dds(
+                                        self.png_to_dds(
                                             img_dir + search_png, img_dir + search_dds
                                         )
                                         IconName.append(search_dds)
@@ -214,17 +227,17 @@ class Main(Common):
                                             resizeIcon.save(img_dir + search_png)
                                             IconName.append(search_png)
                                         except Exception as e:
-                                            self.logIt(str(e), "Warning")
+                                            self.log_to_external_file(str(e), "Warning")
 
                                     if search_dds in content_in_file:
                                         try:
-                                            self.png2dds(
+                                            self.png_to_dds(
                                                 img_dir + search_png,
                                                 img_dir + search_dds,
                                             )
                                             IconName.append(search_dds)
                                         except Exception as e:
-                                            self.logIt(str(e), "Error")
+                                            self.log_to_external_file(str(e), "Error")
                         self.ResizingBar.setProperty("value", 45)
 
                         if self.browsed_bg_img_path != "" and self.browsed_bg_img_path != None:
@@ -249,10 +262,10 @@ class Main(Common):
                             self.ResizingBar.setProperty("value", 75)
 
                             if "pic0.dds" in content_in_file:
-                                self.png2dds(img_dir + "pic0.png", img_dir + "pic0.dds")
+                                self.png_to_dds(img_dir + "pic0.png", img_dir + "pic0.dds")
                                 BackgroundName.append("pic0.dds")
                             if "pic1.dds" in content_in_file:
-                                self.png2dds(img_dir + "pic1.png", img_dir + "pic1.dds")
+                                self.png_to_dds(img_dir + "pic1.png", img_dir + "pic1.dds")
                                 BackgroundName.append("pic1.dds")
 
                             for bg in BackgroundName:
@@ -293,7 +306,7 @@ class Main(Common):
                     self.msg.setText("Success. Icons will take time to change in both the PS4 & Iconit")
              
                 except Exception as e:
-                    self.logIt(str(e), "Error")
+                    self.log_to_external_file(str(e), "Error")
 
                     self.UploadingBar.setProperty("value", 5)
                     self.msg.setStyleSheet("font: 10pt; color: rgb(250, 1, 1);")
@@ -329,7 +342,7 @@ class Main(Common):
                             progressed += 20
                     self.CheckingBar.setProperty("value", 100)
                 except Exception as e:
-                    self.logIt(str(e), "error")
+                    self.log_to_external_file(str(e), "error")
                 
                 ################################################################
                 ###                     Convert PNG To DDS
@@ -346,7 +359,7 @@ class Main(Common):
                     try:
                         for dds in required_dds:
                             # update v4.21 compatible compression type for PS4 .DDS = DXT1
-                            self.png2dds(
+                            self.png_to_dds(
                                 self.temp_path + dds + ".png",
                                 self.temp_path + dds + ".dds",
                             )
@@ -369,7 +382,7 @@ class Main(Common):
                         self.Yes.hide()
 
                     except Exception as e:
-                        self.logIt(str(e), "Error")
+                        self.log_to_external_file(str(e), "Error")
                 else:
                     self.ui.setupUi(self.window, "Magick image not found")
                     self.window.show()
@@ -402,37 +415,22 @@ class Main(Common):
                     try:
                         os.remove(img_dir + i)
                     except Exception as e:
-                        self.logIt(str(e), "Error")
-            self.Resize_Upload()
+                        self.log_to_external_file(str(e), "Error")
+            self.resize_upload()
 
         except Exception as e:
-            self.logIt(str(e), "Error")
+            self.log_to_external_file(str(e), "Error")
 
         finally:
             self.set_browsed_icon_path("")
             self.set_browsed_bg_img_path("")
 
-    def logIt(self, description, Type):
-        import datetime
 
-        try:
-            error_file = open("Logs.txt", "a")
-        except:
-            error_file = open("Logs.txt", "w")
-        if Type == "Warning":
-            error_file.write(
-                str(datetime.datetime.now())
-                + " | "
-                + "_DEV Warning: "
-                + str(description)
-                + "\n"
-            )
-        else:
-            error_file.write(
-                str(datetime.datetime.now())
-                + " | "
-                + "_DEV ERROR: "
-                + str(description)
-                + "\n"
-            )
+    def log_to_external_file(self, description:str, Type:str) -> None:
+        """ Write info about the issue in an external file """
+        data = lambda : f"{datetime.datetime.now()} | _DEV {Type.upper()}: {description}\n"
 
+        try: error_file = open("Logs.txt", "a")
+        except: error_file = open("Logs.txt", "w")
+
+        error_file.write(data())

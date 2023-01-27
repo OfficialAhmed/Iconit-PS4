@@ -26,6 +26,7 @@ class Main(Common):
         self.unchecked_game_ids = []
         self.is_external_icons_found = True
 
+
     def fetch_sharables(self):
         """ Prepare shared attrs """
         self.ip_input = self.widgets.get_ip_input()
@@ -147,7 +148,6 @@ class Main(Common):
             self.unchecked_game_ids.clear()
 
     def connect_ps4(self, is_valid):
-
         self.ui = Alerts.Ui()
         self.window = QtWidgets.QDialog()
         self.set_ui(self.ui)
@@ -356,7 +356,7 @@ class Game(Main, Common):
                             self.save_undetected_game(game_id)
                             # O(n^2)
                             self.fetch_game_title_from_server(game_id, files)
-                            
+
                     if self.icon_name in files:
                         self.download_data_from_server(self.icon_name, f"{self.cache_path}{game_id}.png",)
 

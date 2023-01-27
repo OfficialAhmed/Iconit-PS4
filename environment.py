@@ -58,7 +58,7 @@ class Common:
         self.app_release_date = "Jan 24th, 2023"
 
         self.game = {}
-        self.game_ids = []
+        self.game_ids = {}
         self.sys_game_ids = []
         self.external_game_ids = []
         self.screen_w = Common.screen_w
@@ -94,6 +94,8 @@ class Common:
         self.ps4_internal_icons_dir = self.constant.PS4_INT_ICONS
         self.ps4_external_icons_dir = self.constant.PS4_EXT_ICONS
         self.ps4_system_icons_dir = self.constant.PS4_SYS_ICONS
+
+        self.backup_path = f"{self.constant.ICONS_BACKUP_NAME}\\"
 
         self.logging = self.html.internal_log_msg("ps4", self.IP, 12, "font-weight:600; font-style:italic;")
 
@@ -284,9 +286,9 @@ class html:
 class Constant:
     """ Read-only class """
 
-    PS4_INT_ICONS = "user/appmeta"
-    PS4_EXT_ICONS = "user/appmeta/external"
-    PS4_SYS_ICONS = "system_ex/app"
+    PS4_INT_ICONS = "user/appmeta/"
+    PS4_EXT_ICONS = "user/appmeta/external/"
+    PS4_SYS_ICONS = "system_ex/app/"
     PS4_ICON_SIZE = (512, 512)
     PS4_PRONOUNCIATION_FILE = "pronunciation.xml"
 

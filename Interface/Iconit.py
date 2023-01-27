@@ -1,4 +1,5 @@
 import os
+from time import perf_counter
 from environment import html
 from Module.Iconit import Main as Iconit
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -270,6 +271,7 @@ class Ui(Iconit):
 
         self.retranslateUi()
 
+
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.PortInput.setText(_translate("window", self.userPort))
@@ -320,11 +322,13 @@ class Ui(Iconit):
         self.widgets.set_status_label(self.StatusLabel)
         self.widgets.set_game_icon_radio(self.GameIconsRadio)
 
+
     def open_options(self):
         self.window = QtWidgets.QDialog()
         self.ui = Settings.Ui()
         self.ui.setupUi(self.window)
         self.window.show()
+
 
     def open_about(self):
         self.window = QtWidgets.QDialog()
@@ -333,12 +337,14 @@ class Ui(Iconit):
         self.ui.alert("About")
         self.window.show()
 
+
     def open_credits(self):
         self.window = QtWidgets.QDialog()
         self.ui = Alerts.Ui()
         self.ui.setupUi(self.window)
         self.ui.alert("CUSTOMspecial_thanks")
         self.window.show()
+
 
     def download_database(self):
         self.window = QtWidgets.QDialog()
@@ -352,6 +358,7 @@ class Ui(Iconit):
             ui.alert(data[1])
         self.window.show()
         
+
     def remove_cache(self):
         self.window = QtWidgets.QDialog()
         ui = Alerts.Ui()
