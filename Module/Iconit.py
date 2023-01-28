@@ -4,6 +4,7 @@
     the class inherits 'Common'
 
 """
+import string
 import Interface.Icons as Icons
 import Interface.Alerts as Alerts
 import Interface.Avatars as Avatars
@@ -14,7 +15,6 @@ from PyQt5 import QtWidgets
 from xml.dom import minidom
 
 import os, json
-import cProfile, pstats # profiling performance
 
 class Main(Common):
     def __init__(self) -> None:
@@ -23,7 +23,6 @@ class Main(Common):
         self.cached = ""
         self.ui = self.get_ui()
         self.window = self.get_window()
-        self.unchecked_game_ids = []
         self.is_external_icons_found = True
 
 
@@ -39,6 +38,7 @@ class Main(Common):
         self.status_label = self.widgets.get_status_label()
         self.game_icon_radio = self.widgets.get_game_icon_radio()
 
+
     def check_ip_port(self) -> None:
         self.fetch_sharables()
 
@@ -52,8 +52,7 @@ class Main(Common):
             is_valid = False
             if len(self.ip) > 8:
                 for i in f"{self.ip}{self.port}":
-                    if i.isalpha():
-                        break
+                    if i.isalpha(): break
                 else:
                     is_valid = True
 
@@ -61,6 +60,7 @@ class Main(Common):
 
         except Exception as e:
             self.logs(str(e), "Warning")
+
 
     def chage_state(self, connected: bool) -> None:
         labels = {
@@ -73,16 +73,13 @@ class Main(Common):
         success = self.constant.get_color("green")
         fail = self.constant.get_color("red")
         
-        if connected:
-            self.status_label.setText(self.html.span_tag("Connected", success, 18))
-        else:
-            self.status_label.setText(self.html.span_tag("Failed to connect", fail, 18))
+        if connected: self.status_label.setText(self.html.span_tag("Connected", success, 18))
+        else: self.status_label.setText(self.html.span_tag("Failed to connect", fail, 18))
             
-        for l in labels:
-            if connected:
-                l.setText(self.html.span_tag(labels[l], success, 14))
-            else:
-                l.setText(self.html.span_tag(labels[l], fail, 14))
+        for label in labels:
+            if connected: label.setText(self.html.span_tag(labels[label], success, 14))
+            else: label.setText(self.html.span_tag(labels[label], fail, 14))
+
 
     def set_cache(self) -> None:
         # match self.get_selected_mode():
@@ -91,6 +88,7 @@ class Main(Common):
             with open(self.game_cache_file, "w+") as jsonFile:
                 json.dump(self.game_ids, jsonFile)
 
+
     def get_cache(self) -> dict:
         result = {}
         if os.path.isfile(self.game_cache_file):
@@ -98,8 +96,18 @@ class Main(Common):
             result = json.load(ReadJson)
         return result
         
+
+    def sort_game_ids(self):
+        """ Sort by game title in alphabetical order """
+        sorted_ids = sorted(self.game_ids.items(), key=lambda data: data[1].get("title"))
+        self.game_ids = dict(sorted_ids)
+
+
     def filter_game_ids(self):
-        def get_game_id(line):
+
+        self.unchecked_game_ids = []
+
+        def append_game_id(line):
             """
             ######################################
                     fetch game ids
@@ -121,11 +129,11 @@ class Main(Common):
             self.ftp.cwd(f"/{dir}")
 
             """
-            #######################################################
-                read server directory line by line for ids
-            #######################################################
+            #################################################################
+                read server directory line by line for ids - Worst-case O(n)
+            #################################################################
             """
-            self.ftp.retrlines("LIST ", lambda line: get_game_id(line)
+            self.ftp.retrlines("LIST ", lambda line: append_game_id(line)
                 if len(line.split(" ")[-1]) >= 8 
                 and line[0].lower() == "d" 
                 and line.split(" ")[-1] not in self.game_ids
@@ -147,6 +155,7 @@ class Main(Common):
 
             self.unchecked_game_ids.clear()
 
+
     def connect_ps4(self, is_valid):
         self.ui = Alerts.Ui()
         self.window = QtWidgets.QDialog()
@@ -157,12 +166,15 @@ class Main(Common):
             is_connected = False
             try:
                 self.ftp.set_debuglevel(0)
-                self.ftp.connect(self.ip, int(self.port))
+                self.ftp.connect(self.ip, int(self.port), timeout=2)
                 self.ftp.login("", "")
+                self.set_ftp(self.ftp)
                 self.chage_state(True)
                 is_connected = True
+            except TimeoutError:
+                txt = "Double check the Ip and port DEV| TimeoutError"
             except ConnectionRefusedError:
-                txt = "Cannot make connection with the given IP/Port. DEV| ConnectionRefusedError"
+                txt = "PS4 has refused to connect, perhaps it's connected somewhere else DEV| ConnectionRefusedError"
             except Exception as e:
                 txt = f"Something went wrong. DEV| {str(e)}"
             finally:
@@ -176,7 +188,6 @@ class Main(Common):
             self.status_label.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
             self.set_ui(self.ui)
             self.set_window(self.window)
-            self.ftp.close()
             if self.game_icon_radio.isChecked():
                 """
                 #####################################################
@@ -215,6 +226,7 @@ class Main(Common):
             self.ui.alert("Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection")
             self.window.show()
 
+
     def render_window(self):
         self.window = QtWidgets.QWidget()
         self.set_ui(self.ui)
@@ -229,6 +241,7 @@ class Main(Common):
             self.ui.setupUi(self.window, self.userID, self.ip, self.port, self.w, self.h)
             self.window.show()
 
+
 class Game(Main, Common):
     """
     ########################################################
@@ -238,16 +251,16 @@ class Game(Main, Common):
     """
     def __init__(self) -> None:
         super().__init__()
+        self.ftp = self.get_ftp()
         self.widgets = self.fetch_sharables()
         
         self.icon_name = "icon0.png"
         self.id_and_location = []
-        self.game_title_file_path = f"{self.temp_path}{self.constant.PS4_PRONOUNCIATION_FILE}"
         self.game_title_file = self.constant.PS4_PRONOUNCIATION_FILE
-        self.Eng1 = tuple(chr(x) for x in range(ord("a"), ord("a") + 26))  # a - z
-        self.Eng2 = tuple(chr(x) for x in range(ord("A"), ord("A") + 26))  # A - Z
-        self.Eng = self.Eng1 + self.Eng2 + tuple(" ")
+        self.game_title_file_path = f"{self.temp_path}{self.game_title_file}"
+        self.english = f"{string.ascii_letters}{string.digits} "
         self.alphaNum = ("one",  "two",  "three", "four",  "five",  "six",  "seven", "eight", "nine", "™", "'", "!", "?")
+
 
     def fetch_game_title_from_server(self, game_id, server_files):
         game_title = "UNKNOWN TITLE"
@@ -260,7 +273,7 @@ class Game(Main, Common):
                     
                     english = True
                     for char in game_title:
-                        if char not in self.Eng:
+                        if char not in self.english:
                             english = False
                             break
 
@@ -273,14 +286,16 @@ class Game(Main, Common):
         else:
             self.game_ids[game_id]["title"] = game_title
 
+
     def fetch_game_title_from_db(self, game_id) -> bool:
         respons = self.database.fetch_game_title(game_id)
         if respons[0] == True:
             self.game_ids[game_id]["title"] = respons[1]
             return True
-        else:
-            self.logs(respons[1], "Wrning")
-            return False
+
+        self.logs(respons[1], "Wrning")
+        return False
+
 
     def save_undetected_game(self, game_id):
         title = \
@@ -300,14 +315,12 @@ class Game(Main, Common):
         with file as f:
             f.write(txt)
 
+
     def start_cache(self) -> bool:
         try:
             self.game_ids = self.get_cache()
-            self.ftp.set_debuglevel(0)
-            self.ftp.connect(self.get_ip(), self.get_port())
-            self.ftp.login("", "")
             self.chage_state(True)
-            self.ftp.cwd(f"/{self.ps4_internal_icons_dir}")
+            self.ftp.cwd(f"{self.ps4_internal_icons_dir}")
 
             self.icon_directories = (self.ps4_internal_icons_dir, self.ps4_external_icons_dir)
             if "external" not in self.get_server_directories():
@@ -363,10 +376,11 @@ class Game(Main, Common):
                 percentage += process_weight_fraction
                 self.cache_bar.setProperty("value", f"{int(percentage)}")
             
-            self.set_game_ids(self.game_ids, is_new_game_found)
-
             if is_new_game_found:
+                self.sort_game_ids()
                 self.set_cache()
+
+            self.set_game_ids(self.game_ids)
             return True
 
         except Exception as e:
@@ -385,6 +399,7 @@ class System(Main):
     """
     def __init__(self) -> None:
         super().__init__()
+
 
     def start_cache(self):
         self.change_colors(True)
@@ -484,6 +499,7 @@ class Avatar(Main):
         self.userID = []
 
         self.chage_state(True)
+
 
     def start_cache(self):
         directories = []

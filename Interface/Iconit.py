@@ -269,6 +269,11 @@ class Ui(Iconit):
         self.Special_thanks.triggered.connect(self.open_credits)
         self.DownloadDatabase.triggered.connect(self.download_database)
 
+        # ________________  BETA v5 Disable ______________________
+
+        self.AvatarIconsRadio.setEnabled(False)
+        self.SystemIconsRadio.setEnabled(False)
+
         self.retranslateUi()
 
 
@@ -276,8 +281,8 @@ class Ui(Iconit):
         _translate = QtCore.QCoreApplication.translate
         self.PortInput.setText(_translate("window", self.userPort))
         self.GameIconsRadio.setText(_translate("window", "Game Icon/Pic"))
-        self.SystemIconsRadio.setText(_translate("window", "System Icons"))
-        self.AvatarIconsRadio.setText(_translate("window", "Profile Avatar"))
+        self.SystemIconsRadio.setText(_translate("window", "System Icons [Disabled]"))
+        self.AvatarIconsRadio.setText(_translate("window", "Profile Avatar [Disabled]"))
         self.IpInput.setPlaceholderText(_translate("window", "192.168.XXX.XXX"))
         self.ModeLabel.setText(_translate("window", self.html.span_tag("MODE", "#f2ae30", 16, font=self.userFont)))
         self.IpLabel.setText(_translate("window", self.html.span_tag("PS4 IP", "#f2ae30", 16, font=self.userFont)))

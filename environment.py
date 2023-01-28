@@ -43,6 +43,9 @@ class Common:
     ui = None
     window = None
 
+    # Store connection for GoldHen one connection 
+    connection = None 
+
     all_game_ids = {}
     selected_mode = None
 
@@ -54,8 +57,8 @@ class Common:
     is_sys_icon = False
 
     def __init__(self) -> None:
-        self.app_version = "5.06"
-        self.app_release_date = "Jan 24th, 2023"
+        self.app_version = "5.06 BETA"
+        self.app_release_date = "Jan 27th, 2023"
 
         self.game = {}
         self.game_ids = {}
@@ -114,15 +117,21 @@ class Common:
     def get_ui(self):
         return Common.ui
 
-    def get_server_directories(self) -> list:
+    def set_ftp(self, ptr):
+        Common.connection = ptr
+
+    def get_ftp(self):
+        return Common.connection
+        
+    def get_server_directories(self) -> tuple:
         " This is a solution since PS4 ftp doesnt support nlst()."
         result = []
         self.ftp.retrlines("LIST ", lambda line : result.append(line.split(" ")[-1]))
-        return result
+        return tuple(result)
 
     def download_data_from_server(self, file_name, file_path_with_extension) -> None:
         with open(file_path_with_extension, "wb") as downloaded_file:
-            self.ftp.retrbinary("RETR " + file_name, downloaded_file.write)
+            self.ftp.retrbinary("RETR " + file_name, downloaded_file.write, 65536)
 
     def set_browsed_bg_img_path(self, path:str):
         Common.browsed_bg_img_path = path
@@ -154,12 +163,8 @@ class Common:
     def get_browsed_icon_path(self):
         return Common.browsed_icon_path
 
-    def set_game_ids(self, ids:dict, is_new_game_found:bool):
-        if ids and is_new_game_found:
-            sorted_ids = sorted(ids.items(), key=lambda data: data[1].get("title"))
-            Common.all_game_ids = dict(sorted_ids)
-        else:
-            Common.all_game_ids = ids
+    def set_game_ids(self, ids:dict):
+        Common.all_game_ids = ids
 
     def get_all_game_ids(self):
         return Common.all_game_ids

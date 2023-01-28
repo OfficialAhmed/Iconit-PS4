@@ -1,39 +1,36 @@
-import datetime
+
 from environment import Common
 import Interface.Alerts as Alerts
 
 from PIL import Image
 from PyQt5 import QtWidgets
-import time, os, shutil, PIL
+import time, os, shutil, PIL, subprocess, datetime
 
 class Main(Common):
     def __init__(self) -> None:
         super().__init__()
+        self.ftp = self.get_ftp()
+        self.upload_type = self.get_upload_type()
         self.game_ids = self.get_all_game_ids()
         self.is_sys_icon = self.get_is_sys_icon()
         self.current_game_id = self.get_current_game_id()
         self.browsed_icon_path = self.get_browsed_icon_path()
         self.browsed_bg_img_path = self.get_browsed_bg_img_path()
 
-    def png_to_dds_test(self, input_dir, output_dir) -> None:
+
+    def png_to_dds(self, input_dir: str, output_dir: str) -> None:
         """ 
             A method could solve the need of an external program installation to convert png to dds 
             * Check on PS4 * 
         """
-        import pydds
-        from PIL import Image
-
-        im = Image.open("image.png")
-
-        # Convert the image to a numpy array
-        data = pydds.to_numpy(im)
-
-        # Save the image as DDS with DXT1 compression
-        pydds.save("image.dds", data, format="DXT1")
+    
+        subprocess.run(
+            ["Data\\BIN\\texconv", "-f", "BC1_UNORM", input_dir, "-o", output_dir, "-y"]
+        )
 
 
-    def png_to_dds(self, input_dir, output_dir) -> None:
-        """ 
+    def png_to_dds_obsolete(self, input_dir, output_dir) -> None:
+        """ _ TO BE DEBRECATED _
             convert legit png to dds using imageMagic lib (wand) 
             [technique requires imagemagic to be installed]
         """
@@ -43,23 +40,25 @@ class Main(Common):
                 img.save(filename=output_dir)
 
 
+    def get_timestamp(self) -> str:
+        date = datetime.datetime.now()
+        time = date.time()
+
+        return f"{time.minute}_{time.hour}_{date.day}_{date.month}-{time.microsecond}"
+
+
     def backup_icon(self):
-        backup = []
         try:
             icon_name = f"{self.current_game_id}.png"
-            backup = os.listdir(self.backup_path)
+            backup_icon_name = f"{self.get_timestamp()}.png"
 
-            if icon_name in backup:
-                try: os.remove(f"{self.backup_path}{icon_name}")
-                except Exception as e: self.log_to_external_file(str(e), "Error")
         except:
             os.mkdir(self.backup_path.replace("\\", ""))
-
 
         try:
             shutil.copyfile(
                 f"{self.metadata_path}{self.selected_mode}\\{icon_name}",
-                f"{self.backup_path}{icon_name}"
+                f"{self.backup_path}{backup_icon_name}"
             )
         except Exception as e:
             self.log_to_external_file(str(e), "Error")
@@ -67,6 +66,8 @@ class Main(Common):
 
     def resize_upload(self):
         try:
+            starting_time = time.perf_counter()
+
             self.image = None
             try:
                 from wand import image
@@ -79,13 +80,6 @@ class Main(Common):
 
             self.Yes.setEnabled(False)
             self.No.setEnabled(False)
-            try:
-                self.ftp.connect(self.IP, int(self.Port))
-                self.ftp.login("", "")
-            except Exception as e:
-                self.log_to_external_file(str(e), "Error")
-                self.ui.setupUi(self.window, str(e))
-                self.window.show()
             self.CheckingBar.setProperty("value", 10)
             img_dir = self.temp_path + "Icons\\"
 
@@ -166,7 +160,6 @@ class Main(Common):
                         self.ftp.retrlines("LIST", files_in_dir.write)
                     self.CheckingBar.setProperty("value", 95)
 
-                    # update v4.65 compatible compression type for PS4 .DDS = DXT1
                     with open(
                         self.temp_path + "files_in_dir.dat", "r", encoding="utf8"
                     ) as files_in_dir_4_pics:
@@ -187,7 +180,7 @@ class Main(Common):
 
                             if "icon0.dds" in content_in_file:
                                 self.png_to_dds(
-                                    img_dir + "icon0.png", img_dir + "icon0.dds"
+                                    img_dir + "icon0.png", img_dir
                                 )
                                 IconName.append("icon0.dds")
                             self.ResizingBar.setProperty("value", 10)
@@ -215,7 +208,7 @@ class Main(Common):
                                         # create a png, resize it and convert it to dds
                                         resizeIcon.save(img_dir + search_png)
                                         self.png_to_dds(
-                                            img_dir + search_png, img_dir + search_dds
+                                            img_dir + search_png, img_dir
                                         )
                                         IconName.append(search_dds)
                                 else:
@@ -233,7 +226,7 @@ class Main(Common):
                                         try:
                                             self.png_to_dds(
                                                 img_dir + search_png,
-                                                img_dir + search_dds,
+                                                img_dir,
                                             )
                                             IconName.append(search_dds)
                                         except Exception as e:
@@ -262,10 +255,10 @@ class Main(Common):
                             self.ResizingBar.setProperty("value", 75)
 
                             if "pic0.dds" in content_in_file:
-                                self.png_to_dds(img_dir + "pic0.png", img_dir + "pic0.dds")
+                                self.png_to_dds(img_dir + "pic0.png", img_dir)
                                 BackgroundName.append("pic0.dds")
                             if "pic1.dds" in content_in_file:
-                                self.png_to_dds(img_dir + "pic1.png", img_dir + "pic1.dds")
+                                self.png_to_dds(img_dir + "pic1.png", img_dir)
                                 BackgroundName.append("pic1.dds")
 
                             for bg in BackgroundName:
@@ -312,6 +305,7 @@ class Main(Common):
                     self.msg.setStyleSheet("font: 10pt; color: rgb(250, 1, 1);")
                     self.msg.setText("Sorry! PS4 has denied the signal, enable Full R/W")
 
+                print(f"Total time took to upload: {time.perf_counter() - starting_time} seconds")
                 self.No.hide()
                 self.Yes.hide()
                 self.Ok.raise_()
@@ -358,10 +352,9 @@ class Main(Common):
 
                     try:
                         for dds in required_dds:
-                            # update v4.21 compatible compression type for PS4 .DDS = DXT1
                             self.png_to_dds(
                                 self.temp_path + dds + ".png",
-                                self.temp_path + dds + ".dds",
+                                self.temp_path,
                             )
 
                             for i in range(progressed, progress):

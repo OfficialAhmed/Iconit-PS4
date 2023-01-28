@@ -17,23 +17,33 @@ Pure Python implementation of an automated software to change `PS4` xmb icons, p
 This application is much convenient than uploading the icons manually, it automates the following:
 
 * Icon duplication 
-* Backup original icons
+* Backup original icons `icon0, icon1, ...`
 * Upload and overwrite icons to the `PS4`  
 * Game ID `CUSA` to game title conversion
-* Image conversion `JPG, ICO ...` to `PNG`
-* Image to textures conversion `PNG` to `DDS`
+* Image conversion `JPG, ICO, ...` to `PNG`
+* Image to compressed textures conversion `PNG` to `DDS dxt1`
 * Resize images to the required size `512x512`, `1920x1080`
 
 ________________________________________
 
-## *What's new*
+## *What's new in v5 BETA*
 
-* `Circular icon scrolling` When the last icon reached, it'll begin again from the start and vice versa. 
-* `Games List` Game ID now shown next to the game title 
-* `Local database` fetched from [DEFAULTDNB](https://github.com/DEFAULTDNB/DEFAULTDNB.github.io). Much faster caching process "_Read WIKI for detailes_"  
-* Change between modes without restarting the program
-* `OOP implementation` Better performance & less memory usage 
+#### _For end users:_
 
+*  Finally `Independent version` ImageMagick is no longer required
+*  In the `Games List` _Game IDs_ now shown next to the game title
+*  `Modes` can be changed without restarting the program
+*  `Backup icons` will never be overwritten nor removed [_used to cache once then overwrite the older one_]
+*  `Circular icon scrolling` when the last icon's reached, it'll begin again from the start and vice versa.
+*  `Faster caching` new techniques added
+*  `New option` __Download database__ for a faster caching process
+ 
+#### _For developers:_
+*  `Local database` implemented & fetched from [DEFAULTDNB](https://github.com/DEFAULTDNB/DEFAULTDNB.github.io). For game titles caching "_Read [wiki](https://github.com/OfficialAhmed/Iconit-PS4/wiki/Performance) for detailes_"
+*  `Subproccess` implementation to convert `PNG` to `DDS` DXT1 compression using [DirectXTex/texconv](https://github.com/Microsoft/DirectXTex/wiki/Texconv)
+*  `Buffer size` increased to ~65500 bytes
+*  `Clean up` code and files structure
+*  `OOP implementation` Better performance & less memory usage
 ________________________________________
 
 ## *Current implementation Main bugs* 
@@ -42,7 +52,6 @@ ________________________________________
 
 ## _To do list_
 
-* [ ] Apply `PSD` Masks
 * [ ] Multiple icon change
 * [ ] Apply mask on all xmb icons at once
 * [ ] Render Game ID `CUSAXXXXX` text on icon

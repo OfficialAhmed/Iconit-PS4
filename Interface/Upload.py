@@ -7,6 +7,7 @@ class Ui(Upload):
     def __init__(self) -> None:
         super().__init__()
 
+
     def setupUi(self, window):
         self.upload_type = self.get_upload_type()
         self.selected_mode = self.get_selected_mode()
@@ -119,13 +120,14 @@ class Ui(Upload):
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(window)
 
+
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.Yes.setText(_translate("ConfirmWindow", "Yes"))
         self.Ok.setText(_translate("ConfirmWindow", "Ok"))
         self.No.setText(_translate("ConfirmWindow", "No"))
-        self.CheckingLabel.setText(_translate("ConfirmWindow", "Validation"))
-        self.ResizingLabel.setText(_translate("ConfirmWindow", "Convertion"))
-        self.UploadingLabel.setText(_translate("ConfirmWindow", "Sending"))
+        self.CheckingLabel.setText(_translate("ConfirmWindow", "VALIDATION"))
+        self.ResizingLabel.setText(_translate("ConfirmWindow", "CONVERSION"))
+        self.UploadingLabel.setText(_translate("ConfirmWindow", "SEND"))
         warning_message = f"{self.html.p_tag('margin: 0px;font-size:12pt; -qt-block-indent:0; text-indent:0px; color:#e83c3c', 'ATTENTION! This will overwrite the icon on the PS4')}Are sure you want to proceed?"
         self.msg.setText(_translate("ConfirmWindow", warning_message))

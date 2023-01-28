@@ -16,13 +16,16 @@ import Interface.Mask as Mask
 class Main(Common):
     def __init__(self) -> None:
         super().__init__()
+
         # setStyleSheet Url works only with forward slash (/)
         self.pref_path = self.pref_path.replace("\\", "/")
+        
         self.img_counter = 0
         self.game_ids = self.get_all_game_ids()
         self.icons_limit = len(self.game_ids)
         self.ui = self.get_ui()
         self.window = self.get_window()
+
 
     def update_info(self, is_from_dropdown_list:bool = False):
         self.SendBtn.setDisabled(True)
@@ -54,6 +57,7 @@ class Main(Common):
         self.GameIdTxt.setText(self.current_game_id)
         self.Icon.setStyleSheet(self.html.border_image(current_img_path))
 
+
     def change_icon_size_label(self, color="white", bg_image="", size="(512, 512)"):
         self.IconSizeTxt.setText(f"Current Icon dimension {size}")
         if bg_image != "":
@@ -61,11 +65,13 @@ class Main(Common):
         else:
             self.IconSizeTxt.setStyleSheet(f"color: {color};")
 
+
     def bg_image_to_original(self):
         self.is_bg_image_changed = False  # Reset bg image
         self.change_icon_size_label()
         self.change_bg()
         self.window.setStyleSheet(self.html.bg_image(f"{self.pref_path}{self.background}"))
+
 
     def change_bg(self):
         label_bg = (
@@ -101,6 +107,7 @@ class Main(Common):
         for bg in label_bg:
             bg.setStyleSheet(style)
 
+
     def get_image_browser(self):
         options = QtWidgets.QFileDialog.Options()
         options |= QtWidgets.QFileDialog.DontUseSheet
@@ -135,6 +142,7 @@ class Main(Common):
                 self.logging += self.html.internal_log_msg("error", f"[Image width] {err}")
             self.update_internal_logs()
 
+
     def is_img_valid(self, img_path):
         required_dimension = self.constant.PS4_ICON_SIZE
         img_size = Image.open(img_path).size
@@ -165,6 +173,7 @@ class Main(Common):
             self.logging += self.html.internal_log_msg("warning", "Image will be resized (Too large)")
             self.update_internal_logs()
 
+
     def next(self):
         self.bg_image_to_original()
         self.img_counter += 1
@@ -172,6 +181,7 @@ class Main(Common):
             # Go back to head, if tail's been reached
             self.img_counter = 0
         self.update_info()
+
 
     def previous(self):
         self.bg_image_to_original()
@@ -182,10 +192,12 @@ class Main(Common):
             self.img_counter -= 1
         self.update_info()
 
+
     def select(self):
         self.bg_image_to_original()
         self.img_counter = self.GameTitles.currentIndex()
         self.update_info(is_from_dropdown_list=True)
+
 
     def render_browse_icon_window(self):
         options = QtWidgets.QFileDialog.Options()
@@ -210,12 +222,14 @@ class Main(Common):
 
             self.set_browsed_icon_path(img)
 
+
     def render_mask_maker_window(self):
         self.SendBtn.setEnabled(False)
         self.window = QtWidgets.QWidget()
         self.ui = Mask.Ui()
         self.ui.setupUi(self.window)
         self.window.show()
+
 
     def render_upload_window(self):
         self.SendBtn.setEnabled(False)
@@ -233,6 +247,7 @@ class Main(Common):
 
         self.logging += self.html.internal_log_msg("success", f"Auto Backup {self.current_game_id} success.")
         self.update_internal_logs()
+
 
     def update_internal_logs(self):
         """ overwrite logs with the new lines """
