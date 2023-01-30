@@ -5,7 +5,6 @@
     html: class holds repeated html tags and styling for the UI
     constant: class holds constant vars. Only getters
 """
-import pygame
 import os, datetime
 from ftplib import FTP
 
@@ -103,7 +102,6 @@ class Common:
         self.logging = self.html.internal_log_msg("ps4", self.IP, 12, "font-weight:600; font-style:italic;")
 
         self.update_pref()
-        pygame.mixer.init()
    
     def get_window(self):
         return Common.window
@@ -228,16 +226,6 @@ class Common:
         Common.userPort = port
         Common.userIPath = i_path
         Common.userDPath = d_path
-
-    def play_sound(self, location, loop=False) -> None:
-        try:
-            pygame.mixer.music.load(location)
-            if loop:
-                pygame.mixer.music.play(loops=-1)
-            else:
-                pygame.mixer.music.play()
-        except Exception as e:
-            self.logs("Cannot run music and sounds", str(e))
 
     def logs(self, description, Type):
         try:

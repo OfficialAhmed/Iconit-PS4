@@ -61,7 +61,6 @@ ________________________________________
 ## _Credits_
 * Special thanks to [@Lapy](https://twitter.com/Lapy05575948) for the help.
 * Special thanks to [@DEFAULTDNB](https://github.com/DEFAULTDNB) AKA [@KiiWii](https://twitter.com/DefaultDNB) for the Database
-* Sound Effects from [Pixabay](https://pixabay.com/).
 
     ### _Testers_:
 * [@laz305](https://twitter.com/laz305)
