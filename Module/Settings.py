@@ -85,7 +85,8 @@ class Main:
         """ Render browsing window to pick default paths """
         opt = QtWidgets.QFileDialog.Options()
         opt |= QtWidgets.QFileDialog.DontUseSheet
-        dialog = QFileDialog().setOptions(opt)
+        dialog = QFileDialog()
+        dialog.setOptions(opt)
         dialog.setDirectory(self.application_location)
         if type == "download":
             path = QtWidgets.QFileDialog.getExistingDirectory(

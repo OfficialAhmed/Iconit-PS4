@@ -10,131 +10,225 @@ class Ui(Settings):
         self.OptionsWin = OptionsWin 
         OptionsWin.setObjectName("OptionsWin")
         OptionsWin.setWindowTitle("Options")
-        OptionsWin.resize(473, 246)
-        OptionsWin.setMinimumSize(QtCore.QSize(473, 246))
-        OptionsWin.setMaximumSize(QtCore.QSize(473, 246))
+        OptionsWin.resize(675, 380)
+
 
         #_________________   VISUALS   ________________________#
         self.FontObj = QtGui.QFont()
         self.FontObj.setFamily(self.userFont)
         self.FontObj.setPointSize(10)
         OptionsWin.setFont(self.FontObj)
-        self.cursor = QtGui.QCursor(QtCore.Qt.ArrowCursor)
+
+        self.arrow_cursor = QtGui.QCursor(QtCore.Qt.ArrowCursor)
+        self.pointing_cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         
+
         #_________________   BUTTONS   ________________________#
-        self.WindowBtns = QtWidgets.QDialogButtonBox(OptionsWin)
-        self.WindowBtns.setGeometry(QtCore.QRect(30, 210, 300, 23))
-        self.WindowBtns.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Save)
-        self.WindowBtns.setObjectName("WindowBtns")
-
-        self.DefaultBtn = QtWidgets.QDialogButtonBox(OptionsWin)
-        self.DefaultBtn.setGeometry(QtCore.QRect(25, 210, 110, 23))
-        self.DefaultBtn.setStandardButtons(QtWidgets.QDialogButtonBox.Yes)
-        self.DefaultBtn.button(QtWidgets.QDialogButtonBox.Yes).setText("Default")
-        self.DefaultBtn.setObjectName("DefaultBtn")
-
-        self.IconsPathBtn = QtWidgets.QToolButton(OptionsWin)
-        self.IconsPathBtn.setGeometry(QtCore.QRect(410, 89, 31, 24))
-        self.IconsPathBtn.setObjectName("IconsPathBtn")
-
-        self.DownloadPathBtn = QtWidgets.QToolButton(OptionsWin)
-        self.DownloadPathBtn.setGeometry(QtCore.QRect(410, 119, 31, 24))
-        self.DownloadPathBtn.setObjectName("DownloadPathBtn")
-
-        self.YesRadio = QtWidgets.QRadioButton(OptionsWin)
-        self.YesRadio.setGeometry(QtCore.QRect(170, 160, 82, 17))
-        self.YesRadio.setObjectName("YesRadio")
-        
+        self.SaveBtn = QtWidgets.QPushButton(OptionsWin)
         self.NoRadio = QtWidgets.QRadioButton(OptionsWin)
-        self.NoRadio.setGeometry(QtCore.QRect(220, 160, 82, 17))
-        self.NoRadio.setObjectName("NoRadio")
+        self.YesRadio = QtWidgets.QRadioButton(OptionsWin)
+        self.CancelBtn = QtWidgets.QPushButton(OptionsWin)
+        self.DefaultBtn = QtWidgets.QPushButton(OptionsWin)
+        self.IconsPathBtn = QtWidgets.QToolButton(OptionsWin)
+        self.DownloadPathBtn = QtWidgets.QToolButton(OptionsWin)
+
+        self.SaveBtn.setMaximumSize(QtCore.QSize(16777215, 28))
+        self.CancelBtn.setMaximumSize(QtCore.QSize(16777215, 28))
+        self.DefaultBtn.setMaximumSize(QtCore.QSize(16777215, 28))
+        self.IconsPathBtn.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.DownloadPathBtn.setMaximumSize(QtCore.QSize(30, 30))
+
+        self.IconsPathBtn.setMinimumSize(QtCore.QSize(30, 30))
+        self.DownloadPathBtn.setMinimumSize(QtCore.QSize(30, 30))
+
+        self.NoRadio.setChecked(True)
+        self.CancelBtn.setDefault(True)
+
+        self.IconsPathBtn.setText("...")
+        self.DownloadPathBtn.setText("...")
+        
+        self.YesRadio.setCursor(self.pointing_cursor)
+        self.NoRadio.setCursor(self.pointing_cursor)
+
 
         #_________________   LABELS   ________________________#
         self.IpLabel = QtWidgets.QLabel(OptionsWin)
-        self.IpLabel.setObjectName("IpLabel")
-        self.IpLabel.setGeometry(QtCore.QRect(30, 59, 120, 22))
-
         self.PortLabel = QtWidgets.QLabel(OptionsWin)
-        self.PortLabel.setGeometry(QtCore.QRect(30, 40, 120, 22))
-        self.PortLabel.setObjectName("PortLabel")
-
         self.FontLabel = QtWidgets.QLabel(OptionsWin)
-        self.FontLabel.setGeometry(QtCore.QRect(30, 8, 120, 22))
-        self.FontLabel.setObjectName("FontLabel")
-
-        self.IconsPathLabel = QtWidgets.QLabel(OptionsWin)
-        self.IconsPathLabel.setGeometry(QtCore.QRect(30, 89, 120, 22))
-        self.IconsPathLabel.setObjectName("IconsPathLabel")
-
-        self.DownloadPathLabel = QtWidgets.QLabel(OptionsWin)
-        self.DownloadPathLabel.setGeometry(QtCore.QRect(30, 119, 135, 22))
-        self.DownloadPathLabel.setObjectName("DownloadPathLabel")
-
+        self.LanguageLabel = QtWidgets.QLabel(OptionsWin)
         self.HomebrewLabel = QtWidgets.QLabel(OptionsWin)
-        self.HomebrewLabel.setGeometry(QtCore.QRect(30, 150, 110, 31))
-        self.HomebrewLabel.setObjectName("HomebrewLabel")
+        self.IconsPathLabel = QtWidgets.QLabel(OptionsWin)
+        self.DownloadPathLabel = QtWidgets.QLabel(OptionsWin)
 
-        self.FontObj.setPointSize(8)
-        self.EnableHbInfo = QtWidgets.QPlainTextEdit(OptionsWin)
-        self.EnableHbInfo.setGeometry(QtCore.QRect(270, 140, 171, 51))
-        self.EnableHbInfo.setFont(self.FontObj)
-        self.EnableHbInfo.setStyleSheet("color: rgb(255, 53, 53);")
-        self.EnableHbInfo.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.EnableHbInfo.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.EnableHbInfo.setReadOnly(True)
-        self.EnableHbInfo.setObjectName("EnableHbInfo")
 
         #_________________   INPUTS   ________________________#
-        self.Port = QtWidgets.QLineEdit(OptionsWin)
-        self.Port.setGeometry(QtCore.QRect(170, 40, 271, 22))
-        self.Port.setCursor(self.cursor)
-        self.Port.setMaxLength(8)
-        self.Port.setAlignment(QtCore.Qt.AlignCenter)
-        self.Port.setClearButtonEnabled(True)
-        self.Port.setObjectName("Port")
-
         self.Ip = QtWidgets.QLineEdit(OptionsWin)
-        self.Ip.setGeometry(QtCore.QRect(170, 59, 271, 22))
-        self.Ip.setCursor(self.cursor)
-        self.Ip.setMaxLength(28)
-        self.Ip.setAlignment(QtCore.Qt.AlignCenter)
-        self.Ip.setClearButtonEnabled(True)
-        self.Ip.setObjectName("Ip")
-
-        self.FontPicker = QtWidgets.QFontComboBox(OptionsWin)
-        self.FontPicker.setGeometry(QtCore.QRect(170, 8, 271, 22))
-        self.FontPicker.setFont(self.FontObj)
-        self.FontPicker.setCurrentFont(self.FontObj)
-        self.FontPicker.setEditable(False)
-        self.FontPicker.setFontFilters(QtWidgets.QFontComboBox.AllFonts)
-        self.FontPicker.setObjectName("FontPicker")
-
+        self.Port = QtWidgets.QSpinBox(OptionsWin)
+        self.Fonts = QtWidgets.QFontComboBox(OptionsWin)
         self.IconPath = QtWidgets.QLineEdit(OptionsWin)
-        self.IconPath.setGeometry(QtCore.QRect(170, 89, 241, 22))
-        self.IconPath.setCursor(self.cursor)
-        self.IconPath.setText("")
-        self.IconPath.setMaxLength(50)
-        self.IconPath.setAlignment(QtCore.Qt.AlignCenter)
-        self.IconPath.setReadOnly(True)
-        self.IconPath.setObjectName("IconPath")
-
+        self.Languages = QtWidgets.QComboBox(OptionsWin)
         self.DownloadPath = QtWidgets.QLineEdit(OptionsWin)
-        self.DownloadPath.setGeometry(QtCore.QRect(170, 119, 241, 22))
-        self.DownloadPath.setCursor(self.cursor)
-        self.DownloadPath.setText("")
-        self.DownloadPath.setMaxLength(50)
-        self.DownloadPath.setAlignment(QtCore.Qt.AlignCenter)
-        self.DownloadPath.setReadOnly(True)
-        self.DownloadPath.setObjectName("DownloadPath")
+        self.EnableHbInfo = QtWidgets.QPlainTextEdit(OptionsWin)
+
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHeightForWidth(self.Ip.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.Port.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.Fonts.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.IconPath.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.DownloadPath.sizePolicy().hasHeightForWidth())
+
+        self.Ip.setSizePolicy(sizePolicy)
+        self.Port.setSizePolicy(sizePolicy)
+        self.IconPath.setSizePolicy(sizePolicy)
+        self.DownloadPath.setSizePolicy(sizePolicy)
+
+        self.Languages.addItem("")
+        self.Languages.addItem("")
+        self.Languages.addItem("")
+        self.Languages.setFrame(False)
+        self.Languages.setEnabled(False)
+        self.Languages.setFont(self.FontObj)
+        self.Languages.setMaxVisibleItems(5)
+        self.Languages.setCursor(self.pointing_cursor)
+        self.Languages.setSizePolicy(sizePolicy)
+
+        self.Fonts.setFrame(False)
+        self.Fonts.setEditable(False)
+        self.Fonts.setFont(self.FontObj)
+        self.Fonts.setSizePolicy(sizePolicy)
+        self.Fonts.setCurrentFont(self.FontObj)
+
+
+        self.Ip.setFrame(False)
+        self.Ip.setMaxLength(22)
+        self.Ip.setFont(self.FontObj)
+        self.Ip.setClearButtonEnabled(True)
+        self.Ip.setCursor(self.pointing_cursor)
+        self.Ip.setAlignment(QtCore.Qt.AlignCenter)
         
-        #_________________   SIGNALS   ________________________#
+        self.Port.setFrame(False)
+        self.Port.setMaximum(99999)
+        self.Port.setFont(self.FontObj)
+        self.Port.setAlignment(QtCore.Qt.AlignCenter)
+        self.Port.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
+        self.Port.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+
+        paths = (self.IconPath, self.DownloadPath)
+        for path in paths:
+            path.setFrame(False)
+            path.setReadOnly(True)
+            path.setFont(self.FontObj)
+            path.setClearButtonEnabled(True)
+            path.setAlignment(QtCore.Qt.AlignCenter)
+            path.setStyleSheet("border-radius: 13px;")
+
+        self.EnableHbInfo.setEnabled(True)
+        self.EnableHbInfo.setReadOnly(True)
+        self.EnableHbInfo.setFont(self.FontObj)
+        self.EnableHbInfo.setFrameShape(QtWidgets.QFrame.Box)
+
+        max_40_height = QtCore.QSize(16777215, 40)
+        max_50_height = QtCore.QSize(16777215, 50)
+
+        self.Ip.setMaximumSize(max_40_height)
+        self.Port.setMaximumSize(max_40_height)
+        self.Fonts.setMaximumSize(max_50_height)
+        self.IconPath.setMaximumSize(max_40_height)
+        self.Languages.setMaximumSize(max_50_height)
+        self.DownloadPath.setMaximumSize(max_40_height)
+        self.EnableHbInfo.setMaximumSize(QtCore.QSize(16777215, 60))
+
+
+        #_________________   TAB ORDER   ________________________#
+        OptionsWin.setTabOrder(self.Fonts, self.Ip)
+        OptionsWin.setTabOrder(self.Ip, self.IconsPathBtn)
+        OptionsWin.setTabOrder(self.YesRadio, self.NoRadio)
+        OptionsWin.setTabOrder(self.SaveBtn, self.CancelBtn)
+        OptionsWin.setTabOrder(self.NoRadio, self.DefaultBtn)
+        OptionsWin.setTabOrder(self.DefaultBtn, self.SaveBtn)
+        OptionsWin.setTabOrder(self.DownloadPath, self.IconPath)
+        OptionsWin.setTabOrder(self.CancelBtn, self.EnableHbInfo)
+        OptionsWin.setTabOrder(self.DownloadPathBtn, self.YesRadio)
+        OptionsWin.setTabOrder(self.EnableHbInfo, self.DownloadPath)
+        OptionsWin.setTabOrder(self.IconsPathBtn, self.DownloadPathBtn)
+        spacerItem = QtWidgets.QSpacerItem(50, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+
+
+        #_________________   LAYOUTS   ________________________#
+        self.lineSeperator = QtWidgets.QFrame(OptionsWin)
+        self.lineSeperator.setFrameShape(QtWidgets.QFrame.HLine)
+        self.lineSeperator.setFrameShadow(QtWidgets.QFrame.Sunken)
+
+        self.TopLayout = QtWidgets.QGridLayout()
+        self.MainLayout = QtWidgets.QVBoxLayout()
+        self.FirstLayout = QtWidgets.QHBoxLayout()
+        self.BottomLayout = QtWidgets.QHBoxLayout()
+        self.SecondLayout = QtWidgets.QHBoxLayout()
+        self.HombrewLayout = QtWidgets.QHBoxLayout()
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(OptionsWin)
+
+        self.TopLayout.setVerticalSpacing(20)
+        self.TopLayout.setHorizontalSpacing(10)
+        self.TopLayout.setContentsMargins(-1, 10, -1, 10)
+
+        self.verticalLayout_2.addLayout(self.MainLayout)
+        
+        self.MainLayout.addLayout(self.TopLayout)
+        self.MainLayout.addWidget(self.lineSeperator)
+        self.MainLayout.addLayout(self.BottomLayout)
+        self.FirstLayout.addWidget(self.IconPath)
+        self.FirstLayout.addWidget(self.IconsPathBtn)
+        self.SecondLayout.addWidget(self.DownloadPath)
+        self.SecondLayout.addWidget(self.DownloadPathBtn)
+        
+        self.TopLayout.addWidget(self.Languages, 0, 1, 1, 1,)
+        self.TopLayout.addWidget(self.LanguageLabel, 0, 0, 1, 1)
+
+        self.TopLayout.addWidget(self.Fonts, 1, 1, 1, 1)
+        self.TopLayout.addWidget(self.FontLabel, 1, 0, 1, 1)
+        
+        self.TopLayout.addWidget(self.Ip, 2, 1, 1, 1)
+        self.TopLayout.addWidget(self.IpLabel, 2, 0, 1, 1)
+
+        self.TopLayout.addWidget(self.Port, 3, 1, 1, 1)
+        self.TopLayout.addWidget(self.PortLabel, 3, 0, 1, 1)
+
+        self.TopLayout.addLayout(self.FirstLayout, 4, 1, 1, 1)
+        self.TopLayout.addWidget(self.IconsPathLabel, 4, 0, 1, 1)
+
+        self.TopLayout.addLayout(self.SecondLayout, 5, 1, 1, 1)
+        self.TopLayout.addWidget(self.DownloadPathLabel, 5, 0, 1, 1)
+        
+        self.TopLayout.addLayout(self.HombrewLayout, 6, 1, 1, 1)
+        self.TopLayout.addWidget(self.HomebrewLabel, 6, 0, 1, 1)
+
+        self.BottomLayout.setContentsMargins(50, 0, 50, -1)
+        self.BottomLayout.addItem(spacerItem)
+        self.BottomLayout.addWidget(self.SaveBtn)
+        self.BottomLayout.addWidget(self.CancelBtn)
+        self.BottomLayout.addWidget(self.DefaultBtn)
+
+        self.HombrewLayout.addWidget(self.NoRadio)
+        self.HombrewLayout.addWidget(self.YesRadio)
+        self.HombrewLayout.addWidget(self.EnableHbInfo)
+
+
+        #_________________   DEFAULT VALUES   _____________________#
+        self.Port.setValue(int(self.userPort))
+        self.Ip.setPlaceholderText(self.userIp)
+        self.Fonts.setCurrentText(self.userFont)
+        self.IconPath.setPlaceholderText(self.userIPath)
+        self.DownloadPath.setPlaceholderText(self.userDPath)
+
+
+        #_________________   SIGNALS        _______________________#
         self.NoRadio.setChecked(True)
         if self.userHB == "True":
             self.YesRadio.setChecked(True)
-
-        self.WindowBtns.accepted.connect(
+        
+        self.SaveBtn.clicked.connect(
             lambda: self.save_cache(
-                self.FontPicker.currentText(),
+                self.Fonts.currentText(),
                 self.IconPath.text(),
                 self.DownloadPath.text(),
                 str(self.YesRadio.isChecked()),
@@ -142,30 +236,34 @@ class Ui(Settings):
                 self.Ip.text()
             )
         )
-        self.DownloadPathBtn.clicked.connect(lambda: self.get_path("download"))
+
+        self.DefaultBtn.clicked.connect(self.reset_to_defaults)
+        self.CancelBtn.clicked.connect(lambda: OptionsWin.close())
         self.IconsPathBtn.clicked.connect(lambda: self.get_path("icons"))
-        self.WindowBtns.rejected.connect(OptionsWin.close)
-        self.DefaultBtn.accepted.connect(self.reset_to_defaults)
+        self.DownloadPathBtn.clicked.connect(lambda: self.get_path("download"))
 
-        self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(OptionsWin)
+        self.translate_ui()
 
-    def retranslateUi(self):
+
+    def translate_ui(self):
+        """ To translate the text in different language for future update """
         _translate = QtCore.QCoreApplication.translate
-        self.NoRadio.setText(_translate("OptionsWin", "Off"))
-        self.YesRadio.setText(_translate("OptionsWin", "On"))
-        self.IconsPathBtn.setText(_translate("OptionsWin", "..."))
-        self.IpLabel.setText(_translate("OptionsWin", "Default IP"))
-        self.DownloadPathBtn.setText(_translate("OptionsWin", "..."))
-        self.PortLabel.setText(_translate("OptionsWin", "Default Port"))
+        self.Languages.setCurrentIndex(1)
+        self.NoRadio.setText(_translate("OptionsWin", "OFF"))
+        self.YesRadio.setText(_translate("OptionsWin", "ON"))
+        self.SaveBtn.setText(_translate("OptionsWin", "SAVE"))
+        self.CancelBtn.setText(_translate("OptionsWin", "CANCEL"))
+        self.IpLabel.setText(_translate("OptionsWin", "DEFAULT IP"))
+        self.DefaultBtn.setText(_translate("OptionsWin", "DEFAULT"))
+        self.PortLabel.setText(_translate("OptionsWin", "DEFAULT PORT"))
         self.FontLabel.setText(_translate("OptionsWin", "Default Font"))
-        self.HomebrewLabel.setText(_translate("OptionsWin", "Detect Homebrew"))
-        self.IconsPathLabel.setText(_translate("OptionsWin", "Default Icon Path"))
-        self.DownloadPathLabel.setText(_translate("OptionsWin", "Default Download Path"))
-        self.EnableHbInfo.setPlainText(_translate("OptionsWin", "Allow Homebrew / Apps icons\n to be detected(This will take longer to cache)",))
+        self.HomebrewLabel.setText(_translate("OptionsWin", "ENABLE HOMEBREW"))
+        self.LanguageLabel.setText(_translate("OptionsWin", "DEFAULT LANGUAGE"))
+        self.IconsPathLabel.setText(_translate("OptionsWin", "DEFAULT ICONS PATH"))
+        self.DownloadPathLabel.setText(_translate("OptionsWin", "DEFAULT DOWNLOAD PATH"))
+        self.EnableHbInfo.setPlainText(_translate("OptionsWin", "NOTE: Enabling this option will allow you to change homebrew icons but the caching will take longer depends on how many homebrews you have installed."))
 
-        self.Ip.setPlaceholderText(_translate("OptionsWin", self.userIp))
-        self.Port.setPlaceholderText(_translate("OptionsWin", self.userPort))
-        self.FontPicker.setCurrentText(_translate("OptionsWin", self.userFont))
-        self.IconPath.setPlaceholderText(_translate("OptionsWin", self.userIPath))
-        self.DownloadPath.setPlaceholderText(_translate("OptionsWin", self.userDPath))
+        self.Languages.setItemText(0, _translate("OptionsWin", "Arabic"))
+        self.Languages.setItemText(1, _translate("OptionsWin", "English"))
+        self.Languages.setItemText(2, _translate("OptionsWin", "Spanish"))

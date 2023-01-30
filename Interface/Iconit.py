@@ -182,7 +182,6 @@ class Ui(Iconit):
         spacerItem11 = SpacerMinExp
 
         self.GridLayout = QtWidgets.QGridLayout()
-        self.GridLayout.setObjectName("GridLayout")
         self.GridLayout.addItem(spacerItem3, 1, 2, 1, 1)
         self.GridLayout.addItem(spacerItem2, 2, 3, 1, 1)
         self.GridLayout.addItem(spacerItem, 2, 0, 1, 1)
@@ -200,14 +199,10 @@ class Ui(Iconit):
         self.GridLayout.addWidget(self.AvatarIconsRadio, 12, 2, 1, 1)
 
         self.VerticalLayout4 = QtWidgets.QVBoxLayout(self.TransparentLayer)
-        self.VerticalLayout4.setObjectName("VerticalLayout4")
         self.VerticalLayout5 = QtWidgets.QVBoxLayout(self.mainWidget)
-        self.VerticalLayout5.setObjectName("VerticalLayout5")
         self.VerticalLayout6 = QtWidgets.QVBoxLayout()
-        self.VerticalLayout6.setObjectName("VerticalLayout6")
 
         self.GridLayout2 = QtWidgets.QGridLayout()
-        self.GridLayout2.setObjectName("GridLayout2")
         self.GridLayout2.setContentsMargins(-1, 15, -1, -1)
         self.GridLayout2.addItem(spacerItem5, 0, 2, 1, 1)
         self.GridLayout2.addItem(spacerItem7, 2, 0, 1, 1)
@@ -223,11 +218,11 @@ class Ui(Iconit):
         self.GridLayout2.addWidget(self.OnlineIconsLink, 6, 2, 1, 1)
         self.VerticalLayout4.addItem(spacerItem11)
         self.VerticalLayout5.addWidget(self.TitleLink)
-        self.VerticalLayout5.addWidget(self.TransparentLayer)
         self.VerticalLayout6.addWidget(self.StatusLabel)
         self.VerticalLayout6.addLayout(self.GridLayout)
         self.VerticalLayout6.addLayout(self.GridLayout2)
         self.VerticalLayout4.addLayout(self.VerticalLayout6)
+        self.VerticalLayout5.addWidget(self.TransparentLayer)
 
         # ______________   SETTINGS TREE   _____________________ #
         window.setCentralWidget(self.mainWidget)
@@ -329,7 +324,7 @@ class Ui(Iconit):
 
 
     def open_options(self):
-        self.window = QtWidgets.QDialog()
+        self.window = QtWidgets.QWidget()
         self.ui = Settings.Ui()
         self.ui.setupUi(self.window)
         self.window.show()
