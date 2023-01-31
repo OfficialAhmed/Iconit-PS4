@@ -46,7 +46,7 @@ class Main(Common):
             self.ip = self.ip_input.text()
             self.port = self.port_input.text()
             
-            self.set_ip_port(self.ip, self.port) 
+            self.set_ip_port(self.ip, self.port)
             self.settings.save_cache(ip = self.ip, port = self.port)
 
             is_valid = False

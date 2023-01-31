@@ -1,0 +1,34 @@
+{
+    "Language":"English",
+
+    "Languages":{
+        "English" : "English",
+        "Arabic" : "Arabic"
+    },
+    
+    "Settings":{
+        "WindowTitle": "Settings",
+        "NoRadio":"OFF",
+        "YesRadio":"ON",
+        "SaveBtn":"SAVE",
+        "CancelBtn":"CANCEL",
+        "IpLabel":"DEFAULT IP",
+        "PortLabel":"DEFAULT PORT",
+        "DefaultBtn": "DEFAULT",
+        "FontLabel": "Default Font",
+        "HomebrewLabel": "ENABLE HOMEBREW",
+        "LanguageLabel": "DEFAULT LANGUAGE",
+        "IconsPathLabel": "DEFAULT ICONS PATH",
+        "DownloadPathLabel": "DEFAULT DOWNLOAD PATH",
+        "EnableHbInfo": "NOTE: Enabling this option will allow you to change homebrew icons but the caching will take longer depends on how many homebrews you have installed."
+    },
+
+    "Iconit":{
+        
+    },
+
+    "Icons":{
+        
+    }
+
+}

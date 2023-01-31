@@ -26,13 +26,15 @@ class Common:
             - (Access attribute value) via self call
     """
 
-    #__________  if pref.ini not found use these _________#
+    #__________  if Settings.json not found use these _________#
+    # FIXME: reconstruct this block to call the defaults from settings moduel (self.default_settings)
     userFont = "Arial"
     userPort = "21"
     userIp = "192.168.1.1"
     userIPath = os.getcwd()
     userDPath = os.getcwd()
     userHB = "False"
+    userLanguage = "English"
     
     #__________  shared attrs _________#
     IP = "not accepted"
@@ -74,15 +76,18 @@ class Common:
         self.userPort = Common.userPort
         self.userIPath = Common.userIPath
         self.userDPath = Common.userDPath
+        self.userLanguage = Common.userLanguage
 
         self.app_root_path = f"{os.getcwd()}\\"
-        self.pref_path = f"{self.app_root_path}Data\\Pref\\"
-        self.temp_path = f"{self.app_root_path}Data\\Cache\\"
+        self.data_path = f"{self.app_root_path}Data\\"
+        self.pref_path = f"{self.data_path}Pref\\"
+        self.temp_path = f"{self.data_path}Cache\\"
+        self.language_path = f"{self.data_path}Language\\"
+        self.appmeta_path = f"{self.data_path}User\\appmeta\\"
         self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
-        self.appmeta_path = f"{self.app_root_path}data\\User\\appmeta\\"
+        self.database_file = f"{self.temp_path}Database.json"
         self.cache_path = f"{self.metadata_path}game\\"
         self.game_cache_file = f"{self.cache_path}games.json"
-        self.database_file = f"{self.temp_path}Title\\database.json"
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
 
@@ -100,9 +105,82 @@ class Common:
         self.backup_path = f"{self.constant.ICONS_BACKUP_NAME}\\"
 
         self.logging = self.html.internal_log_msg("ps4", self.IP, 12, "font-weight:600; font-style:italic;")
-
         self.update_pref()
-   
+    
+
+    def set_user_pref(self, ip, port, font, i_path, d_path, hb, lang):
+        self.userIp = ip
+        self.userHB = hb
+        self.userFont = font
+        self.userPort = port
+        self.userIPath = i_path
+        self.userDPath = d_path
+        self.userLanguage = lang
+        Common.userIp = ip
+        Common.userHB = hb
+        Common.userFont = font
+        Common.userPort = port
+        Common.userIPath = i_path
+        Common.userDPath = d_path
+        Common.userLanguage = lang
+
+
+    def update_pref(self):
+        self.settings.set_defaults(
+            self.userIp,
+            self.userHB,
+            self.userFont,
+            self.userPort,
+            self.userIPath,
+            self.userDPath,
+            self.userLanguage,
+            self.temp_path,
+            self.app_root_path
+        )
+        settings_cache = self.settings.update_cache(self.temp_path)
+
+        ip = settings_cache.get("ip")
+        hb = settings_cache.get("homebrew")
+        font = settings_cache.get("font")
+        port = settings_cache.get("port")
+        lang = settings_cache.get("language")
+        Ipath = settings_cache.get("icons_path")
+        Dpath = settings_cache.get("download_path")
+        self.set_user_pref(ip, port, font, Ipath, Dpath, hb, lang)
+        
+
+    def logs(self, description, Type):
+        try: error_file = open("Logs.txt", "a")
+        except: error_file = open("Logs.txt", "w+")
+
+        error_file.write(
+            f"{str(datetime.datetime.now())}| _DEV {Type}: {str(description)} \n"
+        )
+
+
+    def get_server_directories(self) -> tuple:
+        " This is a solution since PS4 ftp doesnt support nlst()."
+        result = []
+        self.ftp.retrlines("LIST ", lambda line : result.append(line.split(" ")[-1]))
+        return tuple(result)
+
+
+    def download_data_from_server(self, file_name, file_path_with_extension) -> None:
+        with open(file_path_with_extension, "wb") as downloaded_file:
+            self.ftp.retrbinary("RETR " + file_name, downloaded_file.write, 65536)
+
+
+    def get_translation(self, lang, window_to_translate):
+        # func call from Settings module
+        return self.settings.get_translation(lang, window_to_translate)
+
+
+    def get_language(self):
+        return Common.userLanguage
+
+    def set_language(self, lang):
+        Common.userLanguage = lang
+
     def get_window(self):
         return Common.window
 
@@ -121,16 +199,6 @@ class Common:
     def get_ftp(self):
         return Common.connection
         
-    def get_server_directories(self) -> tuple:
-        " This is a solution since PS4 ftp doesnt support nlst()."
-        result = []
-        self.ftp.retrlines("LIST ", lambda line : result.append(line.split(" ")[-1]))
-        return tuple(result)
-
-    def download_data_from_server(self, file_name, file_path_with_extension) -> None:
-        with open(file_path_with_extension, "wb") as downloaded_file:
-            self.ftp.retrbinary("RETR " + file_name, downloaded_file.write, 65536)
-
     def set_browsed_bg_img_path(self, path:str):
         Common.browsed_bg_img_path = path
 
@@ -173,33 +241,10 @@ class Common:
     def get_selected_mode(self):
         return Common.selected_mode
 
-    def update_pref(self):
-        self.settings.set_defaults(
-            self.userIp,
-            self.userHB,
-            self.userFont,
-            self.userPort,
-            self.userIPath,
-            self.userDPath,
-            self.pref_path,
-            self.app_root_path
-        )
-        settings_cache = self.settings.update_cache(self.pref_path)
-
-        font = settings_cache[0]
-        port = settings_cache[1]
-        ip = settings_cache[2]
-        Ipath = settings_cache[3]
-        Dpath = settings_cache[4]
-        hb = settings_cache[5]
-        self.set_user_pref(ip, port, font, Ipath, Dpath, hb)
-        
     def set_ip_port(self, ip, port) -> None:
         """ Make Ip and Port sharable between classes """
-        self.IP = ip
-        self.Port = port
-        Common.IP = ip
-        Common.Port = port
+        self.IP, self.Port = ip, port
+        Common.IP, Common.Port = ip, port
 
     def get_ip(self):
         return Common.IP
@@ -208,61 +253,43 @@ class Common:
         return int(Common.Port)
         
     def set_screen_size(self, w, h) -> None:
-        self.screen_w = w
-        self.screen_h = h
-        Common.screen_w = w
-        Common.screen_h = h
+        self.screen_w, Common.screen_w = w, w
+        self.screen_h, Common.screen_h = h, h
 
-    def set_user_pref(self, ip, port, font, i_path, d_path, hb):
-        self.userIp = ip
-        self.userHB = hb
-        self.userFont = font
-        self.userPort = port
-        self.userIPath = i_path
-        self.userDPath = d_path
-        Common.userIp = ip
-        Common.userHB = hb
-        Common.userFont = font
-        Common.userPort = port
-        Common.userIPath = i_path
-        Common.userDPath = d_path
 
-    def logs(self, description, Type):
-        try:
-            error_file = open("Logs.txt", "a")
-        except:
-            error_file = open("Logs.txt", "w+")
-
-        error_file.write(
-            f"{str(datetime.datetime.now())}| _DEV {Type}: {str(description)} \n"
-        )
-    
 class html:
     def __init__(self) -> None:
         self.start = "<html><head/><body>"
         self.end = "</p></body></html>"
         self.constant = Constant()
 
+
     def p_tag(self, cstm_style, txt=None) -> str:
         """  generate Paragraph """
         return f'<p align="center" style="{cstm_style}">{txt}</p>'
+
 
     def a_tag(self, href:str, txt:str, color:str, size:int, cstm_style: str = "", align: str = "center", font="Arial") -> str:
         """  generate Link """
         return f'{self.start}<p align="{align}"><a href="{href}"><span style="text-decoration: underline; font-size:{size}pt; color:{color}; {cstm_style}; font-family: {font}">{txt}</span></a>{self.end}'
         
+
     def span_tag(self, txt:str, color:str, size:int, align:str = "center", weight = 700, font="Arial") -> str:
         """  generate Text """
         return f'{self.start}<p align="{align}"><span style=" font-size:{size}pt; font-weight:{weight}; color:{color}; font-family: {font}">{txt}</span>{self.end}'
 
+
     def tooltip_tag(self, txt:str) -> str:
         return f"<p style='color:Black'>{txt}</p>"
+
 
     def bg_image(self, url:str) -> str:
         return f"background-image: url({url});"
 
+
     def border_image(self, url:str) -> str:
         return f"border-image: url({url});"
+
 
     def internal_log_msg(self, state, msg, size=10, custome_style="") -> str:
         """ generate a logging line as <p> tag"""
@@ -275,6 +302,7 @@ class html:
 
         style = f"margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:{size}pt; color:{color[state]}; {custome_style}"
         return self.p_tag(style, f"[{state.upper()}] : {msg}")
+
 
 class Constant:
     """ Read-only class """
@@ -293,12 +321,15 @@ class Constant:
         "orange":"#ffaa00",
     }
 
+
     def __init__(self) -> None:
         # init the self parameter
         pass
 
+
     def __setattr__(self, __name: str, __value: any) -> None:
         raise AttributeError(f"READ-ONLY: Class 'Constant' allow getters only. Occured while trying to set [{__name}]")
         
+
     def get_color(self, x:str) -> str:
         return Constant.HASH_COLOR[x]

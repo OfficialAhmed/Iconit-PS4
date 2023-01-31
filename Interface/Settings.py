@@ -5,33 +5,48 @@ from Module.Settings import Main as Settings
 class Ui(Settings):
     def __init__(self) -> None:
         super().__init__()
+        self.cache = self.get_cache()
+        self.cached_language: str = self.cache.get("language")
+        self.supported_languages: dict = self.get_supported_languages()
+        self.translated_languages: dict = self.get_translation(self.cached_language, "Languages")
+        self.translated_languages_in_english = {key: value for value, key in self.translated_languages.items()}
+
+
+    def get_cache(self) -> dict:
+        with open(f"{self.temp_path}Settings.json", encoding="utf-8") as file:
+            return json.load(file)
+
+
+    def get_supported_languages(self) -> dict:
+        """ Fetch supported languages from the English json """
+        with open(f"{self.language_path}English.json") as file:
+            return json.load(file).get("Languages")
+
 
     def setupUi(self, OptionsWin):
-        # Save window for the methods in Module/Settings
         self.OptionsWin = OptionsWin 
-        OptionsWin.setObjectName("OptionsWin")
-        OptionsWin.setWindowTitle("Options")
-        OptionsWin.resize(675, 380)
+        self.OptionsWin.setObjectName("OptionsWin")
+        self.OptionsWin.resize(680, 400)
 
 
         #_________________   VISUALS   ________________________#
         self.FontObj = QtGui.QFont()
         self.FontObj.setFamily(self.userFont)
         self.FontObj.setPointSize(10)
-        OptionsWin.setFont(self.FontObj)
+        self.OptionsWin.setFont(self.FontObj)
 
         self.arrow_cursor = QtGui.QCursor(QtCore.Qt.ArrowCursor)
         self.pointing_cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         
 
         #_________________   BUTTONS   ________________________#
-        self.SaveBtn = QtWidgets.QPushButton(OptionsWin)
-        self.NoRadio = QtWidgets.QRadioButton(OptionsWin)
-        self.YesRadio = QtWidgets.QRadioButton(OptionsWin)
-        self.CancelBtn = QtWidgets.QPushButton(OptionsWin)
-        self.DefaultBtn = QtWidgets.QPushButton(OptionsWin)
-        self.IconsPathBtn = QtWidgets.QToolButton(OptionsWin)
-        self.DownloadPathBtn = QtWidgets.QToolButton(OptionsWin)
+        self.SaveBtn = QtWidgets.QPushButton(self.OptionsWin)
+        self.NoRadio = QtWidgets.QRadioButton(self.OptionsWin)
+        self.YesRadio = QtWidgets.QRadioButton(self.OptionsWin)
+        self.CancelBtn = QtWidgets.QPushButton(self.OptionsWin)
+        self.DefaultBtn = QtWidgets.QPushButton(self.OptionsWin)
+        self.IconsPathBtn = QtWidgets.QToolButton(self.OptionsWin)
+        self.DownloadPathBtn = QtWidgets.QToolButton(self.OptionsWin)
 
         self.SaveBtn.setMaximumSize(QtCore.QSize(16777215, 28))
         self.CancelBtn.setMaximumSize(QtCore.QSize(16777215, 28))
@@ -53,23 +68,23 @@ class Ui(Settings):
 
 
         #_________________   LABELS   ________________________#
-        self.IpLabel = QtWidgets.QLabel(OptionsWin)
-        self.PortLabel = QtWidgets.QLabel(OptionsWin)
-        self.FontLabel = QtWidgets.QLabel(OptionsWin)
-        self.LanguageLabel = QtWidgets.QLabel(OptionsWin)
-        self.HomebrewLabel = QtWidgets.QLabel(OptionsWin)
-        self.IconsPathLabel = QtWidgets.QLabel(OptionsWin)
-        self.DownloadPathLabel = QtWidgets.QLabel(OptionsWin)
+        self.IpLabel = QtWidgets.QLabel(self.OptionsWin)
+        self.PortLabel = QtWidgets.QLabel(self.OptionsWin)
+        self.FontLabel = QtWidgets.QLabel(self.OptionsWin)
+        self.LanguageLabel = QtWidgets.QLabel(self.OptionsWin)
+        self.HomebrewLabel = QtWidgets.QLabel(self.OptionsWin)
+        self.IconsPathLabel = QtWidgets.QLabel(self.OptionsWin)
+        self.DownloadPathLabel = QtWidgets.QLabel(self.OptionsWin)
 
 
         #_________________   INPUTS   ________________________#
-        self.Ip = QtWidgets.QLineEdit(OptionsWin)
-        self.Port = QtWidgets.QSpinBox(OptionsWin)
-        self.Fonts = QtWidgets.QFontComboBox(OptionsWin)
-        self.IconPath = QtWidgets.QLineEdit(OptionsWin)
-        self.Languages = QtWidgets.QComboBox(OptionsWin)
-        self.DownloadPath = QtWidgets.QLineEdit(OptionsWin)
-        self.EnableHbInfo = QtWidgets.QPlainTextEdit(OptionsWin)
+        self.Ip = QtWidgets.QLineEdit(self.OptionsWin)
+        self.Port = QtWidgets.QSpinBox(self.OptionsWin)
+        self.Fonts = QtWidgets.QFontComboBox(self.OptionsWin)
+        self.IconPath = QtWidgets.QLineEdit(self.OptionsWin)
+        self.Languages = QtWidgets.QComboBox(self.OptionsWin)
+        self.DownloadPath = QtWidgets.QLineEdit(self.OptionsWin)
+        self.EnableHbInfo = QtWidgets.QPlainTextEdit(self.OptionsWin)
 
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHeightForWidth(self.Ip.sizePolicy().hasHeightForWidth())
@@ -83,9 +98,6 @@ class Ui(Settings):
         self.IconPath.setSizePolicy(sizePolicy)
         self.DownloadPath.setSizePolicy(sizePolicy)
 
-        self.Languages.addItem("")
-        self.Languages.addItem("")
-        self.Languages.addItem("")
         self.Languages.setFrame(False)
         self.Languages.setFont(self.FontObj)
         self.Languages.setMaxVisibleItems(5)
@@ -140,22 +152,22 @@ class Ui(Settings):
 
 
         #_________________   TAB ORDER   ________________________#
-        OptionsWin.setTabOrder(self.Fonts, self.Ip)
-        OptionsWin.setTabOrder(self.Ip, self.IconsPathBtn)
-        OptionsWin.setTabOrder(self.YesRadio, self.NoRadio)
-        OptionsWin.setTabOrder(self.SaveBtn, self.CancelBtn)
-        OptionsWin.setTabOrder(self.NoRadio, self.DefaultBtn)
-        OptionsWin.setTabOrder(self.DefaultBtn, self.SaveBtn)
-        OptionsWin.setTabOrder(self.DownloadPath, self.IconPath)
-        OptionsWin.setTabOrder(self.CancelBtn, self.EnableHbInfo)
-        OptionsWin.setTabOrder(self.DownloadPathBtn, self.YesRadio)
-        OptionsWin.setTabOrder(self.EnableHbInfo, self.DownloadPath)
-        OptionsWin.setTabOrder(self.IconsPathBtn, self.DownloadPathBtn)
+        self.OptionsWin.setTabOrder(self.Fonts, self.Ip)
+        self.OptionsWin.setTabOrder(self.Ip, self.IconsPathBtn)
+        self.OptionsWin.setTabOrder(self.YesRadio, self.NoRadio)
+        self.OptionsWin.setTabOrder(self.SaveBtn, self.CancelBtn)
+        self.OptionsWin.setTabOrder(self.NoRadio, self.DefaultBtn)
+        self.OptionsWin.setTabOrder(self.DefaultBtn, self.SaveBtn)
+        self.OptionsWin.setTabOrder(self.DownloadPath, self.IconPath)
+        self.OptionsWin.setTabOrder(self.CancelBtn, self.EnableHbInfo)
+        self.OptionsWin.setTabOrder(self.DownloadPathBtn, self.YesRadio)
+        self.OptionsWin.setTabOrder(self.EnableHbInfo, self.DownloadPath)
+        self.OptionsWin.setTabOrder(self.IconsPathBtn, self.DownloadPathBtn)
         spacerItem = QtWidgets.QSpacerItem(50, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
 
 
         #_________________   LAYOUTS   ________________________#
-        self.lineSeperator = QtWidgets.QFrame(OptionsWin)
+        self.lineSeperator = QtWidgets.QFrame(self.OptionsWin)
         self.lineSeperator.setFrameShape(QtWidgets.QFrame.HLine)
         self.lineSeperator.setFrameShadow(QtWidgets.QFrame.Sunken)
 
@@ -165,7 +177,7 @@ class Ui(Settings):
         self.BottomLayout = QtWidgets.QHBoxLayout()
         self.SecondLayout = QtWidgets.QHBoxLayout()
         self.HombrewLayout = QtWidgets.QHBoxLayout()
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(OptionsWin)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.OptionsWin)
 
         self.TopLayout.setVerticalSpacing(20)
         self.TopLayout.setHorizontalSpacing(10)
@@ -221,7 +233,7 @@ class Ui(Settings):
         self.DownloadPath.setPlaceholderText(self.userDPath)
 
 
-        #_________________   SIGNALS        _______________________#
+        #_________________      SIGNALS     _______________________#
         self.NoRadio.setChecked(True)
         if self.userHB == "True":
             self.YesRadio.setChecked(True)
@@ -234,42 +246,59 @@ class Ui(Settings):
                 str(self.YesRadio.isChecked()),
                 self.Port.text(),
                 self.Ip.text(),
-                self.Languages.currentText()
+                self.supported_languages.get(
+                    self.translated_languages_in_english.get( 
+                        self.Languages.currentText()
+                    )
+                )
             )
         )
 
-        self.DefaultBtn.clicked.connect(self.reset_to_defaults)
-        self.CancelBtn.clicked.connect(lambda: OptionsWin.close())
-        self.IconsPathBtn.clicked.connect(lambda: self.get_path("icons"))
-        self.DownloadPathBtn.clicked.connect(lambda: self.get_path("download"))
+        self.CancelBtn.clicked.connect(
+            lambda: self.OptionsWin.close()
+        )
+        
+        self.IconsPathBtn.clicked.connect(
+            lambda: self.get_path("icons")
+        )
 
-        QtCore.QMetaObject.connectSlotsByName(OptionsWin)
+        self.DownloadPathBtn.clicked.connect(
+            lambda: self.get_path("download")
+        )
+
+        self.DefaultBtn.clicked.connect(self.reset_to_defaults)
+
+        QtCore.QMetaObject.connectSlotsByName(self.OptionsWin)
         self.translate_ui()
 
-    def get_cache(self) -> dict:
-        with open(f"{self.temp_path}Settings.json", encoding="utf-8") as file:
-            return json.load(file)
 
     def translate_ui(self):
-        cache = self.get_cache()
-        content = self.get_translation(cache.get("language"), "Settings")
+        translated_content: dict = self.get_translation(self.cached_language, "Settings")
+        self._translate = QtCore.QCoreApplication.translate
 
-        _translate = QtCore.QCoreApplication.translate
-        self.Languages.setCurrentText(cache.get("Language"))
-        self.NoRadio.setText(_translate("OptionsWin", content.get("NoRadio")))
-        self.YesRadio.setText(_translate("OptionsWin", content.get("YesRadio")))
-        self.SaveBtn.setText(_translate("OptionsWin", content.get("SaveBtn")))
-        self.CancelBtn.setText(_translate("OptionsWin", content.get("CancelBtn")))
-        self.IpLabel.setText(_translate("OptionsWin", content.get("YesRadio")))
-        self.DefaultBtn.setText(_translate("OptionsWin", "DEFAULT"))
-        self.PortLabel.setText(_translate("OptionsWin", "DEFAULT PORT"))
-        self.FontLabel.setText(_translate("OptionsWin", "Default Font"))
-        self.HomebrewLabel.setText(_translate("OptionsWin", "ENABLE HOMEBREW"))
-        self.LanguageLabel.setText(_translate("OptionsWin", "DEFAULT LANGUAGE"))
-        self.IconsPathLabel.setText(_translate("OptionsWin", "DEFAULT ICONS PATH"))
-        self.DownloadPathLabel.setText(_translate("OptionsWin", "DEFAULT DOWNLOAD PATH"))
-        self.EnableHbInfo.setPlainText(_translate("OptionsWin", "NOTE: Enabling this option will allow you to change homebrew icons but the caching will take longer depends on how many homebrews you have installed."))
+        self.translate_dropdown_list_items()
+        
+        self.NoRadio.setText(self._translate("OptionsWin", translated_content.get("NoRadio")))
+        self.YesRadio.setText(self._translate("OptionsWin", translated_content.get("YesRadio")))
+        self.SaveBtn.setText(self._translate("OptionsWin", translated_content.get("SaveBtn")))
+        self.CancelBtn.setText(self._translate("OptionsWin", translated_content.get("CancelBtn")))
+        self.IpLabel.setText(self._translate("OptionsWin", translated_content.get("IpLabel")))
+        self.DefaultBtn.setText(self._translate("OptionsWin", translated_content.get("DefaultBtn")))
+        self.PortLabel.setText(self._translate("OptionsWin", translated_content.get("PortLabel")))
+        self.FontLabel.setText(self._translate("OptionsWin", translated_content.get("FontLabel")))
+        self.HomebrewLabel.setText(self._translate("OptionsWin", translated_content.get("HomebrewLabel")))
+        self.LanguageLabel.setText(self._translate("OptionsWin", translated_content.get("LanguageLabel")))
+        self.IconsPathLabel.setText(self._translate("OptionsWin", translated_content.get("IconsPathLabel")))
+        self.DownloadPathLabel.setText(self._translate("OptionsWin", translated_content.get("DownloadPathLabel")))
+        self.EnableHbInfo.setPlainText(self._translate("OptionsWin", translated_content.get("EnableHbInfo")))
+        self.OptionsWin.setWindowTitle(self._translate("OptionsWin", translated_content.get("WindowTitle")))
 
-        self.Languages.setItemText(0, _translate("OptionsWin", "Arabic"))
-        self.Languages.setItemText(1, _translate("OptionsWin", "English"))
-        self.Languages.setItemText(2, _translate("OptionsWin", "Spanish"))
+
+    def translate_dropdown_list_items(self) -> None:
+        """ Translate the languages dropdown list according to the default language chosen """
+        
+        for index, language in enumerate(self.supported_languages):
+            self.Languages.addItem(self.translated_languages.get(language))
+            
+            if language == self.cached_language:
+                self.Languages.setCurrentIndex(index)

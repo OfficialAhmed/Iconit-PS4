@@ -274,7 +274,7 @@ class Ui(Iconit):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.PortInput.setText(_translate("window", self.userPort))
+        self.PortInput.setText(_translate("window", str(self.userPort)))
         self.GameIconsRadio.setText(_translate("window", "Game Icon/Pic"))
         self.SystemIconsRadio.setText(_translate("window", "System Icons [Disabled]"))
         self.AvatarIconsRadio.setText(_translate("window", "Profile Avatar [Disabled]"))
@@ -302,10 +302,11 @@ class Ui(Iconit):
 
         self.ConnectBtn.setShortcut("Return")
 
-        # Autofill cached IP & port from pref.ini
+        # Update the cache and set following values from Settings.json 
         cache = self.settings.update_cache(self.pref_path)
-        self.PortInput.setText(cache[1])
-        self.IpInput.setText(cache[2])
+        self.PortInput.setText(cache.get("port"))
+        self.IpInput.setText(cache.get("ip"))
+        self.set_language(cache.get("language"))
 
         """
         ###########################################

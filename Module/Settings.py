@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-import os
+import os, json
 
 class Main:
     """
@@ -15,11 +15,30 @@ class Main:
     userPort = None
     userIPath = None
     userDPath = None
+    userLanguage = None
 
-    pref_location = None
+    temp_path = None
     application_location = None
-    
-    def set_defaults(self, Ip, HB, Font, Port, IPath, DPath, pref, loc) -> None:
+
+
+    def __init__(self) -> None:
+        app_path = os.getcwd()
+        self.app_root_path = f"{app_path}\\"
+        self.data_path = f"{self.app_root_path}Data\\"
+        self.language_path = f"{self.data_path}Language\\"
+        self.temp_path = f"{self.data_path}Cache\\"
+
+        self.default_settings = {"font":"Arial", "port":"21", "ip":"", "icons_path":app_path, "download_path":app_path, "homebrew":"False", "language":"English"}
+
+
+    def get_translation(self, lang:str, fetch:str) -> dict:
+        """ Get info from tranlated json files. (lang):represent the json name to fetch data from """
+        file = open(f"{self.language_path}{lang}.json", encoding="utf-8")
+        read = json.load(file)
+        return read.get(fetch)
+
+
+    def set_defaults(self, Ip, HB, Font, Port, IPath, DPath, lang, cache_path, loc) -> None:
         """ Make attributes public for other classes """
         Main.userIp, self.userIp = Ip, Ip
         Main.userHB, self.userHB = HB, HB
@@ -27,59 +46,71 @@ class Main:
         Main.userPort, self.userPort = Port, Port
         Main.userIPath, self.userIPath = IPath, IPath
         Main.userDPath, self.userDPath = DPath, DPath
-        Main.pref_location, self.pref_location = pref, pref
+        Main.userLanguage, self.userLanguage = lang, lang
+
+        Main.temp_path, self.temp_path = cache_path, cache_path
         Main.application_location, self.application_location = loc, loc
 
+
     def reset_to_defaults(self):
-        """ overwrite external file (pref.ini) by default settings """
+        """ overwrite external file (Settings.json) by default settings """
         try:
-            with open(f"{self.pref_location}pref.ini", "w+") as file:
-                default_data = f"F:Arial\nP:21\nIP:\nIPath:{os.getcwd()}\nDPath:{os.getcwd()}\nHB:False"
-                file.write(default_data)
-            self.update_cache(self.pref_location)
+            with open(f"{self.temp_path}Settings.json", "w+") as file:
+                json.dump(self.default_settings, file)
+
+            self.update_cache(self.temp_path)
             self.OptionsWin.close()
         except: pass
 
-    def update_cache(self, pref_location) -> tuple:
-        """ Update the class's cache from external file (pref.ini) & return attributes"""
+
+    def update_cache(self, cache_path) -> dict:
+        """ Update the class's cache from external file (Settings.json) & return attributes"""
+
         try:
-            with open(f"{pref_location}pref.ini") as file:
-                content = file.readlines()
-                Main.userFont, self.userFont = content[0][2:-1], content[0][2:-1]
-                Main.userPort, self.userPort = content[1][2:-1], content[1][2:-1]
-                Main.userIp, self.userIp = content[2][3:-1], content[2][3:-1]
-                Main.userIPath, self.userIPath = content[3][6:-1], content[3][6:-1]
-                Main.userDPath, self.userDPath = content[4][6:-1], content[4][6:-1]
-                Main.userHB, self.userHB = content[5][3:].strip(), content[5][3:].strip()
+            with open(f"{cache_path}Settings.json", encoding="utf-8") as file:
+                content: dict = json.load(file)
+                ip = content.get("ip")
+                font = content.get("font")
+                port = content.get("port")
+                homebrew = content.get("homebrew")
+                language = content.get("language")
+                icons_path = content.get("icons_path")
+                donwload_path = content.get("donwload_path")
+
+                Main.userIp, self.userIp = ip, ip
+                Main.userFont, self.userFont = font, font
+                Main.userPort, self.userPort = port, port
+                Main.userHB, self.userHB = homebrew, homebrew
+                Main.userLanguage, self.userLanguage = language, language
+                Main.userIPath, self.userIPath = icons_path, icons_path
+                Main.userDPath, self.userDPath = donwload_path, donwload_path
         except: pass
         finally: 
-            return (
-                self.userFont, 
-                self.userPort, 
-                self.userIp, 
-                self.userIPath, 
-                self.userDPath,
-                self.userHB
-            )
+            data = {"font":self.userFont, "port":self.userPort, "ip":self.userIp, "icons_path":self.userIPath, "download_path":self.userDPath, "homebrew":self.userHB, "language":self.userLanguage}
+            return data
 
-    def save_cache(self, font:str = "", icon_path:str = "", download_path:str = "", hb:str = "", port:str = "", ip:str = "") -> None:
-        """ Cache information to external file pref.ini """
+
+    def save_cache(self, font:str = "", icons_path:str = "", download_path:str = "", hb:str = "", port:str = "", ip:str = "", lang:str = "") -> None:
+        """ Cache information to external file Settings.json """
 
         if ip == "": ip = self.userIp
         if hb == "": hb = self.userHB
         if port == "": port = self.userPort
         if font == "": font = self.userFont
-        if icon_path == "": icon_path = self.userIPath
+        if icons_path == "": icons_path = self.userIPath
         if download_path == "": download_path = self.userDPath
-
-        with open(f"{self.pref_location}pref.ini", "w+") as file:
-            default_data = f"F:{font}\nP:{port}\nIP:{ip}\nIPath:{icon_path}\nDPath:{download_path}\nHB:{hb}"
-            file.write(default_data)
-        self.update_cache(self.pref_location)
+        if lang == "": lang = self.userLanguage
+    
+        data = {"font":font, "port":port, "ip":ip, "icons_path":icons_path, "download_path": download_path, "homebrew":hb, "language":lang}
+        with open(f"{self.temp_path}Settings.json", "w+") as file:
+            json.dump(data, file)
+        
+        self.update_cache(self.temp_path)
 
         # Sometimes saving without the window
         try: self.OptionsWin.close() 
         except: pass
+
 
     def get_path(self, type):
         """ Render browsing window to pick default paths """
