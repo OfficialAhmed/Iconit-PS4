@@ -1,3 +1,4 @@
+import json
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Module.Settings import Main as Settings
 
@@ -86,7 +87,6 @@ class Ui(Settings):
         self.Languages.addItem("")
         self.Languages.addItem("")
         self.Languages.setFrame(False)
-        self.Languages.setEnabled(False)
         self.Languages.setFont(self.FontObj)
         self.Languages.setMaxVisibleItems(5)
         self.Languages.setCursor(self.pointing_cursor)
@@ -233,7 +233,8 @@ class Ui(Settings):
                 self.DownloadPath.text(),
                 str(self.YesRadio.isChecked()),
                 self.Port.text(),
-                self.Ip.text()
+                self.Ip.text(),
+                self.Languages.currentText()
             )
         )
 
@@ -245,16 +246,21 @@ class Ui(Settings):
         QtCore.QMetaObject.connectSlotsByName(OptionsWin)
         self.translate_ui()
 
+    def get_cache(self) -> dict:
+        with open(f"{self.temp_path}Settings.json", encoding="utf-8") as file:
+            return json.load(file)
 
     def translate_ui(self):
-        """ To translate the text in different language for future update """
+        cache = self.get_cache()
+        content = self.get_translation(cache.get("language"), "Settings")
+
         _translate = QtCore.QCoreApplication.translate
-        self.Languages.setCurrentIndex(1)
-        self.NoRadio.setText(_translate("OptionsWin", "OFF"))
-        self.YesRadio.setText(_translate("OptionsWin", "ON"))
-        self.SaveBtn.setText(_translate("OptionsWin", "SAVE"))
-        self.CancelBtn.setText(_translate("OptionsWin", "CANCEL"))
-        self.IpLabel.setText(_translate("OptionsWin", "DEFAULT IP"))
+        self.Languages.setCurrentText(cache.get("Language"))
+        self.NoRadio.setText(_translate("OptionsWin", content.get("NoRadio")))
+        self.YesRadio.setText(_translate("OptionsWin", content.get("YesRadio")))
+        self.SaveBtn.setText(_translate("OptionsWin", content.get("SaveBtn")))
+        self.CancelBtn.setText(_translate("OptionsWin", content.get("CancelBtn")))
+        self.IpLabel.setText(_translate("OptionsWin", content.get("YesRadio")))
         self.DefaultBtn.setText(_translate("OptionsWin", "DEFAULT"))
         self.PortLabel.setText(_translate("OptionsWin", "DEFAULT PORT"))
         self.FontLabel.setText(_translate("OptionsWin", "Default Font"))
