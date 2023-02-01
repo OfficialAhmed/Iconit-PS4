@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-import os, json
+import json
 
 class Main:
     """
@@ -9,26 +9,30 @@ class Main:
 
         * local attributes can be called without inheritence
     """
-    userHB = None
-    userIp = None
-    userFont = None
-    userPort = None
-    userIPath = None
-    userDPath = None
-    userLanguage = None
 
-    temp_path = None
-    application_location = None
-
+    paths: dict = {}
+    default_settings: dict = {}
+    DEFAULT_SETTINGS: dict = {}
 
     def __init__(self) -> None:
-        app_path = os.getcwd()
-        self.app_root_path = f"{app_path}\\"
-        self.data_path = f"{self.app_root_path}Data\\"
-        self.language_path = f"{self.data_path}Language\\"
-        self.temp_path = f"{self.data_path}Cache\\"
+        """ init the self parameter only """
+        self.init()
+        
 
-        self.default_settings = {"font":"Arial", "port":"21", "ip":"", "icons_path":app_path, "download_path":app_path, "homebrew":"False", "language":"English"}
+    def init(self):
+        """ custom init callable manually """
+        self.path = Main.paths
+        self.default_settings = Main.default_settings
+        
+        self.data_path = f"{self.path.get('app_root_path')}Data\\"
+        self.temp_path = self.path.get('temp_path')
+        self.language_path = f"{self.data_path}Language\\"
+
+
+    def set_paths(self, app_path, temp_path):
+        """ fetch paths from environment class. [Called once by environment on init only] """
+        Main.paths["app_root_path"] = app_path
+        Main.paths["temp_path"] = temp_path
 
 
     def get_translation(self, lang:str, fetch:str) -> dict:
@@ -38,75 +42,60 @@ class Main:
         return read.get(fetch)
 
 
-    def set_defaults(self, Ip, HB, Font, Port, IPath, DPath, lang, cache_path, loc) -> None:
-        """ Make attributes public for other classes """
-        Main.userIp, self.userIp = Ip, Ip
-        Main.userHB, self.userHB = HB, HB
-        Main.userFont, self.userFont = Font, Font
-        Main.userPort, self.userPort = Port, Port
-        Main.userIPath, self.userIPath = IPath, IPath
-        Main.userDPath, self.userDPath = DPath, DPath
-        Main.userLanguage, self.userLanguage = lang, lang
-
-        Main.temp_path, self.temp_path = cache_path, cache_path
-        Main.application_location, self.application_location = loc, loc
+    def set_defaults(self, data:dict) -> None:
+        """ Make attributes public for child objects """
+        Main.default_settings = data
+        Main.DEFAULT_SETTINGS = data
 
 
     def reset_to_defaults(self):
         """ overwrite external file (Settings.json) by default settings """
         try:
             with open(f"{self.temp_path}Settings.json", "w+") as file:
-                json.dump(self.default_settings, file)
+                json.dump(Main.DEFAULT_SETTINGS, file)
 
-            self.update_cache(self.temp_path)
+            self.update_local_cache(self.temp_path)
             self.OptionsWin.close()
         except: pass
 
 
-    def update_cache(self, cache_path) -> dict:
+    def update_local_cache(self, cache_path) -> dict:
         """ Update the class's cache from external file (Settings.json) & return attributes"""
 
         try:
             with open(f"{cache_path}Settings.json", encoding="utf-8") as file:
-                content: dict = json.load(file)
-                ip = content.get("ip")
-                font = content.get("font")
-                port = content.get("port")
-                homebrew = content.get("homebrew")
-                language = content.get("language")
-                icons_path = content.get("icons_path")
-                donwload_path = content.get("donwload_path")
-
-                Main.userIp, self.userIp = ip, ip
-                Main.userFont, self.userFont = font, font
-                Main.userPort, self.userPort = port, port
-                Main.userHB, self.userHB = homebrew, homebrew
-                Main.userLanguage, self.userLanguage = language, language
-                Main.userIPath, self.userIPath = icons_path, icons_path
-                Main.userDPath, self.userDPath = donwload_path, donwload_path
+                Main.default_settings = json.load(file)
+                self.default_settings = Main.default_settings
         except: pass
         finally: 
-            data = {"font":self.userFont, "port":self.userPort, "ip":self.userIp, "icons_path":self.userIPath, "download_path":self.userDPath, "homebrew":self.userHB, "language":self.userLanguage}
+            data = {
+                "ip":self.default_settings.get("ip"), 
+                "font":self.default_settings.get("font"), 
+                "port":self.default_settings.get("port"), 
+                "homebrew":self.default_settings.get("homebrew"), 
+                "language":self.default_settings.get("language"),
+                "icons_path":self.default_settings.get("icons_path"), 
+                "download_path":self.default_settings.get("download_path")            
+            }
             return data
 
 
     def save_cache(self, font:str = "", icons_path:str = "", download_path:str = "", hb:str = "", port:str = "", ip:str = "", lang:str = "") -> None:
         """ Cache information to external file Settings.json """
 
-        if ip == "": ip = self.userIp
-        if hb == "": hb = self.userHB
-        if port == "": port = self.userPort
-        if font == "": font = self.userFont
-        if icons_path == "": icons_path = self.userIPath
-        if download_path == "": download_path = self.userDPath
-        if lang == "": lang = self.userLanguage
+        # replace empty parameters with the local cache
+        if not ip: ip = self.default_settings.get("ip")
+        if not hb: hb = self.default_settings.get("homebrew")
+        if not port: port = self.default_settings.get("port")
+        if not font: font = self.default_settings.get("font")
+        if not icons_path: icons_path = self.default_settings.get("icons_path")
+        if not download_path: download_path = self.default_settings.get("download_path")
+        if not lang: lang = self.default_settings.get("language")
     
         data = {"font":font, "port":port, "ip":ip, "icons_path":icons_path, "download_path": download_path, "homebrew":hb, "language":lang}
         with open(f"{self.temp_path}Settings.json", "w+") as file:
             json.dump(data, file)
         
-        self.update_cache(self.temp_path)
-
         # Sometimes saving without the window
         try: self.OptionsWin.close() 
         except: pass
@@ -118,14 +107,14 @@ class Main:
         opt |= QtWidgets.QFileDialog.DontUseSheet
         dialog = QFileDialog()
         dialog.setOptions(opt)
-        dialog.setDirectory(self.application_location)
+        dialog.setDirectory(self.path.get('app_root_path'))
         if type == "download":
             path = QtWidgets.QFileDialog.getExistingDirectory(
-                None, "Default download folder...", self.application_location, options=opt
+                None, "Default download folder...", self.path.get('app_root_path'), options=opt
             )
             if path: self.DownloadPath.setText(path)
         else:
             path = QtWidgets.QFileDialog.getExistingDirectory(
-                None, "Default icons folder...", self.application_location, options=opt
+                None, "Default icons folder...", self.path.get('app_root_path'), options=opt
             )
             if path: self.IconPath.setText(path)
