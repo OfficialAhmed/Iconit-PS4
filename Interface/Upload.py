@@ -17,7 +17,7 @@ class Ui(Upload):
         self.ui = Alerts.Ui()
 
         font = QtGui.QFont()
-        font.setFamily(self.userFont)
+        font.setFamily(self.cached_font)
         font.setPointSize(12)
         font.setItalic(True)
 

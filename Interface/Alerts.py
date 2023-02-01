@@ -9,7 +9,7 @@ class Ui(Alerts):
         font = QtGui.QFont()
         font.setWeight(9)
         font.setPointSize(12)
-        font.setFamily(self.userFont)
+        font.setFamily(self.cached_font)
         
         window.resize(357, 208)
         window.setWindowTitle("Alert")

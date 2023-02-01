@@ -42,7 +42,7 @@ class Main(Common):
         if len(self.sys_game_ids) > 1:
             hb = "SYSTEM ICON: YES"
 
-        elif self.userHB == "True":
+        elif self.cached_toggled_homebrew == "True":
             if "CUSA" in self.current_game_id:
                 hb = "HOMEBREW ICON: NO"
             else:
@@ -113,7 +113,7 @@ class Main(Common):
         options |= QtWidgets.QFileDialog.DontUseSheet
         dialog = QFileDialog()
         dialog.setOptions(options)
-        dialog.setDirectory(self.userIPath)
+        dialog.setDirectory(self.cached_icons_path)
 
         img, _ = QtWidgets.QFileDialog.getOpenFileName(
             None,
@@ -204,7 +204,7 @@ class Main(Common):
         options |= QtWidgets.QFileDialog.DontUseSheet
         dialog = QFileDialog()
         dialog.setOptions(options)
-        dialog.setDirectory(self.userIPath)
+        dialog.setDirectory(self.cached_icons_path)
 
         img, _ = QtWidgets.QFileDialog.getOpenFileName(
             None,

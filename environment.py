@@ -28,17 +28,18 @@ class Common:
 
     #__________  if Settings.json not found use these _________#
     # FIXME: reconstruct this block to call the defaults from settings moduel (self.default_settings)
-    userFont = "Arial"
-    userPort = "21"
-    userIp = "192.168.1.1"
-    userIPath = os.getcwd()
-    userDPath = os.getcwd()
-    userHB = "False"
-    userLanguage = "English"
+    app_path = os.getcwd()
+    # cached_port = "21"
+    # cached_font = "Arial"
+    # cached_ip = "192.168.1.1"
+    # cached_language = "English"
+    # cached_icons_path = os.getcwd()
+    # cached_download_path = os.getcwd()
+    # cached_toggled_homebrew = "False"
+
+    default_settings = {"font":"Arial", "port":"21", "ip":"", "icons_path":app_path, "download_path":app_path, "homebrew":"False", "language":"English"}
     
     #__________  shared attrs _________#
-    IP = "not accepted"
-    Port = 21
     screen_w = 0
     screen_h = 0
     ui = None
@@ -68,17 +69,17 @@ class Common:
         self.screen_w = Common.screen_w
         self.screen_h = Common.screen_h
 
-        self.IP = Common.IP
-        self.Port = Common.Port
-        self.userIp = Common.userIp
-        self.userHB = Common.userHB
-        self.userFont = Common.userFont
-        self.userPort = Common.userPort
-        self.userIPath = Common.userIPath
-        self.userDPath = Common.userDPath
-        self.userLanguage = Common.userLanguage
+        self.ip = Common.default_settings.get("ip")
+        self.port = Common.default_settings.get("port")
+        self.cached_ip = Common.default_settings.get("ip")
+        self.cached_font = Common.default_settings.get("font")
+        self.cached_port = Common.default_settings.get("port")
+        self.cached_language = Common.default_settings.get("language")
+        self.cached_icons_path = Common.default_settings.get("icons_path")
+        self.cached_download_path = Common.default_settings.get("download_path")
+        self.cached_toggled_homebrew = Common.default_settings.get("homebrew")
 
-        self.app_root_path = f"{os.getcwd()}\\"
+        self.app_root_path = f"{Common.app_path}\\"
         self.data_path = f"{self.app_root_path}Data\\"
         self.pref_path = f"{self.data_path}Pref\\"
         self.temp_path = f"{self.data_path}Cache\\"
@@ -91,53 +92,30 @@ class Common:
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
 
+
         self.ftp = FTP()
         self.html = html()
         self.widgets = Widget()
         self.constant = Constant()
         self.settings = Settings()
+        self.settings.set_paths(self.app_root_path, self.temp_path)
+        self.settings.init()
+
         self.database = Database(self.database_file)
 
+        self.ps4_system_icons_dir = self.constant.PS4_SYS_ICONS
         self.ps4_internal_icons_dir = self.constant.PS4_INT_ICONS
         self.ps4_external_icons_dir = self.constant.PS4_EXT_ICONS
-        self.ps4_system_icons_dir = self.constant.PS4_SYS_ICONS
 
         self.backup_path = f"{self.constant.ICONS_BACKUP_NAME}\\"
 
-        self.logging = self.html.internal_log_msg("ps4", self.IP, 12, "font-weight:600; font-style:italic;")
-        self.update_pref()
-    
-
-    def set_user_pref(self, ip, port, font, i_path, d_path, hb, lang):
-        self.userIp = ip
-        self.userHB = hb
-        self.userFont = font
-        self.userPort = port
-        self.userIPath = i_path
-        self.userDPath = d_path
-        self.userLanguage = lang
-        Common.userIp = ip
-        Common.userHB = hb
-        Common.userFont = font
-        Common.userPort = port
-        Common.userIPath = i_path
-        Common.userDPath = d_path
-        Common.userLanguage = lang
+        self.logging = self.html.internal_log_msg("ps4", self.ip, 12, "font-weight:600; font-style:italic;")
+        self.fetch_settings_cache()
 
 
-    def update_pref(self):
-        self.settings.set_defaults(
-            self.userIp,
-            self.userHB,
-            self.userFont,
-            self.userPort,
-            self.userIPath,
-            self.userDPath,
-            self.userLanguage,
-            self.temp_path,
-            self.app_root_path
-        )
-        settings_cache = self.settings.update_cache(self.temp_path)
+    def fetch_settings_cache(self) -> None:
+        self.settings.set_defaults(self.default_settings)
+        settings_cache = self.settings.update_local_cache(self.temp_path)
 
         ip = settings_cache.get("ip")
         hb = settings_cache.get("homebrew")
@@ -146,8 +124,14 @@ class Common:
         lang = settings_cache.get("language")
         Ipath = settings_cache.get("icons_path")
         Dpath = settings_cache.get("download_path")
-        self.set_user_pref(ip, port, font, Ipath, Dpath, hb, lang)
-        
+        Common.cached_ip, self.cached_ip = ip, ip
+        Common.cached_font, self.cached_font = font, font
+        Common.cached_port, self.cached_port = port, port
+        Common.cached_language, self.cached_language = lang, lang
+        Common.cached_icons_path, self.cached_icons_path = Ipath, Ipath
+        Common.cached_toggled_homebrew, self.cached_toggled_homebrew = hb, hb
+        Common.cached_download_path, self.cached_download_path = Dpath, Dpath        
+
 
     def logs(self, description, Type):
         try: error_file = open("Logs.txt", "a")
@@ -176,10 +160,10 @@ class Common:
 
 
     def get_language(self):
-        return Common.userLanguage
+        return Common.cached_language
 
     def set_language(self, lang):
-        Common.userLanguage = lang
+        Common.cached_language = lang
 
     def get_window(self):
         return Common.window
@@ -243,14 +227,14 @@ class Common:
 
     def set_ip_port(self, ip, port) -> None:
         """ Make Ip and Port sharable between classes """
-        self.IP, self.Port = ip, port
-        Common.IP, Common.Port = ip, port
+        self.ip, self.port = ip, port
+        Common.default_settings["ip"], Common.default_settings["port"] = ip, port
 
     def get_ip(self):
-        return Common.IP
+        return Common.default_settings.get("ip")
 
     def get_port(self):
-        return int(Common.Port)
+        return int(Common.default_settings["port"])
         
     def set_screen_size(self, w, h) -> None:
         self.screen_w, Common.screen_w = w, w

@@ -6,15 +6,16 @@ class Ui(Settings):
     def __init__(self) -> None:
         super().__init__()
         self.cache = self.get_cache()
-        self.cached_language: str = self.cache.get("language")
         self.supported_languages: dict = self.get_supported_languages()
-        self.translated_languages: dict = self.get_translation(self.cached_language, "Languages")
+        self.translated_languages: dict = self.get_translation(self.cache.get("language"), "Languages")
         self.translated_languages_in_english = {key: value for value, key in self.translated_languages.items()}
 
-
     def get_cache(self) -> dict:
-        with open(f"{self.temp_path}Settings.json", encoding="utf-8") as file:
-            return json.load(file)
+        try:
+            with open(f"{self.temp_path}Settings.json", encoding="utf-8") as file:
+                return json.load(file)
+        except: 
+            return self.default_settings
 
 
     def get_supported_languages(self) -> dict:
@@ -31,7 +32,7 @@ class Ui(Settings):
 
         #_________________   VISUALS   ________________________#
         self.FontObj = QtGui.QFont()
-        self.FontObj.setFamily(self.userFont)
+        self.FontObj.setFamily(self.cache.get("font"))
         self.FontObj.setPointSize(10)
         self.OptionsWin.setFont(self.FontObj)
 
@@ -226,16 +227,16 @@ class Ui(Settings):
 
 
         #_________________   DEFAULT VALUES   _____________________#
-        self.Port.setValue(int(self.userPort))
-        self.Ip.setPlaceholderText(self.userIp)
-        self.Fonts.setCurrentText(self.userFont)
-        self.IconPath.setPlaceholderText(self.userIPath)
-        self.DownloadPath.setPlaceholderText(self.userDPath)
+        self.Port.setValue(int(self.cache.get("port")))
+        self.Ip.setPlaceholderText(self.cache.get("ip"))
+        self.Fonts.setCurrentText(self.cache.get("font"))
+        self.IconPath.setPlaceholderText(self.cache.get("icons_path"))
+        self.DownloadPath.setPlaceholderText(self.cache.get("download_path"))
 
 
         #_________________      SIGNALS     _______________________#
         self.NoRadio.setChecked(True)
-        if self.userHB == "True":
+        if self.cache.get("homebrew") == "True":
             self.YesRadio.setChecked(True)
         
         self.SaveBtn.clicked.connect(
@@ -273,7 +274,7 @@ class Ui(Settings):
 
 
     def translate_ui(self):
-        translated_content: dict = self.get_translation(self.cached_language, "Settings")
+        translated_content: dict = self.get_translation(self.cache.get("language"), "Settings")
         self._translate = QtCore.QCoreApplication.translate
 
         self.translate_dropdown_list_items()
@@ -300,5 +301,5 @@ class Ui(Settings):
         for index, language in enumerate(self.supported_languages):
             self.Languages.addItem(self.translated_languages.get(language))
             
-            if language == self.cached_language:
+            if language == self.cache.get("language"):
                 self.Languages.setCurrentIndex(index)

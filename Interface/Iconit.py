@@ -18,7 +18,7 @@ class Ui(Iconit):
         font.setBold(True)
         font.setItalic(True)
         font.setPointSize(13)
-        font.setFamily(self.userFont)
+        font.setFamily(self.cached_font)
 
         pointing_hand_cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
 
@@ -114,7 +114,7 @@ class Ui(Iconit):
         for input in inputs:
             input.setFont(font)
             input.setMaxLength(16)
-            input.setText(self.userPort)
+            input.setText(self.cached_port)
             input.setSizePolicy(sizePolicy)
             input.setClearButtonEnabled(True)
             input.setAlignment(QtCore.Qt.AlignCenter)
@@ -274,22 +274,22 @@ class Ui(Iconit):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.PortInput.setText(_translate("window", str(self.userPort)))
+        self.PortInput.setText(_translate("window", str(self.cached_port)))
         self.GameIconsRadio.setText(_translate("window", "Game Icon/Pic"))
         self.SystemIconsRadio.setText(_translate("window", "System Icons [Disabled]"))
         self.AvatarIconsRadio.setText(_translate("window", "Profile Avatar [Disabled]"))
         self.IpInput.setPlaceholderText(_translate("window", "192.168.XXX.XXX"))
-        self.ModeLabel.setText(_translate("window", self.html.span_tag("MODE", "#f2ae30", 16, font=self.userFont)))
-        self.IpLabel.setText(_translate("window", self.html.span_tag("PS4 IP", "#f2ae30", 16, font=self.userFont)))
-        self.CacheLabel.setText(_translate("window", self.html.span_tag("Cache", "#f2ae30", 10, font=self.userFont)))
-        self.PortLabel.setText( _translate( "window", self.html.span_tag("PS4 Port", "#f2ae30", 16, font=self.userFont)))
-        self.StatusLabel.setText(_translate("window", self.html.span_tag("Awaiting ..", "#f2ae30", 18, font=self.userFont)))
-        self.OnlineIconsLink.setText(_translate("window", self.html.a_tag("https://all-exhost.github.io/Icons.html", "Download Free Icons", "#f250e7", 8, font=self.userFont)))
-        self.PaypalLink.setText(_translate("window", self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "Donate (PayPal)", "#f250e7", 8, font=self.userFont)))
-        self.TwitterLink.setText(_translate("window", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created by @OfficialAhmed0", "#f250e7", 8, font=self.userFont)))
-        self.SysIconsInfo.setText(_translate("window", self.html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8, font=self.userFont),))
-        self.GameIconsInfo.setText(_translate("window", self.html.span_tag("Note: You can enable Homebrew icons in the settings before connecting to the PS4", "#f2ae30", 8, font=self.userFont)))
-        self.TitleLink.setText(_translate("window", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{self.app_version}", "#f250e7", 18, font=self.userFont),))
+        self.ModeLabel.setText(_translate("window", self.html.span_tag("MODE", "#f2ae30", 16, font=self.cached_font)))
+        self.IpLabel.setText(_translate("window", self.html.span_tag("PS4 IP", "#f2ae30", 16, font=self.cached_font)))
+        self.CacheLabel.setText(_translate("window", self.html.span_tag("Cache", "#f2ae30", 10, font=self.cached_font)))
+        self.PortLabel.setText( _translate( "window", self.html.span_tag("PS4 Port", "#f2ae30", 16, font=self.cached_font)))
+        self.StatusLabel.setText(_translate("window", self.html.span_tag("Awaiting ..", "#f2ae30", 18, font=self.cached_font)))
+        self.OnlineIconsLink.setText(_translate("window", self.html.a_tag("https://all-exhost.github.io/Icons.html", "Download Free Icons", "#f250e7", 8, font=self.cached_font)))
+        self.PaypalLink.setText(_translate("window", self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "Donate (PayPal)", "#f250e7", 8, font=self.cached_font)))
+        self.TwitterLink.setText(_translate("window", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created by @OfficialAhmed0", "#f250e7", 8, font=self.cached_font)))
+        self.SysIconsInfo.setText(_translate("window", self.html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8, font=self.cached_font),))
+        self.GameIconsInfo.setText(_translate("window", self.html.span_tag("Note: You can enable Homebrew icons in the settings before connecting to the PS4", "#f2ae30", 8, font=self.cached_font)))
+        self.TitleLink.setText(_translate("window", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{self.app_version}", "#f250e7", 18, font=self.cached_font),))
 
         self.About.setText(_translate("window", "About"))
         self.actionAbout.setText(_translate("window", "About"))
@@ -303,7 +303,7 @@ class Ui(Iconit):
         self.ConnectBtn.setShortcut("Return")
 
         # Update the cache and set following values from Settings.json 
-        cache = self.settings.update_cache(self.pref_path)
+        cache = self.settings.update_local_cache(self.temp_path)
         self.PortInput.setText(cache.get("port"))
         self.IpInput.setText(cache.get("ip"))
         self.set_language(cache.get("language"))

@@ -117,7 +117,7 @@ class Main(Common):
             is_accepted = True
             game_id = line.split(" ")[-1]
 
-            if not bool(self.userHB):
+            if not bool(self.cached_toggled_homebrew):
                 if "CUSA" not in game_id:
                     is_accepted = False
                     self.game_ids.pop(game_id)
@@ -336,7 +336,7 @@ class Game(Main, Common):
             is_new_game_found = False
             game_ids_with_hb = self.game_ids.copy()
             for game_id in game_ids_with_hb:
-                if self.userHB == "False":
+                if self.cached_toggled_homebrew == "False":
                     if "CUSA" not in game_id:
                         self.game_ids.pop(game_id)
                         continue

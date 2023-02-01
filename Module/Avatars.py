@@ -68,7 +68,7 @@ class Main(Common):
                 + ".json"
             )
             ftp.set_debuglevel(2)
-            ftp.connect(self.IP, int(self.Port))
+            ftp.connect(self.ip, int(self.port))
             ftp.login("", "")
             ftp.cwd(
                 "system_data/priv/cache/profile/" + self.user[self.currentUserCounter]
@@ -198,7 +198,7 @@ class Main(Common):
             opt |= QtWidgets.QFileDialog.DontUseSheet
             dialog = QFileDialog()
             dialog.setOptions(opt)
-            dialog.setDirectory(self.userDPath)
+            dialog.setDirectory(self.cached_download_path)
             path, _ = QtWidgets.QFileDialog.getSaveFileName(
                 None,
                 "Where to Download?",
@@ -227,7 +227,7 @@ class Main(Common):
             opt |= QtWidgets.QFileDialog.DontUseSheet
             dialog = QFileDialog()
             dialog.setOptions(opt)
-            dialog.setDirectory(self.userIPath)
+            dialog.setDirectory(self.cached_icons_path)
             path, _ = QtWidgets.QFileDialog.getOpenFileName(
                 None,
                 "Pick an image greater than (440x440) ...",
@@ -308,8 +308,8 @@ class Main(Common):
             self.ui.setupUi(
                 self.windo,
                 self.avatar,
-                self.IP,
-                self.Port,
+                self.ip,
+                self.port,
                 "",
                 "Profileit",
                 "",
