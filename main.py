@@ -1,7 +1,6 @@
 import sys
 import Interface.Iconit as Iconit
 from environment import Common
-
 from PyQt5 import QtWidgets
 
 if __name__ == "__main__":
