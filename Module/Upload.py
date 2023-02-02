@@ -29,17 +29,6 @@ class Main(Common):
         )
 
 
-    def png_to_dds_obsolete(self, input_dir, output_dir) -> None:
-        """ _ TO BE DEBRECATED _
-            convert legit png to dds using imageMagic lib (wand) 
-            [technique requires imagemagic to be installed]
-        """
-        if self.image != None:
-            with self.image.Image(filename=input_dir) as img:
-                img.compression = "dxt1"
-                img.save(filename=output_dir)
-
-
     def get_timestamp(self) -> str:
         date = datetime.datetime.now()
         time = date.time()
@@ -66,17 +55,10 @@ class Main(Common):
 
     def resize_upload(self):
         try:
+            from time import perf_counter
             starting_time = time.perf_counter()
 
             self.image = None
-            try:
-                from wand import image
-                self.image = image
-            except Exception as e:
-                self.log_to_external_file( 
-                    f"{e} | DEV module wand cannot be found, something related to imageMagic",
-                    "Error"
-                )
 
             self.Yes.setEnabled(False)
             self.No.setEnabled(False)
@@ -93,8 +75,7 @@ class Main(Common):
                     ###
                     ###################################################
 
-                    self.ftp.cwd("/")
-                    self.ftp.cwd("system_ex/app/" + self.current_game_id + "/sce_sys")
+                    self.ftp.cwd(f"{self.ps4_system_icons_dir}{self.current_game_id}/sce_sys")
                     sce_sys_dir = []
                     self.ftp.retrlines("LIST ", sce_sys_dir.append)
                     files_inside = [x.split(" ")[-1] for x in sce_sys_dir]
@@ -341,44 +322,37 @@ class Main(Common):
                 ################################################################
                 ###                     Convert PNG To DDS
                 ################################################################
+               
+                progress = 25
+                progressed = 0
 
-                if os.path.isfile(
-                    "C:\Program Files\ImageMagick-6.9.10-Q16\convert.exe"
-                ) or os.path.isfile(
-                    "C:\Program Files (x86)\ImageMagick-7.1.0-Q16\convert.exe"
-                ):
-                    progress = 25
-                    progressed = 0
-
-                    try:
-                        for dds in required_dds:
-                            self.png_to_dds(
-                                self.temp_path + dds + ".png",
-                                self.temp_path,
-                            )
-
-                            for i in range(progressed, progress):
-                                self.ResizingBar.setProperty("value", i)
-                                time.sleep(0.01)
-                            progressed += progress
-                            os.remove(self.temp_path + dds + ".png")
-                        self.ResizingBar.setProperty("value", 100)
-                        self.msg.setStyleSheet(
-                            "font: 10pt; color: rgb(5, 255, 20);"
+                try:
+                    for dds in required_dds:
+                        self.png_to_dds(
+                            self.temp_path + dds + ".png",
+                            self.temp_path,
                         )
-                        self.msg.setText(
-                            "Done. Give it some time & the avatar will change."
-                        )
-                        self.Ok.setEnabled(False)
-                        self.Ok.raise_()
-                        self.No.hide()
-                        self.Yes.hide()
 
-                    except Exception as e:
-                        self.log_to_external_file(str(e), "Error")
-                else:
-                    self.ui.setupUi(self.window, "Magick image not found")
-                    self.window.show()
+                        for i in range(progressed, progress):
+                            self.ResizingBar.setProperty("value", i)
+                            time.sleep(0.01)
+                        progressed += progress
+                        os.remove(self.temp_path + dds + ".png")
+                    self.ResizingBar.setProperty("value", 100)
+                    self.msg.setStyleSheet(
+                        "font: 10pt; color: rgb(5, 255, 20);"
+                    )
+                    self.msg.setText(
+                        "Done. Give it some time & the avatar will change."
+                    )
+                    self.Ok.setEnabled(False)
+                    self.Ok.raise_()
+                    self.No.hide()
+                    self.Yes.hide()
+
+                except Exception as e:
+                    self.log_to_external_file(str(e), "Error")
+
 
                 ################################################################
                 ###                     Upload icons
