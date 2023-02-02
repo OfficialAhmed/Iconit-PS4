@@ -198,7 +198,7 @@ class Main(Common):
             opt |= QtWidgets.QFileDialog.DontUseSheet
             dialog = QFileDialog()
             dialog.setOptions(opt)
-            dialog.setDirectory(self.cached_download_path)
+            dialog.setDirectory(self.download_path)
             path, _ = QtWidgets.QFileDialog.getSaveFileName(
                 None,
                 "Where to Download?",
@@ -227,7 +227,7 @@ class Main(Common):
             opt |= QtWidgets.QFileDialog.DontUseSheet
             dialog = QFileDialog()
             dialog.setOptions(opt)
-            dialog.setDirectory(self.cached_icons_path)
+            dialog.setDirectory(self.icons_path)
             path, _ = QtWidgets.QFileDialog.getOpenFileName(
                 None,
                 "Pick an image greater than (440x440) ...",

@@ -11,10 +11,11 @@ from ftplib import FTP
 from Module.Database.Generate import Database
 from Module.Settings import Main as Settings
 from Module.Widget.Shared import Widget
+from Module.Widget.Translate import Translate
 
 class Common:
     """
-        * A Bridge class to connect between multiple ones
+        * A Bridge class to connect between multiple classes 'different window process'
         
         Class attributes accessable anywhere (SHARABLE ACCROSS CHILDS)
             - (Change attribute value) via setters
@@ -27,16 +28,7 @@ class Common:
     """
 
     #__________  if Settings.json not found use these _________#
-    # FIXME: reconstruct this block to call the defaults from settings moduel (self.default_settings)
     app_path = os.getcwd()
-    # cached_port = "21"
-    # cached_font = "Arial"
-    # cached_ip = "192.168.1.1"
-    # cached_language = "English"
-    # cached_icons_path = os.getcwd()
-    # cached_download_path = os.getcwd()
-    # cached_toggled_homebrew = "False"
-
     default_settings = {"font":"Arial", "port":"21", "ip":"", "icons_path":app_path, "download_path":app_path, "homebrew":"False", "language":"English"}
     
     #__________  shared attrs _________#
@@ -59,8 +51,8 @@ class Common:
     is_sys_icon = False
 
     def __init__(self) -> None:
-        self.app_version = "5.06 BETA"
-        self.app_release_date = "Jan 27th, 2023"
+        self.app_version = "5.11 BETA"
+        self.app_release_date = "Feb 2nd, 2023"
 
         self.game = {}
         self.game_ids = {}
@@ -68,16 +60,6 @@ class Common:
         self.external_game_ids = []
         self.screen_w = Common.screen_w
         self.screen_h = Common.screen_h
-
-        self.ip = Common.default_settings.get("ip")
-        self.port = Common.default_settings.get("port")
-        self.cached_ip = Common.default_settings.get("ip")
-        self.cached_font = Common.default_settings.get("font")
-        self.cached_port = Common.default_settings.get("port")
-        self.cached_language = Common.default_settings.get("language")
-        self.cached_icons_path = Common.default_settings.get("icons_path")
-        self.cached_download_path = Common.default_settings.get("download_path")
-        self.cached_toggled_homebrew = Common.default_settings.get("homebrew")
 
         self.app_root_path = f"{Common.app_path}\\"
         self.data_path = f"{self.app_root_path}Data\\"
@@ -89,19 +71,18 @@ class Common:
         self.database_file = f"{self.temp_path}Database.json"
         self.cache_path = f"{self.metadata_path}game\\"
         self.game_cache_file = f"{self.cache_path}games.json"
+        self.language_path = f"{self.data_path}Language\\"
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
-
 
         self.ftp = FTP()
         self.html = html()
         self.widgets = Widget()
         self.constant = Constant()
         self.settings = Settings()
-        self.settings.set_paths(self.app_root_path, self.temp_path)
-        self.settings.init()
-
+        self.settings.init(self.temp_path, self.language_path, self.default_settings, is_for_local_attr=True)
         self.database = Database(self.database_file)
+        self.translation = Translate(self.language_path)
 
         self.ps4_system_icons_dir = self.constant.PS4_SYS_ICONS
         self.ps4_internal_icons_dir = self.constant.PS4_INT_ICONS
@@ -109,28 +90,16 @@ class Common:
 
         self.backup_path = f"{self.constant.ICONS_BACKUP_NAME}\\"
 
+        self.settings_cache = self.settings.update_local_cache(self.temp_path)
+        self.ip:str = self.settings_cache.get("ip")
+        self.font:str = self.settings_cache.get("font")
+        self.port:str = self.settings_cache.get("port")
+        self.language:str = self.settings_cache.get("language")
+        self.icons_path:str = self.settings_cache.get("icons_path")
+        self.toggled_homebrew:str = self.settings_cache.get("homebrew")
+        self.download_path:str = self.settings_cache.get("download_path")
+
         self.logging = self.html.internal_log_msg("ps4", self.ip, 12, "font-weight:600; font-style:italic;")
-        self.fetch_settings_cache()
-
-
-    def fetch_settings_cache(self) -> None:
-        self.settings.set_defaults(self.default_settings)
-        settings_cache = self.settings.update_local_cache(self.temp_path)
-
-        ip = settings_cache.get("ip")
-        hb = settings_cache.get("homebrew")
-        font = settings_cache.get("font")
-        port = settings_cache.get("port")
-        lang = settings_cache.get("language")
-        Ipath = settings_cache.get("icons_path")
-        Dpath = settings_cache.get("download_path")
-        Common.cached_ip, self.cached_ip = ip, ip
-        Common.cached_font, self.cached_font = font, font
-        Common.cached_port, self.cached_port = port, port
-        Common.cached_language, self.cached_language = lang, lang
-        Common.cached_icons_path, self.cached_icons_path = Ipath, Ipath
-        Common.cached_toggled_homebrew, self.cached_toggled_homebrew = hb, hb
-        Common.cached_download_path, self.cached_download_path = Dpath, Dpath        
 
 
     def logs(self, description, Type):
@@ -154,16 +123,11 @@ class Common:
             self.ftp.retrbinary("RETR " + file_name, downloaded_file.write, 65536)
 
 
-    def get_translation(self, lang, window_to_translate):
-        # func call from Settings module
-        return self.settings.get_translation(lang, window_to_translate)
-
-
     def get_language(self):
-        return Common.cached_language
+        return Common.language
 
     def set_language(self, lang):
-        Common.cached_language = lang
+        Common.language = lang
 
     def get_window(self):
         return Common.window
@@ -226,9 +190,8 @@ class Common:
         return Common.selected_mode
 
     def set_ip_port(self, ip, port) -> None:
-        """ Make Ip and Port sharable between classes """
-        self.ip, self.port = ip, port
-        Common.default_settings["ip"], Common.default_settings["port"] = ip, port
+        Common.default_settings["ip"], self.ip = ip, ip
+        Common.default_settings["port"], self.port = port, port
 
     def get_ip(self):
         return Common.default_settings.get("ip")

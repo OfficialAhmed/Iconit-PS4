@@ -24,7 +24,29 @@
     },
 
     "Iconit":{
-        
+        "GameIconsRadio":"Game Icon/Pic",
+        "SystemIconsRadio":"System Icons [Disabled]",
+        "AvatarIconsRadio":"Profile Avatar [Disabled]",
+        "ModeLabel":"MODE",
+        "IpLabel":"PS4 IP",
+        "CacheLabel":"Cache",
+        "PortLabel":"PS4 Port",
+        "StatusLabel":"Awaiting ..",
+        "OnlineIconsLink":"Download Free Icons",
+        "PaypalLink":"Donate (PayPal)",
+        "TwitterLink":"Created by",
+        "SysIconsInfo":"Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)",
+        "GameIconsInfo":"Note: You can enable Homebrew icons in the settings before connecting to the PS4",
+        "TitleLink":"Iconit",
+
+        "menuSettings":"Settings",
+        "About":"About",
+        "actionAbout":"About",
+        "Options":"Options...",
+        "ConnectBtn":"Connect PS4",
+        "Remove_cache":"Remove cache",
+        "Special_thanks":"Special thanks",
+        "DownloadDatabase":"Download/Update Database"
     },
 
     "Icons":{

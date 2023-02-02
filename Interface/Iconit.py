@@ -11,6 +11,7 @@ class Ui(Iconit):
     def __init__(self) -> None:
         super().__init__()
         
+        
     def setupUi(self, window):
         self.html = html()
 
@@ -18,7 +19,7 @@ class Ui(Iconit):
         font.setBold(True)
         font.setItalic(True)
         font.setPointSize(13)
-        font.setFamily(self.cached_font)
+        font.setFamily(self.font)
 
         pointing_hand_cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
 
@@ -114,7 +115,7 @@ class Ui(Iconit):
         for input in inputs:
             input.setFont(font)
             input.setMaxLength(16)
-            input.setText(self.cached_port)
+            input.setText(self.port)
             input.setSizePolicy(sizePolicy)
             input.setClearButtonEnabled(True)
             input.setAlignment(QtCore.Qt.AlignCenter)
@@ -264,42 +265,6 @@ class Ui(Iconit):
         self.Special_thanks.triggered.connect(self.open_credits)
         self.DownloadDatabase.triggered.connect(self.download_database)
 
-        # ________________  BETA v5 Disable ______________________
-
-        self.AvatarIconsRadio.setEnabled(False)
-        self.SystemIconsRadio.setEnabled(False)
-
-        self.retranslateUi()
-
-
-    def retranslateUi(self):
-        _translate = QtCore.QCoreApplication.translate
-        self.PortInput.setText(_translate("window", str(self.cached_port)))
-        self.GameIconsRadio.setText(_translate("window", "Game Icon/Pic"))
-        self.SystemIconsRadio.setText(_translate("window", "System Icons [Disabled]"))
-        self.AvatarIconsRadio.setText(_translate("window", "Profile Avatar [Disabled]"))
-        self.IpInput.setPlaceholderText(_translate("window", "192.168.XXX.XXX"))
-        self.ModeLabel.setText(_translate("window", self.html.span_tag("MODE", "#f2ae30", 16, font=self.cached_font)))
-        self.IpLabel.setText(_translate("window", self.html.span_tag("PS4 IP", "#f2ae30", 16, font=self.cached_font)))
-        self.CacheLabel.setText(_translate("window", self.html.span_tag("Cache", "#f2ae30", 10, font=self.cached_font)))
-        self.PortLabel.setText( _translate( "window", self.html.span_tag("PS4 Port", "#f2ae30", 16, font=self.cached_font)))
-        self.StatusLabel.setText(_translate("window", self.html.span_tag("Awaiting ..", "#f2ae30", 18, font=self.cached_font)))
-        self.OnlineIconsLink.setText(_translate("window", self.html.a_tag("https://all-exhost.github.io/Icons.html", "Download Free Icons", "#f250e7", 8, font=self.cached_font)))
-        self.PaypalLink.setText(_translate("window", self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "Donate (PayPal)", "#f250e7", 8, font=self.cached_font)))
-        self.TwitterLink.setText(_translate("window", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created by @OfficialAhmed0", "#f250e7", 8, font=self.cached_font)))
-        self.SysIconsInfo.setText(_translate("window", self.html.span_tag("Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)", "#f2ae30", 8, font=self.cached_font),))
-        self.GameIconsInfo.setText(_translate("window", self.html.span_tag("Note: You can enable Homebrew icons in the settings before connecting to the PS4", "#f2ae30", 8, font=self.cached_font)))
-        self.TitleLink.setText(_translate("window", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"Iconit v{self.app_version}", "#f250e7", 18, font=self.cached_font),))
-
-        self.About.setText(_translate("window", "About"))
-        self.actionAbout.setText(_translate("window", "About"))
-        self.Options.setText(_translate("window", "Options..."))
-        self.ConnectBtn.setText(_translate("window", "Connect PS4"))
-        self.menuSettings.setTitle(_translate("window", "Settings"))
-        self.Remove_cache.setText(_translate("window", "Remove cache"))
-        self.Special_thanks.setText(_translate("window", "Special thanks"))
-        self.DownloadDatabase.setText(_translate("window", "Download/Update Database"))
-
         self.ConnectBtn.setShortcut("Return")
 
         # Update the cache and set following values from Settings.json 
@@ -308,11 +273,7 @@ class Ui(Iconit):
         self.IpInput.setText(cache.get("ip"))
         self.set_language(cache.get("language"))
 
-        """
-        ###########################################
-                Share pointers of the widgets 
-        ###########################################
-        """
+        # Share pointers of the widgets 
         self.widgets.set_ip_input(self.IpInput)
         self.widgets.set_ip_label(self.IpLabel)
         self.widgets.set_cache_bar(self.CacheBar)
@@ -322,6 +283,42 @@ class Ui(Iconit):
         self.widgets.set_cache_label(self.CacheLabel)
         self.widgets.set_status_label(self.StatusLabel)
         self.widgets.set_game_icon_radio(self.GameIconsRadio)
+        # ________________  BETA v5 Disable ______________________
+
+        self.AvatarIconsRadio.setEnabled(False)
+        self.SystemIconsRadio.setEnabled(False)
+
+        self.translate_ui()
+
+
+    def translate_ui(self):
+        translated_content: dict = self.translation.get_translation(self.language, "Iconit")
+
+        _translate = QtCore.QCoreApplication.translate
+        self.GameIconsRadio.setText(_translate("window", translated_content.get("GameIconsRadio")))
+        self.SystemIconsRadio.setText(_translate("window", translated_content.get("SystemIconsRadio")))
+        self.AvatarIconsRadio.setText(_translate("window", translated_content.get("AvatarIconsRadio")))
+        self.ModeLabel.setText(_translate("window", self.html.span_tag(translated_content.get("ModeLabel"), "#f2ae30", 16, font=self.font)))
+        self.IpLabel.setText(_translate("window", self.html.span_tag(translated_content.get("IpLabel"), "#f2ae30", 16, font=self.font)))
+        self.CacheLabel.setText(_translate("window", self.html.span_tag(translated_content.get("CacheLabel"), "#f2ae30", 10, font=self.font)))
+        self.PortLabel.setText( _translate( "window", self.html.span_tag(translated_content.get("PortLabel"), "#f2ae30", 16, font=self.font)))
+        self.StatusLabel.setText(_translate("window", self.html.span_tag(translated_content.get("StatusLabel"), "#f2ae30", 18, font=self.font)))
+        self.OnlineIconsLink.setText(_translate("window", self.html.a_tag("https://all-exhost.github.io/Icons.html", translated_content.get("OnlineIconsLink"), "#f250e7", 8, font=self.font)))
+        self.PaypalLink.setText(_translate("window", self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", translated_content.get("PaypalLink"), "#f250e7", 8, font=self.font)))
+        self.TwitterLink.setText(_translate("window", self.html.a_tag("https://twitter.com/OfficialAhmed0", f"{translated_content.get('TwitterLink')} @OfficialAhmed0", "#f250e7", 8, font=self.font)))
+        self.SysIconsInfo.setText(_translate("window", self.html.span_tag(translated_content.get("SysIconsInfo"), "#f2ae30", 8, font=self.font),))
+        self.GameIconsInfo.setText(_translate("window", self.html.span_tag(translated_content.get("GameIconsInfo"), "#f2ae30", 8, font=self.font)))
+        self.TitleLink.setText(_translate("window", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"{translated_content.get('TitleLink')} v{self.app_version}", "#f250e7", 18, font=self.font),))
+
+        self.About.setText(_translate("window", translated_content.get("About")))
+        self.actionAbout.setText(_translate("window", translated_content.get("actionAbout")))
+        self.Options.setText(_translate("window", translated_content.get("Options")))
+        self.ConnectBtn.setText(_translate("window", translated_content.get("ConnectBtn")))
+        self.menuSettings.setTitle(_translate("window", translated_content.get("menuSettings")))
+        self.Remove_cache.setText(_translate("window", translated_content.get("Remove_cache")))
+        self.Special_thanks.setText(_translate("window", translated_content.get("Special_thanks")))
+        self.DownloadDatabase.setText(_translate("window", translated_content.get("DownloadDatabase")))
+
 
 
     def open_options(self):

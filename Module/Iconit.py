@@ -106,7 +106,6 @@ class Main(Common):
     def filter_game_ids(self):
 
         self.unchecked_game_ids = []
-
         def append_game_id(line):
             """
             ######################################
@@ -117,7 +116,7 @@ class Main(Common):
             is_accepted = True
             game_id = line.split(" ")[-1]
 
-            if not bool(self.cached_toggled_homebrew):
+            if not bool(self.toggled_homebrew):
                 if "CUSA" not in game_id:
                     is_accepted = False
                     self.game_ids.pop(game_id)
@@ -162,21 +161,38 @@ class Main(Common):
         self.set_ui(self.ui)
         self.set_window(self.window)
 
-        if is_valid:
+        if not is_valid:
+            self.window = QtWidgets.QDialog()
+            self.chage_state(False)
+            self.ui.setupUi(self.window)
+            self.ui.alert("Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection")
+            self.window.show()
+
+        else:
             is_connected = False
+            
+            # Check connection with PS4
             try:
                 self.ftp.set_debuglevel(0)
                 self.ftp.connect(self.ip, int(self.port), timeout=2)
                 self.ftp.login("", "")
                 self.set_ftp(self.ftp)
                 self.chage_state(True)
-                is_connected = True
+
+                try:
+                    self.ftp.cwd(self.ps4_internal_icons_dir)
+                    self.ftp.cwd("/")
+                    is_connected = True
+                except:
+                    txt = "Are you sure you're connected to PS4?"
+
             except TimeoutError:
                 txt = "Double check the Ip and port DEV| TimeoutError"
             except ConnectionRefusedError:
                 txt = "PS4 has refused to connect, perhaps it's connected somewhere else DEV| ConnectionRefusedError"
             except Exception as e:
                 txt = f"Something went wrong. DEV| {str(e)}"
+
             finally:
                 if not is_connected:
                     self.chage_state(False)
@@ -188,43 +204,24 @@ class Main(Common):
             self.status_label.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
             self.set_ui(self.ui)
             self.set_window(self.window)
+
+            # Check selected mode
             if self.game_icon_radio.isChecked():
-                """
-                #####################################################
-                            User Picked Game icons
-                #####################################################
-                """
                 self.set_selected_mode("game")
                 is_cached = Game().start_cache()
  
             elif self.SystemIconsRadio.isChecked():
-                """
-                #####################################################
-                            User picked system icons
-                #####################################################
-                """
                 #FIXME: reimplement a patch
                 self.set_selected_mode("system")
                 is_cached = System().start_cache()
                 
             else:
-                """
-                #####################################################
-                            User picked Avatar icons
-                #####################################################
-                """
                 #FIXME: reimplement a patch
                 self.set_selected_mode("avatars")
                 is_cached = Avatar().start_cache()
 
             if is_cached : 
                 self.render_window()
-        else:
-            self.window = QtWidgets.QDialog()
-            self.chage_state(False)
-            self.ui.setupUi(self.window)
-            self.ui.alert("Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection")
-            self.window.show()
 
 
     def render_window(self):
@@ -320,7 +317,7 @@ class Game(Main, Common):
         try:
             self.game_ids = self.get_cache()
             self.chage_state(True)
-            self.ftp.cwd(f"{self.ps4_internal_icons_dir}")
+            self.ftp.cwd(self.ps4_internal_icons_dir)
 
             self.icon_directories = (self.ps4_internal_icons_dir, self.ps4_external_icons_dir)
             if "external" not in self.get_server_directories():
@@ -335,8 +332,9 @@ class Game(Main, Common):
 
             is_new_game_found = False
             game_ids_with_hb = self.game_ids.copy()
+
             for game_id in game_ids_with_hb:
-                if self.cached_toggled_homebrew == "False":
+                if self.toggled_homebrew == "False":
                     if "CUSA" not in game_id:
                         self.game_ids.pop(game_id)
                         continue

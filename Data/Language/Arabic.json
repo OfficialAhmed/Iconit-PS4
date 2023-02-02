@@ -12,19 +12,41 @@
         "YesRadio":"مفعل",
         "SaveBtn":"حفظ",
         "CancelBtn":"إلغاء",
-        "IpLabel":"رقم الاي بي",
-        "PortLabel":"رقم البورت",
+        "IpLabel":"عنوان آلاي بي الافتراضي",
+        "PortLabel":"رقم رقم المنفذ الافتراضي",
         "DefaultBtn": "إعدادات الافتراضية",
-        "FontLabel": "الخط",
+        "FontLabel": "الخط الافتراضي",
         "HomebrewLabel": "برامج التهكير",
-        "LanguageLabel": "اللغة",
+        "LanguageLabel": "اللغة الافتراضية",
         "IconsPathLabel": "مجلد الايقونات الافتراضي",
         "DownloadPathLabel": "مجلد تحميل الايقونات الافتراضي",
         "EnableHbInfo": "انتبة: إن تفعيل هذة الخاصية ستتيح لك بتغيير ايقونات البرامج والالعاب المقرصنة ولكن سوف يأخذ وقتا اطول حتى يتم تخزين المعلومات اثناء الاتصال مع البلايستيشن لاول مرة"
     },
 
     "Iconit":{
-        
+        "GameIconsRadio":"ايقونات و خلفيات الالعاب",
+        "SystemIconsRadio":"صور النظام [غير مفعل]",
+        "AvatarIconsRadio":"شخصيات الحساب [غير مفعل]",
+        "ModeLabel":"الوضع",
+        "IpLabel":"عنوان آلاي بي",
+        "CacheLabel":"نسبة التحميل",
+        "PortLabel":"رقم المنفذ",
+        "StatusLabel":"...منتظر",
+        "OnlineIconsLink":"تحميل ايقونات مجانية",
+        "PaypalLink":"تبرع (PayPal)",
+        "TwitterLink":"المبرمج",
+        "SysIconsInfo":"Lapy Xplorer انتبة: هذه الخاصية تتطلب اذونات خاصة متوفرة في بعض الانظمة مثل برنامج",
+        "GameIconsInfo":"انتبة: بامكانك تغيير صور البرامج والالعاب المقرصنة عن طريق الخيارات",
+        "TitleLink":"Iconit",
+
+        "menuSettings":"الخيارات",
+        "Options":"...الإعدادات",
+        "ConnectBtn":"أَبدَء",
+        "Remove_cache":"حذف معلومات البرنامج",
+        "Special_thanks":"شكر وتقدير",
+        "DownloadDatabase":"تحميل و تحديث قاعدة البيانات",
+        "About":"عني",
+        "actionAbout":"عني"
     },
 
     "Icons":{

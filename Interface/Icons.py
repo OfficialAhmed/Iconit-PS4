@@ -42,7 +42,7 @@ class Ui(Icons):
         font.setBold(True)
         font.setWeight(75)
         font.setPointSize(25)
-        font.setFamily(self.cached_font)
+        font.setFamily(self.font)
 
         # ______________    WINDOW SPECS    _________________ # 
         window.resize(1080, 720)
@@ -308,8 +308,8 @@ class Ui(Icons):
         self.IconSizeTxt.setText(_translate("IconsWindow", "Current icon dimension(512x512)"))
         self.GameTitleLabel.setText(_translate("IconsWindow", self.game_ids.get(self.current_game_id).get("title")))
         self.TotalGamesTxt.setText(_translate("IconsWindow", f"1/{len(self.game_ids)}"))
-        self.TwitterLink.setText(_translate("IconsWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created By @OfficialAhmed0", "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.cached_font)))
-        self.PaypalLink.setText(_translate("IconsWindow",self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "PayPal", "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.cached_font)))
+        self.TwitterLink.setText(_translate("IconsWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created By @OfficialAhmed0", "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.font)))
+        self.PaypalLink.setText(_translate("IconsWindow",self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "PayPal", "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.font)))
         self.LogsTxt.setHtml(_translate("IconsWindow",
                 f"""
                     {self.html.span_tag(f"*Connected to PS4: {self.ip}*", "#ffffff", 12)}
@@ -326,7 +326,7 @@ class Ui(Icons):
         if len(self.sys_game_ids) > 1:
             self.HomebrewLabel.setText(_translate("IconsWindow", "System icon: Yes"))
             # self.ChangeBgBtn.hide()
-        elif self.cached_toggled_homebrew == "True":
+        elif self.toggled_homebrew == "True":
             enabled = "YES"
             if "CUSA" in self.current_game_id:
                 enabled = "NO"
