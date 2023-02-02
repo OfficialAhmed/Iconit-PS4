@@ -146,7 +146,7 @@ class Main(Common):
             """
             for id in self.unchecked_game_ids:
                 self.ftp.cwd(f"/{dir}/{id}")
-                game_files = self.get_server_directories()
+                game_files = self.get_server_list()
                 
                 if self.constant.PS4_PRONOUNCIATION_FILE in game_files:
                     location = "External" if "external" in dir else "Internal"
@@ -320,7 +320,7 @@ class Game(Main, Common):
             self.ftp.cwd(self.ps4_internal_icons_dir)
 
             self.icon_directories = (self.ps4_internal_icons_dir, self.ps4_external_icons_dir)
-            if "external" not in self.get_server_directories():
+            if "external" not in self.get_server_list():
                 self.icon_directories = (self.ps4_internal_icons_dir, )
                 self.is_external_icons_found = False
 
@@ -353,7 +353,7 @@ class Game(Main, Common):
                         current_directory = self.ps4_external_icons_dir
 
                     self.ftp.cwd(f"/{current_directory}/{game_id}")
-                    files = self.get_server_directories()
+                    files = self.get_server_list()
 
 
                     if self.game_title_file in files:
@@ -402,15 +402,15 @@ class System(Main):
     def start_cache(self):
         self.change_colors(True)
         self.ftp.cwd(f"/{self.ps4_system_icons_dir}")
-        files = self.get_server_directories()
+        files = self.get_server_list()
 
         for sys_game in files:
             if len(sys_game) == 9:
                 self.ftp.cwd(sys_game)
-                folders_inside = self.get_server_directories()
+                folders_inside = self.get_server_list()
                 if "sce_sys" in folders_inside:
                     self.ftp.cwd("sce_sys")
-                    files_inside = self.get_server_directories()
+                    files_inside = self.get_server_list()
                     if "icon0.png" in files_inside:
                         self.sys_game_ids.append(sys_game)
 
@@ -425,7 +425,7 @@ class System(Main):
 
         for sysIcon in self.all_:
             self.ftp.cwd(sysIcon + "/sce_sys")
-            inside_sce_sys = self.get_server_directories()
+            inside_sce_sys = self.get_server_list()
             icon_2_fetch = "icon0.png"
 
             # fetch 4k version if found

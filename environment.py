@@ -7,7 +7,6 @@
 """
 import os, datetime
 from ftplib import FTP
-
 from Module.Database.Generate import Database
 from Module.Settings import Main as Settings
 from Module.Widget.Shared import Widget
@@ -72,6 +71,7 @@ class Common:
         self.cache_path = f"{self.metadata_path}game\\"
         self.game_cache_file = f"{self.cache_path}games.json"
         self.language_path = f"{self.data_path}Language\\"
+        self.icons_cache_path = f"{self.temp_path}Icons\\"
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
 
@@ -111,10 +111,15 @@ class Common:
         )
 
 
-    def get_server_directories(self) -> tuple:
+    def get_server_list(self, list="directories") -> tuple:
         " This is a solution since PS4 ftp doesnt support nlst()."
         result = []
-        self.ftp.retrlines("LIST ", lambda line : result.append(line.split(" ")[-1]))
+    
+        command = lambda line : result.append(line.split(" ")[-1])
+        if list == "files":
+            command = lambda line : result.append(line.split(" ")[-1]) if line[:2] == "-r" else None
+        
+        self.ftp.retrlines("LIST ", command)
         return tuple(result)
 
 
@@ -254,10 +259,11 @@ class html:
 class Constant:
     """ Read-only class """
 
+    PS4_PIC_SIZE = (1920, 1080)
+    PS4_ICON_SIZE = (512, 512)
     PS4_INT_ICONS = "user/appmeta/"
     PS4_EXT_ICONS = "user/appmeta/external/"
     PS4_SYS_ICONS = "system_ex/app/"
-    PS4_ICON_SIZE = (512, 512)
     PS4_PRONOUNCIATION_FILE = "pronunciation.xml"
 
     ICONS_BACKUP_NAME = "Backup"

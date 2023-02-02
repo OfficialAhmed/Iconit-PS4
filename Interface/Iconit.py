@@ -1,5 +1,4 @@
 import os
-from time import perf_counter
 from environment import html
 from Module.Iconit import Main as Iconit
 from PyQt5 import QtCore, QtGui, QtWidgets
