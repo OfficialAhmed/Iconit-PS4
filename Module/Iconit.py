@@ -59,7 +59,7 @@ class Main(Common):
             self.connect_ps4(is_valid)
 
         except Exception as e:
-            self.logs(str(e), "Warning")
+            self.log_to_external_file(str(e), "Warning")
 
 
     def chage_state(self, connected: bool) -> None:
@@ -290,7 +290,7 @@ class Game(Main, Common):
             self.game_ids[game_id]["title"] = respons[1]
             return True
 
-        self.logs(respons[1], "Wrning")
+        self.log_to_external_file(respons[1], "Wrning")
         return False
 
 
@@ -382,7 +382,7 @@ class Game(Main, Common):
             return True
 
         except Exception as e:
-            self.logs(str(e), "Error")
+            self.log_to_external_file(str(e), "Error")
             self.chage_state(False)
             self.ui.setupUi(self.window)
             self.ui.alert(f"Error occured |_DEV {str(e)}")

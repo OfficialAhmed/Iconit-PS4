@@ -134,7 +134,7 @@ class Main(Common):
                     self.window.setStyleSheet(self.html.bg_image(img))
                     self.is_bg_image_changed = True
                     self.browsed_bg_img_path = img
-                    self.set_browsed_bg_img_path(img)
+                    self.set_browsed_pic_path(img)
                     self.change_bg()
                 else:
                     self.logging += self.html.internal_log_msg("error", f"[Image heigh] {err}")
@@ -235,7 +235,7 @@ class Main(Common):
         self.SendBtn.setEnabled(False)
         if self.is_bg_image_changed == False:
             self.browsed_bg_img_path = ""
-            self.set_browsed_bg_img_path("")
+            self.set_browsed_pic_path("")
 
         self.set_current_game_id(self.current_game_id)
         self.set_upload_type("Iconit")

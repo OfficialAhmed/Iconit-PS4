@@ -103,7 +103,7 @@ class Ui(Upload):
         #_________________    SIGNALS    ________________#
         self.Ok.clicked.connect(window.close)
         self.No.clicked.connect(window.close)
-        self.Yes.clicked.connect(self.resize_icons)
+        self.Yes.clicked.connect(self.resize_icon)
 
         #_________________    VISIBILITY    ________________#
         self.graphicsView.raise_()

@@ -102,13 +102,14 @@ class Common:
         self.logging = self.html.internal_log_msg("ps4", self.ip, 12, "font-weight:600; font-style:italic;")
 
 
-    def logs(self, description, Type):
+    def log_to_external_file(self, description:str, Type:str) -> None:
+        """ Write info about the issue in an external file """
+        data = lambda : f"{datetime.datetime.now()} | _DEV {Type.upper()}: {description}\n"
+
         try: error_file = open("Logs.txt", "a")
         except: error_file = open("Logs.txt", "w+")
 
-        error_file.write(
-            f"{str(datetime.datetime.now())}| _DEV {Type}: {str(description)} \n"
-        )
+        error_file.write(data())
 
 
     def get_server_list(self, list="directories") -> tuple:
@@ -125,83 +126,83 @@ class Common:
 
     def download_data_from_server(self, file_name, file_path_with_extension) -> None:
         with open(file_path_with_extension, "wb") as downloaded_file:
-            self.ftp.retrbinary("RETR " + file_name, downloaded_file.write, 65536)
+            self.ftp.retrbinary("RETR " + file_name, downloaded_file.write, 5120)
 
 
-    def get_language(self):
+    def get_language(self) -> str:
         return Common.language
 
-    def set_language(self, lang):
+    def set_language(self, lang) -> None:
         Common.language = lang
 
     def get_window(self):
         return Common.window
 
-    def set_window(self, ptr):
+    def set_window(self, ptr) -> None:
         Common.window = ptr
 
-    def set_ui(self, ptr):
+    def set_ui(self, ptr) -> None:
         Common.ui = ptr
 
     def get_ui(self):
         return Common.ui
 
-    def set_ftp(self, ptr):
+    def set_ftp(self, ptr) -> None:
         Common.connection = ptr
 
     def get_ftp(self):
         return Common.connection
         
-    def set_browsed_bg_img_path(self, path:str):
+    def set_browsed_pic_path(self, path:str) -> None:
         Common.browsed_bg_img_path = path
 
-    def get_browsed_bg_img_path(self):
+    def get_browsed_bg_img_path(self) -> str:
         return Common.browsed_bg_img_path
 
-    def set_is_sys_icon(self, sys:bool):
+    def set_is_sys_icon(self, sys:bool) -> None:
         Common.is_sys_icon = sys
 
-    def get_is_sys_icon(self):
+    def get_is_sys_icon(self) -> bool:
         return Common.is_sys_icon
 
-    def set_upload_type(self, t:str):
+    def set_upload_type(self, t:str) -> None:
         Common.upload_type = t
 
-    def get_upload_type(self):
+    def get_upload_type(self) -> str:
         return Common.upload_type
 
-    def set_current_game_id(self, id:str):
+    def set_current_game_id(self, id:str) -> None:
         Common.current_game_id = id
 
-    def get_current_game_id(self):
+    def get_current_game_id(self) -> str:
         return Common.current_game_id
         
-    def set_browsed_icon_path(self, path:str):
+    def set_browsed_icon_path(self, path:str) -> None:
         Common.browsed_icon_path = path
 
-    def get_browsed_icon_path(self):
+    def get_browsed_icon_path(self) -> str:
         return Common.browsed_icon_path
 
-    def set_game_ids(self, ids:dict):
+    def set_game_ids(self, ids:dict) -> None:
         Common.all_game_ids = ids
 
-    def get_all_game_ids(self):
+    def get_all_game_ids(self) -> dict:
         return Common.all_game_ids
 
-    def set_selected_mode(self, mode:str):
+    def set_selected_mode(self, mode:str) -> None:
         Common.selected_mode = mode
 
-    def get_selected_mode(self):
+    def get_selected_mode(self) -> str:
         return Common.selected_mode
 
     def set_ip_port(self, ip, port) -> None:
         Common.default_settings["ip"], self.ip = ip, ip
         Common.default_settings["port"], self.port = port, port
 
-    def get_ip(self):
+    def get_ip(self) -> str:
         return Common.default_settings.get("ip")
 
-    def get_port(self):
+    def get_port(self) -> int:
         return int(Common.default_settings["port"])
         
     def set_screen_size(self, w, h) -> None:
@@ -211,9 +212,9 @@ class Common:
 
 class html:
     def __init__(self) -> None:
-        self.start = "<html><head/><body>"
-        self.end = "</p></body></html>"
-        self.constant = Constant()
+        self.__start = "<html><head/><body>"
+        self.__end = "</p></body></html>"
+        self.__constant = Constant()
 
 
     def p_tag(self, cstm_style, txt=None) -> str:
@@ -223,12 +224,12 @@ class html:
 
     def a_tag(self, href:str, txt:str, color:str, size:int, cstm_style: str = "", align: str = "center", font="Arial") -> str:
         """  generate Link """
-        return f'{self.start}<p align="{align}"><a href="{href}"><span style="text-decoration: underline; font-size:{size}pt; color:{color}; {cstm_style}; font-family: {font}">{txt}</span></a>{self.end}'
+        return f'{self.__start}<p align="{align}"><a href="{href}"><span style="text-decoration: underline; font-size:{size}pt; color:{color}; {cstm_style}; font-family: {font}">{txt}</span></a>{self.__end}'
         
 
     def span_tag(self, txt:str, color:str, size:int, align:str = "center", weight = 700, font="Arial") -> str:
         """  generate Text """
-        return f'{self.start}<p align="{align}"><span style=" font-size:{size}pt; font-weight:{weight}; color:{color}; font-family: {font}">{txt}</span>{self.end}'
+        return f'{self.__start}<p align="{align}"><span style=" font-size:{size}pt; font-weight:{weight}; color:{color}; font-family: {font}">{txt}</span>{self.__end}'
 
 
     def tooltip_tag(self, txt:str) -> str:
@@ -246,10 +247,10 @@ class html:
     def internal_log_msg(self, state, msg, size=10, custome_style="") -> str:
         """ generate a logging line as <p> tag"""
         color = {
-            "error":self.constant.get_color("red"),
-            "warning":self.constant.get_color("orange"),
-            "success":self.constant.get_color("green"),
-            "ps4":self.constant.get_color("white")
+            "error":self.__constant.get_color("red"),
+            "warning":self.__constant.get_color("orange"),
+            "success":self.__constant.get_color("green"),
+            "ps4":self.__constant.get_color("white")
         }
 
         style = f"margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:{size}pt; color:{color[state]}; {custome_style}"

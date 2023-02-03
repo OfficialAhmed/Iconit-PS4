@@ -17,36 +17,36 @@ class Main(Common):
         self.browsed_bg_img_path = self.get_browsed_bg_img_path()
 
 
-    def png_to_dds(self, input_dir: str, output_dir: str) -> None:
-        # Microsoft corp. (texconv) LICENSED software under MIT license
-        os.system(f"Data\\BIN\\texconv -f BC1_UNORM {input_dir} -o {output_dir} -y")
+    def png_to_dds(self, png_dir: str, output_dir: str) -> None:
+        """ 
+        Legit DDS conversion with DXT1 compression using 
+        Microsoft corp. (texconv) LICENSED software under MIT license
+        """
+        os.system(f"Data\\BIN\\texconv -f BC1_UNORM {png_dir} -o {output_dir} -y")
 
 
     def get_timestamp(self) -> str:
+        """ To avoid NameExists for the backup, rename it to current time """
         date = datetime.datetime.now()
         time = date.time()
-
-        return f"{time.minute}_{time.hour}_{date.day}_{date.month}-{time.microsecond}"
+        return f"{date.day}_{date.month}_{time.hour}_{time.minute}-{time.microsecond}"
 
 
     def backup_icon(self):
-        try:
-            icon_name = f"{self.current_game_id}.png"
-            backup_icon_name = f"{self.get_timestamp()}.png"
-
-        except:
-            os.mkdir(self.backup_path.replace("\\", ""))
+        """ Copy icon from local cache for backup """
+        icon_name = f"{self.current_game_id}.png"
+        backup_icon_name = f"{self.get_timestamp()}.png"
 
         try:
             shutil.copyfile(
                 f"{self.metadata_path}{self.selected_mode}\\{icon_name}",
                 f"{self.backup_path}{backup_icon_name}"
             )
-        except Exception as e:
-            self.log_to_external_file(str(e), "Error")
+        except Exception as e: self.log_to_external_file(str(e), "Error")
 
 
     def generate_underscore_icons(self, resized_icon:Image, underscore_icons:list) -> None:
+        """ if underscore icons found for the game, generate them from the resized icon """
         for x in range(1, len(underscore_icons)+1):
             if x < 10:
                 search_png = f"icon0_0{x}.png"
@@ -65,13 +65,15 @@ class Main(Common):
                 self.icons_to_upload.append(search_dds)
 
 
-    def resize_icons(self):
+    def resize_icon(self):
+        """ take the user image, resize and duplicate it """
         try:
             self.image = None
 
             self.Yes.setEnabled(False)
             self.No.setEnabled(False)
             self.CheckingBar.setProperty("value", 10)
+
 
             if self.upload_type == "Iconit":
                 if self.is_sys_icon:
@@ -99,8 +101,8 @@ class Main(Common):
                         found_4k = True
 
                     self.CheckingBar.setProperty("value", 45)
-                    with open(self.temp_path + "Icons\\icon0.png", "wb") as file:
-                        self.ftp.retrbinary("RETR " + iconFound, file.write)
+                    with open(self.temp_path + "Icons\\icon0.png", "wb") as picture:
+                        self.ftp.retrbinary("RETR " + iconFound, picture.write)
 
                     self.backup_icon(sys=True)
                     self.CheckingBar.setProperty("value", 100)
@@ -127,17 +129,15 @@ class Main(Common):
                         self.ResizingBar.setProperty("value", 100)
                 else: # Game icons
 
-                    self.icons_to_upload = []  # Icon0, Icon0_X (dds and png extension)
-                    self.pics_to_upload = []  # Pic0, Pic1 (dds and png extension)
-                    game_directory = f"{self.ps4_internal_icons_dir}{self.current_game_id}"
+                    self.pics_to_upload = []
+                    self.icons_to_upload = []
 
-                    if self.game_ids.get(self.current_game_id).get("location") == "External":
-                        game_directory = f"{self.ps4_internal_icons_dir}/external/{self.current_game_id}"
+                    folder = ""
+                    if self.game_ids.get(self.current_game_id).get("location") == "External": 
+                        folder = "/external/"
+                    game_directory = f"{self.ps4_internal_icons_dir}{folder}{self.current_game_id}"
                     
                     self.ftp.cwd(f"/{game_directory}")
-
-                    self.CheckingBar.setProperty("value", 50)
-
                     self.game_files = self.get_server_list(list="files")
 
                     self.CheckingBar.setProperty("value", 100)
@@ -150,59 +150,53 @@ class Main(Common):
                         self.backup_icon()
 
                         icon = Image.open(self.browsed_icon_path)
+                        icon_path = f"{self.icons_cache_path}icon0.png"
                         resized_icon = icon.resize(self.constant.PS4_ICON_SIZE, PIL.Image.ANTIALIAS)
-                        resized_icon.save(f"{self.icons_cache_path}icon0.png")
+                        resized_icon.save(icon_path)
 
                         underscore_icons = []
-                        for file in self.game_files:
-                            if "icon0_" in file:
-                                underscore_icons.append(file)
+                        for picture in self.game_files:
+                            if "icon0_" in picture:
+                                underscore_icons.append(picture)
 
-                            if file == "icon0.png":
-                                resized_icon.save(f"{self.icons_cache_path}icon0.png")
-                                self.icons_to_upload.append("icon0.png")
+                            elif picture == "icon0.png":
+                                resized_icon.save(icon_path)
 
-                            if file == "icon0.dds":
-                                self.png_to_dds(f"{self.icons_cache_path}icon0.png", self.icons_cache_path)
-                                self.icons_to_upload.append("icon0.dds")
+                            elif picture == "icon0.dds":
+                                self.png_to_dds(icon_path, self.icons_cache_path)
+
+                            self.icons_to_upload.append(picture)
 
                         if underscore_icons:
                             self.generate_underscore_icons(resized_icon, underscore_icons)
-
 
                     if self.browsed_bg_img_path:
                         #############################################################
                         ###   PIC has been changed, generate the PNG & DDS
                         #############################################################
 
-                        Background = Image.open(self.browsed_bg_img_path)
-                        resizeBackground = Background.resize(self.constant.PS4_PIC_SIZE, PIL.Image.ANTIALIAS)
-                        self.ResizingBar.setProperty("value", 50)
+                        pic = Image.open(self.browsed_bg_img_path)
+                        resized_pic = pic.resize(self.constant.PS4_PIC_SIZE, PIL.Image.ANTIALIAS)
+                        resized_pic.save(f"{self.icons_cache_path}pic0.png")
 
-                        # v4.65 background pic0, pic1 implementaion
-                        if "pic0.png" in self.game_files:
-                            resizeBackground.save(self.icons_cache_path + "pic0.png")
-                            self.pics_to_upload.append("pic0.png")
-                        if "pic1.png" in self.game_files:
-                            resizeBackground.save(self.icons_cache_path + "pic1.png")
-                            self.pics_to_upload.append("pic1.png")
                         self.ResizingBar.setProperty("value", 75)
 
-                        if "pic0.dds" in self.game_files:
-                            self.png_to_dds(self.icons_cache_path + "pic0.png", self.icons_cache_path)
-                            self.pics_to_upload.append("pic0.dds")
-                        if "pic1.dds" in self.game_files:
-                            self.png_to_dds(self.icons_cache_path + "pic1.png", self.icons_cache_path)
-                            self.pics_to_upload.append("pic1.dds")
+                        for picture in self.game_files:
+                            if picture == "pic0.png" or picture == "pic1.png":
+                                resized_pic.save(f"{self.icons_cache_path}{picture}")
+                                self.pics_to_upload.append(picture)
 
-                        for bg in self.pics_to_upload:
-                            with open(self.icons_cache_path + str(bg), "rb") as save_file:
-                                self.ftp.storbinary("STOR " + str(bg), save_file, 1024)
-
+                            elif picture == "pic0.dds" or picture == "pic1.dds":
+                                self.png_to_dds(f"{self.icons_cache_path}{picture[:4]}.png", self.icons_cache_path)
+                                self.pics_to_upload.append(picture)
+                            
                 self.ResizingBar.setProperty("value", 100)
                 self.UploadingBar.setProperty("value", 1)
+                
+                self.send_generated_images()
+                self.remove_unwanted_icons()
 
-                self.send_icon_to_ps4()
+                self.UploadingBar.setProperty("value", 100)
 
                 self.No.hide()
                 self.Yes.hide()
@@ -289,8 +283,7 @@ class Main(Common):
                     progressed += progress
                 self.Ok.setEnabled(True)
 
-        except FileNotFoundError:
-            pass
+        except FileNotFoundError: pass
 
         except FileExistsError:
             self.icons_to_upload = os.listdir(self.icons_cache_path)
@@ -299,38 +292,47 @@ class Main(Common):
                     os.remove(self.icons_cache_path + i)
                 except Exception as e:
                     self.log_to_external_file(str(e), "Error")
-            self.resize_icons()
+            self.resize_icon()
 
         except Exception as e:
-            self.log_to_external_file(str(e), "Error")
-
+            self.update_message(False, "Encountered a problem while resizing icon", str(e))
+        
         finally:
+            self.set_browsed_pic_path("")
             self.set_browsed_icon_path("")
-            self.set_browsed_bg_img_path("")
+
+
+    def send_generated_images(self) -> None:
+        if self.icons_to_upload:
+            self.send_icon_to_ps4()
+
+        if self.pics_to_upload:
+            self.send_pic_to_ps4()
+
+
+    def send_pic_to_ps4(self) -> None:
+        """ upload generated icons to ps4 """
+        for pic in self.pics_to_upload:
+            self.upload_to_server(f"{self.icons_cache_path}{pic}", pic)
 
 
     def send_icon_to_ps4(self):
+        """ send icon to ps4, upon sucess copy icon0 for app preview """
         try:
-            ########################################################################
-            ###         Send icon and move a copy for in-app preview
-            ########################################################################
             for icon in self.icons_to_upload:
                 if self.upload_to_server(f"{self.icons_cache_path}{icon}", icon):
-                    if icon.lower() == "icon0.png":
-                        shutil.move(f"{self.icons_cache_path}{icon}",
-                            f"{self.metadata_path}{self.selected_mode}\\{self.current_game_id}.png"
-                        )
+                    shutil.move(f"{self.icons_cache_path}{icon}",
+                        f"{self.metadata_path}{self.selected_mode}\\{self.current_game_id}.png"
+                    )
+                else:
+                    self.update_message(False, "Sorry! an issue has occured, Sending has been canceled")
+                    break
 
             self.UploadingBar.setProperty("value", 100)
-            self.msg.setStyleSheet("font: 10pt; color: rgb(5, 255, 20);")
-            self.msg.setText("Success. Icons will take time to change in both the PS4 & Iconit")
+            self.update_message(True, "Success. Icons will take time to change in both the PS4 & Iconit")
         
         except Exception as e:
-            self.log_to_external_file(str(e), "Error")
-
-            self.UploadingBar.setProperty("value", 5)
-            self.msg.setStyleSheet("font: 10pt; color: rgb(250, 1, 1);")
-            self.msg.setText("Sorry! PS4 has denied the signal, enable Full R/W")
+            self.update_message(False, "Sorry! PS4 has denied the signal", str(e))
 
 
     def upload_to_server(self, file, file_name) -> bool:
@@ -338,16 +340,22 @@ class Main(Common):
             with open(file, "rb") as binary_data:
                 self.ftp.storbinary(f"STOR {file_name}", binary_data, 1024)
                 return True
-        except ftplib.error_perm as e:
-            self.log_to_external_file(str(e), "Error")
+        except:
             return False
 
 
-    def log_to_external_file(self, description:str, Type:str) -> None:
-        """ Write info about the issue in an external file """
-        data = lambda : f"{datetime.datetime.now()} | _DEV {Type.upper()}: {description}\n"
+    def update_message(self, is_sucess:bool, msg:str, dev_msg:str= "", font_size:int= 10) -> None:
+        color = self.constant.get_color("green")
+        if not is_sucess:
+            color = self.constant.get_color("red")
+            self.log_to_external_file(f"{msg} | DEV {dev_msg}", "Error")
+        
+        self.msg.setStyleSheet(f"font: {font_size}pt; color: {color};")
+        self.msg.setText(f"{msg}. Read logs.txt")
 
-        try: error_file = open("Logs.txt", "a")
-        except: error_file = open("Logs.txt", "w")
 
-        error_file.write(data())
+    def remove_unwanted_icons(self) -> None:
+        """ Delete temp icons generated for the server """
+        for file in os.listdir(self.icons_cache_path):
+            if os.path.isfile(file):
+                os.remove(f"{self.icons_cache_path}{file}")

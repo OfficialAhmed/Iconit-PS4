@@ -331,7 +331,7 @@ class Main(Common):
                 for i in data:
                     os.remove(dir + i)
             except Exception as e:
-                self.logs(str(e), "Warning")
+                self.log_to_external_file(str(e), "Warning")
 
         progress = int(100 / len(self.userID))
         progressed = 0
@@ -346,7 +346,7 @@ class Main(Common):
                 try:
                     self.ftp.retrbinary("RETR " + "avatar.png", file.write, 1024)
                 except Exception as e:
-                    self.logs(str(e), "Warning")
+                    self.log_to_external_file(str(e), "Warning")
             with open(self.dir + "\\" + user + ".json", "wb") as file:
                 # Fix (v4.07) make a fake one if online json not found
                 # fix (json not found) v4.51
@@ -398,7 +398,7 @@ class Main(Common):
                         origIcon.write(img.content)
 
             except Exception as e:
-                self.logs(str(e), "Warning")
+                self.log_to_external_file(str(e), "Warning")
 
             for i in range(1, progress):
                 self.CacheBar.setProperty("value", progressed + i)

@@ -286,7 +286,6 @@ class Ui(Iconit):
 
         self.AvatarIconsRadio.setEnabled(False)
         self.SystemIconsRadio.setEnabled(False)
-
         self.translate_ui()
 
 
@@ -317,7 +316,6 @@ class Ui(Iconit):
         self.Remove_cache.setText(_translate("window", translated_content.get("Remove_cache")))
         self.Special_thanks.setText(_translate("window", translated_content.get("Special_thanks")))
         self.DownloadDatabase.setText(_translate("window", translated_content.get("DownloadDatabase")))
-
 
 
     def open_options(self):

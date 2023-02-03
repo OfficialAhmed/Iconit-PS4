@@ -74,10 +74,10 @@ class Main(Common):
                         self.mask_is_changed = True
                     else:
                         self.bake_state.setText("Invalid mask file")
-                        self.logs("Invalid mask file", "Error")
+                        self.log_to_external_file("Invalid mask file", "Error")
 
                 except Exception as e:
-                    self.logs(str(e), "Error")
+                    self.log_to_external_file(str(e), "Error")
             else:
                 self.bake_state.setText("ZIP file too large")
         self.is_baking_valid()
@@ -117,7 +117,7 @@ class Main(Common):
             
         except Exception as e:
             self.bake_state.setText("Error baking mask, read logs.txt")
-            self.logs(str(e), "Error")
+            self.log_to_external_file(str(e), "Error")
             self.is_preview_allowed = False
 
         finally:
@@ -131,7 +131,7 @@ class Main(Common):
                 location = "Baked masks"
                 self.bake_view.setStyleSheet(f"border-image: url({location}/{self.last_baked_mask}.png);")
             except Exception as e:
-                self.logs(str(e), "Warning")
+                self.log_to_external_file(str(e), "Warning")
 
     def quit(self):
         exit()
