@@ -18,6 +18,7 @@ class Main(Common):
 
 
     def png_to_dds(self, input_dir: str, output_dir: str) -> None:
+        # Microsoft corp. (texconv) LICENSED software under MIT license
         os.system(f"Data\\BIN\\texconv -f BC1_UNORM {input_dir} -o {output_dir} -y")
 
 
@@ -66,9 +67,6 @@ class Main(Common):
 
     def resize_icons(self):
         try:
-            from time import perf_counter
-            starting_time = time.perf_counter()
-
             self.image = None
 
             self.Yes.setEnabled(False)
@@ -157,7 +155,6 @@ class Main(Common):
 
                         underscore_icons = []
                         for file in self.game_files:
-             
                             if "icon0_" in file:
                                 underscore_icons.append(file)
 
@@ -171,6 +168,7 @@ class Main(Common):
 
                         if underscore_icons:
                             self.generate_underscore_icons(resized_icon, underscore_icons)
+
 
                     if self.browsed_bg_img_path:
                         #############################################################
@@ -206,7 +204,6 @@ class Main(Common):
 
                 self.send_icon_to_ps4()
 
-                print(f"Total time took to upload: {time.perf_counter() - starting_time} seconds")
                 self.No.hide()
                 self.Yes.hide()
                 self.Ok.raise_()
@@ -299,8 +296,7 @@ class Main(Common):
             self.icons_to_upload = os.listdir(self.icons_cache_path)
             for i in self.icons_to_upload:
                 try:
-                    # os.remove(self.icons_cache_path + i)
-                    shutil.rm(self.icons_cache_path + i)
+                    os.remove(self.icons_cache_path + i)
                 except Exception as e:
                     self.log_to_external_file(str(e), "Error")
             self.resize_icons()

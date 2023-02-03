@@ -72,5 +72,11 @@ ________________________________________
 Don't hesitate to contact [me](https://twitter.com/OfficialAhmed0) for new suggestions and ideas 
 
 ## _Preview_
-![iconit ui](Iconit UI 2.png)
-![avatar change ui](Iconit UI.png)
+![Main_screen](Interface/view/main_screen.jpg)
+![Icons_screen](Interface/view/icons_screen.jpg)
+
+
+# License
+Iconit-PS4 - Copyright (C) 2019-2023 OfficialAhmed
+
+This software is free to use, distribute and/or modify it under the terms of the [MIT License](LICENSE) (MIT)
