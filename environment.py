@@ -62,13 +62,13 @@ class Common:
 
         self.app_root_path = f"{Common.app_path}\\"
         self.data_path = f"{self.app_root_path}Data\\"
-        self.pref_path = f"{self.data_path}Pref\\"
+        self.pref_path = f"{self.data_path}Preference\\"
         self.temp_path = f"{self.data_path}Cache\\"
         self.language_path = f"{self.data_path}Language\\"
         self.appmeta_path = f"{self.data_path}User\\appmeta\\"
         self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
-        self.database_file = f"{self.temp_path}Database.json"
         self.cache_path = f"{self.metadata_path}game\\"
+        self.database_file = f"{self.cache_path}Database.json"
         self.game_cache_file = f"{self.cache_path}games.json"
         self.language_path = f"{self.data_path}Language\\"
         self.icons_cache_path = f"{self.temp_path}Icons\\"
@@ -108,12 +108,15 @@ class Common:
 
         try: error_file = open("Logs.txt", "a")
         except: error_file = open("Logs.txt", "w+")
-
         error_file.write(data())
 
 
     def get_server_list(self, list="directories") -> tuple:
-        " This is a solution since PS4 ftp doesnt support nlst()."
+        """ 
+            This is a solution since PS4 ftp doesnt support nlst(). 
+            list: files = name of files if any 
+            list: directories = directories names if any 
+        """
         result = []
     
         command = lambda line : result.append(line.split(" ")[-1])
