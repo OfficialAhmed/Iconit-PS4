@@ -39,7 +39,7 @@ class Main(Common):
 
         loc = self.game_ids.get(self.current_game_id).get("location").upper()
 
-        if len(self.sys_game_ids) > 1:
+        if len(self.system_apps_ids) > 1:
             hb = "SYSTEM ICON: YES"
 
         elif self.toggled_homebrew == "True":

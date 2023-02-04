@@ -264,8 +264,6 @@ class Ui(Iconit):
         self.Special_thanks.triggered.connect(self.open_credits)
         self.DownloadDatabase.triggered.connect(self.download_database)
 
-        self.ConnectBtn.setShortcut("Return")
-
         # Update the cache and set following values from Settings.json 
         cache = self.settings.update_local_cache(self.temp_path)
         self.PortInput.setText(cache.get("port"))
@@ -282,10 +280,11 @@ class Ui(Iconit):
         self.widgets.set_cache_label(self.CacheLabel)
         self.widgets.set_status_label(self.StatusLabel)
         self.widgets.set_game_icon_radio(self.GameIconsRadio)
+        
+        self.ConnectBtn.setShortcut("Return")
         # ________________  BETA v5 Disable ______________________
 
         self.AvatarIconsRadio.setEnabled(False)
-        self.SystemIconsRadio.setEnabled(False)
         self.translate_ui()
 
 
@@ -346,7 +345,7 @@ class Ui(Iconit):
         ui = Alerts.Ui()
         ui.setupUi(self.window)
 
-        data = self.database.save()
+        data = self.game_database.save()
         if data[0] == True:
             ui.alert("db success")
         else:
@@ -359,9 +358,9 @@ class Ui(Iconit):
         ui = Alerts.Ui()
         ui.setupUi(self.window)
         try:
-            all = os.listdir(self.cache_path)
+            all = os.listdir(self.game_cache_path)
             for game in all:
-                os.remove(f"{self.cache_path}{game}")
+                os.remove(f"{self.game_cache_path}{game}")
             ui.alert("CUSTOMdoneRmvCache")
         except PermissionError:
             ui.alert("PermissionDenied")

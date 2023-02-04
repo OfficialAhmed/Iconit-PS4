@@ -25,7 +25,7 @@
 
     "Iconit":{
         "GameIconsRadio":"Game Icon/Pic",
-        "SystemIconsRadio":"System Icons [Disabled]",
+        "SystemIconsRadio":"System Icons",
         "AvatarIconsRadio":"Profile Avatar [Disabled]",
         "ModeLabel":"MODE",
         "IpLabel":"PS4 IP",

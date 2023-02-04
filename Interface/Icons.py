@@ -16,7 +16,7 @@ class Ui(Icons):
 
         # FIXME:These 2 lines are always empty -> reading from init as empty
         # FIX: init them as class attr for 'Common' class. Access through getters
-        self.sys_games = self.sys_game_ids
+        self.sys_games = self.system_apps_ids
         self.external_games = self.external_game_ids
         self.current_game_id = self.icon_names[0]
 
@@ -323,7 +323,7 @@ class Ui(Icons):
         self.PreviousBtn.setShortcut("Left")
         self.SelectBtn.setShortcut("return")
 
-        if len(self.sys_game_ids) > 1:
+        if len(self.system_apps_ids) > 1:
             self.HomebrewLabel.setText(_translate("IconsWindow", "System icon: Yes"))
             # self.ChangeBgBtn.hide()
         elif self.toggled_homebrew == "True":
