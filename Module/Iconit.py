@@ -146,7 +146,7 @@ class Main(Common):
             """
             try:
                 self.ftp.set_debuglevel(0)
-                self.ftp.connect(self.ip, int(self.port), timeout=2)
+                self.ftp.connect(self.ip, int(self.port))
                 self.ftp.login("", "")
                 self.set_ftp(self.ftp)
                 self.chage_state(True)

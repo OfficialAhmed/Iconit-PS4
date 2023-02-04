@@ -326,9 +326,10 @@ class Main(Common):
         try:
             for icon in self.icons_to_upload:
                 if self.upload_to_server(f"{self.icons_cache_path}{icon}", icon):
-                    shutil.move(f"{self.icons_cache_path}{icon}",
-                        f"{self.metadata_path}{self.selected_mode}\\{self.current_game_id}.png"
-                    )
+                    if icon == "icon0.png":
+                        shutil.move(f"{self.icons_cache_path}{icon}",
+                            f"{self.metadata_path}{self.selected_mode}\\{self.current_game_id}.png"
+                        )
                 else:
                     self.update_message(False, "Sorry! an issue has occured, Sending has been canceled")
                     break
@@ -354,9 +355,10 @@ class Main(Common):
         if not is_sucess:
             color = self.constant.get_color("red")
             self.log_to_external_file(f"{msg} | DEV {dev_msg} | TRACEBACK {traceback_stack}", "Error")
+            msg += ". Read logs.txt"
         
         self.msg.setStyleSheet(f"font: {font_size}pt; color: {color};")
-        self.msg.setText(f"{msg}. Read logs.txt")
+        self.msg.setText(msg)
 
 
     def remove_generated_images(self) -> None:
