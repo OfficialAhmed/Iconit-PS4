@@ -7,10 +7,10 @@
 """
 import os, datetime
 from ftplib import FTP
-from Module.Database.Generate import Database
 from Module.Settings import Main as Settings
 from Module.Widget.Shared import Widget
 from Module.Widget.Translate import Translate
+from Module.Database.Generate import Game_database, System_database
 
 class Common:
     """
@@ -55,23 +55,26 @@ class Common:
 
         self.game = {}
         self.game_ids = {}
-        self.sys_game_ids = []
+        self.system_apps_ids = {}
         self.external_game_ids = []
         self.screen_w = Common.screen_w
         self.screen_h = Common.screen_h
 
         self.app_root_path = f"{Common.app_path}\\"
         self.data_path = f"{self.app_root_path}Data\\"
-        self.pref_path = f"{self.data_path}Preference\\"
         self.temp_path = f"{self.data_path}Cache\\"
+        self.pref_path = f"{self.data_path}Preference\\"
+        self.icons_cache_path = f"{self.temp_path}Icons\\"
         self.language_path = f"{self.data_path}Language\\"
         self.appmeta_path = f"{self.data_path}User\\appmeta\\"
         self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
-        self.cache_path = f"{self.metadata_path}game\\"
-        self.database_file = f"{self.cache_path}Database.json"
-        self.game_cache_file = f"{self.cache_path}games.json"
-        self.language_path = f"{self.data_path}Language\\"
-        self.icons_cache_path = f"{self.temp_path}Icons\\"
+        self.game_cache_path = f"{self.metadata_path}game\\"
+        self.system_apps_cache_path = f"{self.metadata_path}system\\"
+
+        self.game_cache_file = f"{self.game_cache_path}games.json"
+        self.game_database_file = f"{self.game_cache_path}Database.json"
+        self.system_apps_database_file = f"{self.system_apps_cache_path}Database.json"
+        self.system_apps_cache_file = f"{self.system_apps_cache_path}system_apps.json"
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
 
@@ -81,7 +84,8 @@ class Common:
         self.constant = Constant()
         self.settings = Settings()
         self.settings.init(self.temp_path, self.language_path, self.default_settings, is_for_local_attr=True)
-        self.database = Database(self.database_file)
+        self.game_database = Game_database(self.game_database_file)
+        self.system_apps_database = System_database(self.system_apps_database_file)
         self.translation = Translate(self.language_path)
 
         self.ps4_system_icons_dir = self.constant.PS4_SYS_ICONS
@@ -268,6 +272,7 @@ class Constant:
     PS4_INT_ICONS = "user/appmeta/"
     PS4_EXT_ICONS = "user/appmeta/external/"
     PS4_SYS_ICONS = "system_ex/app/"
+    PS4_SYS_SCE = "sce_sys"
     PS4_PRONOUNCIATION_FILE = "pronunciation.xml"
 
     ICONS_BACKUP_NAME = "Backup"

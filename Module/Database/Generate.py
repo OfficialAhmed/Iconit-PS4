@@ -1,11 +1,17 @@
 """
+Game_database
     Fetch game titles and ids from 
     https://github.com/DEFAULTDNB/DEFAULTDNB.github.io
+    and store them locally as JSON
+
+System_database
+    Fetch apps info from online repo
+
     and store them locally as JSON
 """
 import requests, json
 
-class Database:
+class Game_database:
     def __init__(self, db_file) -> None:
         self.db_file = db_file
         self.lines = ""
@@ -66,3 +72,8 @@ class Database:
         return data
 
  
+class System_database:
+    def __init__(self, db_file) -> None:
+        self.db_file = db_file
+
+    

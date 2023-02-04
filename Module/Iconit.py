@@ -30,7 +30,7 @@ class Main(Common):
         """ Prepare shared attrs """
         self.ip_input = self.widgets.get_ip_input()
         self.ip_label = self.widgets.get_ip_label()
-        self.cache_bar = self.widgets.get_cache_bar()
+        self.CacheBar = self.widgets.get_cache_bar()
         self.port_label = self.widgets.get_port_label()
         self.mode_label = self.widgets.get_mode_label()
         self.port_input = self.widgets.get_port_input()
@@ -211,13 +211,12 @@ class Main(Common):
                 is_cached = Game().start_cache()
  
             elif self.SystemIconsRadio.isChecked():
-                #FIXME: reimplement a patch
                 self.set_selected_mode("system")
                 is_cached = System().start_cache()
                 
             else:
                 #FIXME: reimplement a patch
-                self.set_selected_mode("avatars")
+                self.set_selected_mode("avatar")
                 is_cached = Avatar().start_cache()
 
             if is_cached : 
@@ -239,11 +238,10 @@ class Main(Common):
             self.window.show()
 
 
-class Game(Main, Common):
+class Game(Main):
     """
     ########################################################
-        Class resposible for caching PS4 xmb game icons 
-        from PS4 'appmeta' to 'Data' folder
+            Game icons caching technique  
     ########################################################
     """
     def __init__(self) -> None:
@@ -285,7 +283,7 @@ class Game(Main, Common):
 
 
     def fetch_game_title_from_db(self, game_id) -> bool:
-        respons = self.database.fetch_game_title(game_id)
+        respons = self.game_database.fetch_game_title(game_id)
         if respons[0] == True:
             self.game_ids[game_id]["title"] = respons[1]
             return True
@@ -327,7 +325,7 @@ class Game(Main, Common):
             self.filter_game_ids()
             
             percentage = 0
-            self.cached = os.listdir(self.cache_path)
+            self.cached = os.listdir(self.game_cache_path)
             process_weight_fraction = (1 / len(self.game_ids)) * 100
 
             is_new_game_found = False
@@ -346,15 +344,14 @@ class Game(Main, Common):
                     #######################################################
                     """
                     is_new_game_found = True
-                    current_directory = self.ps4_internal_icons_dir
                     game_location = self.game_ids.get(game_id).get("location")
 
+                    current_directory = self.ps4_internal_icons_dir
                     if game_location == "External":
                         current_directory = self.ps4_external_icons_dir
 
                     self.ftp.cwd(f"/{current_directory}/{game_id}")
                     files = self.get_server_list()
-
 
                     if self.game_title_file in files:
                         """
@@ -362,23 +359,22 @@ class Game(Main, Common):
                             Fetch Game Title from server if title not in cache
                         #######################################################
                         """
-                        # O(n)
                         if not self.fetch_game_title_from_db(game_id):
                             self.save_undetected_game(game_id)
-                            # O(n^2)
                             self.fetch_game_title_from_server(game_id, files)
 
                     if self.icon_name in files:
-                        self.download_data_from_server(self.icon_name, f"{self.cache_path}{game_id}.png",)
+                        self.download_data_from_server(self.icon_name, f"{self.game_cache_path}{game_id}.png",)
 
                 percentage += process_weight_fraction
-                self.cache_bar.setProperty("value", f"{int(percentage)}")
+                self.CacheBar.setProperty("value", f"{int(percentage)}")
             
             if is_new_game_found:
                 self.sort_game_ids()
                 self.set_cache()
 
             self.set_game_ids(self.game_ids)
+            self.CacheBar.setProperty("value", 100)
             return True
 
         except Exception as e:
@@ -388,98 +384,89 @@ class Game(Main, Common):
             self.ui.alert(f"Error occured |_DEV {str(e)}")
             self.window.show()
 
+
 class System(Main):
     """
-    ########################################################
-        Class resposible for caching PS4 xmb system app 
-        icons from PS4 'appmeta' to 'Data' folder
-    ########################################################
+    #######################################################
+            System apps caching technique 
+    #######################################################
     """
     def __init__(self) -> None:
         super().__init__()
-
-
+        self.ftp = self.get_ftp()
+        self.widgets = self.fetch_sharables()
+        
     def start_cache(self):
-        self.change_colors(True)
+        self.chage_state(True)
         self.ftp.cwd(f"/{self.ps4_system_icons_dir}")
-        files = self.get_server_list()
+        all_apps = self.get_server_list(list="directories")
+        
+        for app_id in all_apps:
+            self.ftp.cwd(f"/{self.ps4_system_icons_dir}")
 
-        for sys_game in files:
-            if len(sys_game) == 9:
-                self.ftp.cwd(sys_game)
-                folders_inside = self.get_server_list()
-                if "sce_sys" in folders_inside:
-                    self.ftp.cwd("sce_sys")
-                    files_inside = self.get_server_list()
-                    if "icon0.png" in files_inside:
-                        self.sys_game_ids.append(sys_game)
+            # If sce_sys folder not found skip folder
+            try: self.ftp.cwd(f"{app_id}/{self.constant.PS4_SYS_SCE}")
+            except: continue
 
-            self.ftp.cwd("/")
-            self.ftp.cwd(self.ps4_system_icons_dir)
+            app_files = self.get_server_list(list="files")
 
-        GameWeightInFraction = (1 / len(self.all_)) * 100
-        percentage = 0
-        self.ftp.set_debuglevel(0)
-        self.ftp.cwd("/")
-        self.ftp.cwd(self.ps4_system_icons_dir)
+            # if icon nor icon_4k not found skip folder
+            if "icon0_4k.png" in app_files: 
+                icon_name = "icon0_4k.png"
+                self.system_apps_ids[app_id] = None
+                
+            elif "icon0.png" in app_files:
+                icon_name = "icon0.png"
+                self.system_apps_ids[app_id] = None
 
-        for sysIcon in self.all_:
-            self.ftp.cwd(sysIcon + "/sce_sys")
-            inside_sce_sys = self.get_server_list()
-            icon_2_fetch = "icon0.png"
+            else: continue
+            
+            # Download icon from PS4
+            self.download_data_from_server(icon_name, f"{self.system_apps_cache_path}{app_id}.png")
+            self.fetch_title(app_id, app_files)
+            self.CacheBar.setProperty("value", 60)
 
-            # fetch 4k version if found
-            if "icon0_4k.png" in inside_sce_sys:
-                icon_2_fetch = "icon0_4k.png"
+        # self.render_window()
+        self.CacheBar.setProperty("value", 100)
 
-            self.download_data_from_server(
-                icon_2_fetch,
-                f"{self.temp_path}Icons\metadata\\{sysIcon}.png",
-            )
-            if self.game_title_file in inside_sce_sys:
-                self.download_data_from_server(self.game_title_file, self.temp_path + self.game_title_file)
 
-                diff_titles = []  # all different titles for current fetched game
-                file = minidom.parse(self.temp_path + self.game_title_file).getElementsByTagName(
-                    "text"
-                )
+    def fetch_title(self, app_id, app_files):
+        """ Fetch app title from database if not found, try from ps4, else it's unknown """
+        with open(self.system_apps_database_file) as database:
+            apps_ids = json.load()
 
-                for name in file:
-                    diff_titles.append(name.firstChild.data)
 
-                GameTitle = ""
-                for title in diff_titles:
-                    english = True
+        if self.game_title_file in app_files:
+            self.download_data_from_server(self.game_title_file, self.temp_path + self.game_title_file)
 
-                    for alpha in self.alphaNum:
-                        if alpha in title or alpha.title() in title:
-                            GameTitle = title
-                            self.game_cache[sysIcon] = GameTitle
-                        else:
-                            for char in title:
-                                if char not in self.Eng:
-                                    english = False
-                                    break
-                    if english:
+            diff_titles = []  # all different titles for current fetched game
+            file = minidom.parse(self.temp_path + self.game_title_file).getElementsByTagName("text")
+
+            for name in file:
+                diff_titles.append(name.firstChild.data)
+
+            GameTitle = ""
+            for title in diff_titles:
+                english = True
+
+                for alpha in self.alphaNum:
+                    if alpha in title or alpha.title() in title:
                         GameTitle = title
-                        self.game_cache[sysIcon] = GameTitle
+                        self.game_cache[app_id] = GameTitle
+                    else:
+                        for char in title:
+                            if char not in self.Eng:
+                                english = False
+                                break
+                if english:
+                    GameTitle = title
+                    self.game_cache[app_id] = GameTitle
+        else:
+            if "NPXS" in app_id:
+                self.game_cache[app_id] = 'Unknown system icon "Sony didn\'t provide one :)"'
             else:
-                if "NPXS" in sysIcon:
-                    self.game_cache[sysIcon] = 'Unknown system icon "Sony didn\'t provide one :)"'
-                else:
-                    self.game_cache[sysIcon] = f"Cannot find title for {sysIcon}"
+                self.game_cache[app_id] = f"Cannot find title for {app_id}"
 
-            self.ftp.cwd("/")
-            self.ftp.cwd(self.ps4_system_icons_dir)
-            percentage += GameWeightInFraction
-            self.cache_bar.setProperty(
-                "value", str(percentage)[: str(percentage).index(".")]
-            )
-
-        try:
-            self.render_window()
-        except Exception as e:
-            print(str(e))
 
 class Avatar(Main):
     """
