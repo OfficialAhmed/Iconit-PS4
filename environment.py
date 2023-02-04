@@ -131,9 +131,13 @@ class Common:
         return tuple(result)
 
 
-    def download_data_from_server(self, file_name, file_path_with_extension) -> None:
-        with open(file_path_with_extension, "wb") as downloaded_file:
-            self.ftp.retrbinary("RETR " + file_name, downloaded_file.write, 5120)
+    def download_data_from_server(self, file_name, file_path_with_extension) -> bool:
+        try:
+            with open(file_path_with_extension, "wb") as downloaded_file:
+                self.ftp.retrbinary("RETR " + file_name, downloaded_file.write, 5120)
+                return True
+        except:
+            return False
 
 
     def get_language(self) -> str:

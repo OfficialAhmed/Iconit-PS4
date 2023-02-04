@@ -11,13 +11,15 @@ System_database
 """
 import requests, json
 
+
 class Game_database:
     def __init__(self, db_file) -> None:
         self.db_file = db_file
         self.lines = ""
         self.games = {}
         self.raw_data = "https://raw.githubusercontent.com/DEFAULTDNB/DEFAULTDNB.github.io/master/ps4date.db"
-                
+
+
     def fetch_game_title(self, game_id) -> tuple:
         """ return the local data """
         result = None
@@ -37,15 +39,16 @@ class Game_database:
         finally:
             return result
 
+
     def save(self) -> tuple:
         fetched_data = self.fetch_data()
         if fetched_data[0] == True:
             try:
                 with open(self.db_file, "w+") as file:
                     json.dump(self.get_game_id_and_title(), file)
-            except: 
-                pass
+            except: pass
         return fetched_data
+
 
     def fetch_data(self) -> tuple:
         try:
@@ -56,9 +59,11 @@ class Game_database:
         except Exception as e:
             return (False, f"Couldn't update database| {e}")
 
+
     def find_game_ids(self, line) -> list:
         """ return indices of CUSA/s in a line """
         return [idx for idx, _ in enumerate(line) if line[idx:idx+4] == "CUSA"]
+
 
     def get_game_id_and_title(self) -> dict:
         data = {}
@@ -75,5 +80,24 @@ class Game_database:
 class System_database:
     def __init__(self, db_file) -> None:
         self.db_file = db_file
+        self.raw_data = "https://raw.githubusercontent.com/OfficialAhmed/Iconit-PS4/master/Data/Cache/Icons/metadata/system/Database.json"
 
     
+    def save(self) -> tuple:
+        fetched_data = self.fetch_data()
+        if fetched_data[0] == True:
+            try:
+                with open(self.db_file, "w+", encoding="utf-8") as file:
+                    file.write(self.database)
+            except:  pass
+        return fetched_data
+
+
+    def fetch_data(self) -> tuple:
+        try:
+            self.database:str = requests.get(self.raw_data).text
+            return (True, )
+        except requests.ConnectionError:
+            return (False, "ConnectionError| Internet connection failed")
+        except Exception as e:
+            return (False, f"Couldn't update database| {e}")

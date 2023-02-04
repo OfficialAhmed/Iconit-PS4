@@ -345,11 +345,22 @@ class Ui(Iconit):
         ui = Alerts.Ui()
         ui.setupUi(self.window)
 
-        data = self.game_database.save()
-        if data[0] == True:
-            ui.alert("db success")
+        game_db = self.game_database.save()
+        apps_db = self.system_apps_database.save()
+        txt = ""
+
+        if game_db[0] == True:
+            txt += "Games Database Successful \n"
         else:
-            ui.alert(data[1])
+            txt += f"Games Database Unuccessful | {game_db[1]} \n"
+
+        if apps_db[0] == True:
+            txt += "Apps Database Successful \n"
+        else:
+            txt += f"Apps Database Unuccessful | {apps_db[1]} \n"
+
+
+        ui.alert(txt+" \n\nDON'T USE THIS OPTION MANY TIMES OR YOU WILL BE BLOCKED BY THE SERVER, 2 OR 3 TIMES A DAY")
         self.window.show()
         
 

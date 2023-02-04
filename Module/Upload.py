@@ -19,21 +19,24 @@ class Main(Common):
 
     def png_to_dds(self, png_dir: str, output_dir: str) -> None:
         """ 
-        Legit DDS conversion with DXT1 compression using 
-        Microsoft corp. (texconv) LICENSED software under MIT license
+            DDS conversion with DXT1 compression using 
+            Microsoft corp. (texconv) LICENSED software under MIT license
         """
+
         os.system(f"Data\\BIN\\texconv -f BC1_UNORM {png_dir} -o {output_dir} -y")
 
 
     def get_timestamp(self) -> str:
-        """ To avoid NameExists for the backup, rename it to current time """
+        """ To avoid NameExists for the backup, rename it to current time """    
+
         date = datetime.datetime.now()
         time = date.time()
         return f"{date.day}_{date.month}_{time.hour}_{time.minute}-{time.microsecond}"
 
 
     def backup_icon(self):
-        """ Copy icon from local cache for backup """
+        """ Copy icon from local cache for backup """ 
+
         icon_name = f"{self.current_game_id}.png"
         backup_icon_name = f"{self.get_timestamp()}.png"
 
@@ -43,16 +46,14 @@ class Main(Common):
             icon_path = f"{self.metadata_path}{self.selected_mode}\\{icon_name}"
         
         try:
-            shutil.copyfile(
-                icon_path,
-                f"{self.backup_path}{backup_icon_name}"
-            )
+            shutil.copyfile(icon_path, f"{self.backup_path}{backup_icon_name}")
         except Exception as e: 
             self.log_to_external_file(f"{e} | TRACEBACK {extract_stack()}", "Error")
 
 
     def generate_underscore_icons(self, resized_icon:Image, underscore_icons:list) -> None:
         """ if underscore icons found for the game, generate them from the resized icon """
+
         for x in range(1, len(underscore_icons)+1):
             if x < 10:
                 search_png = f"icon0_0{x}.png"
@@ -73,6 +74,7 @@ class Main(Common):
 
     def resize_icon(self):
         """ take the user image, resize and duplicate it according to the mode selected """
+
         try:
             self.image = None
 
@@ -80,15 +82,14 @@ class Main(Common):
             self.No.setEnabled(False)
             self.CheckingBar.setProperty("value", 10)
 
-
             if self.selected_mode == "system":
+                """
                 ###################################################
-                ###
                 ### Critical method needs to be accurate 100%
                 ### messing up with PS4 sys files related to sys icons
                 ### Triple check everything here
-                ###
                 ###################################################
+                """
                 self.CheckingBar.setProperty("value", 5)
 
                 self.ftp.cwd(f"/{self.ps4_system_icons_dir}{self.current_game_id}/sce_sys")
@@ -145,9 +146,11 @@ class Main(Common):
                 self.ResizingBar.setProperty("value", 1)
 
                 if self.browsed_icon_path:
+                    """
                     #############################################################
                     ###   icon has been changed, generate the PNG & DDS
                     #############################################################
+                    """
                     self.backup_icon()
 
                     icon = Image.open(self.browsed_icon_path)
@@ -166,16 +169,20 @@ class Main(Common):
                         elif picture == "icon0.dds":
                             self.png_to_dds(icon_path, self.icons_cache_path)
 
+                        else:
+                            continue
+
                         self.icons_to_upload.append(picture)
 
                     if underscore_icons:
                         self.generate_underscore_icons(resized_icon, underscore_icons)
 
                 if self.browsed_bg_img_path:
+                    """
                     #############################################################
                     ###   PIC has been changed, generate the PNG & DDS
                     #############################################################
-
+                    """
                     pic = Image.open(self.browsed_bg_img_path)
                     resized_pic = pic.resize(self.constant.PS4_PIC_SIZE, PIL.Image.ANTIALIAS)
                     resized_pic.save(f"{self.icons_cache_path}pic0.png")
@@ -195,9 +202,11 @@ class Main(Common):
             elif self.selected_mode == "avatar":
                 sysProfileRoot = "system_data/priv/cache/profile/"
                 try:
+                    """
                     ###############################################################
                     #######          Resize Icon and make copies
                     ###############################################################
+                    """
                     required_dds = ("avatar64", "avatar128", "avatar260", "avatar440")
                     ResizeImg = Image.open(self.browsed_icon_path)
                     avatar = ResizeImg.resize((440, 440), PIL.Image.ANTIALIAS)
@@ -220,10 +229,12 @@ class Main(Common):
                 except Exception as e:
                     self.log_to_external_file(f"{e} | TRACEBACK {extract_stack()}", "Error")
                 
+                """
                 ################################################################
                 ###                     Convert PNG To DDS
                 ################################################################
-               
+                
+                """
                 progress = 25
                 progressed = 0
 
@@ -253,10 +264,12 @@ class Main(Common):
 
                 except Exception as e:
                     self.log_to_external_file(f"{e} | TRACEBACK {extract_stack()}", "Error")
-
+                
+                """
                 ################################################################
                 ###                     Upload icons
                 ################################################################
+                """
                 self.ftp.cwd(sysProfileRoot + "/" + self.CurrentUser)
                 progress = 20
                 progressed = 20
@@ -285,15 +298,6 @@ class Main(Common):
             self.Ok.raise_()
 
         except FileNotFoundError: pass
-
-        except FileExistsError:
-            self.icons_to_upload = os.listdir(self.icons_cache_path)
-            for i in self.icons_to_upload:
-                try:
-                    os.remove(self.icons_cache_path + i)
-                except Exception as e:
-                    self.log_to_external_file(f"{e} | TRACEBACK {extract_stack()}", "Error")
-            self.resize_icon()
 
         except Exception as e:
             self.update_message(False, "Encountered a problem while resizing icon", extract_stack(), str(e) + f"{e} : ")
@@ -345,7 +349,7 @@ class Main(Common):
             return False
 
 
-    def update_message(self, is_sucess:bool, msg:str, traceback_stack:list, dev_msg:str= "", font_size:int= 10) -> None:
+    def update_message(self, is_sucess:bool, msg:str, traceback_stack:list = [], dev_msg:str= "", font_size:int= 10) -> None:
         color = self.constant.get_color("green")
         if not is_sucess:
             color = self.constant.get_color("red")
