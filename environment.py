@@ -7,10 +7,10 @@
 """
 import os, datetime
 from ftplib import FTP
-from Module.Settings import Main as Settings
 from Module.Widget.Shared import Widget
+from Module.Settings import Main as Settings
 from Module.Widget.Translate import Translate
-from Module.Database.Generate import Game_database, System_database
+from Module.Database.Generate import Game_Database, System_Database
 
 class Common:
     """
@@ -26,20 +26,18 @@ class Common:
             - (Access attribute value) via self call
     """
 
-    #__________  if Settings.json not found use these _________#
+    #__________  if Settings.json not found use these _________  #
     app_path = os.getcwd()
     default_settings = {"font":"Arial", "port":"21", "ip":"", "icons_path":app_path, "download_path":app_path, "homebrew":"False", "language":"English"}
     
-    #__________  shared attrs _________#
+    #__________  shared attrs _________  #
     screen_w = 0
     screen_h = 0
     ui = None
     window = None
 
-    # Store connection for GoldHen one connection 
+    #__________ Store connection for GoldHen one connection  _________________ #
     connection = None 
-
-    all_game_ids = {}
     selected_mode = None
 
     current_game_id = ""
@@ -47,15 +45,40 @@ class Common:
     browsed_bg_img_path = ""
 
     upload_type = ""
-    is_sys_icon = False
+
+    #__________ Different modes mapping _________________ #
+    mode = {
+        "game" : {
+            "ids" : {},
+            "ignore ids" : {},
+            "ignored file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\ignored.json",
+            "cache path" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\",
+            "cache file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\games.json",
+            "database" : Game_Database(f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\Database.json")
+        },
+
+        "system apps" : {
+            "ids" : {},
+            "ignore ids" : {},
+            "ignored file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system\\ignored.json",
+            "cache path" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system\\",
+            "cache file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system\\system_apps.json",
+            "database" : System_Database(f"{app_path}\\Data\\Cache\\Icons\\metadata\\system\\Database.json")
+        },
+
+        "avatar mode" : {
+            "ids" : {},
+            "ignore ids" : {},
+            "cache path" : "",
+            "cache file" : "",
+            "database" : ""
+        }
+    }
 
     def __init__(self) -> None:
         self.app_version = "5.11 BETA"
         self.app_release_date = "Feb 2nd, 2023"
 
-        self.game = {}
-        self.game_ids = {}
-        self.system_apps_ids = {}
         self.external_game_ids = []
         self.screen_w = Common.screen_w
         self.screen_h = Common.screen_h
@@ -68,13 +91,8 @@ class Common:
         self.language_path = f"{self.data_path}Language\\"
         self.appmeta_path = f"{self.data_path}User\\appmeta\\"
         self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
-        self.game_cache_path = f"{self.metadata_path}game\\"
-        self.system_apps_cache_path = f"{self.metadata_path}system\\"
 
-        self.game_cache_file = f"{self.game_cache_path}games.json"
-        self.game_database_file = f"{self.game_cache_path}Database.json"
-        self.system_apps_database_file = f"{self.system_apps_cache_path}Database.json"
-        self.system_apps_cache_file = f"{self.system_apps_cache_path}system_apps.json"
+
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
 
@@ -84,8 +102,6 @@ class Common:
         self.constant = Constant()
         self.settings = Settings()
         self.settings.init(self.temp_path, self.language_path, self.default_settings, is_for_local_attr=True)
-        self.game_database = Game_database(self.game_database_file)
-        self.system_apps_database = System_database(self.system_apps_database_file)
         self.translation = Translate(self.language_path)
 
         self.ps4_system_icons_dir = self.constant.PS4_SYS_ICONS
@@ -100,7 +116,7 @@ class Common:
         self.port:str = self.settings_cache.get("port")
         self.language:str = self.settings_cache.get("language")
         self.icons_path:str = self.settings_cache.get("icons_path")
-        self.toggled_homebrew:str = self.settings_cache.get("homebrew")
+        self.is_toggled_homebrew:str = self.settings_cache.get("homebrew")
         self.download_path:str = self.settings_cache.get("download_path")
 
         self.logging = self.html.internal_log_msg("ps4", self.ip, 12, "font-weight:600; font-style:italic;")
@@ -170,12 +186,6 @@ class Common:
     def get_browsed_bg_img_path(self) -> str:
         return Common.browsed_bg_img_path
 
-    def set_is_sys_icon(self, sys:bool) -> None:
-        Common.is_sys_icon = sys
-
-    def get_is_sys_icon(self) -> bool:
-        return Common.is_sys_icon
-
     def set_upload_type(self, t:str) -> None:
         Common.upload_type = t
 
@@ -194,11 +204,11 @@ class Common:
     def get_browsed_icon_path(self) -> str:
         return Common.browsed_icon_path
 
-    def set_game_ids(self, ids:dict) -> None:
-        Common.all_game_ids = ids
+    def set_ids(self, ids:dict) -> None:
+        Common.mode.get(self.selected_mode)["ids"] = ids
 
-    def get_all_game_ids(self) -> dict:
-        return Common.all_game_ids
+    def get_ids(self) -> dict:
+        return Common.mode.get(self.get_selected_mode()).get("ids")
 
     def set_selected_mode(self, mode:str) -> None:
         Common.selected_mode = mode

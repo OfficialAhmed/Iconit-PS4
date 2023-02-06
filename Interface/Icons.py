@@ -6,17 +6,14 @@ class Ui(Icons):
     def __init__(self) -> None:
         super().__init__()
         self.is_bg_image_changed = False
-        self.game_ids = self.get_all_game_ids()
+        self.ids = self.get_ids()
         self.selected_mode = self.get_selected_mode()
-        self.icon_names = tuple(i for i in self.game_ids.keys())
+        self.icon_names = tuple(i for i in self.ids.keys())
         self.icon_path = f"{self.metadata_path}{self.selected_mode}/".replace("\\", "/")
 
         # Temp Settings | reset on app restart (v4.91)
         self.last_browse_path = ""
 
-        # FIXME:These 2 lines are always empty -> reading from init as empty
-        # FIX: init them as class attr for 'Common' class. Access through getters
-        self.sys_games = self.system_apps_ids
         self.external_games = self.external_game_ids
         self.current_game_id = self.icon_names[0]
 
@@ -32,11 +29,6 @@ class Ui(Icons):
 
     def setupUi(self, window):
         self.window = window # for next window
-
-        is_sys_icon = False
-        if self.get_selected_mode() == "system": # If not empty
-            is_sys_icon = True
-        self.set_is_sys_icon(is_sys_icon)
 
         font = QtGui.QFont()
         font.setBold(True)
@@ -214,8 +206,8 @@ class Ui(Icons):
         sizePolicy.setHeightForWidth(self.GameTitles.sizePolicy().hasHeightForWidth())
         self.GameTitles.setSizePolicy(sizePolicy)
 
-        for index, current_game_id in enumerate(self.game_ids):
-            self.GameTitles.addItem(f"{index + 1}: {self.game_ids.get(current_game_id).get('title')} [{current_game_id}]")
+        for index, current_game_id in enumerate(self.ids):
+            self.GameTitles.addItem(f"{index + 1}: {self.ids.get(current_game_id).get('title')} [{current_game_id}]")
 
         # ______________    ICONS    _________________ # 
         self.Icon = QtWidgets.QGraphicsView(window)
@@ -306,8 +298,8 @@ class Ui(Icons):
         self.GameIdTxt.setText(_translate("IconsWindow", self.current_game_id))
         self.IconLocationLabel.setText(_translate("IconsWindow", "ICON LOCATION"))
         self.IconSizeTxt.setText(_translate("IconsWindow", "Current icon dimension(512x512)"))
-        self.GameTitleLabel.setText(_translate("IconsWindow", self.game_ids.get(self.current_game_id).get("title")))
-        self.TotalGamesTxt.setText(_translate("IconsWindow", f"1/{len(self.game_ids)}"))
+        self.GameTitleLabel.setText(_translate("IconsWindow", self.ids.get(self.current_game_id).get("title")))
+        self.TotalGamesTxt.setText(_translate("IconsWindow", f"1/{len(self.ids)}"))
         self.TwitterLink.setText(_translate("IconsWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created By @OfficialAhmed0", "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.font)))
         self.PaypalLink.setText(_translate("IconsWindow",self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "PayPal", "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.font)))
         self.LogsTxt.setHtml(_translate("IconsWindow",
@@ -323,19 +315,21 @@ class Ui(Icons):
         self.PreviousBtn.setShortcut("Left")
         self.SelectBtn.setShortcut("return")
 
-        if len(self.system_apps_ids) > 1:
+        if self.selected_mode == "system" and len(self.ids) > 1:
             self.HomebrewLabel.setText(_translate("IconsWindow", "System icon: Yes"))
             # self.ChangeBgBtn.hide()
-        elif self.toggled_homebrew == "True":
-            enabled = "YES"
-            if "CUSA" in self.current_game_id:
-                enabled = "NO"
         else:
-            enabled = "TURNED OFF"
-        self.HomebrewLabel.setText(_translate("IconsWindow", f"HOMEBREW ICON: {enabled}"))
+            if self.is_toggled_homebrew == "True":
+                state = "YES"
+                if "CUSA" in self.current_game_id:
+                    state = "NO"
+            else:
+                state = "TURNED OFF"
+
+            self.HomebrewLabel.setText(_translate("IconsWindow", f"HOMEBREW ICON: {state}"))
 
         self.IconLocationTxt.setText(_translate("IconsWindow", "INTERNAL"))
-        if self.game_ids[self.current_game_id] in self.external_games:
+        if self.ids[self.current_game_id] in self.external_games:
             self.IconLocationTxt.setText(_translate("IconsWindow", "EXTERNAL"))
 
         self.NextBtn.setToolTip(self.html.tooltip_tag("Next Game"))
@@ -349,4 +343,3 @@ class Ui(Icons):
         self.HomebrewLabel.setToolTip(self.html.tooltip_tag("Turned on = Homebrew will be visible and can be changed (turn it on/off from the settings)"))
         self.GameTitleLabel.setToolTip(self.html.tooltip_tag("Some game titles are unknown because they're not legit (homebrews/PS2 converted games etc.)"))
     
-  

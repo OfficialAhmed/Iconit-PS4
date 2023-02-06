@@ -1,8 +1,7 @@
 
-from traceback import extract_stack
-from environment import Common
-import Interface.Alerts as Alerts
 from PIL import Image
+from environment import Common
+from traceback import extract_stack
 import time, os, shutil, PIL, datetime
 
 class Main(Common):
@@ -10,8 +9,7 @@ class Main(Common):
         super().__init__()
         self.ftp = self.get_ftp()
         self.upload_type = self.get_upload_type()
-        self.game_ids = self.get_all_game_ids()
-        self.is_sys_icon = self.get_is_sys_icon()
+        self.game_ids = self.get_ids()
         self.current_game_id = self.get_current_game_id()
         self.browsed_icon_path = self.get_browsed_icon_path()
         self.browsed_bg_img_path = self.get_browsed_bg_img_path()

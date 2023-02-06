@@ -369,9 +369,20 @@ class Ui(Iconit):
         ui = Alerts.Ui()
         ui.setupUi(self.window)
         try:
-            all = os.listdir(self.game_cache_path)
-            for game in all:
-                os.remove(f"{self.game_cache_path}{game}")
+            ignore_cache = (".gitkeep", "Database.json")
+
+            path = self.mode.get("game").get("cache path")
+            all = os.listdir(path)
+            for cache in all:
+                if cache not in ignore_cache:
+                    os.remove(f"{path}{cache}")
+
+            path = self.mode.get("system apps").get("cache path")
+            all = os.listdir(path)
+            for cache in all:
+                if cache not in ignore_cache:
+                    os.remove(f"{path}{cache}")
+
             ui.alert("CUSTOMdoneRmvCache")
         except PermissionError:
             ui.alert("PermissionDenied")

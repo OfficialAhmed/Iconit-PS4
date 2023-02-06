@@ -23,7 +23,7 @@ class Main(Common):
         self.cached = ""
         self.ui = self.get_ui()
         self.window = self.get_window()
-        self.is_external_icons_found = True
+        self.selected_mode = self.get_selected_mode()
         self.pronunciation_file = self.constant.PS4_PRONOUNCIATION_FILE
         self.pronunciation_file_path = f"{self.temp_path}{self.pronunciation_file}"
 
@@ -85,14 +85,9 @@ class Main(Common):
 
     def set_cache(self) -> None:
         """ Save ids and titles locally as JSON """
-
-        match self.selected_mode:
-            case "game":
-                cache_file = self.game_cache_file
-                ids = self.game_ids
-            case "system":
-                cache_file = self.system_apps_cache_file
-                ids = self.system_apps_ids
+        
+        ids = self.mode.get(self.selected_mode).get("ids")
+        cache_file = self.mode.get(self.selected_mode).get("cache file")
            
         with open(cache_file, "w+", encoding="utf-8") as jsonFile:
             json.dump(ids, jsonFile)
@@ -102,25 +97,26 @@ class Main(Common):
         """ Return the cached ids and titles if found """
 
         result = {}
-        match self.selected_mode:
-            case "game":
-                cache = self.game_cache_file
-            case "system":
-                cache = self.system_apps_cache_file
+        cache = self.mode.get(self.selected_mode).get("cache file")
 
         if os.path.isfile(cache):
-            try:
-                result = json.load(open(cache))
+            try: result = json.load(open(cache))
             except: pass
-
         return result
         
 
-    def sort_game_ids(self):
-        """ Sort by game title in alphabetical order """
+    def sort_ids_by_title(self):
+        """ Sort by title in alphabetical order """
 
-        sorted_ids = sorted(self.game_ids.items(), key=lambda data: data[1].get("title"))
-        self.game_ids = dict(sorted_ids)
+        ids:dict = self.mode.get(self.selected_mode).get("ids")
+
+        match self.selected_mode:
+            case "game":
+                sorted_ids = sorted(ids.items(), key=lambda data: data[1].get("title"))
+            case "system":
+                sorted_ids = sorted(ids.items(), key=lambda data: data[1])
+
+        self.mode.get(self.selected_mode)["ids"] = dict(sorted_ids)
 
 
     def connect_ps4(self, is_valid):
@@ -228,7 +224,6 @@ class Main(Common):
             return title
         
 
-
     def render_window(self) -> None:
         self.window = QtWidgets.QWidget()
         self.set_ui(self.ui)
@@ -263,9 +258,12 @@ class Game(Main):
 
 
     def fetch_game_title_from_db(self, game_id) -> bool:
-        respons = self.game_database.fetch_game_title(game_id)
+        """ get game titles and ids from local json file """
+        
+        db = self.mode.get("game").get("database")
+        respons = db.fetch_game_title(game_id)
         if respons[0] == True:
-            self.game_ids[game_id]["title"] = respons[1]
+            self.ids[game_id]["title"] = respons[1]
             return True
 
         self.log_to_external_file(respons[1], "Wrning")
@@ -280,6 +278,7 @@ class Game(Main):
         "If you don't mind please share the game ids with @Officialahmed0\n" +\
         "so we can add them to the database.\n" +\
         "To make the caching faster for everyone. Thank you!" 
+
         txt = ""
         if os.path.isfile(self.undetected_games_file):
             file = open(self.undetected_games_file, "a")
@@ -287,128 +286,161 @@ class Game(Main):
         else:
             file = open(self.undetected_games_file, "w")
             txt = f"{title}\n\n{game_id}\n"
+
         with file as f:
             f.write(txt)
 
 
-    def filter_game_ids(self):
-        """ remove ids with empty folders """
+    def filter_ids(self):
+        """ filter out empty game folders and the homebrews """
 
-        self.unchecked_game_ids = []
-        def append_game_id(line):
-            """ line contains other info we need the last index item which is the ID """
-            
-            is_accepted = True
-            game_id = line.split(" ")[-1]
+        self.is_new_to_ignore = False
+        self.is_external_found = False
+        self.ignored_ids = self.load_ignored_ids()
 
-            """
-            ######################################
-                    homebrews check
-            ######################################
-            """
-            if not bool(self.toggled_homebrew):
-                if "CUSA" not in game_id:
-                    is_accepted = False
-                    self.game_ids.pop(game_id)
+        """
+        #######################################################
+                    Internal IDs validation
+        #######################################################
+        """
+        # Fetch folder name with length 9 i.e.(CUSA12345)
+        self.ftp.cwd(self.ps4_internal_icons_dir)
+        internal_ids = [x for x in self.get_server_list() if len(x) == 9 or x == "external"]
+        self.validate_ids(internal_ids, self.ps4_internal_icons_dir)
 
-            if is_accepted:
-                self.unchecked_game_ids.append(game_id)
 
-        for dir in self.icon_directories:
-            self.ftp.cwd(f"/{dir}")
+        """
+        #######################################################
+                    External IDs validation
+        #######################################################
+        """
+        if self.is_external_found:
+            self.ftp.cwd(f"/{self.ps4_external_icons_dir}")
+            external_ids = [x for x in self.get_server_list() if len(x) == 9]
+            self.validate_ids(external_ids, self.ps4_external_icons_dir)
 
-            """
-            #################################################################
-                read server directory line by line for ids - Worst-case O(n)
-            #################################################################
-            """
-            self.ftp.retrlines("LIST ", lambda line: append_game_id(line)
-                if len(line.split(" ")[-1]) >= 8 
-                and line[0].lower() == "d" 
-                and line.split(" ")[-1] not in self.game_ids
-                else None
-            )
-           
+        # End of filtering, update global ids
+        self.set_ids(self.ids)
+        if self.is_new_to_ignore :
+            self.save_ignored_ids(self.ignored_ids)
+
+
+    def validate_ids(self, ids, dir) -> None:
+        """ check the ids for valid ones. invalid ids added to the ignored list for faster caching check"""
+
+        for id in ids:
+            if id == "external":
+                self.is_external_found = True
+
             """
             #######################################################
-                check if id is valid folder, and append to list
+                    Determine id location if its new
             #######################################################
             """
-            for id in self.unchecked_game_ids:
+            # Check for new id
+            if id not in self.ids and id not in self.ignored_ids and id != "external":
+
                 self.ftp.cwd(f"/{dir}/{id}")
                 game_files = self.get_server_list()
                 
-                if self.constant.PS4_PRONOUNCIATION_FILE in game_files:
-                    location = "External" if "external" in dir else "Internal"
-                    self.game_ids[id] = {"location":location}
+                # Valid id, if icon0 found
+                if self.icon_name in game_files:
+                    data = {"location":"Internal"}
+                    if "external" in dir:
+                        data = {"location":"External"}
+                    
+                    self.ids[id] = data
+                    continue
 
-            self.unchecked_game_ids.clear()
+                self.is_new_to_ignore = True
+                self.ignored_ids.append(id)
+
+
+    def load_ignored_ids(self) -> list:
+        """ get ignored cache from JSON """
+
+        data = []
+        file = self.mode.get(self.selected_mode).get("ignored file")
+        try: 
+            data = json.load(open(file)).get("ids")
+        except: pass
+        finally: return data
+
+
+    def save_ignored_ids(self, ids:list) -> None:
+        """ save ignored ids as JSON file """
+
+        data = {"ids":ids}
+        with open(self.mode.get(self.selected_mode).get("ignored file"), "w+") as file:
+            json.dump(data, file)
 
 
     def start_cache(self) -> bool:
         try:
-            self.game_ids = self.get_cache()
             self.chage_state(True)
-            self.ftp.cwd(self.ps4_internal_icons_dir)
+            self.ids = self.get_cache()
 
-            self.icon_directories = (self.ps4_internal_icons_dir, self.ps4_external_icons_dir)
-            if "external" not in self.get_server_list():
-                self.icon_directories = (self.ps4_internal_icons_dir, )
-                self.is_external_icons_found = False
-
-            self.filter_game_ids()
+            self.filter_ids()
             
             percentage = 0
-            self.cached = os.listdir(self.game_cache_path)
-            process_weight_fraction = (1 / len(self.game_ids)) * 100
+            self.cached = os.listdir(self.mode.get("game").get("cache path"))
+            process_weight_fraction = (1 / len(self.ids)) * 100
 
             is_new_game_found = False
-            game_ids_with_hb = self.game_ids.copy()
+            game_ids_with_hb = self.ids.copy()
+
 
             for game_id in game_ids_with_hb:
-                if self.toggled_homebrew == "False":
+                
+                # Ignore homebrews
+                if self.is_toggled_homebrew == "False":
                     if "CUSA" not in game_id:
-                        self.game_ids.pop(game_id)
+                        self.ids.pop(game_id)
                         continue
 
-                if self.game_ids.get(game_id).get("title") == None:
+                if self.ids.get(game_id).get("title") == None:
                     """
                     #######################################################
                         if the game was not found in the cache
                     #######################################################
                     """
                     is_new_game_found = True
-                    game_location = self.game_ids.get(game_id).get("location")
+                    game_location = self.ids.get(game_id).get("location")
 
                     current_directory = self.ps4_internal_icons_dir
                     if game_location == "External":
                         current_directory = self.ps4_external_icons_dir
 
                     self.ftp.cwd(f"/{current_directory}/{game_id}")
-                    files = self.get_server_list()
+                    game_files = self.get_server_list()
 
-                    if self.pronunciation_file in files:
-                        """
-                        #######################################################
-                            Fetch Game Title from server if title not in cache
-                        #######################################################
-                        """
-                        if not self.fetch_game_title_from_db(game_id):
-                            self.save_undetected_game(game_id)
-                            self.game_ids[game_id]["title"] = self.get_title_from_server()
 
-                    if self.icon_name in files:
-                        self.download_data_from_server(self.icon_name, f"{self.game_cache_path}{game_id}.png",)
+                    """
+                    #################################################################
+                        Fetch title from local db, or from PS4, else UNKNOWN title
+                    #################################################################
+                    """
+                    if not self.fetch_game_title_from_db(game_id):
+                        self.save_undetected_game(game_id)
+                        self.ids[game_id]["title"] = self.get_title_from_server()
+
+
+                    if self.icon_name in game_files:
+                        self.download_data_from_server(
+                            self.icon_name, 
+                            f"{self.mode.get('game').get('cache path')}{game_id}.png"
+                        )
+                
 
                 percentage += process_weight_fraction
                 self.CacheBar.setProperty("value", f"{int(percentage)}")
             
             if is_new_game_found:
-                self.sort_game_ids()
+                self.sort_ids_by_title()
                 self.set_cache()
 
-            self.set_game_ids(self.game_ids)
             self.CacheBar.setProperty("value", 100)
+            self.set_ids(self.ids)
             return True
 
         except Exception as e:
@@ -433,18 +465,19 @@ class System(Main):
         
 
     def start_cache(self):
+        self.ids = self.get_cache()
+
         """ Prepare a dict of app id as the key and the value of the title """
+        self.chage_state(True)
 
         self.system_apps_ids = self.get_cache()
-        apps_database = json.load(open(self.system_apps_database_file))
-        self.chage_state(True)
         self.ftp.cwd(f"/{self.ps4_system_icons_dir}")
         
         app_ids_from_server = self.get_server_list(list="directories")
         
         """
         #######################################################
-                Download icons for preview from PS4
+            Download icons for preview/backup from PS4
         #######################################################
         """
 
@@ -470,18 +503,27 @@ class System(Main):
 
                 else: continue
                 
-                # Try to get title from db, otherwise from PS4
-                if apps_database.get(app_id) != None: 
-                    self.system_apps_ids[app_id] = apps_database.get(app_id)
-                else: 
+                
+                # Try to get title from db, else from PS4
+                id_from_db = self.mode.get("system apps").get("database").get_id(app_id)
+                if id_from_db:
+                    self.system_apps_ids[app_id] = id_from_db
+                else:
                     self.system_apps_ids[app_id] = self.get_title_from_server()
+                
 
                 # Download icon from PS4
-                self.download_data_from_server(icon_name, f"{self.system_apps_cache_path}{app_id}.png")
+                self.download_data_from_server(
+                    icon_name, 
+                    f"{self.mode.get('system apps').get('cache path')}{app_id}.png"
+                )
+
 
         if is_new_app_found:
             self.set_cache()
 
+
+        self.set_ids(self.ids)
         # self.render_window()
         self.CacheBar.setProperty("value", 100)
 
@@ -505,6 +547,8 @@ class Avatar(Main):
 
 
     def start_cache(self):
+        self.ids = self.get_cache()
+
         directories = []
         self.ftp.retrlines("LIST ", directories.append)
 

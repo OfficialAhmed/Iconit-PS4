@@ -12,7 +12,7 @@ System_database
 import requests, json
 
 
-class Game_database:
+class Game_Database:
     def __init__(self, db_file) -> None:
         self.db_file = db_file
         self.lines = ""
@@ -77,27 +77,46 @@ class Game_database:
         return data
 
  
-class System_database:
+class System_Database:
     def __init__(self, db_file) -> None:
         self.db_file = db_file
         self.raw_data = "https://raw.githubusercontent.com/OfficialAhmed/Iconit-PS4/master/Data/Cache/Icons/metadata/system/Database.json"
+        self.database = self.read_database()
+
+
+    def read_database(self) -> dict:
+        """ fetch data from json """
+        
+        db = {}
+        try: db = json.load(open(self.db_file, encoding="utf-8"))
+        except: pass            
+        return db
 
     
     def save(self) -> tuple:
-        fetched_data = self.fetch_data()
+        fetched_data = self.fetch_online_data()
         if fetched_data[0] == True:
             try:
                 with open(self.db_file, "w+", encoding="utf-8") as file:
-                    file.write(self.database)
+                    file.write(self.database_txt)
             except:  pass
         return fetched_data
 
 
-    def fetch_data(self) -> tuple:
+    def fetch_online_data(self) -> tuple:
         try:
-            self.database:str = requests.get(self.raw_data).text
+            self.database_txt:str = requests.get(self.raw_data).text
             return (True, )
         except requests.ConnectionError:
             return (False, "ConnectionError| Internet connection failed")
         except Exception as e:
             return (False, f"Couldn't update database| {e}")
+
+
+    def get_id(self, app_id) -> str:
+        """ Try to get title from db, otherwise from PS4 """
+
+        if self.database.get(app_id) != None: 
+            return self.database.get(app_id)
+        else:
+            return "" 

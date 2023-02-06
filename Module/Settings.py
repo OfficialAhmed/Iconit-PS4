@@ -88,8 +88,7 @@ class Main:
             json.dump(data, file)
         
         # Sometimes saving without the window
-        try: 
-            self.OptionsWin.close() 
+        try: self.OptionsWin.close() 
         except: pass
 
 
