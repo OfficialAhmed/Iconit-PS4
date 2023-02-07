@@ -256,11 +256,11 @@ class Ui(Settings):
         )
         
         self.IconsPathBtn.clicked.connect(
-            lambda: self.get_path("icons")
+            lambda: self.render_path_window("icons")
         )
 
         self.DownloadPathBtn.clicked.connect(
-            lambda: self.get_path("download")
+            lambda: self.render_path_window("download")
         )
 
         self.DefaultBtn.clicked.connect(self.reset_to_defaults)

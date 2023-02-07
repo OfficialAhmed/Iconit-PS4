@@ -1,5 +1,5 @@
 import os
-from environment import html
+from Module.Constant.Html import Html
 from Module.Iconit import Main as Iconit
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -12,7 +12,7 @@ class Ui(Iconit):
         
         
     def setupUi(self, window):
-        self.html = html()
+        self.html = Html()
 
         font = QtGui.QFont()
         font.setBold(True)
@@ -281,7 +281,6 @@ class Ui(Iconit):
         self.widgets.set_status_label(self.StatusLabel)
         self.widgets.set_game_icon_radio(self.GameIconsRadio)
         
-        self.ConnectBtn.setShortcut("Return")
         # ________________  BETA v5 Disable ______________________
 
         self.AvatarIconsRadio.setEnabled(False)
@@ -315,6 +314,8 @@ class Ui(Iconit):
         self.Remove_cache.setText(_translate("window", translated_content.get("Remove_cache")))
         self.Special_thanks.setText(_translate("window", translated_content.get("Special_thanks")))
         self.DownloadDatabase.setText(_translate("window", translated_content.get("DownloadDatabase")))
+        self.ConnectBtn.setShortcut("Return")
+        self.Options.setShortcut("alt")
 
 
     def open_options(self):
@@ -368,6 +369,7 @@ class Ui(Iconit):
         self.window = QtWidgets.QDialog()
         ui = Alerts.Ui()
         ui.setupUi(self.window)
+        
         try:
             ignore_cache = (".gitkeep", "Database.json")
 

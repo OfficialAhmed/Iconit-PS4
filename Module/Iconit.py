@@ -24,7 +24,7 @@ class Main(Common):
         self.ui = self.get_ui()
         self.window = self.get_window()
         self.selected_mode = self.get_selected_mode()
-        self.pronunciation_file = self.constant.PS4_PRONOUNCIATION_FILE
+        self.pronunciation_file = self.constant.get_pronunciation_file_path()
         self.pronunciation_file_path = f"{self.temp_path}{self.pronunciation_file}"
 
 
@@ -112,11 +112,12 @@ class Main(Common):
 
         match self.selected_mode:
             case "game":
-                sorted_ids = sorted(ids.items(), key=lambda data: data[1].get("title"))
+                sorted_ids = dict(sorted(ids.items(), key=lambda data: data[1].get("title")))
             case "system":
-                sorted_ids = sorted(ids.items(), key=lambda data: data[1])
-
-        self.mode.get(self.selected_mode)["ids"] = dict(sorted_ids)
+                sorted_ids = dict(sorted(ids.items(), key=lambda data: data[1]))
+                
+        self.ids = sorted_ids
+        self.mode.get(self.selected_mode)["ids"] = sorted_ids
 
 
     def connect_ps4(self, is_valid):
@@ -487,7 +488,7 @@ class System(Main):
 
             if app_id not in self.system_apps_ids:
                 # If sce_sys folder not found skip folder
-                try: self.ftp.cwd(f"{app_id}/{self.constant.PS4_SYS_SCE}")
+                try: self.ftp.cwd(f"{app_id}/{self.constant.get_sce_folder_name()}")
                 except: continue
 
                 app_files = self.get_server_list(list="files")

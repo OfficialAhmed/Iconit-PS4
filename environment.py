@@ -12,6 +12,9 @@ from Module.Settings import Main as Settings
 from Module.Widget.Translate import Translate
 from Module.Database.Generate import Game_Database, System_Database
 
+from Module.Constant.Html import Html
+from Module.Constant.Constants import Constants as Constant
+
 class Common:
     """
         * A Bridge class to connect between multiple classes 'different window process'
@@ -42,9 +45,7 @@ class Common:
 
     current_game_id = ""
     browsed_icon_path = ""
-    browsed_bg_img_path = ""
-
-    upload_type = ""
+    browsed_pic_path = ""
 
     #__________ Different modes mapping _________________ #
     mode = {
@@ -97,18 +98,18 @@ class Common:
         self.setting_path = ""
 
         self.ftp = FTP()
-        self.html = html()
+        self.html = Html()
         self.widgets = Widget()
         self.constant = Constant()
         self.settings = Settings()
         self.settings.init(self.temp_path, self.language_path, self.default_settings, is_for_local_attr=True)
         self.translation = Translate(self.language_path)
 
-        self.ps4_system_icons_dir = self.constant.PS4_SYS_ICONS
-        self.ps4_internal_icons_dir = self.constant.PS4_INT_ICONS
-        self.ps4_external_icons_dir = self.constant.PS4_EXT_ICONS
+        self.ps4_system_icons_dir = self.constant.get_system_icons_path()
+        self.ps4_internal_icons_dir = self.constant.get_internal_icons_path()
+        self.ps4_external_icons_dir = self.constant.get_external_icons_path()
 
-        self.backup_path = f"{self.constant.ICONS_BACKUP_NAME}\\"
+        self.backup_path = f"{self.constant.get_backup_folder_name()}\\"
 
         self.settings_cache = self.settings.update_local_cache(self.temp_path)
         self.ip:str = self.settings_cache.get("ip")
@@ -180,24 +181,18 @@ class Common:
     def get_ftp(self):
         return Common.connection
         
-    def set_browsed_pic_path(self, path:str) -> None:
-        Common.browsed_bg_img_path = path
-
-    def get_browsed_bg_img_path(self) -> str:
-        return Common.browsed_bg_img_path
-
-    def set_upload_type(self, t:str) -> None:
-        Common.upload_type = t
-
-    def get_upload_type(self) -> str:
-        return Common.upload_type
-
     def set_current_game_id(self, id:str) -> None:
         Common.current_game_id = id
 
     def get_current_game_id(self) -> str:
         return Common.current_game_id
-        
+
+    def set_browsed_pic_path(self, path:str) -> None:
+        Common.browsed_pic_path = path
+
+    def get_browsed_pic_path(self) -> str:
+        return Common.browsed_pic_path
+
     def set_browsed_icon_path(self, path:str) -> None:
         Common.browsed_icon_path = path
 
@@ -227,85 +222,5 @@ class Common:
         return int(Common.default_settings["port"])
         
     def set_screen_size(self, w, h) -> None:
-        self.screen_w, Common.screen_w = w, w
-        self.screen_h, Common.screen_h = h, h
-
-
-class html:
-    def __init__(self) -> None:
-        self.__start = "<html><head/><body>"
-        self.__end = "</p></body></html>"
-        self.__constant = Constant()
-
-
-    def p_tag(self, cstm_style, txt=None) -> str:
-        """  generate Paragraph """
-        return f'<p align="center" style="{cstm_style}">{txt}</p>'
-
-
-    def a_tag(self, href:str, txt:str, color:str, size:int, cstm_style: str = "", align: str = "center", font="Arial") -> str:
-        """  generate Link """
-        return f'{self.__start}<p align="{align}"><a href="{href}"><span style="text-decoration: underline; font-size:{size}pt; color:{color}; {cstm_style}; font-family: {font}">{txt}</span></a>{self.__end}'
-        
-
-    def span_tag(self, txt:str, color:str, size:int, align:str = "center", weight = 700, font="Arial") -> str:
-        """  generate Text """
-        return f'{self.__start}<p align="{align}"><span style=" font-size:{size}pt; font-weight:{weight}; color:{color}; font-family: {font}">{txt}</span>{self.__end}'
-
-
-    def tooltip_tag(self, txt:str) -> str:
-        return f"<p style='color:Black'>{txt}</p>"
-
-
-    def bg_image(self, url:str) -> str:
-        return f"background-image: url({url});"
-
-
-    def border_image(self, url:str) -> str:
-        return f"border-image: url({url});"
-
-
-    def internal_log_msg(self, state, msg, size=10, custome_style="") -> str:
-        """ generate a logging line as <p> tag"""
-        color = {
-            "error":self.__constant.get_color("red"),
-            "warning":self.__constant.get_color("orange"),
-            "success":self.__constant.get_color("green"),
-            "ps4":self.__constant.get_color("white")
-        }
-
-        style = f"margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:{size}pt; color:{color[state]}; {custome_style}"
-        return self.p_tag(style, f"[{state.upper()}] : {msg}")
-
-
-class Constant:
-    """ Read-only class """
-
-    PS4_PIC_SIZE = (1920, 1080)
-    PS4_ICON_SIZE = (512, 512)
-    PS4_INT_ICONS = "user/appmeta/"
-    PS4_EXT_ICONS = "user/appmeta/external/"
-    PS4_SYS_ICONS = "system_ex/app/"
-    PS4_SYS_SCE = "sce_sys"
-    PS4_PRONOUNCIATION_FILE = "pronunciation.xml"
-
-    ICONS_BACKUP_NAME = "Backup"
-    HASH_COLOR = {
-        "red":"#e83c3c",
-        "green":"#55ff00",
-        "white":"#ffffff",
-        "orange":"#ffaa00",
-    }
-
-
-    def __init__(self) -> None:
-        # init the self parameter
-        pass
-
-
-    def __setattr__(self, __name: str, __value: any) -> None:
-        raise AttributeError(f"READ-ONLY: Class 'Constant' allow getters only. Occured while trying to set [{__name}]")
-        
-
-    def get_color(self, x:str) -> str:
-        return Constant.HASH_COLOR[x]
+        Common.screen_w = w
+        Common.screen_h = h

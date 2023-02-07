@@ -26,21 +26,120 @@ class Main(Common):
         self.window = self.get_window()
         self.icons_limit = len(self.ids)
 
+        self.last_browsed_path = ""
 
-    def update_info(self, is_from_dropdown_list:bool = False):
+
+    def next(self) -> None:
+        """ Go to next node on the list of icons """
+        self.icon_current_index += 1
+
+        # Go back to head, if tail's been reached
+        if self.icon_current_index == self.icons_limit:
+            self.icon_current_index = 0
+
+        self.background_to_original()
+        self.refresh_ui()
+
+
+    def previous(self) -> None:
+        """ Go to previous node on the list of icons """
+
+        # Go back to Tail, if head's been reached
+        if self.icon_current_index == 0:
+            self.icon_current_index = self.icons_limit - 1
+        else:
+            self.icon_current_index -= 1
+
+        self.background_to_original()
+        self.refresh_ui()
+
+
+    def select(self) -> None:
+        self.background_to_original()
+        self.icon_current_index = self.GameTitles.currentIndex()
+        self.refresh_ui(is_from_dropdown_list=True)
+
+
+    def change_dimensions_label(self, color="white", bg_image="", size="(512, 512)") -> None:
+        """ Determine the size of an icon for the label (icon dimensions)"""
+
+        self.IconSizeTxt.setText(f"Current image dimension {size}")
+        style = f"color: {color};"  
+        if bg_image != "":
+            style = f"{self.html.bg_image(bg_image)} color:{color}"
+
+        self.IconSizeTxt.setStyleSheet(style)
+
+
+    def background_to_original(self) -> None:
+        """ Reset the background to default """
+
+        self.change_dimensions_label()
+        self.change_background(is_default=True)
+        self.window.setStyleSheet(self.html.bg_image(f"{self.pref_path}{self.background}"))
+
+
+    def is_valid_image(self, image_type, image_path) -> bool:
+        """ Read and check image dimensions before proceding """
+
+        is_valid = False
+
+        match image_type:
+            case "icon":
+                required_dimensions = self.constant.get_ps4_icon_size()
+                limit_dimenstions = (1080, 720)
+                background = ""
+                
+            case "picture":
+                required_dimensions = self.constant.get_ps4_pic_size()
+                limit_dimenstions = (2040, 1920)
+                background = f"{self.pref_path}Black.@OfficialAhmed0"
+
+        image_dimension = Image.open(image_path).size
+
+        # Correct size
+        if image_dimension == required_dimensions:
+            self.change_dimensions_label(self.constant.get_color("green"), background, size=str(image_dimension))
+            self.logging += self.html.internal_log_msg("success", "Image in correct dimensions")
+            is_valid = True
+        
+        # Less than the required [CANNOT BE RESIZED]
+        elif image_dimension[0] < required_dimensions[0] or image_dimension[1] < required_dimensions[1]:
+            self.change_dimensions_label(self.constant.get_color("red"), size = str(image_dimension))
+            self.logging += self.html.internal_log_msg("error", "Image cannot be used nor resized (TOO SMALL)")
+
+        # Greater than the limit [CANNOT BE RESIZED]
+        elif image_dimension[0] > limit_dimenstions[0] or image_dimension[1] > limit_dimenstions[1]:
+            self.change_dimensions_label(self.constant.get_color("red"), size = str(image_dimension))
+            self.logging += self.html.internal_log_msg("error", f"Image cannot be used nor resized (TOO LARGE) limited to {limit_dimenstions}")
+
+        # Otherwise [CAN BE RESIZED]
+        else:
+            self.change_dimensions_label(self.constant.get_color("orange"), background, str(image_dimension))
+            self.logging += self.html.internal_log_msg("warning", "Image will be resized (TOO LARGE)")
+            is_valid = True
+
+        self.update_internal_logs()
+        return is_valid
+
+
+    def refresh_ui(self, is_from_dropdown_list:bool = False) -> None:
         """ Update the UI icon and labels """
+
+        # Get stored window, maybe upload window has been rendered before
+        self.window = self.get_window()
 
         self.SendBtn.setDisabled(True)
         self.current_game_id = self.icon_names[self.icon_current_index]
 
         icon_path = self.mode.get(self.get_selected_mode()).get('cache path')
-        current_img_path = icon_path.replace('\\', '//') + f"{self.current_game_id}.png"
+        current_icon_path = icon_path.replace('\\', '//') + f"{self.current_game_id}.png"
 
-        game_num = f"{self.icon_current_index+1}/{self.icons_limit}"
+        icon_index = f"{self.icon_current_index+1}"
         if is_from_dropdown_list:
-            game_num = f"{self.GameTitles.currentIndex() + 1}/{self.icons_limit}"
+            icon_index = f"{self.GameTitles.currentIndex() + 1}"
 
-
+        hb = "HOMEBREW ICON: TURNED OFF"
         if self.selected_mode == "system":
             hb = "SYSTEM ICON: YES"
 
@@ -49,47 +148,49 @@ class Main(Common):
             if "CUSA" not in self.current_game_id:
                 hb = "HOMEBREW ICON: YES"
 
-        else:
-            hb = "HOMEBREW ICON: TURNED OFF"
-
-
-        location = self.ids.get(self.current_game_id).get("location").upper()
         self.HomebrewLabel.setText(hb)
-        self.TotalGamesTxt.setText(game_num)
-        self.IconLocationTxt.setText(location)
         self.GameIdTxt.setText(self.current_game_id)
-        self.Icon.setStyleSheet(self.html.border_image(current_img_path))
+        self.TotalGamesTxt.setText(f"{icon_index}/{self.icons_limit}")
+        self.Icon.setStyleSheet(self.html.border_image(current_icon_path))
         self.GameTitleLabel.setText(self.ids.get(self.current_game_id).get("title"))
+        self.IconLocationTxt.setText(self.ids.get(self.current_game_id).get("location").upper())
 
 
-    def change_icon_size_label(self, color="white", bg_image="", size="(512, 512)"):
-        """ Determine the size of an icon for the label (icon dimensions)"""
+    def change_icon(self):
+        img = self.render_browser_window("CHOOSE AN ICON TO BE DISPLAYED ON THE XMB")
 
-        self.IconSizeTxt.setText(f"Current Icon dimension {size}")
-        if bg_image != "":
-            self.IconSizeTxt.setStyleSheet(f"{self.html.bg_image(bg_image)} color:{color}")
-        else:
-            self.IconSizeTxt.setStyleSheet(f"color: {color};")
-
-
-    def bg_image_to_original(self):
-        """ Reset the background to default """
-
-        self.is_bg_image_changed = False 
-        self.change_icon_size_label()
-        self.change_bg()
-        self.window.setStyleSheet(self.html.bg_image(f"{self.pref_path}{self.background}"))
+        if img:
+            if self.is_valid_image("icon", img):
+                self.SendBtn.setDisabled(False)
+                self.Icon.setStyleSheet(self.html.border_image(img))
+                self.set_browsed_icon_path(img)
+            else:
+                self.set_browsed_icon_path("")   
 
 
-    def change_bg(self):
-        """ Change labels background for more visible user PIC0 """
+    def change_picture(self):
+        img = self.render_browser_window("CHOOSE A PICTURE TO BE DISPLAYED WHEN GAME LAUNCHES")
+
+        if img:
+            self.background_to_original()
+            if self.is_valid_image("picture", img):
+                self.SendBtn.setDisabled(False)
+                self.window.setStyleSheet(self.html.bg_image(img))
+                self.change_background(is_default = False)
+                self.set_browsed_pic_path(img)
+            else:
+                self.set_browsed_pic_path("") 
+
+
+    def change_background(self, is_default:bool = True) -> None:
+        """ Change labels' background for more visible user PIC0 """
 
         label_bg = (
             self.NextBtn,
             self.MaskBtn,
             self.LogsTxt,
-            self.SelectBtn,
             self.SendBtn,
+            self.SelectBtn,
             self.GameIdTxt,
             self.GameTitles,
             self.TitleLabel,
@@ -110,135 +211,12 @@ class Main(Common):
         )
 
         style = "color:white"
-        if self.is_bg_image_changed:
+        if not is_default:
             path = f"{self.pref_path}Black.@OfficialAhmed0"
             style = f"{self.html.bg_image(path)} {style}"
 
         for bg in label_bg:
             bg.setStyleSheet(style)
-
-
-    def get_image_browser(self):
-        """ Render window browser for user icon path input """
-
-        options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseSheet
-        dialog = QFileDialog()
-        dialog.setOptions(options)
-        dialog.setDirectory(self.icons_path)
-
-        img, _ = QtWidgets.QFileDialog.getOpenFileName(
-            None,
-            "Choose a picture to open when game launches",
-            self.last_browse_path,
-            "PNG(*.png);; jpg(*.jpg);; Jpeg(*.jpeg)",
-            options=options,
-        )
-
-        if img:
-            size = Image.open(img).size
-            self.browsed_bg_img_path = ""
-            err = "is too small or too large atleast (1920x1080) atmost (2048x2048)"
-            
-            if size[0] >= 1920 and size[0] <= 2048:
-                if size[1] >= 1080 and size[1] <= 2048:
-                    self.SendBtn.setDisabled(False)
-                    self.window.setStyleSheet(self.html.bg_image(img))
-                    self.is_bg_image_changed = True
-                    self.browsed_bg_img_path = img
-                    self.set_browsed_pic_path(img)
-                    self.change_bg()
-                else:
-                    self.logging += self.html.internal_log_msg("error", f"[Image heigh] {err}")
-            else:
-                self.logging += self.html.internal_log_msg("error", f"[Image width] {err}")
-            self.update_internal_logs()
-
-
-    def validate_icon(self, img_path):
-        """ Read and check icon dimension before proceding """
-
-        required_dimension = self.constant.PS4_ICON_SIZE
-        img_size = Image.open(img_path).size
-        background = f"{self.pref_path}Black.@OfficialAhmed0"
-
-        if img_size == required_dimension:
-            if not self.is_bg_image_changed:
-                background = ""
-            self.change_icon_size_label(self.constant.get_color("green"), background, size=str(img_size))
-        
-        elif img_size[0] < required_dimension[0] or img_size[1] < required_dimension[1]:
-            clr = self.constant.get_color("green")
-
-            if not self.is_bg_image_changed:
-                background = ""
-                clr = self.constant.get_color("red")
-
-            self.change_icon_size_label(clr, background, str(img_size))
-
-            self.SendBtn.setDisabled(True)
-            self.logging += self.html.internal_log_msg("error", "Image cannot be used nor resized (Too Small)")
-            self.update_internal_logs()
-
-        else:
-            if not self.is_bg_image_changed:
-                background = ""
-            self.change_icon_size_label(self.constant.get_color("orange"), size=str(img_size))
-
-            self.logging += self.html.internal_log_msg("warning", "Image will be resized (Too large)")
-            self.update_internal_logs()
-
-
-    def next(self):
-        self.icon_current_index += 1
-
-        # Go back to head, if tail's been reached
-        if self.icon_current_index == self.icons_limit:
-            self.icon_current_index = 0
-
-        self.bg_image_to_original()
-        self.update_info()
-
-
-    def previous(self):
-        # Go back to Tail, if head's been reached
-        if self.icon_current_index == 0:
-            self.icon_current_index = self.icons_limit - 1
-        else:
-            self.icon_current_index -= 1
-
-        self.bg_image_to_original()
-        self.update_info()
-
-
-    def select(self):
-        self.bg_image_to_original()
-        self.icon_current_index = self.GameTitles.currentIndex()
-        self.update_info(is_from_dropdown_list=True)
-
-
-    def render_browse_icon_window(self):
-        options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseSheet
-        dialog = QFileDialog()
-        dialog.setOptions(options)
-        dialog.setDirectory(self.icons_path)
-
-        img, _ = QtWidgets.QFileDialog.getOpenFileName(
-            None,
-            "Choose the icon to upload",
-            self.last_browse_path,
-            "PNG(*.png);; jpg(*.jpg);; Jpeg(*.jpeg);; icon(*.ico)",
-            options=options,
-        )
-        if img:
-            self.SendBtn.setDisabled(False)
-            self.Icon.setStyleSheet(self.html.border_image(img))
-            self.validate_icon(img)
-            self.browsed_icon_path = img
-            self.last_browse_path = img
-
-            self.set_browsed_icon_path(img)
 
 
     def render_mask_maker_window(self):
@@ -250,13 +228,10 @@ class Main(Common):
 
 
     def render_upload_window(self):
+        self.background_to_original()
         self.SendBtn.setEnabled(False)
-        if self.is_bg_image_changed == False:
-            self.browsed_bg_img_path = ""
-            self.set_browsed_pic_path("")
 
         self.set_current_game_id(self.current_game_id)
-        self.set_upload_type("Iconit")
         
         self.window = QtWidgets.QWidget()
         self.ui = Upload.Ui()
@@ -267,7 +242,28 @@ class Main(Common):
         self.update_internal_logs()
 
 
+    def render_browser_window(self, window_title) -> str:
+        """ Display window and return path of an object i.e. Image, Picture if user choose an object """
+
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseSheet
+        dialog = QFileDialog()
+        dialog.setOptions(options)
+        dialog.setDirectory(self.icons_path)
+
+        image_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            None,
+            window_title,
+            self.last_browsed_path,
+            self.constant.get_icon_supported_format(),
+            options=options,
+        )
+
+        return image_path
+
+
     def update_internal_logs(self):
         """ overwrite logs with the new lines """
+
         self.LogsTxt.setHtml(self.logging)
         self.LogsTxt.moveCursor(QtGui.QTextCursor.End)

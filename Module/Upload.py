@@ -8,11 +8,10 @@ class Main(Common):
     def __init__(self) -> None:
         super().__init__()
         self.ftp = self.get_ftp()
-        self.upload_type = self.get_upload_type()
         self.game_ids = self.get_ids()
         self.current_game_id = self.get_current_game_id()
+        self.browsed_pic_path = self.get_browsed_pic_path()
         self.browsed_icon_path = self.get_browsed_icon_path()
-        self.browsed_bg_img_path = self.get_browsed_bg_img_path()
 
 
     def png_to_dds(self, png_dir: str, output_dir: str) -> None:
@@ -82,11 +81,9 @@ class Main(Common):
 
             if self.selected_mode == "system":
                 """
-                ###################################################
-                ### Critical method needs to be accurate 100%
-                ### messing up with PS4 sys files related to sys icons
-                ### Triple check everything here
-                ###################################################
+                ##############################
+                        System icons 
+                ##############################
                 """
                 self.CheckingBar.setProperty("value", 5)
 
@@ -108,23 +105,22 @@ class Main(Common):
                 self.backup_icon()
 
                 self.CheckingBar.setProperty("value", 100)
-                if self.browsed_icon_path != "" and self.browsed_icon_path != None:
+
+                if self.browsed_icon_path:
                     self.ResizingBar.setProperty("value", 10)
-                    icon = Image.open(self.browsed_icon_path)
+                    icon = Image.open(self.browsed_icon_path).resize((minSize, minSize), PIL.Image.ANTIALIAS)
 
                     if is_icon_4k:
                         minSize = 660
-                        resized_icon = icon.resize((minSize, minSize), PIL.Image.ANTIALIAS)
-                        resized_icon.save(self.icons_cache_path + "icon0_4k.png")
+                        icon.save(self.icons_cache_path + "icon0_4k.png")
                         self.ResizingBar.setProperty("value", 40)
 
                     self.ResizingBar.setProperty("value", 75)
 
                     minSize = 512
-                    resized_icon = icon.resize(
-                        (minSize, minSize), PIL.Image.ANTIALIAS
-                    )
-                    resized_icon.save(self.icons_cache_path + "icon0.png")
+                    icon = icon.resize((minSize, minSize), PIL.Image.ANTIALIAS)
+                    icon.save(self.icons_cache_path + "icon0.png")
+
                     self.ResizingBar.setProperty("value", 100)
             
 
@@ -153,8 +149,8 @@ class Main(Common):
 
                     icon = Image.open(self.browsed_icon_path)
                     icon_path = f"{self.icons_cache_path}icon0.png"
-                    resized_icon = icon.resize(self.constant.PS4_ICON_SIZE, PIL.Image.ANTIALIAS)
-                    resized_icon.save(icon_path)
+                    icon = icon.resize(self.constant.get_ps4_icon_size(), PIL.Image.ANTIALIAS)
+                    icon.save(icon_path)
 
                     underscore_icons = []
                     for picture in self.game_files:
@@ -162,7 +158,7 @@ class Main(Common):
                             underscore_icons.append(picture)
 
                         elif picture == "icon0.png":
-                            resized_icon.save(icon_path)
+                            icon.save(icon_path)
 
                         elif picture == "icon0.dds":
                             self.png_to_dds(icon_path, self.icons_cache_path)
@@ -173,28 +169,29 @@ class Main(Common):
                         self.icons_to_upload.append(picture)
 
                     if underscore_icons:
-                        self.generate_underscore_icons(resized_icon, underscore_icons)
+                        self.generate_underscore_icons(icon, underscore_icons)
 
-                if self.browsed_bg_img_path:
+                if self.browsed_pic_path:
                     """
                     #############################################################
                     ###   PIC has been changed, generate the PNG & DDS
                     #############################################################
                     """
-                    pic = Image.open(self.browsed_bg_img_path)
-                    resized_pic = pic.resize(self.constant.PS4_PIC_SIZE, PIL.Image.ANTIALIAS)
-                    resized_pic.save(f"{self.icons_cache_path}pic0.png")
+                    pic = Image.open(self.browsed_pic_path)
+                    resized_pic = pic.resize(self.constant.get_ps4_pic_size(), PIL.Image.ANTIALIAS)
 
                     self.ResizingBar.setProperty("value", 75)
 
                     for picture in self.game_files:
-                        if picture == "pic0.png" or picture == "pic1.png":
-                            resized_pic.save(f"{self.icons_cache_path}{picture}")
-                            self.pics_to_upload.append(picture)
+                        if ".dds" in picture or ".png" in picture:
+                            if picture == "pic0.png" or picture == "pic1.png":
+                                resized_pic.save(f"{self.icons_cache_path}{picture}")
+                                self.pics_to_upload.append(picture)
 
-                        elif picture == "pic0.dds" or picture == "pic1.dds":
-                            self.png_to_dds(f"{self.icons_cache_path}{picture[:4]}.png", self.icons_cache_path)
-                            self.pics_to_upload.append(picture)
+                            elif picture == "pic0.dds" or picture == "pic1.dds":
+                                resized_pic.save(f"{self.icons_cache_path}{picture[:4]}.png")
+                                self.png_to_dds(f"{self.icons_cache_path}{picture[:4]}.png", self.icons_cache_path)
+                                self.pics_to_upload.append(picture)
                         
 
             elif self.selected_mode == "avatar":
@@ -312,6 +309,9 @@ class Main(Common):
         if self.pics_to_upload:
             self.send_pic_to_ps4()
 
+        self.set_browsed_pic_path("")
+        self.set_browsed_icon_path("")
+
 
     def send_pic_to_ps4(self) -> None:
         """ upload generated icons to ps4 """
@@ -333,7 +333,7 @@ class Main(Common):
                     break
 
             self.UploadingBar.setProperty("value", 100)
-            self.update_message(True, "Success. Icons will take time to change in both the PS4 & Iconit")
+            self.update_message(True, "Successful!. Icons will take some time to change on PS4")
         
         except Exception as e:
             self.update_message(False, "Sorry! PS4 has denied the signal", extract_stack(), str(e))

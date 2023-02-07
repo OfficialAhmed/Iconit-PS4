@@ -190,10 +190,10 @@ class Ui(Icons):
         self.NextBtn.clicked.connect(self.next)
         self.SelectBtn.clicked.connect(self.select)
         self.PreviousBtn.clicked.connect(self.previous)
-        self.MaskBtn.clicked.connect(self.render_mask_maker_window)
-        self.ChangeBgBtn.clicked.connect(self.get_image_browser)
         self.SendBtn.clicked.connect(self.render_upload_window)
-        self.ChangeIconBtn.clicked.connect(self.render_browse_icon_window)
+        self.MaskBtn.clicked.connect(self.render_mask_maker_window)
+        self.ChangeBgBtn.clicked.connect(self.change_picture)
+        self.ChangeIconBtn.clicked.connect(self.change_icon)
         
         # ______________    GAME TITLES    _________________ # 
         font.setPointSize(15)

@@ -1,19 +1,19 @@
+"""
+    The only class from Module that doest inherit from (Common)
+    So we can call the methods from Common without polymorphism
+
+    * local attributes can be called without inheritence
+    * init custom method called only once to change class's local attr for any obj access
+"""
+
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 import json
 
 class Main:
-    """
-        The only class from Module that doest inherit from (Common)
-        So we can call the methods from Common without polymorphism
-
-        * local attributes can be called without inheritence
-        * init custom method called only once to change class's local attr for any obj access
-    """
     paths: dict = {}
-    local_settings_cache: dict = {}
-
     DEFAULT_SETTINGS: dict = {}
+    local_settings_cache: dict = {}
 
     def __init__(self) -> None:
         self.init()
@@ -22,8 +22,8 @@ class Main:
     def init(self, cache_path="", lang_path="", data = {}, is_for_local_attr=False) -> None:
         """ fetch paths from environment class. [Called once by environment on init only] """
         
+        # sharable attr for other objects (child class)
         if is_for_local_attr:
-            # sharable attr for other objects (child class)
             Main.paths["language_path"] = lang_path
             Main.paths["cache_path"] = cache_path
             Main.local_settings_cache = data
@@ -38,6 +38,7 @@ class Main:
 
     def reset_to_defaults(self):
         """ overwrite external file (Settings.json) by default settings """
+
         try:
             with open(f"{self.cache_path}Settings.json", "w+") as file:
                 json.dump(Main.DEFAULT_SETTINGS, file)
@@ -92,7 +93,7 @@ class Main:
         except: pass
 
 
-    def get_path(self, type):
+    def render_path_window(self, type) -> None:
         """ Render browsing window to pick default paths """
         
         opt = QtWidgets.QFileDialog.Options()
@@ -100,13 +101,17 @@ class Main:
         dialog = QFileDialog()
         dialog.setOptions(opt)
         dialog.setDirectory(self.path.get('app_root_path'))
+        
         if type == "download":
             path = QtWidgets.QFileDialog.getExistingDirectory(
                 None, "Default download folder...", self.path.get('app_root_path'), options=opt
             )
+
             if path: self.DownloadPath.setText(path)
+
         else:
             path = QtWidgets.QFileDialog.getExistingDirectory(
                 None, "Default icons folder...", self.path.get('app_root_path'), options=opt
             )
+
             if path: self.IconPath.setText(path)

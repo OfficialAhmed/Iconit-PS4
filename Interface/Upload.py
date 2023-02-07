@@ -9,7 +9,6 @@ class Ui(Upload):
 
 
     def setupUi(self, window):
-        self.upload_type = self.get_upload_type()
         self.selected_mode = self.get_selected_mode()
         self.browsed_icon_path = self.get_browsed_icon_path()
 
