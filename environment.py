@@ -61,10 +61,10 @@ class Common:
         "system apps" : {
             "ids" : {},
             "ignore ids" : {},
-            "ignored file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system\\ignored.json",
-            "cache path" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system\\",
-            "cache file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system\\system_apps.json",
-            "database" : System_Database(f"{app_path}\\Data\\Cache\\Icons\\metadata\\system\\Database.json")
+            "ignored file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system apps\\ignored.json",
+            "cache path" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system apps\\",
+            "cache file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system apps\\system_apps.json",
+            "database" : System_Database(f"{app_path}\\Data\\Cache\\Icons\\metadata\\system apps\\Database.json")
         },
 
         "avatar" : {

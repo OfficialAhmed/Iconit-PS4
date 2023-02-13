@@ -6,6 +6,7 @@ class Constants:
     __PS4_SYS_SCE = "sce_sys"
     __PS4_ICON_SIZE = (512, 512)
     __PS4_PIC_SIZE = (1920, 1080)
+    __PS4_4k_ICON_SIZE = (660, 660)
     __PS4_INT_ICONS = "user/appmeta/"
     __PS4_SYS_ICONS = "system_ex/app/"
     __PS4_EXT_ICONS = "user/appmeta/external/"
@@ -36,6 +37,9 @@ class Constants:
 
     def get_ps4_icon_size(self) -> tuple:
         return Constants.__PS4_ICON_SIZE
+
+    def get_ps4_4k_icon_size(self) -> tuple:
+        return Constants.__PS4_4k_ICON_SIZE
 
     def get_sce_folder_name(self) -> str:
         return Constants.__PS4_SYS_SCE

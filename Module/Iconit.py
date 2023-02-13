@@ -273,10 +273,11 @@ class Game(Main):
             Game icons caching technique  
     ########################################################
     """
+
     def __init__(self) -> None:
         super().__init__()
         self.ftp = self.get_ftp()
-        self.widgets = self.fetch_sharables()
+        self.fetch_sharables()
         
         self.icon_name = "icon0.png"
         self.id_and_location = []
@@ -472,7 +473,7 @@ class System(Main):
     def __init__(self) -> None:
         super().__init__()
         self.ftp = self.get_ftp()
-        self.widgets = self.fetch_sharables()
+        self.fetch_sharables()
         
 
     def validate_ids(self, ids) -> bool:
@@ -509,18 +510,18 @@ class System(Main):
                     else:
                         is_new_to_ignore = True
                         ignored_ids.append(id)
+                        continue
 
-                    if is_new_id_found:
-                        # Try to get title from db, else from PS4
-                        id_from_db = self.mode.get("system apps").get("database").get_id(id)
-                        if id_from_db: self.system_apps_ids[id] = id_from_db
-                        else: self.system_apps_ids[id] = self.get_title_from_server()
+                    # Try to get title from db, else from PS4
+                    id_from_db = self.mode.get("system apps").get("database").get_id(id)
+                    if id_from_db: self.system_apps_ids[id] = id_from_db
+                    else: self.system_apps_ids[id] = self.get_title_from_server()
 
-                        # Download icon from PS4
-                        self.download_data_from_server(
-                            icon_name, 
-                            f"{self.mode.get('system apps').get('cache path')}{id}.png"
-                        )
+                    # Download icon from PS4
+                    self.download_data_from_server(
+                        icon_name, 
+                        f"{self.mode.get('system apps').get('cache path')}{id}.png"
+                    )
 
                 except: 
                     is_new_to_ignore = True
@@ -530,7 +531,7 @@ class System(Main):
         if is_new_to_ignore: self.save_ignored_ids(ignored_ids)
 
 
-    def start_cache(self):
+    def start_cache(self) -> bool:
         """ Prepare a dict of app id as the key and the value of the title """
 
         try:
@@ -541,12 +542,11 @@ class System(Main):
             self.ftp.cwd(f"/{self.ps4_system_icons_dir}")
             app_ids_from_server = self.get_server_list(list="directories")
 
-
             self.validate_ids(app_ids_from_server)
             self.set_ids(self.system_apps_ids)
 
-            # self.render_window()
             self.CacheBar.setProperty("value", 100)
+            return True
 
         except Exception as e:
             self.log_to_external_file(str(e), "Error")
@@ -554,6 +554,7 @@ class System(Main):
             self.ui.setupUi(self.window)
             self.ui.alert(f"Error occured |_DEV {str(e)}")
             self.window.show()
+            return False
 
 
 class Avatar(Main):

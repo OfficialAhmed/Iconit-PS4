@@ -3,6 +3,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from Module.Icons import Main as Icons
 
 class Ui(Icons):
+    
     def __init__(self) -> None:
         super().__init__()
         self.is_bg_image_changed = False
@@ -27,6 +28,7 @@ class Ui(Icons):
         else:
             self.background = "4kbg.@OfficialAhmed0"
 
+
     def setupUi(self, window):
         self.window = window # for next window
 
@@ -37,17 +39,17 @@ class Ui(Icons):
         font.setFamily(self.font)
 
         # ______________    WINDOW SPECS    _________________ # 
-        window.resize(1080, 720)
+        # window.resize(self.screen_w, 720)
         window.setObjectName("IconsWindow")
-        window.setMinimumSize(QtCore.QSize(1300, 720))
+        window.setMinimumSize(QtCore.QSize(self.screen_w, 720))
         window.setWindowIcon(QtGui.QIcon(f"{self.pref_path}ic1.@OfficialAhmed0"))
         window.setStyleSheet(f"background-image: url({self.pref_path}{self.background});")
         window.setWindowTitle(f"Iconit v{self.app_version} ({self.app_release_date})")
 
         # ______________    LABELS    _________________ # 
-        self.GameTitleLabel = QtWidgets.QLabel(window)
         self.TitleLabel = QtWidgets.QLabel(window)
         self.HomebrewLabel = QtWidgets.QLabel(window)
+        self.GameTitleLabel = QtWidgets.QLabel(window)
 
         font.setPointSize(22)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -206,9 +208,6 @@ class Ui(Icons):
         sizePolicy.setHeightForWidth(self.GameTitles.sizePolicy().hasHeightForWidth())
         self.GameTitles.setSizePolicy(sizePolicy)
 
-        for index, current_game_id in enumerate(self.ids):
-            self.GameTitles.addItem(f"{index + 1}: {self.ids.get(current_game_id).get('title')} [{current_game_id}]")
-
         # ______________    ICONS    _________________ # 
         self.Icon = QtWidgets.QGraphicsView(window)
         self.Icon.setMinimumSize(QtCore.QSize(340, 370))
@@ -278,18 +277,18 @@ class Ui(Icons):
         self.formLayout.setLayout(2, QtWidgets.QFormLayout.LabelRole, self.LeftLayout)
         self.formLayout.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.RightLayout)
         self.formLayout.setLayout(3, QtWidgets.QFormLayout.SpanningRole, self.BottomLayout)
-
+        
         self.retranslateUi()
         self.GameTitles.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(window)
 
+
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.NextBtn.setText(_translate("IconsWindow", "NEXT"))
-        self.GameIdLabel.setText(_translate("IconsWindow", "GAME ID"))
-        self.SelectBtn.setText(_translate("IconsWindow", "SELECT GAME"))
+        self.SelectBtn.setText(_translate("IconsWindow", "SELECT"))
         self.MaskBtn.setText(_translate("IconsWindow", "MASK MAKER..."))
-        self.TitleLabel.setText(_translate("IconsWindow", "GAME ICONS"))
+        self.GameIdLabel.setText(_translate("IconsWindow", "CURRENT ID"))
         self.ChangeIconBtn.setText(_translate("IconsWindow", "CHANGE..."))
         self.IconSizeLabel.setText(_translate("IconsWindow", "DIMENSIONS"))
         self.SendBtn.setText(_translate("IconsWindow", "SEND ICON/PICTURE"))
@@ -298,48 +297,84 @@ class Ui(Icons):
         self.GameIdTxt.setText(_translate("IconsWindow", self.current_game_id))
         self.IconLocationLabel.setText(_translate("IconsWindow", "ICON LOCATION"))
         self.IconSizeTxt.setText(_translate("IconsWindow", "Current icon dimension(512x512)"))
-        self.GameTitleLabel.setText(_translate("IconsWindow", self.ids.get(self.current_game_id).get("title")))
         self.TotalGamesTxt.setText(_translate("IconsWindow", f"1/{len(self.ids)}"))
         self.TwitterLink.setText(_translate("IconsWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created By @OfficialAhmed0", "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.font)))
         self.PaypalLink.setText(_translate("IconsWindow",self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "PayPal", "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.font)))
         self.LogsTxt.setHtml(_translate("IconsWindow",
-                f"""
-                    {self.html.span_tag(f"*Connected to PS4: {self.ip}*", "#ffffff", 12)}
-                    {self.html.p_tag(f"-qt-paragraph-type:empty; margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;")}
-                """
+            f"""
+                {self.html.span_tag(f"*Connected to PS4: {self.ip}*", "#ffffff", 12)}
+                {self.html.p_tag(f"-qt-paragraph-type:empty; margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;")}
+            """
             )
         )
 
-        # Keyboard recognition v4.07
+        # 
+        """
+        #################################################################
+                    KEYBOARD RECOGNITION SHORTCUTS v4.07
+        #################################################################
+        """
         self.NextBtn.setShortcut("Right")
         self.PreviousBtn.setShortcut("Left")
         self.SelectBtn.setShortcut("return")
 
-        if self.selected_mode == "system" and len(self.ids) > 1:
-            self.HomebrewLabel.setText(_translate("IconsWindow", "System icon: Yes"))
-            # self.ChangeBgBtn.hide()
-        else:
-            if self.is_toggled_homebrew == "True":
-                state = "YES"
-                if "CUSA" in self.current_game_id:
-                    state = "NO"
-            else:
-                state = "TURNED OFF"
 
-            self.HomebrewLabel.setText(_translate("IconsWindow", f"HOMEBREW ICON: {state}"))
-
-        self.IconLocationTxt.setText(_translate("IconsWindow", "INTERNAL"))
-        if self.ids[self.current_game_id] in self.external_games:
-            self.IconLocationTxt.setText(_translate("IconsWindow", "EXTERNAL"))
-
-        self.NextBtn.setToolTip(self.html.tooltip_tag("Next Game"))
-        self.MaskBtn.setToolTip(self.html.tooltip_tag("Apply Mask"))
-        self.PreviousBtn.setToolTip(self.html.tooltip_tag("Previous Game"))
-        self.ChangeIconBtn.setToolTip(self.html.tooltip_tag("Pick an Icon for the game"))
-        self.SelectBtn.setToolTip(self.html.tooltip_tag("Click this to select the game from the games list"))
-        self.ChangeBgBtn.setToolTip(self.html.tooltip_tag("Pick a background to launch when the game starts"))
-        self.SendBtn.setToolTip(self.html.tooltip_tag("Upload the Icon and Pic after you change at least one of them"))
-        self.IconLocationTxt.setToolTip(self.html.tooltip_tag("This is the location where the game is located on your PS4"))
-        self.HomebrewLabel.setToolTip(self.html.tooltip_tag("Turned on = Homebrew will be visible and can be changed (turn it on/off from the settings)"))
-        self.GameTitleLabel.setToolTip(self.html.tooltip_tag("Some game titles are unknown because they're not legit (homebrews/PS2 converted games etc.)"))
+        """
+        #################################################################
+                        HOVEROVER TOOL TIPS
+        #################################################################
+        """
+        self.NextBtn.setToolTip(self.html.tooltip_tag("NEXT ICON"))
+        self.MaskBtn.setToolTip(self.html.tooltip_tag("APPLY MASK FOR THE ICON"))
+        self.PreviousBtn.setToolTip(self.html.tooltip_tag("PREVIOUS ICON"))
+        self.ChangeIconBtn.setToolTip(self.html.tooltip_tag("CHANGE THE ICON"))
+        self.SelectBtn.setToolTip(self.html.tooltip_tag("SELECT THE ICON FROM THE DROPDOWN LIST"))
+        self.ChangeBgBtn.setToolTip(self.html.tooltip_tag("CHANGE BACKGROUND IMAGE FOR THE GAME LAUNCH"))
+        self.SendBtn.setToolTip(self.html.tooltip_tag("UPLOAD THE ICON/BACKGROUND"))
+        self.IconLocationTxt.setToolTip(self.html.tooltip_tag("THE LOCATION WHERE THE CURRENT GAME IS LOCATED AT"))
+        self.HomebrewLabel.setToolTip(self.html.tooltip_tag("WETHER THE CURRENT ID IS A HOMEBREW OR NOT"))
+        self.GameTitleLabel.setToolTip(self.html.tooltip_tag("SOME GAME TITLES ARE UNKNOWN. PERHAPS THEY'RE HOMEBREW (PS2 GAME/UNITY GAME) ETC."))
     
+
+        """
+        #################################################################
+                    MODE SPECIFIC FEATURES
+        #################################################################
+        """
+        match self.selected_mode:
+            case "game":
+                for index, current_game_id in enumerate(self.ids):
+                    self.GameTitles.addItem(f"{index + 1}: {self.ids.get(current_game_id).get('title')} [{current_game_id}]")
+                
+                # ______________    IS HOMEBREW    _________________ # 
+                state = "TURNED OFF"
+                if self.is_toggled_homebrew == "True":
+                    state = "YES"
+                    if "CUSA" in self.current_game_id:
+                        state = "NO"
+
+                # ______________    ICON LOCATION    _________________ # 
+                location = "INTERNAL"
+                if self.ids[self.current_game_id] in self.external_games:
+                    location = "EXTERNAL"
+
+                # ______________    UPDATE TEXT    _________________ # 
+                self.TitleLabel.setText(_translate("IconsWindow", "GAME ICONS"))
+                self.IconLocationTxt.setText(_translate("IconsWindow", location))
+                self.GameTitleLabel.setText(self.ids.get(self.current_game_id).get("title"))
+                self.HomebrewLabel.setText(_translate("IconsWindow", f"HOMEBREW ICON: {state}"))
+
+
+            case "system apps":
+                for index, current_game_id in enumerate(self.ids):
+                    self.GameTitles.addItem(f"{index + 1}: {self.ids.get(current_game_id)} [{current_game_id}]")
+                
+                # ______________    UPDATE TEXT    _________________ # 
+                self.GameTitleLabel.setText(self.ids.get(self.current_game_id))
+                self.TitleLabel.setText(_translate("IconsWindow", "SYSTEM ICONS"))
+                self.HomebrewLabel.setText(_translate("IconsWindow", "SYSTEM ICON: YES"))
+
+                # ______________    HIDE WIDGETS    _________________ # 
+                self.IconLocationLabel.hide()
+                self.IconLocationTxt.hide()
+                self.ChangeBgBtn.hide()

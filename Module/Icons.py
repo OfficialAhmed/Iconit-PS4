@@ -75,7 +75,7 @@ class Main(Common):
         """ Reset the background to default """
 
         self.change_dimensions_label()
-        self.change_background(is_default=True)
+        self.change_label_background(is_default=True)
         self.window.setStyleSheet(self.html.bg_image(f"{self.pref_path}{self.background}"))
 
 
@@ -139,21 +139,26 @@ class Main(Common):
         if is_from_dropdown_list:
             icon_index = f"{self.GameTitles.currentIndex() + 1}"
 
-        hb = "HOMEBREW ICON: TURNED OFF"
-        if self.selected_mode == "system":
-            hb = "SYSTEM ICON: YES"
+        match self.selected_mode:
+            case "game":
+                hb = "HOMEBREW ICON: TURNED OFF"
+                if self.is_toggled_homebrew == "True":
+                    hb = "HOMEBREW ICON: NO"
+                    if "CUSA" not in self.current_game_id:
+                        hb = "HOMEBREW ICON: YES"
+            
+                self.GameTitleLabel.setText(self.ids.get(self.current_game_id).get("title"))
+                self.IconLocationTxt.setText(self.ids.get(self.current_game_id).get("location").upper())
 
-        elif self.is_toggled_homebrew == "True":
-            hb = "HOMEBREW ICON: NO"
-            if "CUSA" not in self.current_game_id:
-                hb = "HOMEBREW ICON: YES"
+            case "system apps":
+                hb = "SYSTEM ICON: YES"
+                self.GameTitleLabel.setText(self.ids.get(self.current_game_id))
+
 
         self.HomebrewLabel.setText(hb)
         self.GameIdTxt.setText(self.current_game_id)
         self.TotalGamesTxt.setText(f"{icon_index}/{self.icons_limit}")
         self.Icon.setStyleSheet(self.html.border_image(current_icon_path))
-        self.GameTitleLabel.setText(self.ids.get(self.current_game_id).get("title"))
-        self.IconLocationTxt.setText(self.ids.get(self.current_game_id).get("location").upper())
 
 
     def change_icon(self):
@@ -176,13 +181,13 @@ class Main(Common):
             if self.is_valid_image("picture", img):
                 self.SendBtn.setDisabled(False)
                 self.window.setStyleSheet(self.html.bg_image(img))
-                self.change_background(is_default = False)
+                self.change_label_background(is_default = False)
                 self.set_browsed_pic_path(img)
             else:
                 self.set_browsed_pic_path("") 
 
 
-    def change_background(self, is_default:bool = True) -> None:
+    def change_label_background(self, is_default:bool = True) -> None:
         """ Change labels' background for more visible user PIC0 """
 
         label_bg = (
@@ -243,7 +248,7 @@ class Main(Common):
 
 
     def render_browser_window(self, window_title) -> str:
-        """ Display window and return path of an object i.e. Image, Picture if user choose an object """
+        """ Display window and return path of an object i.e. Image, Picture if user choose an object [RETURN ICON PATH]"""
 
         options = QtWidgets.QFileDialog.Options()
         options |= QtWidgets.QFileDialog.DontUseSheet
