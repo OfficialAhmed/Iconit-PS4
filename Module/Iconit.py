@@ -102,7 +102,7 @@ class Main(Common):
             json.dump(data, file)
 
 
-    def set_cache(self) -> None:
+    def save_cache(self) -> None:
         """ Save ids and titles locally as JSON """
         
         mode_info = self.mode.get(self.selected_mode)
@@ -323,7 +323,7 @@ class Game(Main):
 
         self.is_new_to_ignore = False
         self.is_external_found = False
-        self.ignored_ids = self.load_ignored_ids()
+        
 
         """
         #######################################################
@@ -361,7 +361,7 @@ class Game(Main):
 
             """
             #######################################################
-                    Determine id location if its new
+                        Determine id location if its new
             #######################################################
             """
             # Check for new id
@@ -387,6 +387,7 @@ class Game(Main):
         try:
             self.chage_state(True)
             self.ids = self.get_cache()
+            self.ignored_ids = self.load_ignored_ids()
 
             self.filter_ids()
             
@@ -447,7 +448,7 @@ class Game(Main):
 
             if is_new_game_found:
                 self.sort_ids_by_title()
-                self.set_cache()
+                self.save_cache()
 
             self.CacheBar.setProperty("value", 100)
             return True
@@ -467,74 +468,92 @@ class System(Main):
             System apps caching technique 
     #######################################################
     """
+
     def __init__(self) -> None:
         super().__init__()
         self.ftp = self.get_ftp()
         self.widgets = self.fetch_sharables()
         
 
-    def start_cache(self):
-        self.ids = self.get_cache()
-
-        """ Prepare a dict of app id as the key and the value of the title """
-        self.chage_state(True)
-
-        self.system_apps_ids = self.get_cache()
-        self.ftp.cwd(f"/{self.ps4_system_icons_dir}")
+    def validate_ids(self, ids) -> bool:
+        """ check if id valid, if not add it to the ignored list for faster caching process """
         
-        app_ids_from_server = self.get_server_list(list="directories")
-        
-        """
-        #######################################################
-            Download icons for preview/backup from PS4
-        #######################################################
-        """
+        is_new_id_found = False
+        is_new_to_ignore = False
+        ignored_ids = self.load_ignored_ids()
 
-        is_new_app_found = False
-        for app_id in app_ids_from_server:
+        for id in ids:
             self.ftp.cwd(f"/{self.ps4_system_icons_dir}")
+     
+            """
+            #######################################################
+                    Determine if the ID is a new one
+            #######################################################
+            """
+            if id not in self.system_apps_ids and id not in ignored_ids:
+                # If sce_sys folder not found, goes to exception to ignore
 
-            if app_id not in self.system_apps_ids:
-                # If sce_sys folder not found skip folder
-                try: self.ftp.cwd(f"{app_id}/{self.constant.get_sce_folder_name()}")
-                except: continue
+                try: 
+                    self.ftp.cwd(f"{id}/{self.constant.get_sce_folder_name()}")
+                    app_files = self.get_server_list(list="files")
 
-                app_files = self.get_server_list(list="files")
+                    # if neither icon nor icon_4k was found, add to ignored ids
+                    if "icon0_4k.png" in app_files: 
+                        is_new_id_found = True
+                        icon_name = "icon0_4k.png"
+                        
+                    elif "icon0.png" in app_files:
+                        is_new_id_found = True
+                        icon_name = "icon0.png"
 
-                # if icon nor icon_4k not found skip folder
-                if "icon0_4k.png" in app_files: 
-                    is_new_app_found = True
-                    icon_name = "icon0_4k.png"
-                    
-                elif "icon0.png" in app_files:
-                    is_new_app_found = True
-                    icon_name = "icon0.png"
+                    else:
+                        is_new_to_ignore = True
+                        ignored_ids.append(id)
 
-                else: continue
-                
-                
-                # Try to get title from db, else from PS4
-                id_from_db = self.mode.get("system apps").get("database").get_id(app_id)
-                if id_from_db:
-                    self.system_apps_ids[app_id] = id_from_db
-                else:
-                    self.system_apps_ids[app_id] = self.get_title_from_server()
-                
+                    if is_new_id_found:
+                        # Try to get title from db, else from PS4
+                        id_from_db = self.mode.get("system apps").get("database").get_id(id)
+                        if id_from_db: self.system_apps_ids[id] = id_from_db
+                        else: self.system_apps_ids[id] = self.get_title_from_server()
 
-                # Download icon from PS4
-                self.download_data_from_server(
-                    icon_name, 
-                    f"{self.mode.get('system apps').get('cache path')}{app_id}.png"
-                )
+                        # Download icon from PS4
+                        self.download_data_from_server(
+                            icon_name, 
+                            f"{self.mode.get('system apps').get('cache path')}{id}.png"
+                        )
+
+                except: 
+                    is_new_to_ignore = True
+                    ignored_ids.append(id)
+
+        if is_new_id_found: self.save_cache()
+        if is_new_to_ignore: self.save_ignored_ids(ignored_ids)
 
 
-        self.set_ids(self.system_apps_ids)
+    def start_cache(self):
+        """ Prepare a dict of app id as the key and the value of the title """
 
-        if is_new_app_found:
-            self.set_cache()
+        try:
+            self.system_apps_ids = self.get_cache()
 
-        # self.render_window()
-        self.CacheBar.setProperty("value", 100)
+            self.chage_state(True)
+
+            self.ftp.cwd(f"/{self.ps4_system_icons_dir}")
+            app_ids_from_server = self.get_server_list(list="directories")
+
+
+            self.validate_ids(app_ids_from_server)
+            self.set_ids(self.system_apps_ids)
+
+            # self.render_window()
+            self.CacheBar.setProperty("value", 100)
+
+        except Exception as e:
+            self.log_to_external_file(str(e), "Error")
+            self.chage_state(False)
+            self.ui.setupUi(self.window)
+            self.ui.alert(f"Error occured |_DEV {str(e)}")
+            self.window.show()
 
 
 class Avatar(Main):
