@@ -67,7 +67,7 @@ class Common:
             "database" : System_Database(f"{app_path}\\Data\\Cache\\Icons\\metadata\\system\\Database.json")
         },
 
-        "avatar mode" : {
+        "avatar" : {
             "ids" : {},
             "ignore ids" : {},
             "cache path" : "",
@@ -92,7 +92,6 @@ class Common:
         self.language_path = f"{self.data_path}Language\\"
         self.appmeta_path = f"{self.data_path}User\\appmeta\\"
         self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
-
 
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
@@ -200,7 +199,7 @@ class Common:
         return Common.browsed_icon_path
 
     def set_ids(self, ids:dict) -> None:
-        Common.mode.get(self.selected_mode)["ids"] = ids
+        Common.mode.get(self.get_selected_mode())["ids"] = ids
 
     def get_ids(self) -> dict:
         return Common.mode.get(self.get_selected_mode()).get("ids")

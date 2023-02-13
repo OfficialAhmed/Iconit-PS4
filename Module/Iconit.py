@@ -83,25 +83,49 @@ class Main(Common):
             else: label.setText(self.html.span_tag(labels[label], fail, 14))
 
 
+    def load_ignored_ids(self) -> list:
+        """ get ignored cache from JSON """
+
+        data = []
+        file = self.mode.get(self.selected_mode).get("ignored file")
+        try: 
+            data = json.load(open(file)).get("ids")
+        except: pass
+        finally: return data
+
+
+    def save_ignored_ids(self, ids:list) -> None:
+        """ save ignored ids as JSON file """
+
+        data = {"ids":ids}
+        with open(self.mode.get(self.selected_mode).get("ignored file"), "w+") as file:
+            json.dump(data, file)
+
+
     def set_cache(self) -> None:
         """ Save ids and titles locally as JSON """
         
-        ids = self.mode.get(self.selected_mode).get("ids")
-        cache_file = self.mode.get(self.selected_mode).get("cache file")
-           
-        with open(cache_file, "w+", encoding="utf-8") as jsonFile:
-            json.dump(ids, jsonFile)
+        mode_info = self.mode.get(self.selected_mode)
+        ids = mode_info.get("ids")
+
+        if ids:
+            with open(mode_info.get("cache file"), "w+", encoding="utf-8") as jsonFile:
+                json.dump(ids, jsonFile)
 
 
     def get_cache(self) -> dict:
         """ Return the cached ids and titles if found """
 
         result = {}
-        cache = self.mode.get(self.selected_mode).get("cache file")
+        mode = self.mode.get(self.selected_mode)
 
-        if os.path.isfile(cache):
-            try: result = json.load(open(cache))
-            except: pass
+        if mode:
+            file = mode.get("cache file") 
+            
+            if os.path.isfile(file):
+                try: result = json.load(open(file))
+                except: pass
+                
         return result
         
 
@@ -113,11 +137,43 @@ class Main(Common):
         match self.selected_mode:
             case "game":
                 sorted_ids = dict(sorted(ids.items(), key=lambda data: data[1].get("title")))
-            case "system":
+            case "system apps":
                 sorted_ids = dict(sorted(ids.items(), key=lambda data: data[1]))
                 
         self.ids = sorted_ids
         self.mode.get(self.selected_mode)["ids"] = sorted_ids
+
+
+    def get_title_from_server(self) -> str:
+        """ 
+            Grab the title of an id from pronuciation.xml file if found else its unknown 
+            Worst-case O(n^2). The worst technique to fetch for titles (TOO SLOW)
+        """
+
+        title = "UNKNOWN TITLE"
+        try:
+            """
+            ########################################################
+                    Find English words from pronunciation file
+            ########################################################
+            """
+            if self.download_data_from_server(self.pronunciation_file, self.pronunciation_file_path):
+                tags = minidom.parse(self.pronunciation_file_path).getElementsByTagName("text")
+                for name in tags:
+                    title = name.firstChild.data
+                    
+                    english = True
+                    for char in title:
+                        if char not in self.english:
+                            english = False
+                            break
+
+                    if english:
+                        break
+
+        except: pass
+        finally:
+            return title
 
 
     def connect_ps4(self, is_valid):
@@ -177,52 +233,22 @@ class Main(Common):
             # Check selected mode
             if self.game_icon_radio.isChecked():
                 self.set_selected_mode("game")
+                self.selected_mode = "game"
                 is_cached = Game().start_cache()
  
             elif self.SystemIconsRadio.isChecked():
-                self.set_selected_mode("system")
+                self.set_selected_mode("system apps")
+                self.selected_mode = "system apps"
                 is_cached = System().start_cache()
                 
             else:
-                #FIXME: reimplement a patch
                 self.set_selected_mode("avatar")
+                self.selected_mode = "avatar"
                 is_cached = Avatar().start_cache()
 
             self.selected_mode = self.get_selected_mode()
             if is_cached : 
                 self.render_window()
-
-
-    def get_title_from_server(self) -> str:
-        """ 
-            Grab the title of an id from pronuciation.xml file if found else its unknown 
-            Worst-case O(n^2). The worst technique to fetch for titles (TOO SLOW)
-        """
-
-        title = "UNKNOWN TITLE"
-        try:
-            """
-            ########################################################
-                    Find English words from pronunciation file
-            ########################################################
-            """
-            if self.download_data_from_server(self.pronunciation_file, self.pronunciation_file_path):
-                tags = minidom.parse(self.pronunciation_file_path).getElementsByTagName("text")
-                for name in tags:
-                    title = name.firstChild.data
-                    
-                    english = True
-                    for char in title:
-                        if char not in self.english:
-                            english = False
-                            break
-
-                    if english:
-                        break
-
-        except: pass
-        finally:
-            return title
         
 
     def render_window(self) -> None:
@@ -357,25 +383,6 @@ class Game(Main):
                 self.ignored_ids.append(id)
 
 
-    def load_ignored_ids(self) -> list:
-        """ get ignored cache from JSON """
-
-        data = []
-        file = self.mode.get(self.selected_mode).get("ignored file")
-        try: 
-            data = json.load(open(file)).get("ids")
-        except: pass
-        finally: return data
-
-
-    def save_ignored_ids(self, ids:list) -> None:
-        """ save ignored ids as JSON file """
-
-        data = {"ids":ids}
-        with open(self.mode.get(self.selected_mode).get("ignored file"), "w+") as file:
-            json.dump(data, file)
-
-
     def start_cache(self) -> bool:
         try:
             self.chage_state(True)
@@ -436,12 +443,13 @@ class Game(Main):
                 percentage += process_weight_fraction
                 self.CacheBar.setProperty("value", f"{int(percentage)}")
             
+            self.set_ids(self.ids)
+
             if is_new_game_found:
                 self.sort_ids_by_title()
                 self.set_cache()
 
             self.CacheBar.setProperty("value", 100)
-            self.set_ids(self.ids)
             return True
 
         except Exception as e:
@@ -520,11 +528,11 @@ class System(Main):
                 )
 
 
+        self.set_ids(self.system_apps_ids)
+
         if is_new_app_found:
             self.set_cache()
 
-
-        self.set_ids(self.ids)
         # self.render_window()
         self.CacheBar.setProperty("value", 100)
 
