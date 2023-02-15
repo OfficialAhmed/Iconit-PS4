@@ -69,7 +69,7 @@ class Main:
             return data
 
 
-    def save_cache(self, font:str = "", icons_path:str = "", download_path:str = "", hb:str = "", port:str = "", ip:str = "", lang:str = "") -> None:
+    def save_cache(self, font:str = "", icons_path:str = "", download_path:str = "", hb:str = "", port:str = "", ip:str = "", lang:str = "", window=False) -> None:
         """ Cache information to external file Settings.json """
 
         # update local cache before using it
@@ -88,9 +88,8 @@ class Main:
         with open(f"{self.cache_path}Settings.json", "w+") as file:
             json.dump(data, file)
         
-        # Sometimes saving without the window
-        try: self.OptionsWin.close() 
-        except: pass
+        if window: 
+            self.OptionsWin.close() 
 
 
     def render_path_window(self, type) -> None:

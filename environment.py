@@ -156,6 +156,11 @@ class Common:
             return False
 
 
+    def progress_bar(self, bar, percentage:int) -> None:
+        """ Refresh the bar object by the passed percentage """
+        bar.setProperty("value", percentage)
+
+
     def get_language(self) -> str:
         return Common.language
 

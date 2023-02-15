@@ -55,10 +55,10 @@ dist/Iconit v5.06 (BETA)/Data/Pref/bgm/success.@OfficialAhmed0
 
 Data/Cache/Settings.json
 Data/New web-based UI.zip
-Data/Cache/Icons/metadata/system/system_apps.json
 pass.json
 Data/Cache/Icons/metadata/game/ignored.json
 Data/Cache/Icons/metadata/system/ignored.json
 Data/Cache/Icons/metadata/system apps/ignored.json
 /.vs/slnx.sqlite
 /.vs
+Data/Cache/Icons/metadata/system apps/system_apps.json

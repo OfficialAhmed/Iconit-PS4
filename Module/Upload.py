@@ -8,21 +8,50 @@ class Main(Common):
     def __init__(self) -> None:
         super().__init__()
         self.ftp = self.get_ftp()
-        self.game_ids = self.get_ids()
-        self.pics_to_upload = None
-        self.icons_to_upload = None
+        self.game_ids: dict = self.get_ids()
+        self.pics_to_upload: list = []
+        self.icons_to_upload: list = []
         self.current_game_id = self.get_current_game_id()
         self.browsed_pic_path = self.get_browsed_pic_path()
         self.browsed_icon_path = self.get_browsed_icon_path()
 
 
-    def png_to_dds(self, png_dir: str, output_dir: str) -> None:
-        """ 
-            DDS conversion with DXT1 compression using 
-            Microsoft corp. (texconv) LICENSED software under MIT license
-        """
+    def start_processing(self):
+        """ take the user image, resize and duplicate it according to the mode selected """
 
-        os.system(f"Data\\BIN\\texconv -f BC1_UNORM {png_dir} -o {output_dir} -y")
+        try:
+            self.image = None
+
+            self.Yes.setEnabled(False)
+            self.No.setEnabled(False)
+
+            match self.selected_mode:
+                case "system apps":
+                    self.generate_system_icons_to_upload()
+                case "game":
+                    self.generate_game_icons_to_upload()
+                case "avatar":
+                    self.generate_avatar_icons_to_upload()
+
+            self.progress_bar(self.ConversionBar, 100)
+
+            self.send_generated_images()
+            self.remove_generated_images()
+
+            self.progress_bar(self.SendingBar, 100)
+
+            self.No.hide()
+            self.Yes.hide()
+            self.Ok.raise_()
+
+        except FileNotFoundError: pass
+
+        except Exception as e:
+            self.update_message(False, "Encountered a problem while resizing icon", extract_stack(), str(e) + f"{e} : ")
+        
+        finally:
+            self.set_browsed_pic_path("")
+            self.set_browsed_icon_path("")
 
 
     def get_timestamp(self) -> str:
@@ -46,10 +75,13 @@ class Main(Common):
             self.log_to_external_file(f"{e} | TRACEBACK {extract_stack()}", "Error")
 
 
-    def generate_underscore_icons(self, resized_icon:Image, underscore_icons:list) -> None:
+    def generate_underscore_icons(self, resized_icon:Image, underscore_icons:list, progress:int) -> None:
         """ if underscore icons found for the game, generate them from the resized icon """
+        
+        total_icons = len(underscore_icons)
+        progress_weight = (100 - progress)/total_icons
 
-        for x in range(1, len(underscore_icons)+1):
+        for x in range(1, total_icons+1):
             if x < 10:
                 search_png = f"icon0_0{x}.png"
                 search_dds = f"icon0_0{x}.dds"
@@ -66,11 +98,12 @@ class Main(Common):
                 self.png_to_dds(self.icons_cache_path + search_png, self.icons_cache_path)
                 self.icons_to_upload.append(search_dds)
 
+            progress += progress_weight
+            self.progress_bar(self.ConversionBar, progress)
+
 
     def generate_system_icons_to_upload(self):
         """ Resize system icons and append them into the list for the uploading method """
-
-        self.CheckingBar.setProperty("value", 5)
 
         self.ftp.cwd(f"/{self.ps4_system_icons_dir}{self.current_game_id}/sce_sys")
         game_files = self.get_server_list(list="files")
@@ -88,15 +121,14 @@ class Main(Common):
             self.ftp.retrbinary("RETR " + icon_name, picture.write)
 
         self.backup_icon()
-
-        self.CheckingBar.setProperty("value", 100)
+        self.progress_bar(self.ValidationBar, 100)
 
         if self.browsed_icon_path:
-            self.ResizingBar.setProperty("value", 10)
             icon = Image.open(self.browsed_icon_path)
 
             icon.resize(self.constant.get_ps4_icon_size(), PIL.Image.ANTIALIAS)
             icon.save(self.icons_cache_path + "icon0.png")
+            self.progress_bar(self.ConversionBar, 50)
             
             if is_icon_4k:
                 icon.resize(self.constant.get_ps4_4k_icon_size(), PIL.Image.ANTIALIAS)
@@ -112,10 +144,16 @@ class Main(Common):
         game_directory = f"{self.ps4_internal_icons_dir}{folder}{self.current_game_id}"
         
         self.ftp.cwd(f"/{game_directory}")
-        self.game_files = self.get_server_list(list="files")
+        self.progress_bar(self.ValidationBar, 60)
 
-        self.CheckingBar.setProperty("value", 100)
-        self.ResizingBar.setProperty("value", 1)
+        self.game_files = self.get_server_list(list="files")
+        self.progress_bar(self.ValidationBar, 100)
+
+        progress = 0
+        progress_percentage = 100
+        if self.browsed_pic_path and self.browsed_icon_path:
+            progress_percentage = 50
+        
 
         if self.browsed_icon_path:
             """
@@ -131,9 +169,15 @@ class Main(Common):
             icon.save(icon_path)
 
             underscore_icons = []
+
+            # devided by 3: the number of processes -> x.png + x.dds + _x.png
+            progress_weight = progress_percentage / 3
+
             for picture in self.game_files:
                 if "icon0_" in picture:
                     underscore_icons.append(picture)
+                    self.icons_to_upload.append(picture)
+                    continue
 
                 elif picture == "icon0.png":
                     icon.save(icon_path)
@@ -146,8 +190,11 @@ class Main(Common):
 
                 self.icons_to_upload.append(picture)
 
+                progress += progress_weight
+                self.progress_bar(self.ConversionBar, progress)
+                
             if underscore_icons:
-                self.generate_underscore_icons(icon, underscore_icons)
+                self.generate_underscore_icons(icon, underscore_icons, progress)
 
         if self.browsed_pic_path:
             """
@@ -158,7 +205,6 @@ class Main(Common):
             pic = Image.open(self.browsed_pic_path)
             resized_pic = pic.resize(self.constant.get_ps4_pic_size(), PIL.Image.ANTIALIAS)
 
-            self.ResizingBar.setProperty("value", 75)
 
             for picture in self.game_files:
                 if ".dds" in picture or ".png" in picture:
@@ -170,6 +216,10 @@ class Main(Common):
                         resized_pic.save(f"{self.icons_cache_path}{picture[:4]}.png")
                         self.png_to_dds(f"{self.icons_cache_path}{picture[:4]}.png", self.icons_cache_path)
                         self.pics_to_upload.append(picture)
+
+                    # devided by 4: number of pics to convert -> pic0[png & dds] + pic1[png & dds]
+                    progress += progress_percentage / 4    
+                    self.progress_bar(self.ConversionBar, progress)
 
 
     def generate_avatar_icons_to_upload(self):
@@ -221,12 +271,8 @@ class Main(Common):
                     self.temp_path,
                 )
 
-                for i in range(progressed, progress):
-                    self.ResizingBar.setProperty("value", i)
-                    time.sleep(0.01)
                 progressed += progress
                 os.remove(self.temp_path + dds + ".png")
-            self.ResizingBar.setProperty("value", 100)
             self.msg.setStyleSheet(
                 "font: 10pt; color: rgb(5, 255, 20);"
             )
@@ -247,61 +293,18 @@ class Main(Common):
         ################################################################
         """
         self.ftp.cwd(sysProfileRoot + "/" + self.CurrentUser)
-        progress = 20
-        progressed = 20
         with open(self.temp_path + "avatar.png", "rb") as save_file:
             self.ftp.storbinary("STOR " + "avatar.png", save_file, 1024)
-            self.UploadingBar.setProperty("value", progressed)
+            
         for avatar in required_dds:
             with open(self.temp_path + avatar + ".dds", "rb") as save_file:
                 self.ftp.storbinary("STOR " + avatar + ".dds", save_file, 1024)
-            for i in range(progressed, progressed + progress + 1):
-                self.UploadingBar.setProperty("value", i)
-                time.sleep(0.01)
-            progressed += progress
-
-
-    def resize_icon(self):
-        """ take the user image, resize and duplicate it according to the mode selected """
-
-        try:
-            self.image = None
-
-            self.Yes.setEnabled(False)
-            self.No.setEnabled(False)
-            self.CheckingBar.setProperty("value", 10)
-
-            match self.selected_mode:
-                case "system apps":
-                    self.generate_system_icons_to_upload()
-                case "game":
-                    self.generate_game_icons_to_upload()
-                case "avatar":
-                    self.generate_avatar_icons_to_upload()
-
-            self.ResizingBar.setProperty("value", 100)
-            self.UploadingBar.setProperty("value", 1)
-            
-            self.send_generated_images()
-            self.remove_generated_images()
-
-            self.UploadingBar.setProperty("value", 100)
-
-            self.No.hide()
-            self.Yes.hide()
-            self.Ok.raise_()
-
-        except FileNotFoundError: pass
-
-        except Exception as e:
-            self.update_message(False, "Encountered a problem while resizing icon", extract_stack(), str(e) + f"{e} : ")
-        
-        finally:
-            self.set_browsed_pic_path("")
-            self.set_browsed_icon_path("")
 
 
     def send_generated_images(self) -> None:
+        self.sending_progress = 0
+        self.sending_progress_weight = int(100 / (len(self.icons_to_upload) + len(self.pics_to_upload)))
+
         if self.icons_to_upload:
             self.send_icon_to_ps4()
 
@@ -311,12 +314,17 @@ class Main(Common):
 
     def send_pic_to_ps4(self) -> None:
         """ upload generated icons to ps4 """
+
         for pic in self.pics_to_upload:
             self.upload_to_server(f"{self.icons_cache_path}{pic}", pic)
+
+            self.sending_progress += self.sending_progress_weight
+            self.progress_bar(self.SendingBar, self.sending_progress)
 
 
     def send_icon_to_ps4(self):
         """ send icon to ps4, upon sucess copy icon0 for app preview """
+
         try:
             for icon in self.icons_to_upload:
                 if self.upload_to_server(f"{self.icons_cache_path}{icon}", icon):
@@ -324,11 +332,14 @@ class Main(Common):
                         shutil.move(f"{self.icons_cache_path}{icon}",
                             f"{self.metadata_path}{self.selected_mode}\\{self.current_game_id}.png"
                         )
+
+                    self.sending_progress += self.sending_progress_weight
+                    self.progress_bar(self.SendingBar, self.sending_progress)
+
                 else:
                     self.update_message(False, "Sorry! an issue has occured, Sending has been canceled")
                     break
 
-            self.UploadingBar.setProperty("value", 100)
             self.update_message(True, "Successful!. Icons will take some time to change on PS4")
         
         except Exception as e:
@@ -360,3 +371,13 @@ class Main(Common):
         for file in os.listdir(self.icons_cache_path):
             if os.path.isfile(file):
                 os.remove(f"{self.icons_cache_path}{file}")
+
+
+    def png_to_dds(self, png_dir: str, output_dir: str) -> None:
+        """ 
+            DDS conversion with DXT1 compression using 
+            Microsoft corp. (texconv) LICENSED software under MIT license
+        """
+
+        os.system(f"Data\\BIN\\texconv -f BC1_UNORM {png_dir} -o {output_dir} -y")
+

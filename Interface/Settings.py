@@ -247,7 +247,7 @@ class Ui(Settings):
                     self.translated_languages_in_english.get( 
                         self.Languages.currentText()
                     )
-                )
+                ), True
             )
         )
 

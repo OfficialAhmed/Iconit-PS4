@@ -28,8 +28,9 @@ class Main(Common):
         self.pronunciation_file_path = f"{self.temp_path}{self.pronunciation_file}"
 
 
-    def fetch_sharables(self):
-        """ Prepare shared attrs """
+    def refetch_shared_widgets(self) -> None:
+        """ Fetch shared widgets. Cannot merge them into init function, since this class is initalized before the widgets. Call this method to fetch the widgets after init the UI """
+        
         self.ip_input = self.widgets.get_ip_input()
         self.ip_label = self.widgets.get_ip_label()
         self.CacheBar = self.widgets.get_cache_bar()
@@ -42,7 +43,7 @@ class Main(Common):
 
 
     def check_ip_port(self) -> None:
-        self.fetch_sharables()
+        self.refetch_shared_widgets()
 
         try:
             self.ip = self.ip_input.text()
@@ -247,7 +248,9 @@ class Main(Common):
                 is_cached = Avatar().start_cache()
 
             self.selected_mode = self.get_selected_mode()
-            if is_cached : 
+
+            if is_cached: 
+                self.progress_bar(self.CacheBar, 100)
                 self.render_window()
         
 
@@ -277,7 +280,7 @@ class Game(Main):
     def __init__(self) -> None:
         super().__init__()
         self.ftp = self.get_ftp()
-        self.fetch_sharables()
+        self.refetch_shared_widgets()
         
         self.icon_name = "icon0.png"
         self.id_and_location = []
@@ -392,12 +395,12 @@ class Game(Main):
 
             self.filter_ids()
             
-            percentage = 0
-            self.cached = os.listdir(self.mode.get("game").get("cache path"))
-            process_weight_fraction = (1 / len(self.ids)) * 100
+            progress = 0
+            progress_weight = (100 / len(self.ids))
 
             is_new_game_found = False
             game_ids_with_hb = self.ids.copy()
+            self.cached = os.listdir(self.mode.get("game").get("cache path"))
 
 
             for game_id in game_ids_with_hb:
@@ -442,8 +445,8 @@ class Game(Main):
                         )
                 
 
-                percentage += process_weight_fraction
-                self.CacheBar.setProperty("value", f"{int(percentage)}")
+                progress += progress_weight
+                self.progress_bar(self.CacheBar, int(progress))
             
             self.set_ids(self.ids)
 
@@ -451,7 +454,6 @@ class Game(Main):
                 self.sort_ids_by_title()
                 self.save_cache()
 
-            self.CacheBar.setProperty("value", 100)
             return True
 
         except Exception as e:
@@ -473,7 +475,7 @@ class System(Main):
     def __init__(self) -> None:
         super().__init__()
         self.ftp = self.get_ftp()
-        self.fetch_sharables()
+        self.refetch_shared_widgets()
         
 
     def validate_ids(self, ids) -> bool:
@@ -482,6 +484,9 @@ class System(Main):
         is_new_id_found = False
         is_new_to_ignore = False
         ignored_ids = self.load_ignored_ids()
+        
+        progress = 0
+        progress_weight = 100/len(ids)
 
         for id in ids:
             self.ftp.cwd(f"/{self.ps4_system_icons_dir}")
@@ -527,6 +532,9 @@ class System(Main):
                     is_new_to_ignore = True
                     ignored_ids.append(id)
 
+            progress += progress_weight
+            self.progress_bar(self.CacheBar, int(progress))
+
         if is_new_id_found: self.save_cache()
         if is_new_to_ignore: self.save_ignored_ids(ignored_ids)
 
@@ -544,8 +552,7 @@ class System(Main):
 
             self.validate_ids(app_ids_from_server)
             self.set_ids(self.system_apps_ids)
-
-            self.CacheBar.setProperty("value", 100)
+            
             return True
 
         except Exception as e:

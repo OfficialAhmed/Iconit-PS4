@@ -1,7 +1,7 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-
 import Interface.Alerts as Alerts
+from PyQt5 import QtCore, QtGui, QtWidgets
 from Module.Upload import Main as Upload
+
 
 class Ui(Upload):
     def __init__(self) -> None:
@@ -43,11 +43,11 @@ class Ui(Upload):
             x_axis += 60
 
         #_________________    PROGRESS BARS    ________________#
-        self.CheckingBar = QtWidgets.QProgressBar(window)
-        self.ResizingBar = QtWidgets.QProgressBar(window)
-        self.UploadingBar = QtWidgets.QProgressBar(window)
+        self.ValidationBar = QtWidgets.QProgressBar(window)
+        self.ConversionBar = QtWidgets.QProgressBar(window)
+        self.SendingBar = QtWidgets.QProgressBar(window)
 
-        bars = (self.CheckingBar, self.ResizingBar, self.UploadingBar)
+        bars = (self.ValidationBar, self.ConversionBar, self.SendingBar)
         y_axis = 225
         for bar in bars:
             bar.setGeometry(QtCore.QRect(220, y_axis, 170, 40))
@@ -60,11 +60,11 @@ class Ui(Upload):
         #_________________    LABELS    ________________#
         font.setPointSize(13)
 
-        self.CheckingLabel = QtWidgets.QLabel(window)
-        self.ResizingLabel = QtWidgets.QLabel(window)
-        self.UploadingLabel = QtWidgets.QLabel(window)
+        self.ValidationLabel = QtWidgets.QLabel(window)
+        self.ConversionLabel = QtWidgets.QLabel(window)
+        self.SendingLabel = QtWidgets.QLabel(window)
 
-        labels = (self.CheckingLabel, self.ResizingLabel, self.UploadingLabel)
+        labels = (self.ValidationLabel, self.ConversionLabel, self.SendingLabel)
         y_axis = 230
         for label in labels:
             label.setFont(font)
@@ -102,19 +102,19 @@ class Ui(Upload):
         #_________________    SIGNALS    ________________#
         self.Ok.clicked.connect(window.close)
         self.No.clicked.connect(window.close)
-        self.Yes.clicked.connect(self.resize_icon)
+        self.Yes.clicked.connect(self.start_processing)
 
         #_________________    VISIBILITY    ________________#
         self.graphicsView.raise_()
         self.Yes.raise_()
         self.No.raise_()
         self.line.raise_()
-        self.CheckingBar.raise_()
-        self.ResizingBar.raise_()
-        self.UploadingBar.raise_()
-        self.CheckingLabel.raise_()
-        self.ResizingLabel.raise_()
-        self.UploadingLabel.raise_()
+        self.ValidationBar.raise_()
+        self.ConversionBar.raise_()
+        self.SendingBar.raise_()
+        self.ValidationLabel.raise_()
+        self.ConversionLabel.raise_()
+        self.SendingLabel.raise_()
         self.msg.raise_()
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(window)
@@ -125,8 +125,8 @@ class Ui(Upload):
         self.Yes.setText(_translate("ConfirmWindow", "Yes"))
         self.Ok.setText(_translate("ConfirmWindow", "Ok"))
         self.No.setText(_translate("ConfirmWindow", "No"))
-        self.CheckingLabel.setText(_translate("ConfirmWindow", "VALIDATION"))
-        self.ResizingLabel.setText(_translate("ConfirmWindow", "CONVERSION"))
-        self.UploadingLabel.setText(_translate("ConfirmWindow", "SEND"))
+        self.ValidationLabel.setText(_translate("ConfirmWindow", "VALIDATION"))
+        self.ConversionLabel.setText(_translate("ConfirmWindow", "CONVERSION"))
+        self.SendingLabel.setText(_translate("ConfirmWindow", "SEND"))
         warning_message = f"{self.html.p_tag('margin: 0px;font-size:12pt; -qt-block-indent:0; text-indent:0px; color:#e83c3c', 'ATTENTION! This will overwrite the icon on the PS4')}Are sure you want to proceed?"
         self.msg.setText(_translate("ConfirmWindow", warning_message))
