@@ -60,3 +60,5 @@ pass.json
 Data/Cache/Icons/metadata/game/ignored.json
 Data/Cache/Icons/metadata/system/ignored.json
 Data/Cache/Icons/metadata/system apps/ignored.json
+/.vs/slnx.sqlite
+/.vs
