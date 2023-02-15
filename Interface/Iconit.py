@@ -346,8 +346,8 @@ class Ui(Iconit):
         ui = Alerts.Ui()
         ui.setupUi(self.window)
 
-        game_db = self.game_database.save()
-        apps_db = self.system_apps_database.save()
+        game_db = self.mode.get("game").get("database").save()
+        apps_db = self.mode.get("system apps").get("database").save()
         txt = ""
 
         if game_db[0] == True:
@@ -361,7 +361,7 @@ class Ui(Iconit):
             txt += f"Apps Database Unuccessful | {apps_db[1]} \n"
 
 
-        ui.alert(txt+" \n\nDON'T USE THIS OPTION MANY TIMES OR YOU WILL BE BLOCKED BY THE SERVER, 2 OR 3 TIMES A DAY")
+        ui.alert(txt+" \n\nNOTE: DON'T USE THIS OPTION MANY TIMES OR YOU WILL BE BLOCKED BY THE SERVER, 2 OR 3 TIMES A DAY")
         self.window.show()
         
 
