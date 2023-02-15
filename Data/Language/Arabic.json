@@ -1,19 +1,17 @@
 {
-    "Language":"العربية",
-
-    "Languages":{
-        "English" : "الانجليزية",
-        "Arabic" : "العربية"
+    "Language": "العربية",
+    "Languages": {
+        "English": "الانجليزية",
+        "Arabic": "العربية"
     },
-    
-    "Settings":{
+    "Settings": {
         "WindowTitle": "الإعدادات",
-        "NoRadio":"معطل",
-        "YesRadio":"مفعل",
-        "SaveBtn":"حفظ",
-        "CancelBtn":"إلغاء",
-        "IpLabel":"عنوان آلاي بي الافتراضي",
-        "PortLabel":"رقم رقم المنفذ الافتراضي",
+        "NoRadio": "معطل",
+        "YesRadio": "مفعل",
+        "SaveBtn": "حفظ",
+        "CancelBtn": "إلغاء",
+        "IpLabel": "عنوان آلاي بي الافتراضي",
+        "PortLabel": "رقم رقم المنفذ الافتراضي",
         "DefaultBtn": "إعدادات الافتراضية",
         "FontLabel": "الخط الافتراضي",
         "HomebrewLabel": "برامج التهكير",
@@ -22,34 +20,58 @@
         "DownloadPathLabel": "مجلد تحميل الايقونات الافتراضي",
         "EnableHbInfo": "انتبة: إن تفعيل هذة الخاصية ستتيح لك بتغيير ايقونات البرامج والالعاب المقرصنة ولكن سوف يأخذ وقتا اطول حتى يتم تخزين المعلومات اثناء الاتصال مع البلايستيشن لاول مرة"
     },
-
-    "Iconit":{
-        "GameIconsRadio":"ايقونات و خلفيات الالعاب",
-        "SystemIconsRadio":"صور النظام",
-        "AvatarIconsRadio":"شخصيات الحساب [غير مفعل]",
-        "ModeLabel":"الوضع",
-        "IpLabel":"عنوان آلاي بي",
-        "CacheLabel":"نسبة التحميل",
-        "PortLabel":"رقم المنفذ",
-        "StatusLabel":"...منتظر",
-        "OnlineIconsLink":"تحميل ايقونات مجانية",
-        "PaypalLink":"تبرع (PayPal)",
-        "TwitterLink":"المبرمج",
-        "SysIconsInfo":"Lapy Xplorer انتبة: هذه الخاصية تتطلب اذونات خاصة متوفرة في بعض الانظمة مثل برنامج",
-        "GameIconsInfo":"انتبة: بامكانك تغيير صور البرامج والالعاب المقرصنة في الخيارات",
-        "TitleLink":"Iconit",
-
-        "menuSettings":"الخيارات",
-        "Options":"...الإعدادات",
-        "ConnectBtn":"أَبدَء",
-        "Remove_cache":"حذف معلومات البرنامج",
-        "Special_thanks":"شكر وتقدير",
-        "DownloadDatabase":"تحميل و تحديث قاعدة البيانات",
-        "About":"عني",
-        "actionAbout":"عني"
+    "Iconit": {
+        "GameIconsRadio": "ايقونات و خلفيات الالعاب",
+        "SystemIconsRadio": "صور النظام",
+        "AvatarIconsRadio": "شخصيات الحساب [غير مفعل]",
+        "ModeLabel": "الوضع",
+        "IpLabel": "عنوان آلاي بي",
+        "CacheLabel": "نسبة التحميل",
+        "PortLabel": "رقم المنفذ",
+        "StatusLabel": "...منتظر",
+        "StatusLabel_success": "متصل",
+        "StatusLabel_fail": "فشل الاتصال",
+        "OnlineIconsLink": "تحميل ايقونات مجانية",
+        "PaypalLink": "تبرع (PayPal)",
+        "TwitterLink": "المبرمج",
+        "SysIconsInfo": "Lapy Xplorer انتبة: هذه الخاصية تتطلب اذونات خاصة متوفرة في بعض الانظمة مثل برنامج",
+        "GameIconsInfo": "انتبة: بامكانك تغيير صور البرامج والالعاب المقرصنة في الخيارات",
+        "TitleLink": "Iconit",
+        "menuSettings": "الخيارات",
+        "Options": "...الإعدادات",
+        "ConnectBtn": "أَبدَء",
+        "Remove_cache": "حذف معلومات البرنامج",
+        "Special_thanks": "شكر وتقدير",
+        "DownloadDatabase": "تحميل و تحديث قاعدة البيانات",
+        "About": "عني",
+        "actionAbout": "عني"
     },
-
-    "Icons":{
-        
+    "Icons": {
+        "NextBtn": "التالي",
+        "SelectBtn": "اختر",
+        "MaskBtn": "صانع الإطار...",
+        "GameIdLabel": "رقم الايقونة الخاص",
+        "ChangeIconBtn": "تغيير الايقونة...",
+        "IconSizeLabel": "قياسات الصورة",
+        "SendBtn": "رفع الصورة و الايقونة",
+        "TotalGamesLabel": "عدد الايقونات الكلي",
+        "ChangeBgBtn": "تغيير صورة الخلفية...",
+        "IconLocationLabel": "مكان الايقونة",
+        "IconSizeTxt": "قياسات الصورة الحالية",
+        "TwitterLink": "المطور @OfficialAhmed0",
+        "PaypalLink": "PayPal",
+        "LogsTxt": "متصل على",
+        "ToolTips": {
+            "NextBtn": "الايقونة التالية",
+            "MaskBtn": "عمل ايطار للصورة",
+            "PreviousBtn": "الايقونة السابقة",
+            "ChangeIconBtn": "تغيير الايقونة التي تعرض في الشاشة ",
+            "SelectBtn": "اختر الايقونة عن طريق الاسماء المتوفرة",
+            "ChangeBgBtn": "تغيير واجهة اللعبة اثناء تشغيلها",
+            "SendBtn": "رفع الصور على البلايستيشن 4",
+            "IconLocationTxt": "مكان الايقونة الحالي",
+            "HomebrewLabel": " homebrew هل هذه ايقونة برنامج او لعبة مقرصنة",
+            "GameTitleLabel": "مكان الايقونة سيكون مجهول بسبب عدم توفير اسمها عند صنعها مثل البرامج المقرصنة والمجانية"
+        }
     }
 }

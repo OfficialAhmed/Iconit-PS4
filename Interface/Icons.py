@@ -284,25 +284,27 @@ class Ui(Icons):
 
 
     def retranslateUi(self):
+        translated_content: dict = self.translation.get_translation(self.language, "Icons")
+
         _translate = QtCore.QCoreApplication.translate
-        self.NextBtn.setText(_translate("IconsWindow", "NEXT"))
-        self.SelectBtn.setText(_translate("IconsWindow", "SELECT"))
-        self.MaskBtn.setText(_translate("IconsWindow", "MASK MAKER..."))
-        self.GameIdLabel.setText(_translate("IconsWindow", "CURRENT ID"))
-        self.ChangeIconBtn.setText(_translate("IconsWindow", "CHANGE..."))
-        self.IconSizeLabel.setText(_translate("IconsWindow", "DIMENSIONS"))
-        self.SendBtn.setText(_translate("IconsWindow", "SEND ICON/PICTURE"))
-        self.TotalGamesLabel.setText(_translate("IconsWindow", "TOTAL GAMES"))
-        self.ChangeBgBtn.setText(_translate("IconsWindow", "GAME PICTURE..."))
         self.GameIdTxt.setText(_translate("IconsWindow", self.current_game_id))
-        self.IconLocationLabel.setText(_translate("IconsWindow", "ICON LOCATION"))
-        self.IconSizeTxt.setText(_translate("IconsWindow", "Current icon dimension(512x512)"))
         self.TotalGamesTxt.setText(_translate("IconsWindow", f"1/{len(self.ids)}"))
-        self.TwitterLink.setText(_translate("IconsWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", "Created By @OfficialAhmed0", "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.font)))
-        self.PaypalLink.setText(_translate("IconsWindow",self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", "PayPal", "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.font)))
+        self.NextBtn.setText(_translate("IconsWindow", translated_content.get("NextBtn")))
+        self.MaskBtn.setText(_translate("IconsWindow", translated_content.get("MaskBtn")))
+        self.SendBtn.setText(_translate("IconsWindow", translated_content.get("SendBtn")))
+        self.SelectBtn.setText(_translate("IconsWindow", translated_content.get("SelectBtn")))
+        self.ChangeBgBtn.setText(_translate("IconsWindow", translated_content.get("ChangeBgBtn")))
+        self.GameIdLabel.setText(_translate("IconsWindow", translated_content.get("GameIdLabel")))
+        self.ChangeIconBtn.setText(_translate("IconsWindow", translated_content.get("ChangeIconBtn")))
+        self.IconSizeLabel.setText(_translate("IconsWindow", translated_content.get("IconSizeLabel")))
+        self.TotalGamesLabel.setText(_translate("IconsWindow", translated_content.get("TotalGamesLabel")))
+        self.IconLocationLabel.setText(_translate("IconsWindow", translated_content.get("IconLocationLabel")))
+        self.IconSizeTxt.setText(_translate("IconsWindow", f"{translated_content.get('IconSizeTxt')}(512x512)"))
+        self.TwitterLink.setText(_translate("IconsWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", translated_content.get("TwitterLink"), "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.font)))
+        self.PaypalLink.setText(_translate("IconsWindow",self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", translated_content.get("PaypalLink"), "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.font)))
         self.LogsTxt.setHtml(_translate("IconsWindow",
             f"""
-                {self.html.span_tag(f"*Connected to PS4: {self.ip}*", "#ffffff", 12)}
+                {self.html.span_tag(f"*{translated_content.get('LogsTxt')}: {self.ip}*", "#ffffff", 12)}
                 {self.html.p_tag(f"-qt-paragraph-type:empty; margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;")}
             """
             )
@@ -324,16 +326,18 @@ class Ui(Icons):
                         HOVEROVER TOOL TIPS
         #################################################################
         """
-        self.NextBtn.setToolTip(self.html.tooltip_tag("NEXT ICON"))
-        self.MaskBtn.setToolTip(self.html.tooltip_tag("APPLY MASK FOR THE ICON"))
-        self.PreviousBtn.setToolTip(self.html.tooltip_tag("PREVIOUS ICON"))
-        self.ChangeIconBtn.setToolTip(self.html.tooltip_tag("CHANGE THE ICON"))
-        self.SelectBtn.setToolTip(self.html.tooltip_tag("SELECT THE ICON FROM THE DROPDOWN LIST"))
-        self.ChangeBgBtn.setToolTip(self.html.tooltip_tag("CHANGE BACKGROUND IMAGE FOR THE GAME LAUNCH"))
-        self.SendBtn.setToolTip(self.html.tooltip_tag("UPLOAD THE ICON/BACKGROUND"))
-        self.IconLocationTxt.setToolTip(self.html.tooltip_tag("THE LOCATION WHERE THE CURRENT GAME IS LOCATED AT"))
-        self.HomebrewLabel.setToolTip(self.html.tooltip_tag("WETHER THE CURRENT ID IS A HOMEBREW OR NOT"))
-        self.GameTitleLabel.setToolTip(self.html.tooltip_tag("SOME GAME TITLES ARE UNKNOWN. PERHAPS THEY'RE HOMEBREW (PS2 GAME/UNITY GAME) ETC."))
+        translated_tooltips:dict = translated_content.get("ToolTips")
+
+        self.NextBtn.setToolTip(self.html.tooltip_tag(translated_tooltips.get("NextBtn")))
+        self.MaskBtn.setToolTip(self.html.tooltip_tag(translated_tooltips.get("MaskBtn")))
+        self.SendBtn.setToolTip(self.html.tooltip_tag(translated_tooltips.get("SendBtn")))
+        self.SelectBtn.setToolTip(self.html.tooltip_tag(translated_tooltips.get("SelectBtn")))
+        self.PreviousBtn.setToolTip(self.html.tooltip_tag(translated_tooltips.get("PreviousBtn")))
+        self.ChangeBgBtn.setToolTip(self.html.tooltip_tag(translated_tooltips.get("ChangeBgBtn")))
+        self.ChangeIconBtn.setToolTip(self.html.tooltip_tag(translated_tooltips.get("ChangeIconBtn")))
+        self.HomebrewLabel.setToolTip(self.html.tooltip_tag(translated_tooltips.get("HomebrewLabel")))
+        self.GameTitleLabel.setToolTip(self.html.tooltip_tag(translated_tooltips.get("GameTitleLabel")))
+        self.IconLocationTxt.setToolTip(self.html.tooltip_tag(translated_tooltips.get("IconLocationTxt")))
     
 
         """

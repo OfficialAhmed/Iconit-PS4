@@ -1,19 +1,17 @@
 {
-    "Language":"English",
-
-    "Languages":{
-        "English" : "English",
-        "Arabic" : "Arabic"
+    "Language": "English",
+    "Languages": {
+        "English": "English",
+        "Arabic": "Arabic"
     },
-    
-    "Settings":{
+    "Settings": {
         "WindowTitle": "Settings",
-        "NoRadio":"OFF",
-        "YesRadio":"ON",
-        "SaveBtn":"SAVE",
-        "CancelBtn":"CANCEL",
-        "IpLabel":"DEFAULT IP",
-        "PortLabel":"DEFAULT PORT",
+        "NoRadio": "OFF",
+        "YesRadio": "ON",
+        "SaveBtn": "SAVE",
+        "CancelBtn": "CANCEL",
+        "IpLabel": "DEFAULT IP",
+        "PortLabel": "DEFAULT PORT",
         "DefaultBtn": "DEFAULT",
         "FontLabel": "Default Font",
         "HomebrewLabel": "ENABLE HOMEBREW",
@@ -22,35 +20,58 @@
         "DownloadPathLabel": "DEFAULT DOWNLOAD PATH",
         "EnableHbInfo": "NOTE: Enabling this option will allow you to change homebrew icons but the caching will take longer depends on how many homebrews you have installed."
     },
-
-    "Iconit":{
-        "GameIconsRadio":"Game Icon/Pic",
-        "SystemIconsRadio":"System Icons",
-        "AvatarIconsRadio":"Profile Avatar [Disabled]",
-        "ModeLabel":"MODE",
-        "IpLabel":"PS4 IP",
-        "CacheLabel":"Cache",
-        "PortLabel":"PS4 Port",
-        "StatusLabel":"Awaiting ..",
-        "OnlineIconsLink":"Download Free Icons",
-        "PaypalLink":"Donate (PayPal)",
-        "TwitterLink":"Created by",
-        "SysIconsInfo":"Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)",
-        "GameIconsInfo":"Note: You can enable Homebrew icons in the settings before connecting to the PS4",
-        "TitleLink":"Iconit",
-
-        "menuSettings":"Settings",
-        "About":"About",
-        "actionAbout":"About",
-        "Options":"Options...",
-        "ConnectBtn":"Connect PS4",
-        "Remove_cache":"Remove cache",
-        "Special_thanks":"Special thanks",
-        "DownloadDatabase":"Download/Update Database"
+    "Iconit": {
+        "GameIconsRadio": "Game Icon/Pic",
+        "SystemIconsRadio": "System Icons",
+        "AvatarIconsRadio": "Profile Avatar [Disabled]",
+        "ModeLabel": "MODE",
+        "IpLabel": "PS4 IP",
+        "CacheLabel": "Cache",
+        "PortLabel": "PS4 Port",
+        "StatusLabel": "Awaiting ..",
+        "StatusLabel_success": "CONNECTED",
+        "StatusLabel_fail": "FAILED TO CONNECT",
+        "OnlineIconsLink": "Download Free Icons",
+        "PaypalLink": "Donate (PayPal)",
+        "TwitterLink": "Created by",
+        "SysIconsInfo": "Note: Full R/W permissions required ( PS4 Xplorer FTP by enabling danger mode)",
+        "GameIconsInfo": "Note: You can enable Homebrew icons in the settings before connecting to the PS4",
+        "TitleLink": "Iconit",
+        "menuSettings": "Settings",
+        "About": "About",
+        "actionAbout": "About",
+        "Options": "Options...",
+        "ConnectBtn": "Connect PS4",
+        "Remove_cache": "Remove cache",
+        "Special_thanks": "Special thanks",
+        "DownloadDatabase": "Download/Update Database"
     },
-
-    "Icons":{
-        
+    "Icons": {
+        "NextBtn": "NEXT",
+        "SelectBtn": "SELECT",
+        "MaskBtn": "MASK MAKER...",
+        "GameIdLabel": "CURRENT ID",
+        "ChangeIconBtn": "CHANGE...",
+        "IconSizeLabel": "DIMENSIONS",
+        "SendBtn": "ICON/PICTURE",
+        "TotalGamesLabel": "TOTAL GAMES",
+        "ChangeBgBtn": "GAME PICTURE...",
+        "IconLocationLabel": "ICON LOCATION",
+        "IconSizeTxt": "Current icon dimension",
+        "TwitterLink": "Created By @OfficialAhmed0",
+        "PaypalLink": "PayPal",
+        "LogsTxt": "Connected to PS4",
+        "ToolTips": {
+            "NextBtn": "NEXT ICON",
+            "MaskBtn": "APPLY MASK FOR THE ICON",
+            "PreviousBtn": "PREVIOUS ICON",
+            "ChangeIconBtn": "CHANGE THE ICON",
+            "SelectBtn": "SELECT THE ICON FROM THE DROPDOWN LIST",
+            "ChangeBgBtn": "CHANGE BACKGROUND IMAGE FOR THE GAME LAUNCH",
+            "SendBtn": "UPLOAD THE ICON/BACKGROUND",
+            "IconLocationTxt": "THE LOCATION WHERE THE CURRENT GAME IS LOCATED AT",
+            "HomebrewLabel": "WETHER THE CURRENT ID IS A HOMEBREW OR NOT",
+            "GameTitleLabel": "SOME GAME TITLES ARE UNKNOWN. PERHAPS THEY'RE HOMEBREW (PS2 GAME/UNITY GAME) ETC."
+        }
     }
-
 }

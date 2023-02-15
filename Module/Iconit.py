@@ -65,19 +65,21 @@ class Main(Common):
             self.log_to_external_file(str(e), "Warning")
 
 
-    def chage_state(self, connected: bool) -> None:
+    def change_state(self, connected: bool) -> None:
+        translated_content: dict = self.translation.get_translation(self.language, "Iconit")
+
         labels = {
-            self.ip_label: "PS4 IP",
-            self.port_label: "PS4 Port",
-            self.mode_label: "Mode",
-            self.cache_label: "Cache",
+            self.ip_label: translated_content.get("IpLabel"),
+            self.port_label: translated_content.get("PortLabel"),
+            self.mode_label: translated_content.get("ModeLabel"),
+            self.cache_label: translated_content.get("CacheLabel"),
         }
 
         success = self.constant.get_color("green")
         fail = self.constant.get_color("red")
         
-        if connected: self.status_label.setText(self.html.span_tag("Connected", success, 18))
-        else: self.status_label.setText(self.html.span_tag("Failed to connect", fail, 18))
+        if connected: self.status_label.setText(self.html.span_tag(translated_content.get("StatusLabel_success"), success, 18))
+        else: self.status_label.setText(self.html.span_tag(translated_content.get("StatusLabel_fail"), fail, 18))
             
         for label in labels:
             if connected: label.setText(self.html.span_tag(labels[label], success, 14))
@@ -185,7 +187,7 @@ class Main(Common):
 
         if not is_valid:
             self.window = QtWidgets.QDialog()
-            self.chage_state(False)
+            self.change_state(False)
             self.ui.setupUi(self.window)
             self.ui.alert("Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection")
             self.window.show()
@@ -203,7 +205,7 @@ class Main(Common):
                 self.ftp.connect(self.ip, int(self.port))
                 self.ftp.login("", "")
                 self.set_ftp(self.ftp)
-                self.chage_state(True)
+                self.change_state(True)
 
                 try:
                     self.ftp.cwd(self.ps4_internal_icons_dir)
@@ -221,7 +223,7 @@ class Main(Common):
 
             finally:
                 if not is_connected:
-                    self.chage_state(False)
+                    self.change_state(False)
                     self.ui.setupUi(self.window)
                     self.ui.alert(txt)
                     self.window.show()
@@ -389,7 +391,7 @@ class Game(Main):
 
     def start_cache(self) -> bool:
         try:
-            self.chage_state(True)
+            self.change_state(True)
             self.ids = self.get_cache()
             self.ignored_ids = self.load_ignored_ids()
 
@@ -458,7 +460,7 @@ class Game(Main):
 
         except Exception as e:
             self.log_to_external_file(str(e), "Error")
-            self.chage_state(False)
+            self.change_state(False)
             self.ui.setupUi(self.window)
             self.ui.alert(f"Error occured |_DEV {str(e)}")
             self.window.show()
@@ -545,7 +547,7 @@ class System(Main):
         try:
             self.system_apps_ids = self.get_cache()
 
-            self.chage_state(True)
+            self.change_state(True)
 
             self.ftp.cwd(f"/{self.ps4_system_icons_dir}")
             app_ids_from_server = self.get_server_list(list="directories")
@@ -557,7 +559,7 @@ class System(Main):
 
         except Exception as e:
             self.log_to_external_file(str(e), "Error")
-            self.chage_state(False)
+            self.change_state(False)
             self.ui.setupUi(self.window)
             self.ui.alert(f"Error occured |_DEV {str(e)}")
             self.window.show()
@@ -579,7 +581,7 @@ class Avatar(Main):
         self.ftp.cwd(self.sysProfileRoot)
         self.userID = []
 
-        self.chage_state(True)
+        self.change_state(True)
 
 
     def start_cache(self):

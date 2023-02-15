@@ -80,7 +80,7 @@ class Game_Database:
 class System_Database:
     def __init__(self, db_file) -> None:
         self.db_file = db_file
-        self.raw_data = "https://raw.githubusercontent.com/OfficialAhmed/Iconit-PS4/master/Data/Cache/Icons/metadata/system/Database.json"
+        self.raw_data = "https://raw.githubusercontent.com/OfficialAhmed/Iconit-PS4/master/Data/Cache/Icons/metadata/system%20apps/Database.json"
         self.database = self.read_database()
 
 
@@ -106,6 +106,8 @@ class System_Database:
     def fetch_online_data(self) -> tuple:
         try:
             self.database_txt:str = requests.get(self.raw_data).text
+            if "404" in self.database_txt[:5]:
+                return (False, "DatabaseLinkError| Database cannot be find from the given link")
             return (True, )
         except requests.ConnectionError:
             return (False, "ConnectionError| Internet connection failed")
