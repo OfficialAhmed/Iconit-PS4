@@ -48,7 +48,7 @@ ________________________________________
 
 ## *Current implementation Main bugs* 
  This version isn't ready for end-users
-1. Avatars & sys icons needs a fix patch after this implemetation
+1. Avatars option patch required
 
 ## _To do list_
 
