@@ -27,6 +27,8 @@ class Main(Common):
         self.icons_limit = len(self.ids)
 
         self.last_browsed_path = ""
+        self.translated_content: dict = self.translation.get_translation(self.language, "Icons")
+        self.translated_logs: dict = self.translated_content.get("Logs")
 
 
     def next(self) -> None:
@@ -63,7 +65,7 @@ class Main(Common):
     def change_dimensions_label(self, color="white", bg_image="", size="(512, 512)") -> None:
         """ Determine the size of an icon for the label (icon dimensions)"""
 
-        self.IconSizeTxt.setText(f"Current image dimension {size}")
+        self.IconSizeTxt.setText(f"{self.translated_content.get('IconSizeTxt')} {size}")
         style = f"color: {color};"  
         if bg_image != "":
             style = f"{self.html.bg_image(bg_image)} color:{color}"
@@ -100,23 +102,23 @@ class Main(Common):
         # Correct size
         if image_dimension == required_dimensions:
             self.change_dimensions_label(self.constant.get_color("green"), background, size=str(image_dimension))
-            self.logging += self.html.internal_log_msg("success", "Image in correct dimensions")
+            self.logging += self.html.internal_log_msg("success", self.translated_logs.get("CorrectDim"))
             is_valid = True
         
         # Less than the required [CANNOT BE RESIZED]
         elif image_dimension[0] < required_dimensions[0] or image_dimension[1] < required_dimensions[1]:
             self.change_dimensions_label(self.constant.get_color("red"), size = str(image_dimension))
-            self.logging += self.html.internal_log_msg("error", "Image cannot be used nor resized (TOO SMALL)")
+            self.logging += self.html.internal_log_msg("error", self.translated_logs.get("SmallDim"))
 
         # Greater than the limit [CANNOT BE RESIZED]
         elif image_dimension[0] > limit_dimenstions[0] or image_dimension[1] > limit_dimenstions[1]:
             self.change_dimensions_label(self.constant.get_color("red"), size = str(image_dimension))
-            self.logging += self.html.internal_log_msg("error", f"Image cannot be used nor resized (TOO LARGE) limited to {limit_dimenstions}")
+            self.logging += self.html.internal_log_msg("error", f"{self.translated_logs.get('ErrDim')} {limit_dimenstions}")
 
         # Otherwise [CAN BE RESIZED]
         else:
             self.change_dimensions_label(self.constant.get_color("orange"), background, str(image_dimension))
-            self.logging += self.html.internal_log_msg("warning", "Image will be resized (TOO LARGE)")
+            self.logging += self.html.internal_log_msg("warning", self.translated_logs.get('LargeDim'))
             is_valid = True
 
         self.update_internal_logs()
@@ -141,17 +143,24 @@ class Main(Common):
 
         match self.selected_mode:
             case "game":
-                hb = "HOMEBREW ICON: TURNED OFF"
                 if self.is_toggled_homebrew == "True":
-                    hb = "HOMEBREW ICON: NO"
                     if "CUSA" not in self.current_game_id:
-                        hb = "HOMEBREW ICON: YES"
-            
+                        hb = self.translated_content.get("HomebrewLabel_Y")
+                    else:
+                        hb = self.translated_content.get("HomebrewLabel_N")
+                else:
+                    hb = self.translated_content.get("HomebrewLabel_T")
+
+                if self.ids.get(self.current_game_id).get("location").upper() == "INTERNAL":
+                    location = self.translated_content.get("IconLocation_In")
+                else:
+                    location = self.translated_content.get("IconLocation_Ex")
+
+                self.IconLocationTxt.setText(location)
                 self.GameTitleLabel.setText(self.ids.get(self.current_game_id).get("title"))
-                self.IconLocationTxt.setText(self.ids.get(self.current_game_id).get("location").upper())
 
             case "system apps":
-                hb = "SYSTEM ICON: YES"
+                hb = self.translated_content.get("HomebrewLabel_Sys")
                 self.GameTitleLabel.setText(self.ids.get(self.current_game_id))
 
 
@@ -243,7 +252,7 @@ class Main(Common):
         self.ui.setupUi(self.window)
         self.window.show()
 
-        self.logging += self.html.internal_log_msg("success", f"Auto Backup {self.current_game_id} success.")
+        self.logging += self.html.internal_log_msg("success", f"{self.current_game_id} {self.translated_logs.get('BackupS')}.")
         self.update_internal_logs()
 
 

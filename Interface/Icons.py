@@ -284,27 +284,27 @@ class Ui(Icons):
 
 
     def retranslateUi(self):
-        translated_content: dict = self.translation.get_translation(self.language, "Icons")
+        # self.translated_content: dict = self.translation.get_translation(self.language, "Icons")
 
         _translate = QtCore.QCoreApplication.translate
         self.GameIdTxt.setText(_translate("IconsWindow", self.current_game_id))
         self.TotalGamesTxt.setText(_translate("IconsWindow", f"1/{len(self.ids)}"))
-        self.NextBtn.setText(_translate("IconsWindow", translated_content.get("NextBtn")))
-        self.MaskBtn.setText(_translate("IconsWindow", translated_content.get("MaskBtn")))
-        self.SendBtn.setText(_translate("IconsWindow", translated_content.get("SendBtn")))
-        self.SelectBtn.setText(_translate("IconsWindow", translated_content.get("SelectBtn")))
-        self.ChangeBgBtn.setText(_translate("IconsWindow", translated_content.get("ChangeBgBtn")))
-        self.GameIdLabel.setText(_translate("IconsWindow", translated_content.get("GameIdLabel")))
-        self.ChangeIconBtn.setText(_translate("IconsWindow", translated_content.get("ChangeIconBtn")))
-        self.IconSizeLabel.setText(_translate("IconsWindow", translated_content.get("IconSizeLabel")))
-        self.TotalGamesLabel.setText(_translate("IconsWindow", translated_content.get("TotalGamesLabel")))
-        self.IconLocationLabel.setText(_translate("IconsWindow", translated_content.get("IconLocationLabel")))
-        self.IconSizeTxt.setText(_translate("IconsWindow", f"{translated_content.get('IconSizeTxt')}(512x512)"))
-        self.TwitterLink.setText(_translate("IconsWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", translated_content.get("TwitterLink"), "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.font)))
-        self.PaypalLink.setText(_translate("IconsWindow",self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", translated_content.get("PaypalLink"), "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.font)))
+        self.NextBtn.setText(_translate("IconsWindow", self.translated_content.get("NextBtn")))
+        self.MaskBtn.setText(_translate("IconsWindow", self.translated_content.get("MaskBtn")))
+        self.SendBtn.setText(_translate("IconsWindow", self.translated_content.get("SendBtn")))
+        self.SelectBtn.setText(_translate("IconsWindow", self.translated_content.get("SelectBtn")))
+        self.ChangeBgBtn.setText(_translate("IconsWindow", self.translated_content.get("ChangeBgBtn")))
+        self.GameIdLabel.setText(_translate("IconsWindow", self.translated_content.get("GameIdLabel")))
+        self.ChangeIconBtn.setText(_translate("IconsWindow", self.translated_content.get("ChangeIconBtn")))
+        self.IconSizeLabel.setText(_translate("IconsWindow", self.translated_content.get("IconSizeLabel")))
+        self.TotalGamesLabel.setText(_translate("IconsWindow", self.translated_content.get("TotalGamesLabel")))
+        self.IconLocationLabel.setText(_translate("IconsWindow", self.translated_content.get("IconLocationLabel")))
+        self.IconSizeTxt.setText(_translate("IconsWindow", f"{self.translated_content.get('IconSizeTxt')}(512x512)"))
+        self.TwitterLink.setText(_translate("IconsWindow", self.html.a_tag("https://twitter.com/OfficialAhmed0", self.translated_content.get("TwitterLink"), "#90f542", 14, "text-decoration: underline; vertical-align:super;", font=self.font)))
+        self.PaypalLink.setText(_translate("IconsWindow",self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", self.translated_content.get("PaypalLink"), "#90f542", 14, "text-decoration: underline; vertical-align:super; font-style:italic", font=self.font)))
         self.LogsTxt.setHtml(_translate("IconsWindow",
             f"""
-                {self.html.span_tag(f"*{translated_content.get('LogsTxt')}: {self.ip}*", "#ffffff", 12)}
+                {self.html.span_tag(f"*{self.translated_content.get('LogsTxt')}: {self.ip}*", "#ffffff", 12)}
                 {self.html.p_tag(f"-qt-paragraph-type:empty; margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600; font-style:italic; text-decoration: underline; color:#ffffff;")}
             """
             )
@@ -326,7 +326,7 @@ class Ui(Icons):
                         HOVEROVER TOOL TIPS
         #################################################################
         """
-        translated_tooltips:dict = translated_content.get("ToolTips")
+        translated_tooltips:dict = self.translated_content.get("ToolTips")
 
         self.NextBtn.setToolTip(self.html.tooltip_tag(translated_tooltips.get("NextBtn")))
         self.MaskBtn.setToolTip(self.html.tooltip_tag(translated_tooltips.get("MaskBtn")))
@@ -351,22 +351,30 @@ class Ui(Icons):
                     self.GameTitles.addItem(f"{index + 1}: {self.ids.get(current_game_id).get('title')} [{current_game_id}]")
                 
                 # ______________    IS HOMEBREW    _________________ # 
-                state = "TURNED OFF"
                 if self.is_toggled_homebrew == "True":
-                    state = "YES"
                     if "CUSA" in self.current_game_id:
-                        state = "NO"
+                        state = self.translated_content.get("HomebrewLabel_Y") 
+                    elif "CUSA" not in self.current_game_id:
+                        state = self.translated_content.get("HomebrewLabel_N")
+
+                else:
+                    state = self.translated_content.get("HomebrewLabel_T")
+                    
 
                 # ______________    ICON LOCATION    _________________ # 
-                location = "INTERNAL"
                 if self.ids[self.current_game_id] in self.external_games:
-                    location = "EXTERNAL"
+                    location = self.translated_content.get("IconLocation_Ex")
+                
+                else:
+                    location = self.translated_content.get("IconLocation_In")
 
-                # ______________    UPDATE TEXT    _________________ # 
-                self.TitleLabel.setText(_translate("IconsWindow", "GAME ICONS"))
+
+                # ______________    UPDATE TEXTs    _________________ # 
+                self.HomebrewLabel.setText(_translate("IconsWindow", state))
                 self.IconLocationTxt.setText(_translate("IconsWindow", location))
+                
                 self.GameTitleLabel.setText(self.ids.get(self.current_game_id).get("title"))
-                self.HomebrewLabel.setText(_translate("IconsWindow", f"HOMEBREW ICON: {state}"))
+                self.TitleLabel.setText(_translate("IconsWindow", self.translated_content.get("TitleLabel_GameIcons")))
 
 
             case "system apps":
@@ -374,11 +382,17 @@ class Ui(Icons):
                     self.GameTitles.addItem(f"{index + 1}: {self.ids.get(current_game_id)} [{current_game_id}]")
                 
                 # ______________    UPDATE TEXT    _________________ # 
+                self.TitleLabel.setText(_translate("IconsWindow", self.translated_content.get("TitleLabel_SysIcons")))
                 self.GameTitleLabel.setText(self.ids.get(self.current_game_id))
-                self.TitleLabel.setText(_translate("IconsWindow", "SYSTEM ICONS"))
                 self.HomebrewLabel.setText(_translate("IconsWindow", "SYSTEM ICON: YES"))
 
                 # ______________    HIDE WIDGETS    _________________ # 
                 self.IconLocationLabel.hide()
                 self.IconLocationTxt.hide()
                 self.ChangeBgBtn.hide()
+
+
+    def translate_dynamic_elements(self):
+        """
+            Translate changable elements on button click 
+        """

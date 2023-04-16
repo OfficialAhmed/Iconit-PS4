@@ -61,6 +61,14 @@
         "TwitterLink": "Created By @OfficialAhmed0",
         "PaypalLink": "PayPal",
         "LogsTxt": "Connected to PS4",
+        "TitleLabel_GameIcons": "GAME ICONS",
+        "TitleLabel_SysIcons": "SYSTEM ICONS",
+        "HomebrewLabel_Y": "HOMEBREW ICON: YES",
+        "HomebrewLabel_N": "HOMEBREW ICON: NO",
+        "HomebrewLabel_T": "HOMEBREW ICON: TURNED OFF",
+        "HomebrewLabel_Sys": "SYSTEM ICON: YES",
+        "IconLocation_In": "INTERNAL",
+        "IconLocation_Ex": "EXTERNAL",
         "ToolTips": {
             "NextBtn": "NEXT ICON",
             "MaskBtn": "APPLY MASK FOR THE ICON",
@@ -72,6 +80,30 @@
             "IconLocationTxt": "THE LOCATION WHERE THE CURRENT GAME IS LOCATED AT",
             "HomebrewLabel": "WETHER THE CURRENT ID IS A HOMEBREW OR NOT",
             "GameTitleLabel": "SOME GAME TITLES ARE UNKNOWN. PERHAPS THEY'RE HOMEBREW (PS2 GAME/UNITY GAME) ETC."
+        },
+        "Logs": {
+            "CorrectDim": "Image in correct dimensions",
+            "SmallDim": "Image cannot be used nor resized (TOO SMALL)",
+            "ErrDim": "Image cannot be used nor resized (TOO LARGE) limited to",
+            "LargeDim": "Image will be resized (TOO LARGE)",
+            "BackupS": "Backed up successfully"
         }
+    },
+    "Alerts": {
+        "Thanks": "Thank you for using Iconit",
+        "About": "Iconit is an automated Windows application for jailbroken PS4 consoles to change xmb icons and profile avatars with the help of FTP payload",
+        "AppVer": "App version",
+        "DbSuccess": "Successfully downloaded aprox. 300kb database, caching games will be faster now.",
+        "SpecialThanks": "Special Thanks",
+        "ThanksAll": "Thanks to all the devs in the scene who made this possible",
+        "CacheRemoved": "Cached icons have been removed. It'll take time to cache next time you connect to the PS4",
+        "InvalidCred": "Error Iconit needs admin permission to perform the task. Rerun as administrator",
+        "PermissionErr": "Invalid IP or Port (Alphabets not allowed)",
+        "SmallSize": "Invalid icon size 'too small'. Minimum size required",
+        "Disconnected": "Disconnected from PS4. Re-enable FTP payload",
+        "InvalidInput": "Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection",
+        "IsPS4": "Are you sure you're connected to PS4?",
+        "TimeOut": "Double check the Ip and port DEV| TimeoutError",
+        "ConnRefused": "PS4 has refused to connect, perhaps it's connected somewhere else DEV| ConnectionRefusedError"
     }
 }

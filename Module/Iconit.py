@@ -189,7 +189,7 @@ class Main(Common):
             self.window = QtWidgets.QDialog()
             self.change_state(False)
             self.ui.setupUi(self.window)
-            self.ui.alert("Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection")
+            self.ui.alert("invalid_ip_port")
             self.window.show()
 
         else:
@@ -212,14 +212,14 @@ class Main(Common):
                     self.ftp.cwd("/")
                     is_connected = True
                 except:
-                    txt = "Are you sure you're connected to PS4?"
+                    txt = "are_you_sure"
 
             except TimeoutError:
-                txt = "Double check the Ip and port DEV| TimeoutError"
+                txt = "timeout"
             except ConnectionRefusedError:
-                txt = "PS4 has refused to connect, perhaps it's connected somewhere else DEV| ConnectionRefusedError"
+                txt = "connection_refused"
             except Exception as e:
-                txt = f"Something went wrong. DEV| {str(e)}"
+                txt = f"Error. DEV| {str(e)}"
 
             finally:
                 if not is_connected:
