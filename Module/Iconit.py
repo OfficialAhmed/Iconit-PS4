@@ -584,7 +584,7 @@ class Avatar(Main):
         self.change_state(True)
 
 
-    def start_cache(self):
+    def start_cache(self) -> None:
         self.ids = self.get_cache()
 
         directories = []

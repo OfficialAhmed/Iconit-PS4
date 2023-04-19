@@ -39,12 +39,25 @@ class Ui(Icons):
         font.setFamily(self.font)
 
         # ______________    WINDOW SPECS    _________________ # 
-        # window.resize(self.screen_w, 720)
         window.setObjectName("IconsWindow")
         window.setMinimumSize(QtCore.QSize(self.screen_w, 720))
         window.setWindowIcon(QtGui.QIcon(f"{self.pref_path}ic1.@OfficialAhmed0"))
         window.setStyleSheet(f"background-image: url({self.pref_path}{self.background});")
         window.setWindowTitle(f"Iconit v{self.app_version} ({self.app_release_date})")
+
+
+        # ______________       MENU BAR      ______________________#
+        self.menubar = QtWidgets.QMenuBar(window)
+        self.menubar.setObjectName("menubar")
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 701, 22))
+
+        self.SetDefaultIcon = QtWidgets.QAction(window)
+        
+        self.menuMore = QtWidgets.QMenu(self.menubar)
+        self.menuMore.setObjectName("menuMore")
+        self.menuMore.addAction(self.SetDefaultIcon)
+        self.menubar.addAction(self.menuMore.menuAction())
+
 
         # ______________    LABELS    _________________ # 
         self.TitleLabel = QtWidgets.QLabel(window)
@@ -196,6 +209,8 @@ class Ui(Icons):
         self.MaskBtn.clicked.connect(self.render_mask_maker_window)
         self.ChangeBgBtn.clicked.connect(self.change_picture)
         self.ChangeIconBtn.clicked.connect(self.change_icon)
+
+        self.menuMore.triggered.connect(self.render_set_default_icons_window)
         
         # ______________    GAME TITLES    _________________ # 
         font.setPointSize(15)
@@ -278,15 +293,18 @@ class Ui(Icons):
         self.formLayout.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.RightLayout)
         self.formLayout.setLayout(3, QtWidgets.QFormLayout.SpanningRole, self.BottomLayout)
         
+
         self.retranslateUi()
+
         self.GameTitles.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(window)
 
 
     def retranslateUi(self):
-        # self.translated_content: dict = self.translation.get_translation(self.language, "Icons")
-
         _translate = QtCore.QCoreApplication.translate
+        self.SetDefaultIcon.setText(_translate("window", self.translated_content.get("setDefaultIcons")))
+        self.menuMore.setTitle(_translate("window", self.translated_content.get("menuMore")))
+
         self.GameIdTxt.setText(_translate("IconsWindow", self.current_game_id))
         self.TotalGamesTxt.setText(_translate("IconsWindow", f"1/{len(self.ids)}"))
         self.NextBtn.setText(_translate("IconsWindow", self.translated_content.get("NextBtn")))

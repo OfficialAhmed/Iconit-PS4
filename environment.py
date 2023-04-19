@@ -9,6 +9,7 @@ import os, datetime
 from ftplib import FTP
 from Module.Widget.Shared import Widget
 from Module.Settings import Main as Settings
+
 from Module.Widget.Translate import Translate
 from Module.Database.Generate import Game_Database, System_Database
 
@@ -101,6 +102,7 @@ class Common:
         self.widgets = Widget()
         self.constant = Constant()
         self.settings = Settings()
+        
         self.settings.init(self.temp_path, self.language_path, self.default_settings, is_for_local_attr=True)
         self.translation = Translate(self.language_path)
 
@@ -110,7 +112,7 @@ class Common:
 
         self.backup_path = f"{self.constant.get_backup_folder_name()}\\"
 
-        self.settings_cache = self.settings.update_local_cache(self.temp_path)
+        self.settings_cache:dict = self.settings.update_local_cache(self.temp_path)
         self.ip:str = self.settings_cache.get("ip")
         self.font:str = self.settings_cache.get("font")
         self.port:str = self.settings_cache.get("port")
@@ -131,7 +133,7 @@ class Common:
         error_file.write(data())
 
 
-    def get_server_list(self, list="directories") -> tuple:
+    def get_server_list(self, list:str = "directories") -> tuple:
         """ 
             This is a solution since PS4 ftp doesnt support nlst(). 
             list: files = name of files if any 
@@ -147,7 +149,7 @@ class Common:
         return tuple(result)
 
 
-    def download_data_from_server(self, file_name, file_path_with_extension) -> bool:
+    def download_data_from_server(self, file_name:str, file_path_with_extension:str) -> bool:
         try:
             with open(file_path_with_extension, "wb") as downloaded_file:
                 self.ftp.retrbinary("RETR " + file_name, downloaded_file.write, 5120)

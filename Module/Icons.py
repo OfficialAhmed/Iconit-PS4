@@ -12,6 +12,7 @@ from PIL import Image
 
 import Interface.Upload as Upload
 import Interface.Mask as Mask
+import Interface.Default_icons as Default_icons
 
 class Main(Common):
     def __init__(self) -> None:
@@ -237,6 +238,14 @@ class Main(Common):
         self.SendBtn.setEnabled(False)
         self.window = QtWidgets.QWidget()
         self.ui = Mask.Ui()
+        self.ui.setupUi(self.window)
+        self.window.show()
+
+
+    def render_set_default_icons_window(self):
+        self.SendBtn.setEnabled(False)
+        self.window = QtWidgets.QDialog()
+        self.ui = Default_icons.Ui()
         self.ui.setupUi(self.window)
         self.window.show()
 

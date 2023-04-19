@@ -16,7 +16,7 @@ class Main(Common):
         self.browsed_icon_path = self.get_browsed_icon_path()
 
 
-    def start_processing(self):
+    def start_processing(self) -> None:
         """ take the user image, resize and duplicate it according to the mode selected """
 
         try:
@@ -62,7 +62,7 @@ class Main(Common):
         return f"{date.day}_{date.month}_{time.hour}_{time.minute}-{time.microsecond}"
 
 
-    def backup_icon(self):
+    def backup_icon(self) -> None:
         """ Copy icon from local cache for backup """ 
 
         icon_name = f"{self.current_game_id}.png"
@@ -102,7 +102,7 @@ class Main(Common):
             self.progress_bar(self.ConversionBar, progress)
 
 
-    def generate_system_icons_to_upload(self):
+    def generate_system_icons_to_upload(self) -> None:
         """ Resize system icons and append them into the list for the uploading method """
 
         self.ftp.cwd(f"/{self.ps4_system_icons_dir}{self.current_game_id}/sce_sys")
@@ -135,7 +135,7 @@ class Main(Common):
                 icon.save(self.icons_cache_path + "icon0_4k.png")
 
 
-    def generate_game_icons_to_upload(self):
+    def generate_game_icons_to_upload(self) -> None:
         """ Resize game icons and append them into the list for the uploading method  """
 
         folder = ""
@@ -322,7 +322,7 @@ class Main(Common):
             self.progress_bar(self.SendingBar, self.sending_progress)
 
 
-    def send_icon_to_ps4(self):
+    def send_icon_to_ps4(self) -> None:
         """ send icon to ps4, upon sucess copy icon0 for app preview """
 
         try:

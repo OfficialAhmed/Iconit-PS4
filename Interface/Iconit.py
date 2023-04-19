@@ -233,11 +233,13 @@ class Ui(Iconit):
         self.menuSettings = QtWidgets.QMenu(self.menubar)
         self.menuSettings.setObjectName("menuSettings")
 
+
         window.setMenuBar(self.menubar)
         self.About = QtWidgets.QAction(window)
         self.Options = QtWidgets.QAction(window)
         self.actionAbout = QtWidgets.QAction(window)
         self.Remove_cache = QtWidgets.QAction(window)
+                
         self.Special_thanks = QtWidgets.QAction(window)
         self.DownloadDatabase = QtWidgets.QAction(window)
         self.actionRemove_cache = QtWidgets.QAction(window)
@@ -248,7 +250,9 @@ class Ui(Iconit):
         self.menuSettings.addSeparator()
         self.menuSettings.addAction(self.About)
         self.menuSettings.addAction(self.Special_thanks)
+
         self.menubar.addAction(self.menuSettings.menuAction())
+
 
         # ______________   SIGNALS   _____________________ #
         self.AvatarIconsRadio.toggled["bool"].connect(self.SysIconsInfo.hide)
@@ -311,6 +315,8 @@ class Ui(Iconit):
         self.Options.setText(_translate("window", translated_content.get("Options")))
         self.ConnectBtn.setText(_translate("window", translated_content.get("ConnectBtn")))
         self.menuSettings.setTitle(_translate("window", translated_content.get("menuSettings")))
+
+        
         self.Remove_cache.setText(_translate("window", translated_content.get("Remove_cache")))
         self.Special_thanks.setText(_translate("window", translated_content.get("Special_thanks")))
         self.DownloadDatabase.setText(_translate("window", translated_content.get("DownloadDatabase")))
