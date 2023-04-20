@@ -88,12 +88,14 @@ class Common:
         self.app_root_path = f"{Common.app_path}\\"
         self.data_path = f"{self.app_root_path}Data\\"
         self.temp_path = f"{self.data_path}Cache\\"
+        self.groups_path = f"{self.temp_path}Groups\\"
         self.pref_path = f"{self.data_path}Preference\\"
         self.icons_cache_path = f"{self.temp_path}Icons\\"
         self.language_path = f"{self.data_path}Language\\"
         self.appmeta_path = f"{self.data_path}User\\appmeta\\"
         self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
 
+        self.default_group_file = f"{self.groups_path}Default"
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
 

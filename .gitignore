@@ -62,3 +62,7 @@ Data/Cache/Icons/metadata/system apps/ignored.json
 /.vs/slnx.sqlite
 /.vs
 Data/Cache/Icons/metadata/system apps/system_apps.json
+Data/Cache/Groups/.gitkeep
+Data/Cache/Groups/Action.json
+Data/Cache/Groups/Default
+Data/Cache/Groups/Default.json

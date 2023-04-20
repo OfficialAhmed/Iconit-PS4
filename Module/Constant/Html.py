@@ -45,3 +45,10 @@ class Html:
 
         style = f"margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:{size}pt; color:{color[state]}; {custome_style}"
         return self.p_tag(style, f"[{state.upper()}] : {msg}")
+    
+    
+    def caution_p_tag(self, clr):
+        return f"<p align='center' style=' margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;'><span style=' font-size:9pt; font-weight:600; color:{clr};'>"
+
+    def caution_msg_2(self, clr):
+        return f"<p align='center' style='-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600; color:{clr};'>"

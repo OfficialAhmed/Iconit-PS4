@@ -2,6 +2,10 @@ from PyQt5 import QtCore, QtWidgets
 from Module.Custom_group import Main as Custom_group
 
 class Ui(Custom_group):
+    def __init__(self) -> None:
+        super().__init__()
+
+
     def setupUi(self, window):
         self.window = window
         self.window.setObjectName("Dialog")
@@ -57,27 +61,31 @@ class Ui(Custom_group):
         self.horizontalLayout.addLayout(self.verticalLayout_2)
 
 
-        self.all_ids: QtWidgets.QCheckBox = []
-        for i in range(5):
-            content = QtWidgets.QCheckBox(self.scrollAreaWidgetContents)
-            id = f"CUSA0000{i}"
-            content.setObjectName(id)
-            content.setText(f"Name of the game is here [{id}]")
+        #___________    Render Game IDs and titles    _______________ #
+        self.selected_ids:list = []
+        ids:dict = self.get_ids()
+        row = 0
 
-            self.gridLayout.addWidget(content, i, 1, 1, 1)
-            self.all_ids.append(content)
+        for id, id_info in ids.items():
+            content = QtWidgets.QCheckBox(self.scrollAreaWidgetContents)
+            content.setObjectName(id)
+            content.setText(f"[{id}] {id_info.get('title')}")
+
+            self.gridLayout.addWidget(content, row, 1, 1, 1)
+            self.selected_ids.append(content)
             content.isChecked()
+            row += 1
 
 
         self.retranslateUi()
-        self.buttonBox.accepted.connect(lambda: self.f())
+        self.buttonBox.accepted.connect(lambda: self.save_group())
         self.buttonBox.rejected.connect(self.window.reject)
         QtCore.QMetaObject.connectSlotsByName(self.window)
 
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.window.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.window.setWindowTitle(_translate("Dialog", "CUSTOM GROUPs"))
 
         self.group_title_label.setText(_translate("Dialog", "GROUP TITLE"))
         self.group_title_input.setPlaceholderText(_translate("Dialog", "i.e. Homebrews"))

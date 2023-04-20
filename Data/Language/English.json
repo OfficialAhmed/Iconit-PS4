@@ -111,9 +111,11 @@
     "SetDefaultIcons":{
         "caution": "CAUTION! Read carefully",
         "optionInfo": "This option will use the current set of icons as the default set. It's recommended that you make sure all icons have the original icon/without any mask, otherwise the resulting icons will end up incorrect",
-        "moreInfo": "* You only need to use this option once *",
+        "moreInfo": "You only need to use this option once",
         "moreInfo2": "If you have new icons/games installed, rerun this option, otherwise the mask maker won't be able detect them.",
-        "moreInfo3": "No worries I will let you know if I detect new icons"
-
+        "moreInfo3": "No worries I will let you know if I detect new icons",
+        "new_icons_label": "NEW ICONS NOT IN [DEFAULT GROUP]",
+        "default_group_btn": "SET/UPDATE DEFAULT GROUP",
+        "custom_group_btn": "SET CUSTOM GROUP"
     }
 }

@@ -57,6 +57,7 @@ ________________________________________
 * [ ] Render Game ID `CUSAXXXXX` text on icon
 * [ ] Utilize 100% CPU usage `Multiprocessing`
 * [ ] Feature : User can edit displayed game title through cache file
+* [ ] Feature : Read titles from xmb DB 
 
 ## _Credits_
 * Special thanks to [@Lapy](https://twitter.com/Lapy05575948) for the help.
