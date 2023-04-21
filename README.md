@@ -56,6 +56,7 @@ ________________________________________
 * [ ] Apply mask on all xmb icons at once
 * [ ] Render Game ID `CUSAXXXXX` text on icon
 * [ ] Utilize 100% CPU usage `Multiprocessing`
+* [x] Copy multiple icons - heavy R/W Bound `Threading`
 * [ ] Feature : User can edit displayed game title through cache file
 * [ ] Feature : Read titles from xmb DB 
 
