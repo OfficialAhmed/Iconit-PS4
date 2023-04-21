@@ -48,7 +48,7 @@ class Ui(Default_icons):
         #______________    SIGNALS    ____________________ #
         self.custom_group_btn.setEnabled(False)
         self.custom_group_btn.clicked.connect(self.render_custom_icons_window)
-        self.default_group_btn.clicked.connect(lambda: self.set_default(self.custom_group_btn, self.new_icons_number))
+        self.default_group_btn.clicked.connect(lambda: self.set_default(self.custom_group_btn, self.default_group_btn, self.new_icons_number))
 
         self.calc_new_titles(self.custom_group_btn, self.new_icons_number)
 

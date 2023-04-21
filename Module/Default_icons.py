@@ -19,14 +19,23 @@ class Main(Common):
     def set_default(
         self, 
         custom_group_btn_obj:QtWidgets.QPushButton,
+        default_group_btn_obj:QtWidgets.QPushButton,
         new_icons_number:QtWidgets.QLCDNumber
     ):
         
         try:
+            ids: dict = self.get_ids()
+
             with open(self.default_group_file, 'w+') as file:
-                file.write(json.dumps(self.get_ids()))
+                file.write(json.dumps(ids))
                 custom_group_btn_obj.setEnabled(True)
+            
+            icons_src = self.mode['game'].get('cache path')
+            icons_dest = self.groups_backup_path
+
+            self.backup_icons(icons_src, icons_dest, ids.keys())
             self.calc_new_titles(custom_group_btn_obj, new_icons_number)
+            default_group_btn_obj.setDisabled(True)
             
         except Exception as e:
             self.log_to_external_file('Cannot make default file', str(e))

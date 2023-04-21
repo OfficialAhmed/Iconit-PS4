@@ -5,8 +5,10 @@
     html: class holds repeated html tags and styling for the UI
     constant: class holds constant vars. Only getters
 """
-import os, datetime
+import os, datetime, shutil
 from ftplib import FTP
+import concurrent.futures
+
 from Module.Widget.Shared import Widget
 from Module.Settings import Main as Settings
 
@@ -49,7 +51,7 @@ class Common:
     browsed_pic_path = ""
 
     #__________ Different modes mapping _________________ #
-    mode = {
+    mode:dict = {
         "game" : {
             "ids" : {},
             "ignore ids" : {},
@@ -89,6 +91,7 @@ class Common:
         self.data_path = f"{self.app_root_path}Data\\"
         self.temp_path = f"{self.data_path}Cache\\"
         self.groups_path = f"{self.temp_path}Groups\\"
+        self.groups_backup_path = f"{self.groups_path}Backup\\"
         self.pref_path = f"{self.data_path}Preference\\"
         self.icons_cache_path = f"{self.temp_path}Icons\\"
         self.language_path = f"{self.data_path}Language\\"
@@ -163,6 +166,19 @@ class Common:
     def progress_bar(self, bar, percentage:int) -> None:
         """ Refresh the bar object by the passed percentage """
         bar.setProperty("value", percentage)
+
+
+    def backup_icons(self, src, dest, ids) -> None:
+        """ copy icons using threads """
+
+        backup = lambda id: shutil.copy(f"{src}{id}.png", f"{dest}\\{id}.png")
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Submit each image as a separate task
+            tasks = [executor.submit(backup, id) for id in ids]
+            
+            # Wait for all tasks to complete on the thread
+            concurrent.futures.wait(tasks)
 
 
     def get_language(self) -> str:
