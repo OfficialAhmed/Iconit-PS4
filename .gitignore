@@ -1,68 +1,33 @@
 __pycache__
 
-Data/Cache/MegaSRX/metadata/game/info.json
-Data/Cache/MegaSRX/icon0.dds
-Data/Cache/files_in_dir.dat
-Data/Cache/pronunciation.xml
 Data/Pref/pref.ini
-output/Data
-output/READ ME.txt
 
-env
-GUI
-output
-
-system icons test.py
-Logs.txt
-
-test.py
 *.dds
 *.png
-Data/Cache/files_in_dir.dat
-Data/Cache/Icons/metadata/game/games.json
 Performance.txt
-performance.txt
 GAMES MADE CACHING SLOWER.txt
-Data/Cache/pronunciation.xml
-Perf.txt
-test.txt
-Data/Cache/pronunciation.xml
+
 upload performance.log
 Interface/New web-based UI.zip
 verrsrc.h
 icon.ico
-dist/Iconit v5.06 (BETA).zip
-dist/Iconit v5.06 (BETA)/Iconit v5.06 (BETA).exe
-dist/Iconit v5.06 (BETA)/Backup/.gitkeep
-dist/Iconit v5.06 (BETA)/Baked masks/.gitkeep
-dist/Iconit v5.06 (BETA)/Data/BIN/texconv.exe
-dist/Iconit v5.06 (BETA)/Data/Cache/Icons/Avatars/.gitkeep
-dist/Iconit v5.06 (BETA)/Data/Cache/Icons/metadata/game/.gitkeep
-dist/Iconit v5.06 (BETA)/Data/Cache/Title/database.json
-dist/Iconit v5.06 (BETA)/Data/Pref/2kbg.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/4kbg.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/bgImageChange.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/Black.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/error.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/HDbg.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/ic1.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/MainBG.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/pref.ini
-dist/Iconit v5.06 (BETA)/Data/Pref/SDbg.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/White.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/bgm/home.@OfficialAhmed0
-dist/Iconit v5.06 (BETA)/Data/Pref/bgm/success.@OfficialAhmed0
 
-Data/Cache/Settings.json
 Data/New web-based UI.zip
 pass.json
 Data/Cache/Icons/metadata/game/ignored.json
 Data/Cache/Icons/metadata/system/ignored.json
 Data/Cache/Icons/metadata/system apps/ignored.json
-/.vs/slnx.sqlite
-/.vs
 Data/Cache/Icons/metadata/system apps/system_apps.json
-Data/Cache/Groups/.gitkeep
-Data/Cache/Groups/Action.json
-Data/Cache/Groups/Default
-Data/Cache/Groups/Default.json
+
+Data/Cache/Groups
+Data/Cache
+Logs.txt
+output
+dist
+test
+env
+GUI
+output
+.vs
+.vscode
+

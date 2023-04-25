@@ -39,6 +39,7 @@ ________________________________________
 *  `New option` __Download database__ for a faster caching process
  
 #### _For developers:_
+* `Threading` implemented concurrent methods for CPU I/O bound
 *  `Local database` implemented & fetched from [DEFAULTDNB](https://github.com/DEFAULTDNB/DEFAULTDNB.github.io). For game titles caching "_Read [wiki](https://github.com/OfficialAhmed/Iconit-PS4/wiki/Performance) for detailes_"
 *  `Subproccess` implementation to convert `PNG` to `DDS` DXT1 compression using [DirectXTex/texconv](https://github.com/Microsoft/DirectXTex/wiki/Texconv)
 *  `Buffer size` increased to ~65500 bytes

@@ -98,7 +98,7 @@ class Common:
         self.appmeta_path = f"{self.data_path}User\\appmeta\\"
         self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
 
-        self.default_group_file = f"{self.groups_path}Default"
+        self.default_group_file = f"{self.groups_path}Default.json"
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
 
@@ -145,8 +145,8 @@ class Common:
             list: directories = directories names if any 
         """
         result = []
-    
         command = lambda line : result.append(line.split(" ")[-1])
+        
         if list == "files":
             command = lambda line : result.append(line.split(" ")[-1]) if line[:2] == "-r" else None
         
@@ -155,16 +155,19 @@ class Common:
 
 
     def download_data_from_server(self, file_name:str, file_path_with_extension:str) -> bool:
+
         try:
             with open(file_path_with_extension, "wb") as downloaded_file:
                 self.ftp.retrbinary("RETR " + file_name, downloaded_file.write, 5120)
                 return True
+            
         except:
             return False
 
 
     def progress_bar(self, bar, percentage:int) -> None:
         """ Refresh the bar object by the passed percentage """
+
         bar.setProperty("value", percentage)
 
 

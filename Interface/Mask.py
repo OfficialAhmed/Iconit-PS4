@@ -2,7 +2,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from Module.Mask import Main as Mask
 
 class Ui(Mask):
+
     def setupUi(self, window):
+        
         window.setObjectName("mask_maker")
         window.resize(604, 630)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
@@ -225,6 +227,7 @@ class Ui(Mask):
         window.setTabOrder(self.game_icon_btn, self.game_icon_view)
         window.setTabOrder(self.game_icon_view, self.mask_view)
 
+
     def retranslateUi(self, mask_maker):
         _translate = QtCore.QCoreApplication.translate
         mask_maker.setWindowTitle(_translate("mask_maker", "Mask maker by @Officialahmed0"))
@@ -234,13 +237,13 @@ class Ui(Mask):
         self.bake_quit_btn.setText(_translate("mask_maker", "quit"))        
         self.bake_quit_btn.hide()
         self.download_mask_link.setText(_translate("mask_maker", '<html><head/><body><p align="center"><a href="https://all-exhost.github.io/Masks.html"><span style=" font-size:8pt; font-weight:700; font-style:italic; text-decoration: underline; color:#f250e7;">Download Free Masks</span></a></p></body></html>',))
-        self.game_icon_label.setText(_translate("mask_maker", "Game Icon"))
+        self.game_icon_label.setText(_translate("mask_maker", "Icons Group"))
         self.game_icon_btn.setText(_translate("mask_maker", "Change..."))
         self.mask_label.setText(_translate("mask_maker", "Mask"))
         self.mask_btn.setText(_translate("mask_maker", "Change..."))
 
         self.mask_btn.clicked.connect(self.browse_mask)
-        self.game_icon_btn.clicked.connect(self.browse_game_icon)
+        self.game_icon_btn.clicked.connect(self.browse_icon_group)
         self.bake_btn.clicked.connect(self.bake_mask)    
         self.bake_preview_btn.clicked.connect(self.preview_baked_mask)    
         self.bake_quit_btn.clicked.connect(self.quit)

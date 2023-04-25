@@ -14,19 +14,28 @@ class Main(Common):
 
         if group_title:
 
-            for selected_id in self.selected_ids:
+            err = 'Cannot use "default" as group name'
+            
+            if group_title.lower() == "default" or group_title == err:
 
-                if selected_id.isChecked():
-                    text = selected_id.text()
-                    id = text[1:10]
-                    title = text[12:]
-                    group[id] = title
+                # Avoid overwriting the default file
+                self.group_title_input.setText(err)
 
-            with open(f"{self.groups_path}{group_title}.json", 'w+') as file:
-                file.write(json.dumps(group))
+            else:
 
-            self.window.close()
+                for selected_id in self.selected_ids:
 
-            return True
+                    if selected_id.isChecked():
+                        text = selected_id.text()
+                        id = text[1:10]
+                        title = text[12:]
+                        group[id] = title
+
+                with open(f"{self.groups_path}{group_title}.json", 'w+') as file:
+                    file.write(json.dumps(group))
+
+                self.window.close()
+
+                return True
         
         return False
