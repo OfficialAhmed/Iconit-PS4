@@ -39,25 +39,27 @@ ________________________________________
 *  `New option` __Download database__ for a faster caching process
  
 #### _For developers:_
-* `Threading` implemented concurrent methods for CPU I/O bound
+*  `Clean up` code and file structure
+*  `Buffer size` increased to ~65500 bytes
+*  `OOP implementation` Better performance & less memory usage
+*  `Break GIL Limitation` implemented concurrent methods for CPU I/O bound 
 *  `Local database` implemented & fetched from [DEFAULTDNB](https://github.com/DEFAULTDNB/DEFAULTDNB.github.io). For game titles caching "_Read [wiki](https://github.com/OfficialAhmed/Iconit-PS4/wiki/Performance) for detailes_"
 *  `Subproccess` implementation to convert `PNG` to `DDS` DXT1 compression using [DirectXTex/texconv](https://github.com/Microsoft/DirectXTex/wiki/Texconv)
-*  `Buffer size` increased to ~65500 bytes
-*  `Clean up` code and files structure
-*  `OOP implementation` Better performance & less memory usage
 ________________________________________
 
 ## *Current implementation Main bugs* 
  This version isn't ready for end-users
 1. Avatars option patch required
 
-## _To do list_
+## _To do list (UPCOMING UPDATE)_
 
-* [ ] Multiple icon change
-* [ ] Apply mask on all xmb icons at once
+* [x] Mask a Set Of Icons `New Feature`
+* [x] Group a Set Of Icons `New Feature`
+
+* [x] Utilize 100% CPU usage `Concurrent processing`
+* [x] Multiple Icon Duplication at Once - heavy R/W Bound `Threading`
+
 * [ ] Render Game ID `CUSAXXXXX` text on icon
-* [ ] Utilize 100% CPU usage `Multiprocessing`
-* [x] Copy multiple icons - heavy R/W Bound `Threading`
 * [ ] Feature : User can edit displayed game title through cache file
 * [ ] Feature : Read titles from xmb DB 
 
@@ -70,9 +72,6 @@ ________________________________________
 * [@maxtinion](https://twitter.com/maxtinion)
 * [@_deejay87_](https://twitter.com/_deejay87_)
 * [@PS__TRICKS](https://twitter.com/PS__TRICKS)
-
-## _Contribution_
-Don't hesitate to contact [me](https://twitter.com/OfficialAhmed0) for new suggestions and ideas 
 
 ## _Preview_
 ![Main_screen](Interface/view/main_screen.jpg)
