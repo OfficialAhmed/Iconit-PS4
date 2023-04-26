@@ -2,9 +2,10 @@
 from PIL import Image
 from environment import Common
 from traceback import extract_stack
-import time, os, shutil, PIL, datetime
+import os, shutil, PIL, datetime
 
 class Main(Common):
+
     def __init__(self) -> None:
         super().__init__()
         self.ftp = self.get_ftp()
@@ -347,17 +348,22 @@ class Main(Common):
 
 
     def upload_to_server(self, file, file_name) -> bool:
+
         try:
             with open(file, "rb") as binary_data:
                 self.ftp.storbinary(f"STOR {file_name}", binary_data, 1024)
                 return True
+            
         except:
             return False
 
 
     def update_message(self, is_sucess:bool, msg:str, traceback_stack:list = [], dev_msg:str= "", font_size:int= 10) -> None:
+
         color = self.constant.get_color("green")
+
         if not is_sucess:
+
             color = self.constant.get_color("red")
             self.log_to_external_file(f"{msg} | DEV {dev_msg} | TRACEBACK {traceback_stack}", "Error")
             msg += ". Read logs.txt"
@@ -368,8 +374,11 @@ class Main(Common):
 
     def remove_generated_images(self) -> None:
         """ Delete temp icons generated for the server """
+
         for file in os.listdir(self.icons_cache_path):
+
             if os.path.isfile(file):
+
                 os.remove(f"{self.icons_cache_path}{file}")
 
 

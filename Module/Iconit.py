@@ -348,13 +348,17 @@ class Game(Main):
         #######################################################
         """
         if self.is_external_found:
+            
             self.ftp.cwd(f"/{self.ps4_external_icons_dir}")
             external_ids = [x for x in self.get_server_list() if len(x) == 9]
             self.validate_ids(external_ids, self.ps4_external_icons_dir)
 
         # End of filtering, update global ids
+
         self.set_ids(self.ids)
+
         if self.is_new_to_ignore :
+
             self.save_ignored_ids(self.ignored_ids)
 
 
@@ -362,7 +366,9 @@ class Game(Main):
         """ check the ids for valid ones. invalid ids added to the ignored list for faster caching check"""
 
         for id in ids:
+
             if id == "external":
+
                 self.is_external_found = True
 
             """
@@ -390,6 +396,7 @@ class Game(Main):
 
 
     def start_cache(self) -> bool:
+
         try:
             self.change_state(True)
             self.ids = self.get_cache()
@@ -409,7 +416,9 @@ class Game(Main):
                 
                 # Ignore homebrews
                 if self.is_toggled_homebrew == "False":
+
                     if "CUSA" not in game_id:
+
                         self.ids.pop(game_id)
                         continue
 
@@ -423,6 +432,7 @@ class Game(Main):
                     game_location = self.ids.get(game_id).get("location")
 
                     current_directory = self.ps4_internal_icons_dir
+
                     if game_location == "External":
                         current_directory = self.ps4_external_icons_dir
 
@@ -436,16 +446,28 @@ class Game(Main):
                     #################################################################
                     """
                     if not self.fetch_game_title_from_db(game_id):
+
                         self.save_undetected_game(game_id)
                         self.ids[game_id]["title"] = self.get_title_from_server()
 
+                    current_id_icons = []
 
-                    if self.icon_name in game_files:
-                        self.download_data_from_server(
-                            self.icon_name, 
-                            f"{self.mode.get('game').get('cache path')}{game_id}.png"
-                        )
-                
+                    for icon in game_files:
+
+                        if '.dds' in icon or '.png' in icon:
+                        
+                            if icon == self.icon_name:
+
+                                # Download main icon
+                                self.download_data_from_server(
+                                    self.icon_name, 
+                                    f"{self.mode.get('game').get('cache path')}{game_id}.png"
+                                )
+                            
+                            # Cache icon name 
+                            current_id_icons.append(icon)
+
+                    self.ids[game_id]["icons"] = current_id_icons
 
                 progress += progress_weight
                 self.progress_bar(self.CacheBar, int(progress))
