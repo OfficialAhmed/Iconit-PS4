@@ -26,11 +26,12 @@ This application is much convenient than uploading the icons manually, it automa
 
 ________________________________________
 
-## *What's new in v5 BETA*
+## *What's new in v5*
 
 #### _For end users:_
 
-*  Finally `Independent version` ImageMagick is no longer required
+*  Fixed `picX_XX.png` & `picX_XX.dds` conversion
+*  `Independent version` ImageMagick is no longer required
 *  In the `Games List` _Game IDs_ now shown next to the game title
 *  `Modes` can be changed without restarting the program
 *  `Backup icons` will never be overwritten nor removed [_used to cache once then overwrite the older one_]
@@ -39,10 +40,13 @@ ________________________________________
 *  `New option` __Download database__ for a faster caching process
  
 #### _For developers:_
+*  `Image Detection` detects all images of the form `iconX_XX` & `picX_XX`
 *  `Clean up` code and file structure
 *  `Buffer size` increased to ~65500 bytes
-*  `OOP implementation` Better performance & less memory usage
-*  `Break GIL Limitation` implemented concurrent methods for CPU I/O bound 
+*  `Required Icons` now will be cached on PS4 connect (_Slower_)
+*  `Required Icons` will be read from cache instead of FTP (_Faster_)
+*  `OOP implementation` (_Faster but more memory usage_)
+*  `Break GIL Limitation` implemented concurrent methods for CPU I/O bound (_Faster when lots of icons, slower otherwise_)
 *  `Local database` implemented & fetched from [DEFAULTDNB](https://github.com/DEFAULTDNB/DEFAULTDNB.github.io). For game titles caching "_Read [wiki](https://github.com/OfficialAhmed/Iconit-PS4/wiki/Performance) for detailes_"
 *  `Subproccess` implementation to convert `PNG` to `DDS` DXT1 compression using [DirectXTex/texconv](https://github.com/Microsoft/DirectXTex/wiki/Texconv)
 ________________________________________
