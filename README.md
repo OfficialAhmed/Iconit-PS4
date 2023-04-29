@@ -63,6 +63,7 @@ ________________________________________
 * [x] Utilize 100% CPU usage `Concurrent processing`
 * [x] Multiple Icon Duplication at Once - heavy R/W Bound `Threading`
 
+* [ ] Backup/Restore cache to/from PS4 `New Feature`
 * [ ] Render Game ID `CUSAXXXXX` text on icon
 * [ ] Feature : User can edit displayed game title through cache file
 * [ ] Feature : Read titles from xmb DB 
