@@ -38,6 +38,7 @@ ________________________________________
 *  `Circular icon scrolling` when the last icon's reached, it'll begin again from the start and vice versa.
 *  `Faster caching` new techniques added
 *  `New option` __Download database__ for a faster caching process
+*  `New Feature` you can now group a set of icons and apply a mask to them
  
 #### _For developers:_
 *  `Image Detection` detects all images of the form `iconX_XX` & `picX_XX`
