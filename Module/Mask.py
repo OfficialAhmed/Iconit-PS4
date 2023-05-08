@@ -89,11 +89,10 @@ class Main(Common):
                     if os.path.exists(f"{self.temp_path}\\mask-style.png"):
                         
                         img_location = self.temp_path.replace('\\', '/')
-                        self.MaskView.setStyleSheet(f"border-image: url({img_location}mask-style.png);")
                         self.MaskName.setText(mask_location.split('/')[-1])
                         self.mask_location = img_location
                         self.mask_is_changed = True
-                        self.show_baked_mask()
+                        self.show_mask()
 
                     else:
                         
@@ -176,18 +175,17 @@ class Main(Common):
         if self.group_icons_is_changed and self.mask_is_changed:
 
             self.bake_preview_icon()
-            self.show_preview_icon()
+            self.show_baked_icon()
             enable = True
 
         self.BakeBtn.setEnabled(enable)
 
 
-    def show_baked_mask(self) -> None:
-        location = "Baked"
-        self.BakedView.setStyleSheet(f"border-image: url({location}/{self.last_baked_mask}.png);")
+    def show_mask(self) -> None:
+        self.MaskView.setStyleSheet(f"border-image: url({self.mask_location}mask-style.png);")
 
 
-    def show_preview_icon(self):
+    def show_baked_icon(self):
         path = self.temp_path.replace('\\', '/')
         self.BakedView.setStyleSheet(f"border-image: url({path}preview.png);")
 

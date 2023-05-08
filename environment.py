@@ -174,11 +174,11 @@ class Common:
     def backup_icons(self, src, dest, ids) -> None:
         """ copy icons using threads """
 
-        backup = lambda id: shutil.copy(f"{src}{id}.png", f"{dest}\\{id}.png")
+        store_icon = lambda id: shutil.copy(f"{src}{id}.png", f"{dest}\\{id}.png")
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            # Submit each image as a separate task
-            tasks = [executor.submit(backup, id) for id in ids]
+            # Submit each image as a separate task - if the icon not found in backup pass it to a thread to copy
+            tasks = [executor.submit(store_icon, id) for id in ids if not os.path.exists(f"{dest}\\{id}.png")]
             
             # Wait for all tasks to complete on the thread
             concurrent.futures.wait(tasks)

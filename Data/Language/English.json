@@ -69,8 +69,8 @@
         "HomebrewLabel_Sys": "SYSTEM ICON: YES",
         "IconLocation_In": "INTERNAL",
         "IconLocation_Ex": "EXTERNAL",
-        "menuMore": "More",
-        "setDefaultIcons": "Set Default Icons",
+        "menuMore": "MENU",
+        "setDefaultIcons": "SET ICON GROUP",
         "ToolTips": {
             "NextBtn": "NEXT ICON",
             "MaskBtn": "APPLY MASK FOR THE ICON",

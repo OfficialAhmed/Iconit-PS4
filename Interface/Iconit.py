@@ -228,6 +228,7 @@ class Ui(Iconit):
         window.setCentralWidget(self.mainWidget)
         self.menubar = QtWidgets.QMenuBar(window)
         self.menubar.setObjectName("menubar")
+        self.menubar.setCursor(pointing_hand_cursor)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 701, 22))
 
         self.menuSettings = QtWidgets.QMenu(self.menubar)

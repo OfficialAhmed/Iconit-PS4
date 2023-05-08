@@ -26,6 +26,7 @@ class Main(Common):
         try:
             ids: dict = self.get_ids()
 
+            # Overwrite default JSON with the new ids
             with open(self.default_group_file, 'w+') as file:
                 file.write(json.dumps(ids))
                 custom_group_btn_obj.setEnabled(True)
@@ -33,6 +34,7 @@ class Main(Common):
             icons_src = self.mode['game'].get('cache path')
             icons_dest = self.groups_backup_path
 
+            # Backup all icons don't exist in the backup folder
             self.backup_icons(icons_src, icons_dest, ids.keys())
             self.calc_new_titles(custom_group_btn_obj, new_icons_number)
             default_group_btn_obj.setDisabled(True)
