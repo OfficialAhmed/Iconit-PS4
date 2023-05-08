@@ -15,7 +15,7 @@ class Constants:
     __ICONS_BACKUP_NAME = "Backup"
     __ICON_SUPPORTED_FORMATS = "Image (*.png *.jpg *.jpeg)"
 
-    __HASH_COLOR = {
+    __HASH_THEME_COLOR = {
         "red":"#e83c3c",
         "green":"#55ff00",
         "white":"#ffffff",
@@ -29,8 +29,8 @@ class Constants:
     def __setattr__(self, __name: str, __value: any) -> None:
         raise AttributeError(f"READ-ONLY: Class 'Constant' allow getters only. Occured while trying to set [{__name}]")
         
-    def get_color(self, x:str) -> str:
-        return Constants.__HASH_COLOR[x]
+    def get_color(self, str_color:str) -> str:
+        return Constants.__HASH_THEME_COLOR[str_color]
 
     def get_ps4_pic_size(self) -> tuple:
         return Constants.__PS4_PIC_SIZE

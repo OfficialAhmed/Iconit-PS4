@@ -5,6 +5,12 @@ class Html:
         self.__start = "<html><head/><body>"
         self.__end = "</p></body></html>"
         self.__constant = Constant()
+        self.color = {
+            "error":self.__constant.get_color("red"),
+            "warning":self.__constant.get_color("orange"),
+            "success":self.__constant.get_color("green"),
+            "ps4":self.__constant.get_color("white")
+        }
 
 
     def p_tag(self, cstm_style, txt=None) -> str:
@@ -36,14 +42,8 @@ class Html:
 
     def internal_log_msg(self, state, msg, size=10, custome_style="") -> str:
         """ generate a logging line as <p> tag"""
-        color = {
-            "error":self.__constant.get_color("red"),
-            "warning":self.__constant.get_color("orange"),
-            "success":self.__constant.get_color("green"),
-            "ps4":self.__constant.get_color("white")
-        }
 
-        style = f"margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:{size}pt; color:{color[state]}; {custome_style}"
+        style = f"margin: 0px; -qt-block-indent:0; text-indent:0px; font-size:{size}pt; color:{self.color.get(state)}; {custome_style}"
         return self.p_tag(style, f"[{state.upper()}] : {msg}")
     
     
