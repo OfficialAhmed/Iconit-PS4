@@ -63,6 +63,7 @@ ________________________________________
 * [x] Utilize 100% CPU usage `Concurrent processing`
 * [x] Multiple Icon Duplication at Once - heavy R/W Bound `Threading`
 
+* [ ] Backup/Restore cache to/from PS4 `New Feature`
 * [ ] Render Game ID `CUSAXXXXX` text on icon
 * [ ] Feature : User can edit displayed game title through cache file
 * [ ] Feature : Read titles from xmb DB 
@@ -81,6 +82,10 @@ ________________________________________
 ![Main_screen](Interface/view/main_screen.jpg)
 ![Icons_screen](Interface/view/icons_screen.jpg)
 
+# Attention
+
+Some antivirus detect the compiled/converted `.exe` version as **_trojan or malware_ [Win64:Evo-gen [Trj] or Trojan.Generic.horqm]** because the compiler _Pyinstaller_ used by some people to make malware but don't worry `Iconit.exe is False-positive`. If you don't trust it, you can check the commits and changes if there's any malicious code or compile the code on your own. Otherwise, you may whitelist it and continue. 
+The _Pyinstaller_ devs stated it here [False-positive Pyinstaller](https://github.com/pyinstaller/pyinstaller/issues/6754)
 
 # License
 Iconit-PS4 - Copyright (C) 2019-2023 OfficialAhmed
