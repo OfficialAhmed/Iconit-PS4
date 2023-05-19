@@ -124,7 +124,7 @@ class Main(Common):
                 
                 # One thread writing to the system at a time
                 with lock:
-                    mask_copy.save(f"{self.groups_path}Baked\\{id}.png")
+                    mask_copy.save(f"{self.baked_path}{id}.png")
 
         try:
 
@@ -143,6 +143,7 @@ class Main(Common):
                 concurrent.futures.wait(tasks)
 
             self.BakeState.setText(""" Done """)
+            self.UploadBtn.setEnabled(True)
 
         except Exception as e:
 

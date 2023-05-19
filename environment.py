@@ -98,9 +98,12 @@ class Common:
         self.appmeta_path = f"{self.data_path}User\\appmeta\\"
         self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
 
+        self.baked_path = f"{self.groups_path}Baked\\"
         self.default_group_file = f"{self.groups_path}Default.json"
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
+
+
 
         self.ftp = FTP()
         self.html = Html()

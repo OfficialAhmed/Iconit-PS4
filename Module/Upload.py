@@ -3,6 +3,7 @@ from PIL import Image
 from environment import Common
 from traceback import extract_stack
 import os, shutil, PIL, datetime
+import Common.Uploader as Uploader
 
 class Main(Common):
 
@@ -17,6 +18,8 @@ class Main(Common):
         self.browsed_icon_path = self.get_browsed_icon_path()
         
         self.game_icons = []
+
+        self.uploader = Uploader.Main()
 
 
     def start_processing(self) -> None:
@@ -171,11 +174,11 @@ class Main(Common):
 
                     if self.browsed_icon_path and "icon" in current_image:
                         resized_icon.save(f"{icon_cache_path_no_extension}.png")
-                        self.png_to_dds(f"{icon_cache_path_no_extension}.png", self.icons_cache_path)
+                        self.uploader.png_to_dds(f"{icon_cache_path_no_extension}.png", self.icons_cache_path)
 
                     if self.browsed_pic_path and 'pic' in current_image:
                         resized_pic.save(f"{icon_cache_path_no_extension}.png")
-                        self.png_to_dds(f"{icon_cache_path_no_extension}.png", self.icons_cache_path)
+                        self.uploader.png_to_dds(f"{icon_cache_path_no_extension}.png", self.icons_cache_path)
                 
                 else:
                     # ignore other extensions
@@ -235,7 +238,7 @@ class Main(Common):
 
     
             for dds in required_dds:
-                self.png_to_dds(
+                self.uploader.png_to_dds(
                     self.temp_path + dds + ".png",
                     self.temp_path,
                 )
@@ -350,13 +353,4 @@ class Main(Common):
         
         self.browsed_pic_path = ""
         self.browsed_icon_path = ""
-
-
-    def png_to_dds(self, png_dir: str, output_dir: str) -> None:
-        """ 
-            DDS conversion with DXT1 compression using 
-            Microsoft corp. (texconv) LICENSED software under MIT license
-        """
-
-        os.system(f"Data\\BIN\\texconv -f BC1_UNORM {png_dir} -o {output_dir} -y")
 

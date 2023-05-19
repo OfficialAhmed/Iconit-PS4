@@ -1,5 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Module.Mask import Main as Mask
+from Module.Multi_upload import Main as multi_upload
+import os
 
 class Ui(Mask):
 
@@ -42,7 +44,7 @@ class Ui(Mask):
         self.gridLayout_5.addWidget(self.UploadState, 2, 1, 1, 1)
 
         self.UploadBtn = QtWidgets.QPushButton(window)
-        self.UploadBtn.setEnabled(False)
+
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
@@ -54,6 +56,7 @@ class Ui(Mask):
         self.BakeBtn = QtWidgets.QPushButton(window)
         self.BakeBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.gridLayout_5.addWidget(self.BakeBtn, 1, 0, 1, 1)
+        self.BakeBtn.setEnabled(False)
         spacerItem1 = spacer_widget_min_exp
         self.gridLayout_5.addItem(spacerItem1, 0, 0, 1, 1)
         self.UpperLayout.addLayout(self.gridLayout_5, 7, 1, 1, 1)
@@ -138,11 +141,30 @@ class Ui(Mask):
         self.GroupName.setText(_translate("mask_maker", ""))
 
         self.BakeState.setText(_translate("mask_maker", self.html.span_tag('AWAITING...', self.constant.get_color('orange'), 8)))
-        self.UploadState.setText(_translate("mask_maker", self.html.span_tag('BAKING REQUIRED', self.constant.get_color('red'), 8)))
         self.ContinueProcessLabel.setText(_translate("mask_maker", "If anything goes wrong while uploading the icons click 'continue' anytime to proceed the process from where it stopped."))
         self.IconitLinkLabel.setText(_translate("mask_maker", self.html.a_tag('https://github.com/OfficialAhmed/Iconit-PS4/releases', 'Iconit', '#f250e7', 9)))
         self.FreeMasksLinkLabel.setText(_translate("mask_maker", self.html.a_tag('https://all-exhost.github.io/Masks.html', 'Download Free Masks', '#f250e7', 9)))
 
+
+        # Check if baked icons found
+        is_found_baked = False
+        baking_state = "BAKING REQUIRED"
+        clr = "red"
+        for file in os.listdir(self.baked_path):
+
+            if file[-4:] == '.png':
+
+                is_found_baked = True
+                baking_state = "BAKED ICONS FOUND"
+                clr = "green"
+                break
+        
+        self.UploadState.setText(_translate("mask_maker", self.html.span_tag(baking_state, self.constant.get_color(clr), 8)))
+        self.UploadBtn.setEnabled(is_found_baked)
+
+        
         self.BakeBtn.clicked.connect(self.bake_mask)    
         self.MaskBtn.clicked.connect(self.browse_mask)
         self.GroupBtn.clicked.connect(self.browse_icon_group)
+         
+        self.UploadBtn.clicked.connect(lambda: multi_upload.upload_baked_icons(self, self.UploadState))
