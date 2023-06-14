@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Module.Mask import Main as Mask
 from Module.Multi_upload import Main as multi_upload
-import os
+import os, json
 
 class Ui(Mask):
 
@@ -52,6 +52,7 @@ class Ui(Mask):
         self.UploadBtn.setSizePolicy(sizePolicy)
         self.UploadBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.gridLayout_5.addWidget(self.UploadBtn, 2, 0, 1, 1)
+        self.UploadBtn.setEnabled(False)
 
         self.BakeBtn = QtWidgets.QPushButton(window)
         self.BakeBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -144,27 +145,9 @@ class Ui(Mask):
         self.ContinueProcessLabel.setText(_translate("mask_maker", "If anything goes wrong while uploading the icons click 'continue' anytime to proceed the process from where it stopped."))
         self.IconitLinkLabel.setText(_translate("mask_maker", self.html.a_tag('https://github.com/OfficialAhmed/Iconit-PS4/releases', 'Iconit', '#f250e7', 9)))
         self.FreeMasksLinkLabel.setText(_translate("mask_maker", self.html.a_tag('https://all-exhost.github.io/Masks.html', 'Download Free Masks', '#f250e7', 9)))
-
-
-        # Check if baked icons found
-        is_found_baked = False
-        baking_state = "BAKING REQUIRED"
-        clr = "red"
-        for file in os.listdir(self.baked_path):
-
-            if file[-4:] == '.png':
-
-                is_found_baked = True
-                baking_state = "BAKED ICONS FOUND"
-                clr = "green"
-                break
-        
-        self.UploadState.setText(_translate("mask_maker", self.html.span_tag(baking_state, self.constant.get_color(clr), 8)))
-        self.UploadBtn.setEnabled(is_found_baked)
-
-        
+        self.UploadState.setText(_translate("mask_maker", "BAKED ICONS NOT FOUND"))
         self.BakeBtn.clicked.connect(self.bake_mask)    
         self.MaskBtn.clicked.connect(self.browse_mask)
         self.GroupBtn.clicked.connect(self.browse_icon_group)
-         
-        self.UploadBtn.clicked.connect(lambda: multi_upload.upload_baked_icons(self, self.UploadState))
+
+        self.UploadBtn.clicked.connect(lambda: multi_upload.upload_baked_icons(self, self.UploadState, self.group_path))

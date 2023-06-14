@@ -21,6 +21,39 @@ class Main(Common):
         self.ps4_icon_dimension = self.constant.get_ps4_icon_size()
 
 
+    def check_bake_state(self):
+        """ Check if all baked icons of selected group found """
+        
+        is_found_baked = False
+        try: group_ids = json.load(open(self.group_path))
+        except: group_ids = []
+        
+        # Only check if group ids not empty
+        if group_ids:
+            
+            for file in os.listdir(self.baked_path):
+
+                if file[-4:] == '.png':
+
+                    # at least one icon not found terminate
+                    if file[:-4] not in group_ids:
+                        is_found_baked = False
+                        break
+
+                    is_found_baked = True
+        
+        if is_found_baked:
+            clr = "green"
+            baking_state = "BAKED ICONS FOUND"
+            
+        else:
+            clr = "red"
+            baking_state = "BAKING REQUIRED"
+
+        self.UploadBtn.setEnabled(is_found_baked)
+        self.UploadState.setText(self.html.span_tag(baking_state, self.constant.get_color(clr), 8))
+
+
     def browse_icon_group(self) -> None:
         """ Get the json group chosen by the user  """
 
@@ -41,13 +74,13 @@ class Main(Common):
         )
 
         if group_path and group_path.split('/')[-2] == 'Groups':
-
+            self.group_path = group_path
+            self.check_bake_state()
             self.BakeState.setText("Baking mask required")
             self.BakedView.setStyleSheet(f'border-image: url({self.preview_icon_path}previewTest.@OfficialAhmed0);')
             
             self.group_icons_is_changed = True
             self.GroupName.setText(group_path.split('/')[-1])
-
             self.group_ids: dict = json.load(open(group_path))
 
         else:

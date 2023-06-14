@@ -13,8 +13,10 @@ class Main(Common):
         self.uploader = Uploader()
 
 
-    def upload_baked_icons(self, state_widget):
-        print("hello from multi upload")
-        state_widget.setText("Yeeey")
+    def upload_baked_icons(self, state_widget, group_path):
+        state_widget.setText("Uploading...")
+        print(group_path)
     
         
+    def get_icon_group(self):
+        self.GroupName
