@@ -131,11 +131,9 @@ class Main(Common):
         game_directory = f"{self.ps4_internal_icons_dir}{folder}{self.current_game_id}"
         
         self.ftp.cwd(f"/{game_directory}")
-        self.progress_bar(self.ValidationBar, 60)
 
         self.game_icons = self.game_ids.get(self.current_game_id).get("icons")
         self.progress_bar(self.ValidationBar, 100)
-
 
         if self.browsed_pic_path or self.browsed_icon_path:
             
@@ -182,6 +180,7 @@ class Main(Common):
                 
                 else:
                     # ignore other extensions
+
                     continue
                 
                 if self.browsed_icon_path and "icon" in current_image:
@@ -288,7 +287,7 @@ class Main(Common):
         """ upload generated icons to ps4 """
 
         for pic in self.pics_to_upload:
-            self.upload_to_server(f"{self.icons_cache_path}{pic}", pic)
+            self.uploader.upload_to_server(f"{self.icons_cache_path}{pic}", pic)
 
             self.sending_progress += self.sending_progress_weight
             self.progress_bar(self.SendingBar, self.sending_progress)
@@ -299,16 +298,17 @@ class Main(Common):
 
         try:
             for icon in self.icons_to_upload:
-                if self.upload_to_server(f"{self.icons_cache_path}{icon}", icon):
+                
+                if self.uploader.upload_to_server(f"{self.icons_cache_path}{icon}", icon):
+                    
                     if icon == "icon0.png":
-                        shutil.move(f"{self.icons_cache_path}{icon}",
-                            f"{self.metadata_path}{self.selected_mode}\\{self.current_game_id}.png"
-                        )
+                        self.uploader.update_local_icon(f"{self.icons_cache_path}{icon}", self.current_game_id)
 
                     self.sending_progress += self.sending_progress_weight
                     self.progress_bar(self.SendingBar, self.sending_progress)
 
                 else:
+
                     self.update_message(False, "Sorry! an issue has occured, Sending has been canceled")
                     break
 
@@ -317,16 +317,6 @@ class Main(Common):
         except Exception as e:
             self.update_message(False, "Sorry! PS4 has denied the signal", extract_stack(), str(e))
 
-
-    def upload_to_server(self, file, file_name) -> bool:
-
-        try:
-            with open(file, "rb") as binary_data:
-                self.ftp.storbinary(f"STOR {file_name}", binary_data, 1024)
-                return True
-            
-        except:
-            return False
 
 
     def update_message(self, is_sucess:bool, msg:str, traceback_stack:list = [], dev_msg:str= "", font_size:int= 10) -> None:

@@ -1,7 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Module.Mask import Main as Mask
 from Module.Multi_upload import Main as multi_upload
-import os, json
 
 class Ui(Mask):
 
@@ -128,7 +127,7 @@ class Ui(Mask):
 
 
     def retranslateUi(self, window):
-
+        
         _translate = QtCore.QCoreApplication.translate
         window.setWindowTitle(_translate("mask_maker", "Iconit - Mask maker"))
 
@@ -146,8 +145,10 @@ class Ui(Mask):
         self.IconitLinkLabel.setText(_translate("mask_maker", self.html.a_tag('https://github.com/OfficialAhmed/Iconit-PS4/releases', 'Iconit', '#f250e7', 9)))
         self.FreeMasksLinkLabel.setText(_translate("mask_maker", self.html.a_tag('https://all-exhost.github.io/Masks.html', 'Download Free Masks', '#f250e7', 9)))
         self.UploadState.setText(_translate("mask_maker", "BAKED ICONS NOT FOUND"))
+        
         self.BakeBtn.clicked.connect(self.bake_mask)    
         self.MaskBtn.clicked.connect(self.browse_mask)
         self.GroupBtn.clicked.connect(self.browse_icon_group)
 
-        self.UploadBtn.clicked.connect(lambda: multi_upload.upload_baked_icons(self, self.UploadState, self.group_path))
+        multi_upload_obj = multi_upload()
+        self.UploadBtn.clicked.connect(lambda: multi_upload_obj.upload_baked_icons(self.UploadState, self.group_path))
