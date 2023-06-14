@@ -56,7 +56,7 @@ class Common:
             "ids" : {},
             "ignore ids" : {},
             "ignored file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\ignored.json",
-            "cache path" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\",
+            "cache path" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\game" + "\\",
             "cache file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\games.json",
             "database" : Game_Database(f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\Database.json")
         },
@@ -65,7 +65,7 @@ class Common:
             "ids" : {},
             "ignore ids" : {},
             "ignored file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system apps\\ignored.json",
-            "cache path" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system apps\\",
+            "cache path" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system apps" + "\\",
             "cache file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\system apps\\system_apps.json",
             "database" : System_Database(f"{app_path}\\Data\\Cache\\Icons\\metadata\\system apps\\Database.json")
         },
@@ -87,23 +87,21 @@ class Common:
         self.screen_w = Common.screen_w
         self.screen_h = Common.screen_h
 
-        self.app_root_path = f"{Common.app_path}\\"
-        self.data_path = f"{self.app_root_path}Data\\"
-        self.temp_path = f"{self.data_path}Cache\\"
-        self.groups_path = f"{self.temp_path}Groups\\"
-        self.groups_backup_path = f"{self.groups_path}Backup\\"
-        self.pref_path = f"{self.data_path}Preference\\"
-        self.icons_cache_path = f"{self.temp_path}Icons\\"
-        self.language_path = f"{self.data_path}Language\\"
-        self.appmeta_path = f"{self.data_path}User\\appmeta\\"
-        self.metadata_path = f"{self.temp_path}Icons\\metadata\\"
+        self.app_root_path = f"{Common.app_path}" + "\\"
+        self.data_path = f"{self.app_root_path}Data" + "\\"
+        self.temp_path = f"{self.data_path}Cache" + "\\"
+        self.groups_path = f"{self.temp_path}Groups" + "\\"
+        self.groups_backup_path = f"{self.groups_path}Backup" + "\\"
+        self.pref_path = f"{self.data_path}Preference" + "\\"
+        self.icons_cache_path = f"{self.temp_path}Icons" + "\\"
+        self.language_path = f"{self.data_path}Language" + "\\"
+        self.appmeta_path = f"{self.data_path}User\\appmeta" + "\\"
+        self.metadata_path = f"{self.temp_path}Icons\\metadata" + "\\"
 
-        self.baked_path = f"{self.groups_path}Baked\\"
+        self.baked_path = f"{self.groups_path}Baked" + "\\"
         self.default_group_file = f"{self.groups_path}Default.json"
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
-
-
 
         self.ftp = FTP()
         self.html = Html()
@@ -118,8 +116,8 @@ class Common:
         self.ps4_internal_icons_dir = self.constant.get_internal_icons_path()
         self.ps4_external_icons_dir = self.constant.get_external_icons_path()
 
-        self.backup_path = f"{self.constant.get_backup_folder_name()}\\"
-
+        self.backup_path = f"{self.constant.get_backup_folder_name()}" + "\\"
+        
         self.settings_cache:dict = self.settings.update_local_cache(self.temp_path)
         self.ip:str = self.settings_cache.get("ip")
         self.font:str = self.settings_cache.get("font")
