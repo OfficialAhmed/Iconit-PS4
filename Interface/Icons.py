@@ -47,16 +47,20 @@ class Ui(Icons):
 
 
         # ______________       MENU BAR      ______________________#
-        self.menubar = QtWidgets.QMenuBar(window)
-        self.menubar.setObjectName("menubar")
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 701, 22))
 
-        self.SetDefaultIcon = QtWidgets.QAction(window)
-        
-        self.menuMore = QtWidgets.QMenu(self.menubar)
-        self.menuMore.setObjectName("menuMore")
-        self.menuMore.addAction(self.SetDefaultIcon)
-        self.menubar.addAction(self.menuMore.menuAction())
+        if self.selected_mode == "game":
+            self.menubar = QtWidgets.QMenuBar(window)
+            self.menubar.setObjectName("menubar")
+            self.menubar.setGeometry(QtCore.QRect(0, 0, 701, 22))
+
+            self.SetDefaultIcon = QtWidgets.QAction(window)
+            
+            self.menuMore = QtWidgets.QMenu(self.menubar)
+            self.menuMore.setObjectName("menuMore")
+            self.menuMore.addAction(self.SetDefaultIcon)
+            self.menubar.addAction(self.menuMore.menuAction())
+
+            self.menuMore.triggered.connect(self.render_set_default_icons_window)
 
 
         # ______________    LABELS    _________________ # 
@@ -210,7 +214,6 @@ class Ui(Icons):
         self.ChangeBgBtn.clicked.connect(self.change_picture)
         self.ChangeIconBtn.clicked.connect(self.change_icon)
 
-        self.menuMore.triggered.connect(self.render_set_default_icons_window)
         
         # ______________    GAME TITLES    _________________ # 
         font.setPointSize(15)
@@ -302,9 +305,7 @@ class Ui(Icons):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.SetDefaultIcon.setText(_translate("window", self.translated_content.get("setDefaultIcons")))
-        self.menuMore.setTitle(_translate("window", self.translated_content.get("menuMore")))
-
+        
         self.GameIdTxt.setText(_translate("IconsWindow", self.current_game_id))
         self.TotalGamesTxt.setText(_translate("IconsWindow", f"1/{len(self.ids)}"))
         self.NextBtn.setText(_translate("IconsWindow", self.translated_content.get("NextBtn")))
@@ -328,7 +329,6 @@ class Ui(Icons):
             )
         )
 
-        # 
         """
         #################################################################
                     KEYBOARD RECOGNITION SHORTCUTS v4.07
@@ -364,7 +364,12 @@ class Ui(Icons):
         #################################################################
         """
         match self.selected_mode:
+
             case "game":
+
+                self.SetDefaultIcon.setText(_translate("window", self.translated_content.get("setDefaultIcons")))
+                self.menuMore.setTitle(_translate("window", self.translated_content.get("menuMore")))
+
                 for index, current_game_id in enumerate(self.ids):
                     self.GameTitles.addItem(f"{index + 1}: {self.ids.get(current_game_id).get('title')} [{current_game_id}]")
                 
@@ -396,6 +401,7 @@ class Ui(Icons):
 
 
             case "system apps":
+                
                 for index, current_game_id in enumerate(self.ids):
                     self.GameTitles.addItem(f"{index + 1}: {self.ids.get(current_game_id)} [{current_game_id}]")
                 
@@ -408,6 +414,7 @@ class Ui(Icons):
                 self.IconLocationLabel.hide()
                 self.IconLocationTxt.hide()
                 self.ChangeBgBtn.hide()
+                self.MaskBtn.hide()
 
 
     def translate_dynamic_elements(self):

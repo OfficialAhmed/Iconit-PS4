@@ -23,6 +23,30 @@ class Main(Common):
         self.uploader = Uploader.Main()
 
 
+    def last_process(self, last_group_path:str = "") -> str|None:
+        """
+            Save/Load process file with the group path 
+        """
+
+        # If path passed (write), else (read)
+        if last_group_path:
+            with open(self.last_baked_group_file, "w+") as file:
+                file.write(last_group_path)
+        
+        else:
+            with open(self.last_baked_group_file) as file:
+                return file.readline()
+
+
+    def continue_upload(self, continue_btn_widget, upload_btn_widget, state_widget):
+        """
+            Unfinished process detected, allow user to continue uploading the rest of baked icons
+        """
+
+        self.generate_icons_from_baked(state_widget, upload_btn_widget, self.last_process())
+        continue_btn_widget.setEnabled(False)
+
+
     def upload_baked_icons(self, game_directory:str, icons:list):
         """
             Upload set of generated icons for the game. One call per game
@@ -35,13 +59,14 @@ class Main(Common):
             self.uploader.upload_to_server(icon_dir, icon)
 
 
-    def generate_icons_from_baked(self, state_widget, group_path):
+    def generate_icons_from_baked(self, state_widget, upload_btn_widget, group_path):
         """
             Baked icons are ready. 
             Make required NO. of icons for each baked icon in the selected group
         """
 
         state_widget.setText("UPLOADING... PLEASE WAIT")
+        self.last_process(group_path)
 
         self.selected_group_icons = json.load(open(group_path))
         baked_icons = os.listdir(self.baked_path)
@@ -95,3 +120,4 @@ class Main(Common):
                 self.log_to_external_file(str(e), "upload - baked mask")
             
         state_widget.setText("DONE!")
+        upload_btn_widget.setEnabled(False)

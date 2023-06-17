@@ -2,8 +2,8 @@ from Module.Constant.Constants import Constants as Constant
 
 class Html:
     def __init__(self) -> None:
-        self.__start = "<html><head/><body>"
-        self.__end = "</p></body></html>"
+        self.__start = "<html><head><body>"
+        self.__end = "</body></head></html>"
         self.__constant = Constant()
         self.color = {
             "error":self.__constant.get_color("red"),

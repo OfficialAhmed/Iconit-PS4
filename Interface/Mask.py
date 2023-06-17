@@ -1,3 +1,4 @@
+import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Module.Mask import Main as Mask
 from Module.Multi_upload import Main as multi_upload
@@ -90,7 +91,6 @@ class Ui(Mask):
         self.ButtomLayout.addItem(spacerItem6, 0, 4, 1, 1)
 
         self.ContinueProcessBtn = QtWidgets.QPushButton(window)
-        self.ContinueProcessBtn.setEnabled(False)
         self.ContinueProcessBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.ButtomLayout.addWidget(self.ContinueProcessBtn, 0, 1, 1, 1)
         spacerItem7 = spacer_widget_exp_min
@@ -146,9 +146,21 @@ class Ui(Mask):
         self.FreeMasksLinkLabel.setText(_translate("mask_maker", self.html.a_tag('https://all-exhost.github.io/Masks.html', 'Download Free Masks', '#f250e7', 9)))
         self.UploadState.setText(_translate("mask_maker", "BAKED ICONS NOT FOUND"))
         
+
+        # ___________  Continue Process Feature   _______________________
+        self.ContinueProcessBtn.setEnabled(False)
+
+        for baked in os.listdir(self.baked_path):
+            if ".png" in baked:
+                self.ContinueProcessBtn.setEnabled(True)
+                break
+
+
+        # _______________    SIGNALS   _______________________
         self.BakeBtn.clicked.connect(self.bake_mask)    
         self.MaskBtn.clicked.connect(self.browse_mask)
         self.GroupBtn.clicked.connect(self.browse_icon_group)
 
         multi_upload_obj = multi_upload()
-        self.UploadBtn.clicked.connect(lambda: multi_upload_obj.generate_icons_from_baked(self.UploadState, self.group_path))
+        self.UploadBtn.clicked.connect(lambda: multi_upload_obj.generate_icons_from_baked(self.UploadState, self.UploadBtn, self.group_path))
+        self.ContinueProcessBtn.clicked.connect(lambda: multi_upload_obj.continue_upload(self.ContinueProcessBtn, self.UploadBtn, self.UploadState))

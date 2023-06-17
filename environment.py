@@ -81,7 +81,7 @@ class Common:
 
     def __init__(self) -> None:
         self.app_version = "5.12"
-        self.app_release_date = "Apr 16th, 2023"
+        self.app_release_date = "June 17th, 2023"
 
         self.external_game_ids = []
         self.screen_w = Common.screen_w
@@ -99,6 +99,7 @@ class Common:
         self.metadata_path = f"{self.temp_path}Icons\\metadata" + "\\"
 
         self.baked_path = f"{self.groups_path}Baked" + "\\"
+        self.last_baked_group_file = f"{self.baked_path}last_process"
         self.default_group_file = f"{self.groups_path}Default.json"
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""

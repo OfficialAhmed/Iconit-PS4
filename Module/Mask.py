@@ -175,7 +175,7 @@ class Main(Common):
                 
                 concurrent.futures.wait(tasks)
 
-            self.BakeState.setText(""" Done """)
+            self.BakeState.setText("DONE!")
             self.UploadBtn.setEnabled(True)
 
         except Exception as e:
