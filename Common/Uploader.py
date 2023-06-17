@@ -12,7 +12,9 @@ class Main(Common):
         super().__init__()
         
         self.ftp:FTP = self.get_ftp()
-    
+        self.game_ids:dict = self.get_ids()
+
+
     def update_local_icon(self, icon_path, game_id):
         """
             Move icon to local view path to update the iconit view screen

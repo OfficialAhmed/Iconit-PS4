@@ -4,6 +4,7 @@
 
 """
 
+import sys
 from environment import Common
 
 from PyQt5.QtWidgets import QFileDialog
@@ -236,10 +237,16 @@ class Main(Common):
 
     def render_mask_maker_window(self):
         self.SendBtn.setEnabled(False)
-        self.window = QtWidgets.QWidget()
+        self.window = QtWidgets.QDialog()
         self.ui = Mask.Ui()
         self.ui.setupUi(self.window)
         self.window.show()
+
+        """ 
+            overwrite the environment window, 
+            to keep make Iconit window reusable
+        """
+        self.set_window(self.window)
 
 
     def render_set_default_icons_window(self):
@@ -248,6 +255,8 @@ class Main(Common):
         self.ui = Default_icons.Ui()
         self.ui.setupUi(self.window)
         self.window.show()
+        
+        self.set_window(self.window)
 
 
     def render_upload_window(self):

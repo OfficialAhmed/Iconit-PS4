@@ -151,4 +151,4 @@ class Ui(Mask):
         self.GroupBtn.clicked.connect(self.browse_icon_group)
 
         multi_upload_obj = multi_upload()
-        self.UploadBtn.clicked.connect(lambda: multi_upload_obj.upload_baked_icons(self.UploadState, self.group_path))
+        self.UploadBtn.clicked.connect(lambda: multi_upload_obj.generate_icons_from_baked(self.UploadState, self.group_path))

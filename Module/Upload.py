@@ -17,13 +17,15 @@ class Main(Common):
         self.browsed_pic_path = self.get_browsed_pic_path()
         self.browsed_icon_path = self.get_browsed_icon_path()
         
-        self.game_icons = []
+        self.current_game_icons = []
 
         self.uploader = Uploader.Main()
 
 
     def start_processing(self) -> None:
-        """ take the user image, resize and duplicate it according to the mode selected """
+        """ 
+            take the user image, resize and duplicate it according to the mode selected 
+        """
 
         try:
             self.image = None
@@ -67,7 +69,9 @@ class Main(Common):
 
 
     def get_timestamp(self) -> str:
-        """ To avoid NameExists for the backup, rename it to current time """    
+        """ 
+            To avoid NameExists for the backup, rename it to current time 
+        """    
 
         date = datetime.datetime.now()
         time = date.time()
@@ -76,7 +80,9 @@ class Main(Common):
 
 
     def backup_icon(self) -> None:
-        """ Copy icon from local cache for backup """ 
+        """ 
+            Copy icon from local cache for backup
+        """ 
 
         icon_name = f"{self.current_game_id}.png"
         backup_icon_name = f"{self.get_timestamp()}.png"
@@ -90,7 +96,9 @@ class Main(Common):
 
 
     def generate_system_icons(self) -> None:
-        """ Resize system icons and append them into the list for the uploading method """
+        """ 
+            Resize system icons and append them into the list for the uploading method 
+        """
 
         self.ftp.cwd(f"/{self.ps4_system_icons_dir}{self.current_game_id}/sce_sys")
         game_files = self.get_server_list(list="files")
@@ -123,16 +131,15 @@ class Main(Common):
 
 
     def generate_game_icons(self) -> None:
-        """ Resize game icons and append them into the list for the uploading method  """
+        """ 
+            Resize game icons and append them into the list for the uploading method  
+        """
 
-        folder = ""
-        if self.game_ids.get(self.current_game_id).get("location") == "External": 
-            folder = "/external/"
-        game_directory = f"{self.ps4_internal_icons_dir}{folder}{self.current_game_id}"
-        
+        game_directory = self.get_ps4_game_location(self.current_game_id)
         self.ftp.cwd(f"/{game_directory}")
+        
+        self.current_game_icons = self.game_ids.get(self.current_game_id).get("icons")
 
-        self.game_icons = self.game_ids.get(self.current_game_id).get("icons")
         self.progress_bar(self.ValidationBar, 100)
 
         if self.browsed_pic_path or self.browsed_icon_path:
@@ -149,16 +156,22 @@ class Main(Common):
                 resized_pic = pic.resize(self.constant.get_ps4_pic_size(), PIL.Image.ANTIALIAS)
 
             progress = 0
-            progress_weight = 100 // len(self.game_icons)
+            progress_weight = 100 // len(self.current_game_icons)
 
-            for current_image in self.game_icons:
+            for current_image in self.current_game_icons:
                 
                 icon_cache_path = f"{self.icons_cache_path}{current_image}"
                 icon_cache_path_no_extension = icon_cache_path[:-4]
 
+                """
                 ######################################################################
-                # Check Icon or Pic has changed, then generate required NO. of icons
+                    Icon / Pic has changed, generate required NO. of icons
                 ######################################################################
+                """
+                if ".png" not in current_image and ".dds" not in current_image:
+                    # ignore extensions other than png/dds
+                    continue
+
                 if ".png" in current_image:
 
                     if self.browsed_icon_path and "icon" in current_image:
@@ -177,11 +190,7 @@ class Main(Common):
                     if self.browsed_pic_path and 'pic' in current_image:
                         resized_pic.save(f"{icon_cache_path_no_extension}.png")
                         self.uploader.png_to_dds(f"{icon_cache_path_no_extension}.png", self.icons_cache_path)
-                
-                else:
-                    # ignore other extensions
 
-                    continue
                 
                 if self.browsed_icon_path and "icon" in current_image:
                     self.icons_to_upload.append(current_image)
@@ -194,7 +203,9 @@ class Main(Common):
                 
 
     def generate_avatar_icons(self):
-        """ Resize avatar icons and append them into the list for the uploading method  """
+        """ 
+            Resize avatar icons and append them into the list for the uploading method  
+        """
 
         # FIXME: OLD IMPLEMENTATION. TO BE FIXED IN ANOTHER UPDATE. 
 
@@ -284,7 +295,9 @@ class Main(Common):
 
 
     def send_pic_to_ps4(self) -> None:
-        """ upload generated icons to ps4 """
+        """ 
+            upload generated icons to ps4
+        """
 
         for pic in self.pics_to_upload:
             self.uploader.upload_to_server(f"{self.icons_cache_path}{pic}", pic)
@@ -294,7 +307,9 @@ class Main(Common):
 
 
     def send_icon_to_ps4(self) -> None:
-        """ send icon to ps4, upon sucess copy icon0 for app preview """
+        """ 
+            send icon to ps4, upon sucess copy icon0 for app preview 
+        """
 
         try:
             for icon in self.icons_to_upload:

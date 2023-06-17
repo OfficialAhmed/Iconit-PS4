@@ -130,8 +130,23 @@ class Common:
         self.logging = self.html.internal_log_msg("ps4", self.ip, 12, "font-weight:600; font-style:italic;")
 
 
+    def get_ps4_game_location(self, game_id:str) -> str:
+        """ 
+            if game exists internally return empty, else external
+        """
+
+        folder = ""
+        if self.get_ids().get(game_id).get("location") == "External": 
+            folder = "/external/"
+
+        return f"{self.ps4_internal_icons_dir}{folder}{game_id}"
+    
+
     def log_to_external_file(self, description:str, Type:str) -> None:
-        """ Write info about the issue in an external file """
+        """ 
+            Write info about the issue to external file 
+        """
+
         data = lambda : f"{datetime.datetime.now()} | _DEV {Type.upper()}: {description}\n"
 
         try: error_file = open("Logs.txt", "a")
@@ -167,13 +182,17 @@ class Common:
 
 
     def progress_bar(self, bar, percentage:int) -> None:
-        """ Refresh the bar object by the passed percentage """
+        """ 
+            Refresh the bar object by the passed percentage 
+        """
 
         bar.setProperty("value", percentage)
 
 
     def backup_icons(self, src, dest, ids) -> None:
-        """ copy icons using threads """
+        """ 
+            copy icons using threads 
+        """
 
         store_icon = lambda id: shutil.copy(f"{src}{id}.png", f"{dest}\\{id}.png")
 
