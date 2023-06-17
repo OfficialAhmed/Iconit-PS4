@@ -172,6 +172,9 @@ class Common:
 
 
     def download_data_from_server(self, file_name:str, file_path_with_extension:str) -> bool:
+        """
+            download icons/xml etc from PS4
+        """
 
         try:
             with open(file_path_with_extension, "wb") as downloaded_file:
