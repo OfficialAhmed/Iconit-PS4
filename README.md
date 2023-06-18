@@ -115,6 +115,7 @@ This version isn't ready for end-users
 
 * [x] Multiple Icon Duplication at Once - heavy R/W Bound `Threading`
 
+* [ ] Save/load cache backup on PS4 `New feature` 
   
 * [ ] Backup/Restore cache to/from PS4 `New Feature`
 
