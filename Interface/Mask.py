@@ -153,6 +153,7 @@ class Ui(Mask):
         for baked in os.listdir(self.baked_path):
             if ".png" in baked:
                 self.ContinueProcessBtn.setEnabled(True)
+                self.alerts.display("continue upload process", "incompleteProcess")
                 break
 
 

@@ -8,6 +8,7 @@
 import os, datetime, shutil
 from ftplib import FTP
 import concurrent.futures
+import Module.Alerts as Alerts
 
 from Module.Widget.Shared import Widget
 from Module.Settings import Main as Settings
@@ -86,7 +87,7 @@ class Common:
         self.external_game_ids = []
         self.screen_w = Common.screen_w
         self.screen_h = Common.screen_h
-
+        
         self.app_root_path = f"{Common.app_path}" + "\\"
         self.data_path = f"{self.app_root_path}Data" + "\\"
         self.temp_path = f"{self.data_path}Cache" + "\\"
@@ -113,6 +114,7 @@ class Common:
         self.settings.init(self.temp_path, self.language_path, self.default_settings, is_for_local_attr=True)
         self.translation = Translate(self.language_path)
 
+
         self.ps4_system_icons_dir = self.constant.get_system_icons_path()
         self.ps4_internal_icons_dir = self.constant.get_internal_icons_path()
         self.ps4_external_icons_dir = self.constant.get_external_icons_path()
@@ -128,6 +130,7 @@ class Common:
         self.is_toggled_homebrew:str = self.settings_cache.get("homebrew")
         self.download_path:str = self.settings_cache.get("download_path")
 
+        self.alerts = Alerts.Main(self.translation, self.language)
         self.logging = self.html.internal_log_msg("ps4", self.ip, 12, "font-weight:600; font-style:italic;")
 
 

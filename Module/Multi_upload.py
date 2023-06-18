@@ -107,7 +107,6 @@ class Main(Common):
                     self.uploader.png_to_dds(f"{icon_cache_path_no_extension}.png", self.icons_cache_path)
 
                 icons_to_upload.append(current_image)
-        
 
             try:
                 game_directory = self.get_ps4_game_location(current_icon_id)
@@ -115,9 +114,10 @@ class Main(Common):
 
                 # Move baked icon to cache for local view upon upload success
                 self.uploader.update_local_icon(f"{self.baked_path}{current_icon_id}.png", current_icon_id)
+                state_widget.setText("DONE!")
 
             except Exception as e:
-                self.log_to_external_file(str(e), "upload - baked mask")
-            
-        state_widget.setText("DONE!")
+                self.log_to_external_file(str(e), "upload - baked mask")            
+                state_widget.setText("ERROR - READ logs.txt")
+
         upload_btn_widget.setEnabled(False)

@@ -30,4 +30,4 @@ GUI
 output
 .vs
 .vscode
-
+*.zip

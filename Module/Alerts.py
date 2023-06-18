@@ -1,41 +1,65 @@
-from environment import Common
+from PyQt5 import QtWidgets
 
-class Main(Common):
-    def  __init__(self) -> None:
+class Main:
+
+    def __init__(self, translation:str, language:str) -> None:
         super().__init__()
-        self.translated_content: dict = self.translation.get_translation(self.language, "Alerts")
 
-        self.copyright = f"\nhttps://twitter.com/OfficialAhmed0\n {self.translated_content.get('Thanks')}"
+        self.translated_content: dict = translation.get_translation(language, "Alerts")
 
-    def alert(self, type:str) -> None:
-        match type:
+
+    def display(self, window_title:str, description:str) -> None:
+        """
+            Display a widget(window) as an alert with useful information of an issue
+        """
+
+        msg = ""
+
+        match description:
+
             case "About":
-                msg = f"{self.translated_content.get('About')}.\n\n{self.translated_content.get('AppVer')} v{self.app_version} [{self.app_release_date}]\n {self.translated_content.get('Thanks')}"
+                msg = f"{self.translated_content.get('About')}.\n\n{self.translated_content.get('Thanks')}"
+
             case "db success":
                 msg = self.translated_content.get("DbSuccess")
+
             case "CUSTOMspecial_thanks":
-                msg = f"{self.translated_content.get('SpecialThanks')}:-\n@Lapy05575948\n\nTesters:-\n@laz305\n@maxtinion\n@_deejay87_\n@PS__TRICKS\n\n{self.translated_content.get('ThanksAll')}"
+                msg = f"{self.translated_content.get('SpecialThanks')}:-\n@Lapy05575948\n@DefaultDNB\n\nTesters:-\n@laz305\n@maxtinion\n@_deejay87_\n@PS__TRICKS\n\n{self.translated_content.get('ThanksAll')}"
+
             case "CUSTOMdoneRmvCache":
                 msg = self.translated_content.get("CacheRemoved")
+
             case "PermissionDenied":
                 msg = self.translated_content.get("PermissionErr")
+
             case "Invalid":
-                msg = f"{self.translated_content.get('InvalidCred')}.\n{self.copyright}"
+                msg = f"{self.translated_content.get('InvalidCred')}."
+
             case "IconIssue":
-                msg = f"{self.translated_content.get('InvalidCred')}.\n{self.copyright}"
+                msg = f"{self.translated_content.get('InvalidCred')}."
+
             case "icon size":
-                msg = f"{self.translated_content.get('SmallSize')} (440x440).\n{self.copyright}"
+                msg = f"{self.translated_content.get('SmallSize')} (440x440)."
+
             case "disconnected":
-                msg = f"{self.translated_content.get('Disconnected')}.\n{self.copyright}"
+                msg = f"{self.translated_content.get('Disconnected')}."
+
             case "invalid_ip_port":
-                msg = f"{self.translated_content.get('InvalidInput')}.\n{self.copyright}"
+                msg = f"{self.translated_content.get('InvalidInput')}."
+
             case "are_you_sure":
-                msg = f"{self.translated_content.get('IsPS4')}.\n{self.copyright}"
+                msg = f"{self.translated_content.get('IsPS4')}."
+
             case "timeout":
-                msg = f"{self.translated_content.get('TimeOut')}.\n{self.copyright}"
+                msg = f"{self.translated_content.get('TimeOut')}."
+
             case "connection_refused":
-                msg = f"{self.translated_content.get('TimeOut')}.\n{self.copyright}"
+                msg = f"{self.translated_content.get('TimeOut')}."
+
+            case "incompleteProcess":
+                msg = f"{self.translated_content.get('IncompleteProcess')}."
+
             case _:
-                msg = f"{type}. \n{self.copyright}"
+                msg = f"{description}."
             
-        self.Message.setPlainText(msg)
+        QtWidgets.QMessageBox.warning(None, f"{window_title.upper()}", f"{msg}")

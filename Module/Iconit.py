@@ -6,7 +6,6 @@
 """
 import string
 import Interface.Icons as Icons
-import Interface.Alerts as Alerts
 import Interface.Avatars as Avatars
 
 from environment import Common
@@ -180,17 +179,10 @@ class Main(Common):
 
 
     def connect_ps4(self, is_valid):
-        self.ui = Alerts.Ui()
-        self.window = QtWidgets.QDialog()
-        self.set_ui(self.ui)
-        self.set_window(self.window)
+        
 
         if not is_valid:
-            self.window = QtWidgets.QDialog()
-            self.change_state(False)
-            self.ui.setupUi(self.window)
-            self.ui.alert("invalid_ip_port")
-            self.window.show()
+            self.alerts.display("error", "invalid_ip_port")
 
         else:
             is_connected = False
@@ -202,6 +194,11 @@ class Main(Common):
             """
             try:
                 self.ftp.set_debuglevel(0)
+                
+                if len(self.port) < 1:
+                    txt = "port is empty"
+                    return
+                
                 self.ftp.connect(self.ip, int(self.port))
                 self.ftp.login("", "")
                 self.set_ftp(self.ftp)
@@ -211,22 +208,21 @@ class Main(Common):
                     self.ftp.cwd(self.ps4_internal_icons_dir)
                     self.ftp.cwd("/")
                     is_connected = True
+
                 except:
                     txt = "are_you_sure"
 
-            except TimeoutError:
-                txt = "timeout"
-            except ConnectionRefusedError:
-                txt = "connection_refused"
-            except Exception as e:
-                txt = f"Error. DEV| {str(e)}"
+            except TimeoutError: txt = "timeout"
+            except ConnectionRefusedError: txt = "connection_refused"
+            except Exception as e: txt = f"Error. DEV| {str(e)}"
 
             finally:
+
                 if not is_connected:
+
+                    self.alerts.display("error", txt)
                     self.change_state(False)
-                    self.ui.setupUi(self.window)
-                    self.ui.alert(txt)
-                    self.window.show()
+
                     return
 
             self.status_label.setText(self.html.span_tag("Please wait...", "#f2ae30", 18))
@@ -481,11 +477,7 @@ class Game(Main):
             return True
 
         except Exception as e:
-            self.log_to_external_file(str(e), "Error")
-            self.change_state(False)
-            self.ui.setupUi(self.window)
-            self.ui.alert(f"Error occured |_DEV {str(e)}")
-            self.window.show()
+            self.alerts.display("error", f"Error occured |_DEV {str(e)}")
 
 
 
@@ -582,9 +574,7 @@ class System(Main):
         except Exception as e:
             self.log_to_external_file(str(e), "Error")
             self.change_state(False)
-            self.ui.setupUi(self.window)
-            self.ui.alert(f"Error occured |_DEV {str(e)}")
-            self.window.show()
+            self.alerts.display("error", f"Error occured |_DEV {str(e)}")
             return False
 
 

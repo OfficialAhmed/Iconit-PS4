@@ -1,4 +1,3 @@
-import Interface.Alerts as Alerts
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Module.Upload import Main as Upload
 
@@ -11,9 +10,6 @@ class Ui(Upload):
     def setupUi(self, window):
         self.selected_mode = self.get_selected_mode()
         self.browsed_icon_path = self.get_browsed_icon_path()
-
-        self.window = QtWidgets.QDialog()
-        self.ui = Alerts.Ui()
 
         font = QtGui.QFont()
         font.setFamily(self.font)

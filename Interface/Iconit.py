@@ -4,9 +4,10 @@ from Module.Iconit import Main as Iconit
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import Interface.Settings as Settings
-import Interface.Alerts as Alerts
+
 
 class Ui(Iconit):
+
     def __init__(self) -> None:
         super().__init__()
         
@@ -333,49 +334,28 @@ class Ui(Iconit):
 
 
     def open_about(self):
-        self.window = QtWidgets.QDialog()
-        self.ui = Alerts.Ui()
-        self.ui.setupUi(self.window)
-        self.ui.alert("About")
-        self.window.show()
+        self.alerts.display("about", "About")
 
 
     def open_credits(self):
-        self.window = QtWidgets.QDialog()
-        self.ui = Alerts.Ui()
-        self.ui.setupUi(self.window)
-        self.ui.alert("CUSTOMspecial_thanks")
-        self.window.show()
+        self.alerts.display("credits", "CUSTOMspecial_thanks")
 
 
     def download_database(self):
-        self.window = QtWidgets.QDialog()
-        ui = Alerts.Ui()
-        ui.setupUi(self.window)
-
         game_db = self.mode.get("game").get("database").save()
         apps_db = self.mode.get("system apps").get("database").save()
         txt = ""
 
-        if game_db[0] == True:
-            txt += "Games Database Successful \n"
-        else:
-            txt += f"Games Database Unuccessful | {game_db[1]} \n"
+        if game_db[0] == True: txt += "Games Database Successful \n"
+        else: txt += f"Games Database Unuccessful | {game_db[1]} \n"
 
-        if apps_db[0] == True:
-            txt += "Apps Database Successful \n"
-        else:
-            txt += f"Apps Database Unuccessful | {apps_db[1]} \n"
+        if apps_db[0] == True: txt += "Apps Database Successful \n"
+        else: txt += f"Apps Database Unuccessful | {apps_db[1]} \n"
 
-
-        ui.alert(txt+" \n\nNOTE: DON'T USE THIS OPTION MANY TIMES OR YOU WILL BE BLOCKED BY THE SERVER, 2 OR 3 TIMES A DAY")
-        self.window.show()
+        self.alerts.display("database", txt+" \n\nNOTE: DON'T USE THIS OPTION MANY TIMES OR YOU WILL BE BLOCKED BY THE SERVER, 2 OR 3 TIMES A DAY")
         
 
     def remove_cache(self):
-        self.window = QtWidgets.QDialog()
-        ui = Alerts.Ui()
-        ui.setupUi(self.window)
         
         try:
             ignore_cache = (".gitkeep", "Database.json")
@@ -392,10 +372,7 @@ class Ui(Iconit):
                 if cache not in ignore_cache:
                     os.remove(f"{path}{cache}")
 
-            ui.alert("CUSTOMdoneRmvCache")
-        except PermissionError:
-            ui.alert("PermissionDenied")
-        except Exception as e:
-            ui.alert(str(e))
+            self.alerts.display("cache", "CUSTOMdoneRmvCache")
 
-        self.window.show()
+        except PermissionError: self.alerts.display("cache", "PermissionDenied")
+        except Exception as e: self.alerts.display("cache", str(e))

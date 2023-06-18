@@ -106,7 +106,8 @@
         "InvalidInput": "Double check PS4 IP and Port\n Note: If you're using GoldHen FTP\n make sure you're not connected to the PS4 with a different app as it only allow one connection",
         "IsPS4": "Are you sure you're connected to PS4?",
         "TimeOut": "Double check the Ip and port DEV| TimeoutError",
-        "ConnRefused": "PS4 has refused to connect, perhaps it's connected somewhere else DEV| ConnectionRefusedError"
+        "ConnRefused": "PS4 has refused to connect, perhaps it's connected somewhere else DEV| ConnectionRefusedError",
+        "IncompleteProcess":"It seems the last uploading process was incomplete, click the 'continue' button if you'd like to continue uploading"
     },
     "SetDefaultIcons":{
         "caution": "CAUTION! Read carefully",
