@@ -4,6 +4,7 @@ from Module.Icons import Main as Icons
 class Ui(Icons):
     
     def __init__(self) -> None:
+
         super().__init__()
         self.is_bg_image_changed = False
         self.ids = self.get_ids()
@@ -37,7 +38,11 @@ class Ui(Icons):
         font.setPointSize(25)
         font.setFamily(self.font)
 
-        # ______________    WINDOW SPECS    _________________ # 
+        """
+        #################################################################
+                                WINDOW SPECS 
+        #################################################################
+        """
         window.setObjectName("IconsWindow")
         window.setMinimumSize(QtCore.QSize(self.screen_w, 720))
         window.setWindowIcon(QtGui.QIcon(f"{self.pref_path}ic1.@OfficialAhmed0"))
@@ -45,7 +50,11 @@ class Ui(Icons):
         window.setWindowTitle(f"Iconit v{self.app_version} ({self.app_release_date})")
 
 
-        # ______________       MENU BAR      ______________________#
+        """
+        #################################################################
+                            MENU BARS - WIDGETS
+        #################################################################
+        """
 
         if self.selected_mode == "game":
             self.menubar = QtWidgets.QMenuBar(window)
@@ -62,7 +71,11 @@ class Ui(Icons):
             self.menuMore.triggered.connect(self.render_set_default_icons_window)
 
 
-        # ______________    LABELS    _________________ # 
+        """
+        #################################################################
+                            LABELS - WIDGETS
+        #################################################################
+        """
         self.TitleLabel = QtWidgets.QLabel(window)
         self.HomebrewLabel = QtWidgets.QLabel(window)
         self.GameTitleLabel = QtWidgets.QLabel(window)
@@ -98,7 +111,11 @@ class Ui(Icons):
         # Unallocate memory
         del labels
 
-        # ______________    BUTTONS    _________________ # 
+        """
+        #################################################################
+                            BUTTONS - WIDGETS
+        #################################################################
+        """
         font.setPointSize(13)
         font.setBold(True)
         self.SelectBtn = QtWidgets.QPushButton(window)
@@ -153,7 +170,11 @@ class Ui(Icons):
         self.SendBtn.setStyleSheet("color: rgb(255, 255, 255);")
         self.SendBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
-        # ______________    TEXT    _________________ # 
+        """
+        #################################################################
+                            TEXT - WIDGETS
+        #################################################################
+        """
         font.setPointSize(16)
         self.GameIdTxt = QtWidgets.QLabel(window)
         self.IconSizeTxt = QtWidgets.QLabel(window)
@@ -171,7 +192,13 @@ class Ui(Icons):
         self.LogsTxt.setReadOnly(True)
 
         del texts
-        # ______________    LINES    ___________________ # 
+        
+        
+        """
+        #################################################################
+                            LINES - WIDGETS
+        #################################################################
+        """
         self.Line2 = QtWidgets.QFrame(window)
         self.Line3 = QtWidgets.QFrame(window)
         self.Line4 = QtWidgets.QFrame(window)
@@ -185,7 +212,12 @@ class Ui(Icons):
             line.setFrameShadow(QtWidgets.QFrame.Sunken)
 
         del lines
-        # ______________    LINKS    _________________ # 
+        
+        """
+        #################################################################
+                            LINKS
+        #################################################################
+        """
         self.TwitterLink = QtWidgets.QLabel(window)
         self.PaypalLink = QtWidgets.QLabel(window)
 
@@ -204,7 +236,12 @@ class Ui(Icons):
             link.setSizePolicy(sizePolicy)
 
         del links 
-        # ______________    SIGNALS    _________________ # 
+
+        """
+        #################################################################
+                                SIGNALS
+        #################################################################
+        """
         self.NextBtn.clicked.connect(self.next)
         self.SelectBtn.clicked.connect(self.select)
         self.PreviousBtn.clicked.connect(self.previous)
@@ -214,7 +251,11 @@ class Ui(Icons):
         self.ChangeIconBtn.clicked.connect(self.change_icon)
 
         
-        # ______________    GAME TITLES    _________________ # 
+        """
+        #################################################################
+                                GAME TITLES
+        #################################################################
+        """
         font.setPointSize(15)
         self.GameTitles = QtWidgets.QComboBox(window)
         self.GameTitles.setFont(font)
@@ -225,7 +266,11 @@ class Ui(Icons):
         sizePolicy.setHeightForWidth(self.GameTitles.sizePolicy().hasHeightForWidth())
         self.GameTitles.setSizePolicy(sizePolicy)
 
-        # ______________    ICONS    _________________ # 
+        """
+        #################################################################
+                                ICONS
+        #################################################################
+        """
         self.Icon = QtWidgets.QGraphicsView(window)
         self.Icon.setMinimumSize(QtCore.QSize(340, 370))
         self.Icon.setFrameShape(QtWidgets.QFrame.NoFrame)
@@ -233,7 +278,11 @@ class Ui(Icons):
         sizePolicy.setHeightForWidth(self.Icon.sizePolicy().hasHeightForWidth())
         self.Icon.setSizePolicy(sizePolicy)
 
-        # ______________    LAYOUTS    _________________ # 
+        """
+        #################################################################
+                                LAYOUTS
+        #################################################################
+        """
         self.TopLayout = QtWidgets.QFormLayout()
         self.TopLayout.setContentsMargins(20, 20, 20, -1)
         self.TopLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.TitleLabel)
@@ -340,7 +389,7 @@ class Ui(Icons):
 
         """
         #################################################################
-                        HOVEROVER TOOL TIPS
+                            HOVEROVER TOOL TIPS
         #################################################################
         """
         translated_tooltips:dict = self.translated_content.get("ToolTips")
@@ -359,7 +408,7 @@ class Ui(Icons):
 
         """
         #################################################################
-                    MODE SPECIFIC FEATURES
+                            MODE SPECIFIC FEATURES
         #################################################################
         """
         match self.selected_mode:
@@ -419,4 +468,6 @@ class Ui(Icons):
     def translate_dynamic_elements(self):
         """
             Translate changable elements on button click 
+
+            ELEMENTS change more than once will be translated using this method
         """

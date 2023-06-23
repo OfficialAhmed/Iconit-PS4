@@ -3,6 +3,7 @@ from Module.Upload import Main as Upload
 
 
 class Ui(Upload):
+    
     def __init__(self) -> None:
         super().__init__()
 
@@ -16,14 +17,22 @@ class Ui(Upload):
         font.setPointSize(12)
         font.setItalic(True)
 
-        #_________________   WINDOW SPECS   _______________#
+        """
+        #################################################################
+                            WINDOW SPECS
+        #################################################################
+        """
         window.resize(378, 229)
         window.setWindowTitle("Proceed sending images...")
         window.setMinimumSize(QtCore.QSize(500, 500))
         window.setMaximumSize(QtCore.QSize(500, 500))
         window.setWindowIcon(QtGui.QIcon(f"{self.pref_path}ic1.@OfficialAhmed0"))
 
-        #_________________    BUTTONS    ________________#
+        """
+        #################################################################
+                                BUTTONS
+        #################################################################
+        """
         self.Yes = QtWidgets.QPushButton(window)
         self.Ok = QtWidgets.QPushButton(window)
         self.No = QtWidgets.QPushButton(window)
@@ -38,7 +47,12 @@ class Ui(Upload):
             btn.setStyleSheet("background-color: rgb(190, 190, 190);")
             x_axis += 60
 
-        #_________________    PROGRESS BARS    ________________#
+
+        """
+        #################################################################
+                        PROGRESS BARS - WIDGETS
+        #################################################################
+        """
         self.ValidationBar = QtWidgets.QProgressBar(window)
         self.ConversionBar = QtWidgets.QProgressBar(window)
         self.SendingBar = QtWidgets.QProgressBar(window)
@@ -53,7 +67,11 @@ class Ui(Upload):
             bar.setOrientation(QtCore.Qt.Horizontal)
             y_axis += 100
 
-        #_________________    LABELS    ________________#
+        """
+        #################################################################
+                            LABELS - WIDGETS
+        #################################################################
+        """
         font.setPointSize(13)
 
         self.ValidationLabel = QtWidgets.QLabel(window)
@@ -75,7 +93,11 @@ class Ui(Upload):
         del bars
         del btns
 
-        #_________________    EXTRA    ________________#
+        """
+        #################################################################
+                            EXTRA - ELEMENTS
+        #################################################################
+        """
         self.msg = QtWidgets.QLabel(window)
         self.msg.setFont(font)
         self.msg.setGeometry(QtCore.QRect(20, 50, 470, 40))
@@ -95,12 +117,20 @@ class Ui(Upload):
 
         self.centralwidget = QtWidgets.QWidget(window)
 
-        #_________________    SIGNALS    ________________#
+        """
+        #################################################################
+                                SIGNALS
+        #################################################################
+        """
         self.Ok.clicked.connect(window.close)
         self.No.clicked.connect(window.close)
         self.Yes.clicked.connect(self.start_processing)
 
-        #_________________    VISIBILITY    ________________#
+        """
+        #################################################################
+                                VISBILITY
+        #################################################################
+        """
         self.graphicsView.raise_()
         self.Yes.raise_()
         self.No.raise_()
@@ -117,12 +147,16 @@ class Ui(Upload):
 
 
     def retranslateUi(self):
+
+        win_name = "ConfirmWindow"
+        translated_content: dict = self.translation.get_translation(self.language, win_name)
         _translate = QtCore.QCoreApplication.translate
-        self.Yes.setText(_translate("ConfirmWindow", "Yes"))
-        self.Ok.setText(_translate("ConfirmWindow", "Ok"))
-        self.No.setText(_translate("ConfirmWindow", "No"))
-        self.ValidationLabel.setText(_translate("ConfirmWindow", "VALIDATION"))
-        self.ConversionLabel.setText(_translate("ConfirmWindow", "CONVERSION"))
-        self.SendingLabel.setText(_translate("ConfirmWindow", "SEND"))
-        warning_message = f"{self.html.p_tag('margin: 0px;font-size:12pt; -qt-block-indent:0; text-indent:0px; color:#e83c3c', 'ATTENTION! This will overwrite the icon on the PS4')}Are sure you want to proceed?"
-        self.msg.setText(_translate("ConfirmWindow", warning_message))
+
+        self.Yes.setText(_translate(win_name, translated_content.get("Yes")))
+        self.Ok.setText(_translate(win_name, translated_content.get("Ok")))
+        self.No.setText(_translate(win_name, translated_content.get("No")))
+        self.ValidationLabel.setText(_translate(win_name, translated_content.get("ValidationLabel")))
+        self.ConversionLabel.setText(_translate(win_name, translated_content.get("ConversionLabel")))
+        self.SendingLabel.setText(_translate(win_name, translated_content.get("SendingLabel")))
+        self.msg.setText(_translate(win_name, warning_message))
+        warning_message = f"{self.html.p_tag('margin: 0px;font-size:12pt; -qt-block-indent:0; text-indent:0px; color:#e83c3c', {translated_content.get('Warning')})}{translated_content.get('Question')}?"

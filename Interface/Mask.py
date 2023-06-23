@@ -127,37 +127,90 @@ class Ui(Mask):
 
 
     def retranslateUi(self, window):
-        
+
+        win_name = "MaskMakerWindow"
+        translated_content: dict = self.translation.get_translation(self.language, "Iconit")
         _translate = QtCore.QCoreApplication.translate
-        window.setWindowTitle(_translate("mask_maker", "Iconit - Mask maker"))
 
-        self.BakeBtn.setText(_translate("mask_maker", "BAKE ICONS"))
-        self.MaskBtn.setText(_translate("mask_maker", "Mask..."))
-        self.GroupBtn.setText(_translate("mask_maker", "Group..."))
-        self.ContinueProcessBtn.setText(_translate("mask_maker", "Continue"))
-        self.UploadBtn.setText(_translate("mask_maker", "UPLOAD BAKED ICONS"))
+        window.setWindowTitle(_translate(win_name, translated_content.get("WindowTitle")))
+        self.MaskName.setText(_translate(win_name, ""))
+        self.GroupName.setText(_translate(win_name, ""))
 
-        self.MaskName.setText(_translate("mask_maker", ""))
-        self.GroupName.setText(_translate("mask_maker", ""))
+        self.BakeBtn.setText(_translate(win_name, translated_content.get("BakeBtn")))
+        self.MaskBtn.setText(_translate(win_name, translated_content.get("MaskBtn")))
+        self.GroupBtn.setText(_translate(win_name, translated_content.get("GroupBtn")))
+        self.UploadBtn.setText(_translate(win_name, translated_content.get("UploadBtn")))
+        self.ContinueProcessBtn.setText(_translate(win_name, translated_content.get("ContinueProcessBtn")))
 
-        self.BakeState.setText(_translate("mask_maker", self.html.span_tag('AWAITING...', self.constant.get_color('orange'), 8)))
-        self.ContinueProcessLabel.setText(_translate("mask_maker", "If anything goes wrong while uploading the icons click 'continue' anytime to proceed the process from where it stopped."))
-        self.IconitLinkLabel.setText(_translate("mask_maker", self.html.a_tag('https://github.com/OfficialAhmed/Iconit-PS4/releases', 'Iconit', '#f250e7', 9)))
-        self.FreeMasksLinkLabel.setText(_translate("mask_maker", self.html.a_tag('https://all-exhost.github.io/Masks.html', 'Download Free Masks', '#f250e7', 9)))
-        self.UploadState.setText(_translate("mask_maker", "BAKED ICONS NOT FOUND"))
+        self.BakeState.setText(
+            _translate(
+                win_name, 
+                self.html.span_tag(
+                    translated_content.get("BakeState"), 
+                    self.constant.get_color('orange'),
+                    8
+                )
+            )
+        )
+        
+        self.ContinueProcessLabel.setText(
+            _translate(
+                win_name, 
+                translated_content.get("ContinueProcessLabel")
+            )
+        )
+        
+        self.IconitLinkLabel.setText(
+            _translate(
+                win_name, 
+                self.html.a_tag(
+                    'https://github.com/OfficialAhmed/Iconit-PS4/releases', 
+                    'Iconit', 
+                    '#f250e7', 
+                    9
+                )
+            )
+        )
+
+        self.FreeMasksLinkLabel.setText(
+            _translate(
+                win_name, 
+                self.html.a_tag(
+                    'https://all-exhost.github.io/Masks.html', 
+                    translated_content.get("FreeMasksLinkLabel"), 
+                    '#f250e7', 
+                    9
+                )
+            )
+        )
+
+        self.UploadState.setText(
+            _translate(
+                win_name, 
+                translated_content.get("UploadState")
+            )
+        )
         
 
-        # ___________  Continue Process Feature   _______________________
+        """
+        #################################################################
+                        CONTINUE PROCESS - FEATURE
+        #################################################################
+        """
         self.ContinueProcessBtn.setEnabled(False)
 
         for baked in os.listdir(self.baked_path):
             if ".png" in baked:
                 self.ContinueProcessBtn.setEnabled(True)
-                self.alerts.display("continue upload process", "incompleteProcess")
+                self.alerts.display(translated_content.get("WarnWindowTitle"), "incompleteProcess")
                 break
 
 
-        # _______________    SIGNALS   _______________________
+        """
+        #################################################################
+                                SIGNALS
+        #################################################################
+        """
         self.BakeBtn.clicked.connect(self.bake_mask)    
         self.MaskBtn.clicked.connect(self.browse_mask)
         self.GroupBtn.clicked.connect(self.browse_icon_group)

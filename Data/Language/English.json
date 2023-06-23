@@ -107,9 +107,9 @@
         "IsPS4": "Are you sure you're connected to PS4?",
         "TimeOut": "Double check the Ip and port DEV| TimeoutError",
         "ConnRefused": "PS4 has refused to connect, perhaps it's connected somewhere else DEV| ConnectionRefusedError",
-        "IncompleteProcess":"It seems the last uploading process was incomplete, click the 'continue' button if you'd like to continue uploading"
+        "IncompleteProcess": "It seems the last uploading process was incomplete, click the 'continue' button if you'd like to continue uploading"
     },
-    "SetDefaultIcons":{
+    "SetDefaultIcons": {
         "caution": "CAUTION! Read carefully",
         "optionInfo": "This option will use the current set of icons as the default set. It's recommended that you make sure all icons have the original icon/without any mask, otherwise the resulting icons will end up incorrect",
         "moreInfo": "You only need to use this option once",
@@ -118,5 +118,29 @@
         "new_icons_label": "NEW ICONS NOT IN [DEFAULT GROUP]",
         "default_group_btn": "SET/UPDATE DEFAULT GROUP",
         "custom_group_btn": "SET CUSTOM GROUP"
+    },
+    "ConfirmWindow": {
+        "Ok": "Ok",
+        "No": "No",
+        "Yes": "Yes",
+        "SendingLabel": "SEND",
+        "ValidationLabel": "VALIDATION",
+        "ConversionLabel": "CONVERSION",
+        "Question": "Are sure you want to proceed",
+        "Warning": "ATTENTION! This will overwrite the icon on the PS4"
+    },
+    "MaskMakerWindow": {
+        "MaskBtn": "Mask...",
+        "GroupBtn": "Group...",
+        "BakeBtn": "BAKE ICONS",
+        "UploadState": "Waiting...",
+        "BakeState": "BAKING REQUIRED",
+        "ContinueProcessBtn": "Continue",
+        "UploadBtn": "UPLOAD BAKED ICONS",
+        "WindowTitle": "Iconit - Mask Maker",
+        "FreeMasksLinkLabel": "Download Free Masks",
+        "Warning": "ATTENTION! This will overwrite the icon on the PS4",
+        "ContinueProcessLabel": "If anything goes wrong while uploading the icons click 'continue' anytime to proceed the process from where it stopped.",
+        "WarnWindowTitle": "continue upload process"
     }
 }
