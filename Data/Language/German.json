@@ -134,6 +134,7 @@
     "MaskMakerWindow": {
         "MaskBtn": "Maske...",
         "GroupBtn": "Gruppe...",
+        "RevertBtn": "Zurücksetzen auf Standard",
         "BakeBtn": "ICONS ERSTELLEN",
         "UploadState": "Warten...",
         "BakeState": "ERSTELLUNG ERFORDERLICH",
@@ -144,6 +145,10 @@
         "Warning": "ACHTUNG! Dadurch wird das Icon auf der PS4 überschrieben",
         "ContinueProcessLabel": "Wenn beim Hochladen der Icons etwas schiefgeht, klicken Sie jederzeit auf 'Fortsetzen', um den Vorgang ab der Stelle fortzusetzen, an der er angehalten wurde.",
         "WarnWindowTitle": "Upload-Vorgang fortsetzen?",
-        "WarnWindowQuestion": "Der letzte Upload-Vorgang wurde unvollständig beendet.\nMöchten Sie den Vorgang fortsetzen?"
+        "RevertToDefaultWindow": {
+            "WinTitle": "BESTÄTIGUNG DER RÜCKKEHR ZUM STANDARD",
+            "Msg1": "Möchten Sie wirklich auf die Standardeinstellungen zurücksetzen?",
+            "Msg2": "Icons auf den Standardstil zurücksetzen?"
+        }
     }
 }

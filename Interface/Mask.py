@@ -28,6 +28,11 @@ class Ui(Mask):
         self.GroupBtn = QtWidgets.QPushButton(window)
         self.GroupBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.gridLayout_3.addWidget(self.GroupBtn, 0, 0, 1, 1)
+
+        self.RevertBtn = QtWidgets.QPushButton(window)
+        self.RevertBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.gridLayout_3.addWidget(self.RevertBtn, 1, 0, 1, 1)
+
         self.UpperLayout.addLayout(self.gridLayout_3, 3, 1, 1, 1)
         self.gridLayout_2 = QtWidgets.QGridLayout()
         self.MaskName = QtWidgets.QLabel(window)
@@ -52,12 +57,10 @@ class Ui(Mask):
         self.UploadBtn.setSizePolicy(sizePolicy)
         self.UploadBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.gridLayout_5.addWidget(self.UploadBtn, 2, 0, 1, 1)
-        self.UploadBtn.setEnabled(False)
 
         self.BakeBtn = QtWidgets.QPushButton(window)
         self.BakeBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.gridLayout_5.addWidget(self.BakeBtn, 1, 0, 1, 1)
-        self.BakeBtn.setEnabled(False)
         spacerItem1 = spacer_widget_min_exp
         self.gridLayout_5.addItem(spacerItem1, 0, 0, 1, 1)
         self.UpperLayout.addLayout(self.gridLayout_5, 7, 1, 1, 1)
@@ -122,6 +125,17 @@ class Ui(Mask):
         self.mainLayout.addLayout(self.CreditsLayout)
         self.verticalLayout_2.addLayout(self.mainLayout)
 
+
+        """
+        #################################################################
+                        BTN BEHAVIOR ON RENDER
+        #################################################################
+        """
+        self.BakeBtn.setEnabled(False)
+        self.UploadBtn.setEnabled(False)
+        self.RevertBtn.setEnabled(False)
+
+
         self.retranslateUi(window)
         QtCore.QMetaObject.connectSlotsByName(window)
 
@@ -129,24 +143,24 @@ class Ui(Mask):
     def retranslateUi(self, window):
 
         win_name = "MaskMakerWindow"
-        translated_content: dict = self.translation.get_translation(self.language, win_name)
         _translate = QtCore.QCoreApplication.translate
 
-        window.setWindowTitle(_translate(win_name, translated_content.get("WindowTitle")))
+        window.setWindowTitle(_translate(win_name, self.translated_content.get("WindowTitle")))
         self.MaskName.setText(_translate(win_name, ""))
         self.GroupName.setText(_translate(win_name, ""))
 
-        self.BakeBtn.setText(_translate(win_name, translated_content.get("BakeBtn")))
-        self.MaskBtn.setText(_translate(win_name, translated_content.get("MaskBtn")))
-        self.GroupBtn.setText(_translate(win_name, translated_content.get("GroupBtn")))
-        self.UploadBtn.setText(_translate(win_name, translated_content.get("UploadBtn")))
-        self.ContinueProcessBtn.setText(_translate(win_name, translated_content.get("ContinueProcessBtn")))
+        self.BakeBtn.setText(_translate(win_name, self.translated_content.get("BakeBtn")))
+        self.MaskBtn.setText(_translate(win_name, self.translated_content.get("MaskBtn")))
+        self.GroupBtn.setText(_translate(win_name, self.translated_content.get("GroupBtn")))
+        self.RevertBtn.setText(_translate(win_name, self.translated_content.get("RevertBtn")))
+        self.UploadBtn.setText(_translate(win_name, self.translated_content.get("UploadBtn")))
+        self.ContinueProcessBtn.setText(_translate(win_name, self.translated_content.get("ContinueProcessBtn")))
 
         self.BakeState.setText(
             _translate(
                 win_name, 
                 self.html.span_tag(
-                    translated_content.get("BakeState"), 
+                    self.translated_content.get("BakeState"), 
                     self.constant.get_color('orange'),
                     8
                 )
@@ -156,7 +170,7 @@ class Ui(Mask):
         self.ContinueProcessLabel.setText(
             _translate(
                 win_name, 
-                translated_content.get("ContinueProcessLabel")
+                self.translated_content.get("ContinueProcessLabel")
             )
         )
         
@@ -177,7 +191,7 @@ class Ui(Mask):
                 win_name, 
                 self.html.a_tag(
                     'https://all-exhost.github.io/Masks.html', 
-                    translated_content.get("FreeMasksLinkLabel"), 
+                    self.translated_content.get("FreeMasksLinkLabel"), 
                     '#f250e7', 
                     9
                 )
@@ -187,7 +201,7 @@ class Ui(Mask):
         self.UploadState.setText(
             _translate(
                 win_name, 
-                translated_content.get("UploadState")
+                self.translated_content.get("UploadState")
             )
         )
         
@@ -202,7 +216,7 @@ class Ui(Mask):
         for baked in os.listdir(self.baked_path):
             if ".png" in baked:
                 self.ContinueProcessBtn.setEnabled(True)
-                self.alerts.display(translated_content.get("WarnWindowTitle"), "incompleteProcess")
+                self.alerts.display(self.translated_content.get("WarnWindowTitle"), "incompleteProcess")
                 break
 
 
@@ -214,6 +228,7 @@ class Ui(Mask):
         self.BakeBtn.clicked.connect(self.bake_mask)    
         self.MaskBtn.clicked.connect(self.browse_mask)
         self.GroupBtn.clicked.connect(self.browse_icon_group)
+        self.RevertBtn.clicked.connect(self.revert_to_default)
 
         multi_upload_obj = multi_upload()
         self.UploadBtn.clicked.connect(lambda: multi_upload_obj.generate_icons_from_baked(self.UploadState, self.UploadBtn, self.group_path))

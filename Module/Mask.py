@@ -2,10 +2,11 @@ from threading import Lock
 from environment import Common
 
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QFileDialog
 from PIL import Image
+from PyQt5.QtWidgets import QFileDialog, QApplication, QMessageBox
 
 import os, shutil, json, concurrent.futures
+
 
 class Main(Common):
 
@@ -19,6 +20,9 @@ class Main(Common):
         self.group_icons_is_changed = False
         self.preview_icon_path = self.pref_path.replace('\\', '/')
         self.ps4_icon_dimension = self.constant.get_ps4_icon_size()
+        
+        win_name = "MaskMakerWindow"
+        self.translated_content: dict = self.translation.get_translation(self.language, win_name)
 
 
     def check_bake_state(self):
@@ -55,7 +59,9 @@ class Main(Common):
 
 
     def browse_icon_group(self) -> None:
-        """ Get the json group chosen by the user  """
+        """ 
+            Get the json group chosen by the user  
+        """
 
         self.group_icons_is_changed = False
         options = QtWidgets.QFileDialog.Options()
@@ -74,13 +80,17 @@ class Main(Common):
         )
 
         if group_path and group_path.split('/')[-2] == 'Groups':
+            
+            self.RevertBtn.setEnabled(True)
+            self.selected_group = group_path.split('/')[-1]
+
             self.group_path = group_path
             self.check_bake_state()
             self.BakeState.setText("Baking mask required")
             self.BakedView.setStyleSheet(f'border-image: url({self.preview_icon_path}previewTest.@OfficialAhmed0);')
             
             self.group_icons_is_changed = True
-            self.GroupName.setText(group_path.split('/')[-1])
+            self.GroupName.setText(self.selected_group)
             self.group_ids: dict = json.load(open(group_path))
 
         else:
@@ -143,6 +153,30 @@ class Main(Common):
 
         self.validate_baking()
 
+
+    def revert_to_default(self):
+        """
+            Get selected group to default style from default cached icons
+            *Prompt user before proceeding*
+        """
+
+        translated_content: dict = self.translated_content.get("RevertToDefaultWindow")
+        msg_window = QMessageBox()
+
+        msg_window.setIcon(QMessageBox.Question)
+        msg_window.setWindowTitle(translated_content.get("WinTitle"))
+        msg_window.setText(f"{translated_content.get('Msg1')} *{self.selected_group}* {translated_content.get('Msg2')}")
+
+        msg_window.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_window.setDefaultButton(QMessageBox.No)
+
+        if msg_window.exec_() == QMessageBox.Yes:
+
+            self.RevertBtn.setEnabled(False)
+
+            # read from default cached icons -> generate No of icons (png/dds) -> upload to PS4
+            
+            
 
     def bake_mask(self) -> None:
         """ Apply chosen mask on all JSON Group """

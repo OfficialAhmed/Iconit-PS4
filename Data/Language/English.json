@@ -134,6 +134,7 @@
     "MaskMakerWindow": {
         "MaskBtn": "Mask...",
         "GroupBtn": "Group...",
+        "RevertBtn": "Revert to default",
         "BakeBtn": "BAKE ICONS",
         "UploadState": "Waiting...",
         "BakeState": "BAKING REQUIRED",
@@ -143,6 +144,11 @@
         "FreeMasksLinkLabel": "Download Free Masks",
         "Warning": "ATTENTION! This will overwrite the icon on the PS4",
         "ContinueProcessLabel": "If anything goes wrong while uploading the icons click 'continue' anytime to proceed the process from where it stopped.",
-        "WarnWindowTitle": "continue upload process"
+        "WarnWindowTitle": "continue upload process",
+        "RevertToDefaultWindow": {
+            "WinTitle": "REVERT TO DEFAULT CONFIRMATION",
+            "Msg1": "Are you sure you want to revert",
+            "Msg2": "icons to the default style?"
+        }
     }
 }

@@ -134,6 +134,7 @@
     "MaskMakerWindow": {
         "MaskBtn": "Máscara...",
         "GroupBtn": "Grupo...",
+        "RevertBtn": "Restaurar a los valores predeterminados",
         "BakeBtn": "HORNEAR ICONOS",
         "UploadState": "Esperando...",
         "BakeState": "HORNADO REQUERIDO",
@@ -143,6 +144,11 @@
         "FreeMasksLinkLabel": "Descargar Máscaras Gratis",
         "Warning": "¡ATENCIÓN! Esto sobrescribirá el icono en la PS4",
         "ContinueProcessLabel": "Si algo sale mal durante la carga de los iconos, haz clic en 'continuar' en cualquier momento para continuar el proceso desde donde se detuvo.",
-        "WarnWindowTitle": "continuar proceso de carga"
+        "WarnWindowTitle": "continuar proceso de carga",
+        "RevertToDefaultWindow": {
+            "WinTitle": "CONFIRMACIÓN DE RESTABLECER A VALORES PREDETERMINADOS",
+            "Msg1": "¿Estás seguro de que quieres restablecer",
+            "Msg2": "los iconos al estilo predeterminado?"
+        }
     }
 }
