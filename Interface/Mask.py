@@ -129,7 +129,7 @@ class Ui(Mask):
     def retranslateUi(self, window):
 
         win_name = "MaskMakerWindow"
-        translated_content: dict = self.translation.get_translation(self.language, "Iconit")
+        translated_content: dict = self.translation.get_translation(self.language, win_name)
         _translate = QtCore.QCoreApplication.translate
 
         window.setWindowTitle(_translate(win_name, translated_content.get("WindowTitle")))

@@ -2,7 +2,9 @@
     "Language": "English",
     "Languages": {
         "English": "English",
-        "Arabic": "Arabic"
+        "Arabic": "Arabic",
+        "German": "German",
+        "Spanish": "Spanish"
     },
     "Settings": {
         "WindowTitle": "Settings",
