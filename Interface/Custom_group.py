@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 from Module.Custom_group import Main as Custom_group
 
 class Ui(Custom_group):
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -52,6 +53,7 @@ class Ui(Custom_group):
         self.group_title_input.setObjectName("group_title_input")
         self.formLayout_6.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.group_title_input)
         self.verticalLayout_2.addLayout(self.formLayout_6)
+
         self.buttonBox = QtWidgets.QDialogButtonBox(self.window)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Save)
@@ -60,9 +62,16 @@ class Ui(Custom_group):
         self.verticalLayout_2.addWidget(self.buttonBox)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
 
+        #___________    CUSTOM SELECT/DESELECT ALL BTNs    _______________ #
 
-        #___________    Render Game IDs and titles    _______________ #
-        self.selected_ids:list = []
+        self.selectAllBtn = QtWidgets.QPushButton("Select all")
+        self.buttonBox.addButton(self.selectAllBtn, QtWidgets.QDialogButtonBox.ActionRole)
+        self.deselectAllBtn = QtWidgets.QPushButton("Deselect all")
+        self.buttonBox.addButton(self.deselectAllBtn, QtWidgets.QDialogButtonBox.ActionRole)
+
+
+        #___________    Render Game ID - title as checkbox    _______________ #
+        self.checkboxes:list = []
         ids:dict = self.get_ids()
         row = 0
 
@@ -72,14 +81,18 @@ class Ui(Custom_group):
             content.setText(f"[{id}] {id_info.get('title')}")
 
             self.gridLayout.addWidget(content, row, 1, 1, 1)
-            self.selected_ids.append(content)
-            content.isChecked()
+            self.checkboxes.append(content)
+
             row += 1
 
 
         self.retranslateUi()
         self.buttonBox.accepted.connect(lambda: self.save_group())
         self.buttonBox.rejected.connect(self.window.reject)
+        self.selectAllBtn.clicked.connect(lambda: self.select_all())
+        self.deselectAllBtn.clicked.connect(lambda: self.deselect_all())
+
+
         QtCore.QMetaObject.connectSlotsByName(self.window)
 
 
