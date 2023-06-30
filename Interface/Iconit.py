@@ -7,11 +7,10 @@ import Interface.Settings as Settings
 
 
 class Ui(Iconit):
-
+    
     def __init__(self) -> None:
         super().__init__()
-        
-        
+
     def setupUi(self, window):
         self.html = Html()
 
@@ -23,19 +22,25 @@ class Ui(Iconit):
 
         pointing_hand_cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
 
-        # ______________   WINDOW SPECS   _____________________ #
+        """
+        #################################################################
+                            WINDOW SPECS
+        #################################################################
+        """
         window.setWindowTitle(f"Iconit v{self.app_version} ({self.app_release_date})")
 
         window.resize(720, 620)
         window.setMinimumSize(QtCore.QSize(720, 620))
         window.setWindowModality(QtCore.Qt.WindowModal)
         window.setTabShape(QtWidgets.QTabWidget.Rounded)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHeightForWidth(window.sizePolicy().hasHeightForWidth())
         window.setSizePolicy(sizePolicy)
 
         self.mainWidget = QtWidgets.QWidget(window)
-        bg_path = self.pref_path.replace('\\', '/')
+        bg_path = self.pref_path.replace("\\", "/")
         self.mainWidget.setObjectName("mainWidget")
         self.mainWidget.setStyleSheet(
             f"""
@@ -48,14 +53,22 @@ class Ui(Iconit):
             """
         )
 
-        # ______________   LABELS   _____________________ #
+        """
+        #################################################################
+                                LABELS
+        #################################################################
+        """
         font.setPointSize(22)
         font.setItalic(False)
 
         self.TransparentLayer = QtWidgets.QWidget(self.mainWidget)
         self.TransparentLayer.setObjectName("TransparentLayer")
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHeightForWidth(self.TransparentLayer.sizePolicy().hasHeightForWidth())
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHeightForWidth(
+            self.TransparentLayer.sizePolicy().hasHeightForWidth()
+        )
         self.TransparentLayer.setSizePolicy(sizePolicy)
         self.TransparentLayer.setStyleSheet(
             f"""
@@ -75,7 +88,11 @@ class Ui(Iconit):
         self.CacheLabel = QtWidgets.QLabel(self.TransparentLayer)
         self.StatusLabel = QtWidgets.QLabel(self.TransparentLayer)
 
-        # ______________   BUTTONS   _____________________ #
+        """
+        #################################################################
+                                BUTTONS
+        #################################################################
+        """
         font.setPointSize(14)
         font.setItalic(True)
 
@@ -85,12 +102,12 @@ class Ui(Iconit):
         self.AvatarIconsRadio = QtWidgets.QRadioButton(self.TransparentLayer)
 
         btns = (
-            self.GameIconsRadio, 
-            self.SystemIconsRadio, 
-            self.AvatarIconsRadio, 
-            self.ConnectBtn
+            self.GameIconsRadio,
+            self.SystemIconsRadio,
+            self.AvatarIconsRadio,
+            self.ConnectBtn,
         )
-        
+
         for btn in btns:
             btn.setFont(font)
             btn.setCursor(pointing_hand_cursor)
@@ -103,7 +120,11 @@ class Ui(Iconit):
         self.ConnectBtn.setStyleSheet("color: rgb(0, 0, 0);")
         self.GameIconsRadio.setChecked(True)
 
-        # ______________   INPUTS   _____________________ #
+        """
+        #################################################################
+                                INPUTS
+        #################################################################
+        """
         font.setPointSize(13)
         font.setBold(False)
         font.setItalic(True)
@@ -121,11 +142,21 @@ class Ui(Iconit):
             input.setAlignment(QtCore.Qt.AlignCenter)
             input.setStyleSheet("border-radius: 10px;")
 
-        # ______________   DESCRIPTION   _____________________ #
+        """
+        #################################################################
+                            DESCRIPTION
+        #################################################################
+        """
+
         self.SysIconsInfo = QtWidgets.QLabel(self.TransparentLayer)
         self.GameIconsInfo = QtWidgets.QLabel(self.TransparentLayer)
 
-        # ______________   CUSTOM PROGRESS BAR   _____________________ #
+        """
+        #################################################################
+                            CUSTOM PROGRESS BAR
+        #################################################################
+        """
+
         self.CacheBar = QtWidgets.QProgressBar(self.TransparentLayer)
         self.CacheBar.setStyleSheet(
             f"""
@@ -142,7 +173,11 @@ class Ui(Iconit):
         self.CacheBar.setProperty("value", 0)
         self.CacheBar.setAlignment(QtCore.Qt.AlignCenter)
 
-        # ______________   CLICKABLE LINKS   _____________________ #
+        """
+        #################################################################
+                            CLICKABLE LINKS
+        #################################################################
+        """
 
         self.TitleLink = QtWidgets.QLabel(self.mainWidget)
         self.PaypalLink = QtWidgets.QLabel(self.TransparentLayer)
@@ -153,8 +188,8 @@ class Ui(Iconit):
             self.TitleLink,
             self.PaypalLink,
             self.TwitterLink,
-            self.OnlineIconsLink
-            )
+            self.OnlineIconsLink,
+        )
 
         for link in links:
             link.setFont(font)
@@ -165,10 +200,21 @@ class Ui(Iconit):
         font.setBold(True)
         self.TitleLink.setFont(font)
 
-        # ______________   SPACERS AND LAYOUTS (Order matter)  _____________________ #
-        SpacerMinExp = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        SpacerExpMin = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        SpacerFixMin = QtWidgets.QSpacerItem(500, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        """
+        #################################################################
+                    SPACERS AND LAYOUTS (Order matter)
+        #################################################################
+        """
+
+        SpacerMinExp = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
+        SpacerExpMin = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
+        SpacerFixMin = QtWidgets.QSpacerItem(
+            500, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum
+        )
         spacerItem = SpacerExpMin
         spacerItem1 = SpacerMinExp
         spacerItem2 = SpacerExpMin
@@ -225,7 +271,11 @@ class Ui(Iconit):
         self.VerticalLayout4.addLayout(self.VerticalLayout6)
         self.VerticalLayout5.addWidget(self.TransparentLayer)
 
-        # ______________   SETTINGS TREE   _____________________ #
+        """
+        #################################################################
+                            SETTINGS TREE
+        #################################################################
+        """
         window.setCentralWidget(self.mainWidget)
         self.menubar = QtWidgets.QMenuBar(window)
         self.menubar.setObjectName("menubar")
@@ -235,13 +285,12 @@ class Ui(Iconit):
         self.menuSettings = QtWidgets.QMenu(self.menubar)
         self.menuSettings.setObjectName("menuSettings")
 
-
         window.setMenuBar(self.menubar)
         self.About = QtWidgets.QAction(window)
         self.Options = QtWidgets.QAction(window)
         self.actionAbout = QtWidgets.QAction(window)
         self.Remove_cache = QtWidgets.QAction(window)
-                
+
         self.Special_thanks = QtWidgets.QAction(window)
         self.DownloadDatabase = QtWidgets.QAction(window)
         self.actionRemove_cache = QtWidgets.QAction(window)
@@ -255,8 +304,11 @@ class Ui(Iconit):
 
         self.menubar.addAction(self.menuSettings.menuAction())
 
-
-        # ______________   SIGNALS   _____________________ #
+        """
+        #################################################################
+                                SIGNALS
+        #################################################################
+        """
         self.AvatarIconsRadio.toggled["bool"].connect(self.SysIconsInfo.hide)
         self.AvatarIconsRadio.toggled["bool"].connect(self.GameIconsInfo.hide)
         self.GameIconsRadio.toggled["bool"].connect(self.GameIconsInfo.setVisible)
@@ -270,13 +322,13 @@ class Ui(Iconit):
         self.Special_thanks.triggered.connect(self.open_credits)
         self.DownloadDatabase.triggered.connect(self.download_database)
 
-        # Update the cache and set following values from Settings.json 
+        # Update the cache and set following values from Settings.json
         cache = self.settings.update_local_cache(self.temp_path)
         self.PortInput.setText(cache.get("port"))
         self.IpInput.setText(cache.get("ip"))
         self.set_language(cache.get("language"))
 
-        # Share pointers of the widgets 
+        # Share pointers of the widgets
         self.widgets.set_ip_input(self.IpInput)
         self.widgets.set_ip_label(self.IpLabel)
         self.widgets.set_cache_bar(self.CacheBar)
@@ -286,42 +338,160 @@ class Ui(Iconit):
         self.widgets.set_cache_label(self.CacheLabel)
         self.widgets.set_status_label(self.StatusLabel)
         self.widgets.set_game_icon_radio(self.GameIconsRadio)
-        
-        # ________________  BETA v5 Disable ______________________
+
+        """
+        #################################################################
+                            BETA v5 Disable
+        #################################################################
+        """
 
         self.AvatarIconsRadio.setEnabled(False)
         self.translate_ui()
 
-
     def translate_ui(self):
-        translated_content: dict = self.translation.get_translation(self.language, "Iconit")
+        translated_content: dict = self.translation.get_translation(
+            self.language, "Iconit"
+        )
 
         _translate = QtCore.QCoreApplication.translate
-        self.GameIconsRadio.setText(_translate("window", translated_content.get("GameIconsRadio")))
-        self.SystemIconsRadio.setText(_translate("window", translated_content.get("SystemIconsRadio")))
-        self.AvatarIconsRadio.setText(_translate("window", translated_content.get("AvatarIconsRadio")))
-        self.ModeLabel.setText(_translate("window", self.html.span_tag(translated_content.get("ModeLabel"), "#f2ae30", 16, font=self.font)))
-        self.IpLabel.setText(_translate("window", self.html.span_tag(translated_content.get("IpLabel"), "#f2ae30", 16, font=self.font)))
-        self.CacheLabel.setText(_translate("window", self.html.span_tag(translated_content.get("CacheLabel"), "#f2ae30", 10, font=self.font)))
-        self.PortLabel.setText( _translate( "window", self.html.span_tag(translated_content.get("PortLabel"), "#f2ae30", 16, font=self.font)))
-        self.StatusLabel.setText(_translate("window", self.html.span_tag(translated_content.get("StatusLabel"), "#f2ae30", 18, font=self.font)))
-        self.OnlineIconsLink.setText(_translate("window", self.html.a_tag("https://all-exhost.github.io/Icons.html", translated_content.get("OnlineIconsLink"), "#f250e7", 8, font=self.font)))
-        self.PaypalLink.setText(_translate("window", self.html.a_tag("https://www.paypal.com/paypalme/Officialahmed0", translated_content.get("PaypalLink"), "#f250e7", 8, font=self.font)))
-        self.TwitterLink.setText(_translate("window", self.html.a_tag("https://twitter.com/OfficialAhmed0", f"{translated_content.get('TwitterLink')} @OfficialAhmed0", "#f250e7", 8, font=self.font)))
-        self.SysIconsInfo.setText(_translate("window", self.html.span_tag(translated_content.get("SysIconsInfo"), "#f2ae30", 8, font=self.font),))
-        self.GameIconsInfo.setText(_translate("window", self.html.span_tag(translated_content.get("GameIconsInfo"), "#f2ae30", 8, font=self.font)))
-        self.TitleLink.setText(_translate("window", self.html.a_tag("https://github.com/OfficialAhmed/Iconit-PS4/releases", f"{translated_content.get('TitleLink')} v{self.app_version}", "#f250e7", 18, font=self.font),))
+        self.GameIconsRadio.setText(
+            _translate("window", translated_content.get("GameIconsRadio"))
+        )
+        self.SystemIconsRadio.setText(
+            _translate("window", translated_content.get("SystemIconsRadio"))
+        )
+        self.AvatarIconsRadio.setText(
+            _translate("window", translated_content.get("AvatarIconsRadio"))
+        )
+        self.ModeLabel.setText(
+            _translate(
+                "window",
+                self.html.span_tag(
+                    translated_content.get("ModeLabel"), "#f2ae30", 16, font=self.font
+                ),
+            )
+        )
+        self.IpLabel.setText(
+            _translate(
+                "window",
+                self.html.span_tag(
+                    translated_content.get("IpLabel"), "#f2ae30", 16, font=self.font
+                ),
+            )
+        )
+        self.CacheLabel.setText(
+            _translate(
+                "window",
+                self.html.span_tag(
+                    translated_content.get("CacheLabel"), "#f2ae30", 10, font=self.font
+                ),
+            )
+        )
+        self.PortLabel.setText(
+            _translate(
+                "window",
+                self.html.span_tag(
+                    translated_content.get("PortLabel"), "#f2ae30", 16, font=self.font
+                ),
+            )
+        )
+        self.StatusLabel.setText(
+            _translate(
+                "window",
+                self.html.span_tag(
+                    translated_content.get("StatusLabel"), "#f2ae30", 18, font=self.font
+                ),
+            )
+        )
+        self.OnlineIconsLink.setText(
+            _translate(
+                "window",
+                self.html.a_tag(
+                    "https://all-exhost.github.io/Icons.html",
+                    translated_content.get("OnlineIconsLink"),
+                    "#f250e7",
+                    8,
+                    font=self.font,
+                ),
+            )
+        )
+        self.PaypalLink.setText(
+            _translate(
+                "window",
+                self.html.a_tag(
+                    "https://www.paypal.com/paypalme/Officialahmed0",
+                    translated_content.get("PaypalLink"),
+                    "#f250e7",
+                    8,
+                    font=self.font,
+                ),
+            )
+        )
+        self.TwitterLink.setText(
+            _translate(
+                "window",
+                self.html.a_tag(
+                    "https://twitter.com/OfficialAhmed0",
+                    f"{translated_content.get('TwitterLink')} @OfficialAhmed0",
+                    "#f250e7",
+                    8,
+                    font=self.font,
+                ),
+            )
+        )
+        self.SysIconsInfo.setText(
+            _translate(
+                "window",
+                self.html.span_tag(
+                    translated_content.get("SysIconsInfo"), "#f2ae30", 8, font=self.font
+                ),
+            )
+        )
+        self.GameIconsInfo.setText(
+            _translate(
+                "window",
+                self.html.span_tag(
+                    translated_content.get("GameIconsInfo"),
+                    "#f2ae30",
+                    8,
+                    font=self.font,
+                ),
+            )
+        )
+        self.TitleLink.setText(
+            _translate(
+                "window",
+                self.html.a_tag(
+                    "https://github.com/OfficialAhmed/Iconit-PS4/releases",
+                    f"{translated_content.get('TitleLink')} v{self.app_version}",
+                    "#f250e7",
+                    18,
+                    font=self.font,
+                ),
+            )
+        )
 
         self.About.setText(_translate("window", translated_content.get("About")))
-        self.actionAbout.setText(_translate("window", translated_content.get("actionAbout")))
+        self.actionAbout.setText(
+            _translate("window", translated_content.get("actionAbout"))
+        )
         self.Options.setText(_translate("window", translated_content.get("Options")))
-        self.ConnectBtn.setText(_translate("window", translated_content.get("ConnectBtn")))
-        self.menuSettings.setTitle(_translate("window", translated_content.get("menuSettings")))
+        self.ConnectBtn.setText(
+            _translate("window", translated_content.get("ConnectBtn"))
+        )
+        self.menuSettings.setTitle(
+            _translate("window", translated_content.get("menuSettings"))
+        )
 
-        
-        self.Remove_cache.setText(_translate("window", translated_content.get("Remove_cache")))
-        self.Special_thanks.setText(_translate("window", translated_content.get("Special_thanks")))
-        self.DownloadDatabase.setText(_translate("window", translated_content.get("DownloadDatabase")))
+        self.Remove_cache.setText(
+            _translate("window", translated_content.get("Remove_cache"))
+        )
+        self.Special_thanks.setText(
+            _translate("window", translated_content.get("Special_thanks"))
+        )
+        self.DownloadDatabase.setText(
+            _translate("window", translated_content.get("DownloadDatabase"))
+        )
         self.ConnectBtn.setShortcut("Return")
         self.Options.setShortcut("alt")
 
@@ -346,17 +516,23 @@ class Ui(Iconit):
         apps_db = self.mode.get("system apps").get("database").save()
         txt = ""
 
-        if game_db[0] == True: txt += "Games Database Successful \n"
-        else: txt += f"Games Database Unuccessful | {game_db[1]} \n"
+        if game_db[0] == True:
+            txt += "Games Database Successful \n"
+        else:
+            txt += f"Games Database Unuccessful | {game_db[1]} \n"
 
-        if apps_db[0] == True: txt += "Apps Database Successful \n"
-        else: txt += f"Apps Database Unuccessful | {apps_db[1]} \n"
+        if apps_db[0] == True:
+            txt += "Apps Database Successful \n"
+        else:
+            txt += f"Apps Database Unuccessful | {apps_db[1]} \n"
 
-        self.alerts.display("database", txt+" \n\nNOTE: DON'T USE THIS OPTION MANY TIMES OR YOU WILL BE BLOCKED BY THE SERVER, 2 OR 3 TIMES A DAY")
-        
+        self.alerts.display(
+            "database",
+            txt
+            + " \n\nNOTE: DON'T USE THIS OPTION MANY TIMES OR YOU WILL BE BLOCKED BY THE SERVER, 2 OR 3 TIMES A DAY",
+        )
 
     def remove_cache(self):
-        
         try:
             ignore_cache = (".gitkeep", "Database.json")
 
@@ -374,5 +550,7 @@ class Ui(Iconit):
 
             self.alerts.display("cache", "CUSTOMdoneRmvCache")
 
-        except PermissionError: self.alerts.display("cache", "PermissionDenied")
-        except Exception as e: self.alerts.display("cache", str(e))
+        except PermissionError:
+            self.alerts.display("cache", "PermissionDenied")
+        except Exception as e:
+            self.alerts.display("cache", str(e))

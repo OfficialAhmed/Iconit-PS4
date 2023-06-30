@@ -3,7 +3,7 @@ from environment import Common
 
 from PyQt5 import QtWidgets
 from PIL import Image
-from PyQt5.QtWidgets import QFileDialog, QApplication, QMessageBox
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 import os, shutil, json, concurrent.futures
 
@@ -26,7 +26,9 @@ class Main(Common):
 
 
     def check_bake_state(self):
-        """ Check if all baked icons of selected group found """
+        """ 
+            Check if all baked icons of selected group found 
+        """
         
         is_found_baked = False
         try: group_ids = json.load(open(self.group_path))
@@ -102,6 +104,9 @@ class Main(Common):
 
 
     def browse_mask(self) -> None:
+        """ 
+            Allow Zip files to be selected through a new rendered window 
+        """
 
         self.mask_is_changed = False
         options = QtWidgets.QFileDialog.Options()
@@ -179,10 +184,14 @@ class Main(Common):
             
 
     def bake_mask(self) -> None:
-        """ Apply chosen mask on all JSON Group """
+        """ 
+            Apply chosen mask on all JSON Group 
+        """
 
         def apply_mask(id, cover, mask:Image, lock):
-            """ Apply mask on style according to the cover(B&W photo) """
+            """ 
+                Apply mask on style according to the cover(B&W photo) 
+            """
             
             with Image.open(f"{self.temp_path}Groups\\Backup\\{id}.png").resize(self.ps4_icon_dimension) as icon:
                 
@@ -223,7 +232,9 @@ class Main(Common):
 
 
     def bake_preview_icon(self) -> None:
-        """ Bake a temp icon for preview with chosen mask """
+        """ 
+            Bake a temp icon for preview with chosen mask 
+        """
 
         style = Image.open(f"{self.temp_path}mask-style.png")
         cover = Image.open(f"{self.temp_path}mask.jpg").resize(self.ps4_icon_dimension).convert("L")
@@ -237,7 +248,9 @@ class Main(Common):
 
 
     def validate_baking(self) -> None:
-        """ Enable/Disable the baking button """
+        """ 
+            Enable/Disable the baking button 
+        """
 
         enable = False    
         if self.group_icons_is_changed and self.mask_is_changed:
