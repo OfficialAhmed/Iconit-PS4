@@ -4,7 +4,6 @@
 
 """
 
-import sys
 from environment import Common
 
 from PyQt5.QtWidgets import QFileDialog
@@ -90,36 +89,37 @@ class Main(Common):
 
         match image_type:
             case "icon":
-                required_dimensions = self.constant.get_ps4_icon_size()
-                limit_dimenstions = (1080, 720)
+                most_dimenstions = (1080, 720)
+                least_dimensions = self.constant.get_ps4_icon_size()
                 background = ""
                 
             case "picture":
-                required_dimensions = self.constant.get_ps4_pic_size()
-                limit_dimenstions = (2040, 1920)
+                most_dimenstions = (2040, 1920)
+                least_dimensions = self.constant.get_ps4_pic_size()
                 background = f"{self.pref_path}Black.@OfficialAhmed0"
 
-        image_dimension = Image.open(image_path).size
+        icon_dimensions = Image.open(image_path).size
+        icon_x, icon_y = icon_dimensions[0], icon_dimensions[1]
 
         # Correct size
-        if image_dimension == required_dimensions:
-            self.change_dimensions_label(self.constant.get_color("green"), background, size=str(image_dimension))
+        if icon_dimensions == least_dimensions:
+            self.change_dimensions_label(self.constant.get_color("green"), background, size=str(icon_dimensions))
             self.logging += self.html.internal_log_msg("success", self.translated_logs.get("CorrectDim"))
             is_valid = True
         
         # Less than the required [CANNOT BE RESIZED]
-        elif image_dimension[0] < required_dimensions[0] or image_dimension[1] < required_dimensions[1]:
-            self.change_dimensions_label(self.constant.get_color("red"), size = str(image_dimension))
+        elif icon_x < least_dimensions[0] or icon_y < least_dimensions[1]:
+            self.change_dimensions_label(self.constant.get_color("red"), size = str(icon_dimensions))
             self.logging += self.html.internal_log_msg("error", self.translated_logs.get("SmallDim"))
 
         # Greater than the limit [CANNOT BE RESIZED]
-        elif image_dimension[0] > limit_dimenstions[0] or image_dimension[1] > limit_dimenstions[1]:
-            self.change_dimensions_label(self.constant.get_color("red"), size = str(image_dimension))
-            self.logging += self.html.internal_log_msg("error", f"{self.translated_logs.get('ErrDim')} {limit_dimenstions}")
+        elif icon_x > most_dimenstions[0] or icon_y > most_dimenstions[1]:
+            self.change_dimensions_label(self.constant.get_color("red"), size = str(icon_dimensions))
+            self.logging += self.html.internal_log_msg("error", f"{self.translated_logs.get('ErrDim')} {most_dimenstions}")
 
         # Otherwise [CAN BE RESIZED]
         else:
-            self.change_dimensions_label(self.constant.get_color("orange"), background, str(image_dimension))
+            self.change_dimensions_label(self.constant.get_color("orange"), background, str(icon_dimensions))
             self.logging += self.html.internal_log_msg("warning", self.translated_logs.get('LargeDim'))
             is_valid = True
 
@@ -144,27 +144,30 @@ class Main(Common):
             icon_index = f"{self.GameTitles.currentIndex() + 1}"
 
         match self.selected_mode:
+
             case "game":
+
                 if self.is_toggled_homebrew == "True":
-                    if "CUSA" not in self.current_game_id:
-                        hb = self.translated_content.get("HomebrewLabel_Y")
-                    else:
-                        hb = self.translated_content.get("HomebrewLabel_N")
+                    hb_label = "HomebrewLabel_Y" if "CUSA" not in self.current_game_id else "HomebrewLabel_N"
                 else:
-                    hb = self.translated_content.get("HomebrewLabel_T")
+                    hb_label = "HomebrewLabel_T"
+                
 
                 if self.ids.get(self.current_game_id).get("location").upper() == "INTERNAL":
-                    location = self.translated_content.get("IconLocation_In")
+                    icon_location = "In"
                 else:
-                    location = self.translated_content.get("IconLocation_Ex")
+                    icon_location = "Ex"
+
+                hb = self.translated_content.get(hb_label)
+                location = self.translated_content.get(f"IconLocation_{icon_location}")
 
                 self.IconLocationTxt.setText(location)
                 self.GameTitleLabel.setText(self.ids.get(self.current_game_id).get("title"))
 
+
             case "system apps":
                 hb = self.translated_content.get("HomebrewLabel_Sys")
                 self.GameTitleLabel.setText(self.ids.get(self.current_game_id))
-
 
         self.HomebrewLabel.setText(hb)
         self.GameIdTxt.setText(self.current_game_id)

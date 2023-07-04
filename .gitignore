@@ -31,3 +31,4 @@ output
 .vs
 .vscode
 *.zip
+test.py
