@@ -1,4 +1,9 @@
+### Language _(Google translation)_
 
+* `Spanish` [Español](https://translate.google.com/translate?sl=en&tl=es&u=https://github.com/OfficialAhmed/Iconit-PS4/blob/master/README.md) 
+*  `German` [Deutsch](https://translate.google.com/translate?sl=en&tl=de&u=https://github.com/OfficialAhmed/Iconit-PS4/blob/master/README.md)
+* `Arabic` [العربية](https://translate.google.com/translate?sl=en&tl=ar&u=https://github.com/OfficialAhmed/Iconit-PS4/blob/master/README.md)
+  
 # Overview
 
 _Latest `exe` version `5.12 (June 17th, 2023)`_
