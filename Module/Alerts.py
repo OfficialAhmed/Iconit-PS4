@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 
 class Main:
 
@@ -62,4 +62,32 @@ class Main:
             case _:
                 msg = f"{description}."
             
-        QtWidgets.QMessageBox.warning(None, f"{window_title.upper()}", f"{msg}")
+        QMessageBox.warning(None, f"{window_title.upper()}", f"{msg}")
+
+
+    def alert(self, title:str, message:str, question=True) -> bool:
+        """
+            Render message box window for confirmation/Information
+        """
+
+        msg_window = QMessageBox()
+
+        icon = QMessageBox.Question
+        buttons = QMessageBox.Yes | QMessageBox.No
+        default_btn = QMessageBox.No
+
+        if not question:
+            icon = QMessageBox.Information
+            buttons = QMessageBox.Yes
+            default_btn = QMessageBox.Yes
+
+        msg_window.setIcon(icon)
+        msg_window.setWindowTitle(title)
+        msg_window.setText(message)
+        msg_window.setStandardButtons(buttons)
+        msg_window.setDefaultButton(default_btn)
+
+        if msg_window.exec_() == QMessageBox.Yes:
+            return True
+        
+        return False

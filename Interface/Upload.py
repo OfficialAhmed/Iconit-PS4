@@ -158,5 +158,5 @@ class Ui(Upload):
         self.ValidationLabel.setText(_translate(win_name, translated_content.get("ValidationLabel")))
         self.ConversionLabel.setText(_translate(win_name, translated_content.get("ConversionLabel")))
         self.SendingLabel.setText(_translate(win_name, translated_content.get("SendingLabel")))
-        self.msg.setText(_translate(win_name, warning_message))
         warning_message = f"{self.html.p_tag('margin: 0px;font-size:12pt; -qt-block-indent:0; text-indent:0px; color:#e83c3c', {translated_content.get('Warning')})}{translated_content.get('Question')}?"
+        self.msg.setText(_translate(win_name, warning_message))

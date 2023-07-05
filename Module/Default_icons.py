@@ -55,7 +55,7 @@ class Main(Common):
         if self.is_default_set():
 
             custom_group_btn_obj.setEnabled(True)
-            total_default_ids = len(json.load(open(self.default_group_file)))
+            total_default_ids = len(self.read_json(self.default_group_file))
 
         new_titles = total_ids - total_default_ids
         new_icons_number.setProperty("intValue", new_titles)

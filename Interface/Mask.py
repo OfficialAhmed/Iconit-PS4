@@ -231,5 +231,13 @@ class Ui(Mask):
         self.RevertBtn.clicked.connect(self.revert_to_default)
 
         multi_upload_obj = multi_upload()
-        self.UploadBtn.clicked.connect(lambda: multi_upload_obj.generate_icons_from_baked(self.UploadState, self.UploadBtn, self.group_path))
-        self.ContinueProcessBtn.clicked.connect(lambda: multi_upload_obj.continue_upload(self.ContinueProcessBtn, self.UploadBtn, self.UploadState))
+        self.UploadBtn.clicked.connect(lambda: multi_upload_obj.generate_and_upload_icons(self.selected_group_path))
+        self.ContinueProcessBtn.clicked.connect(lambda: multi_upload_obj.continue_upload(self.ContinueProcessBtn))
+
+        """
+        #################################################################
+                        Set common widgets
+        #################################################################
+        """
+        self.set_state_widget(self.UploadState)
+        self.set_upload_btn_widget(self.UploadBtn)

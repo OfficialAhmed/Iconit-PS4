@@ -65,6 +65,7 @@ class Main(Common):
 
 
     def change_state(self, connected: bool) -> None:
+
         translated_content: dict = self.translation.get_translation(self.language, "Iconit")
 
         labels = {
@@ -91,7 +92,7 @@ class Main(Common):
         data = []
         file = self.mode.get(self.selected_mode).get("ignored file")
         try: 
-            data = json.load(open(file)).get("ids")
+            data = self.read_json(file).get("ids")
         except: pass
         finally: return data
 
@@ -125,7 +126,7 @@ class Main(Common):
             file = mode.get("cache file") 
             
             if os.path.isfile(file):
-                try: result = json.load(open(file))
+                try: result = self.read_json(file)
                 except: pass
                 
         return result
@@ -231,21 +232,27 @@ class Main(Common):
 
             # Check selected mode
             if self.game_icon_radio.isChecked():
+
                 self.set_selected_mode("game")
                 self.selected_mode = "game"
                 is_cached = Game().start_cache()
  
+
             elif self.SystemIconsRadio.isChecked():
+
                 self.set_selected_mode("system apps")
                 self.selected_mode = "system apps"
                 is_cached = System().start_cache()
                 
+
             else:
+
                 self.set_selected_mode("avatar")
                 self.selected_mode = "avatar"
                 is_cached = Avatar().start_cache()
 
             self.selected_mode = self.get_selected_mode()
+
 
             if is_cached: 
                 self.progress_bar(self.CacheBar, 100)

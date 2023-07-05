@@ -1,11 +1,11 @@
+from PIL import Image
+from PyQt5 import QtWidgets
 from threading import Lock
 from environment import Common
+from Module.Multi_upload import Main as multi_uploader
+from PyQt5.QtWidgets import QFileDialog
 
-from PyQt5 import QtWidgets
-from PIL import Image
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
-
-import os, shutil, json, concurrent.futures
+import os, shutil, concurrent.futures
 
 
 class Main(Common):
@@ -20,6 +20,7 @@ class Main(Common):
         self.group_icons_is_changed = False
         self.preview_icon_path = self.pref_path.replace('\\', '/')
         self.ps4_icon_dimension = self.constant.get_ps4_icon_size()
+        self.multi_uploader = multi_uploader()
         
         win_name = "MaskMakerWindow"
         self.translated_content: dict = self.translation.get_translation(self.language, win_name)
@@ -75,7 +76,7 @@ class Main(Common):
         """
         
         is_found_baked = False
-        try: group_ids = json.load(open(self.group_path))
+        try: group_ids = self.read_json(self.selected_group_path)
         except: group_ids = []
         
         # Only check if group ids not empty
@@ -129,15 +130,15 @@ class Main(Common):
             
             self.RevertBtn.setEnabled(True)
             self.selected_group = group_path.split('/')[-1]
+            self.selected_group_path = group_path
 
-            self.group_path = group_path
             self.check_bake_state()
             self.BakeState.setText("Baking mask required")
             self.BakedView.setStyleSheet(f'border-image: url({self.preview_icon_path}previewTest.@OfficialAhmed0);')
             
             self.group_icons_is_changed = True
             self.GroupName.setText(self.selected_group)
-            self.group_ids: dict = json.load(open(group_path))
+            self.group_ids: dict = self.read_json(group_path)
 
         else:
             
@@ -210,21 +211,38 @@ class Main(Common):
         """
 
         translated_content: dict = self.translated_content.get("RevertToDefaultWindow")
-        msg_window = QMessageBox()
+        
+        is_confirmed = self.alerts.alert(
+            translated_content.get("WinTitle"),
+            f"{translated_content.get('Msg1')} *{self.selected_group}* {translated_content.get('Msg2')}"
+        )
 
-        msg_window.setIcon(QMessageBox.Question)
-        msg_window.setWindowTitle(translated_content.get("WinTitle"))
-        msg_window.setText(f"{translated_content.get('Msg1')} *{self.selected_group}* {translated_content.get('Msg2')}")
-
-        msg_window.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msg_window.setDefaultButton(QMessageBox.No)
-
-        if msg_window.exec_() == QMessageBox.Yes:
+        if is_confirmed:
 
             self.RevertBtn.setEnabled(False)
-
-            # read from default cached icons -> generate No of icons (png/dds) -> upload to PS4
+            selected_group = self.read_json(self.selected_group_path)
             
+            # Copy group icons from cache to baked folder
+            for id in selected_group:
+
+                shutil.copy(
+                    f"{self.mode.get(self.get_selected_mode()).get('default group path')}{id}.png", 
+                    f"{self.baked_path}{id}.png"
+                )
+
+            if self.multi_uploader.generate_and_upload_icons(self.selected_group_path):
+                title = "SUCCESSFULL REVERT"
+                msg = f"*{self.selected_group}* has been successfully reverted to default"
+            
+            else:
+                title = "UNSUCCESSFULL REVERT"
+                msg = f"Something went wrong. Please refer to Logs.txt"
+
+            self.alerts.alert(
+                title,
+                msg,
+                False
+            )
 
 
     def apply_mask(self, id, cover, mask:Image, lock):
@@ -245,12 +263,11 @@ class Main(Common):
 
         try:
             # Reading mask specifications from JSON
-            with open(f"{self.temp_path}set.json") as file:
-                info = json.load(file)
+            info = self.read_json(f"{self.temp_path}set.json")
 
-                vertical_shift = info.get("vertical_shift")
-                horizontal_shift = info.get("horizontal_shift")
-                width, height = info.get("width"), info.get("height")
+            vertical_shift = info.get("vertical_shift")
+            horizontal_shift = info.get("horizontal_shift")
+            width, height = info.get("width"), info.get("height")
         except: pass
 
         resized_game_icon = game_icon.resize((width, height))

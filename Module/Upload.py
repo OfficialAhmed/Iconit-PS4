@@ -19,7 +19,7 @@ class Main(Common):
         
         self.current_game_icons = []
 
-        self.uploader = Uploader.Main()
+        self.multi_uploader = Uploader.Main()
 
 
     def start_processing(self) -> None:
@@ -185,11 +185,11 @@ class Main(Common):
 
                     if self.browsed_icon_path and "icon" in current_image:
                         resized_icon.save(f"{icon_cache_path_no_extension}.png")
-                        self.uploader.png_to_dds(f"{icon_cache_path_no_extension}.png", self.icons_cache_path)
+                        self.multi_uploader.png_to_dds(f"{icon_cache_path_no_extension}.png", self.icons_cache_path)
 
                     if self.browsed_pic_path and 'pic' in current_image:
                         resized_pic.save(f"{icon_cache_path_no_extension}.png")
-                        self.uploader.png_to_dds(f"{icon_cache_path_no_extension}.png", self.icons_cache_path)
+                        self.multi_uploader.png_to_dds(f"{icon_cache_path_no_extension}.png", self.icons_cache_path)
 
                 
                 if self.browsed_icon_path and "icon" in current_image:
@@ -248,7 +248,7 @@ class Main(Common):
 
     
             for dds in required_dds:
-                self.uploader.png_to_dds(
+                self.multi_uploader.png_to_dds(
                     self.temp_path + dds + ".png",
                     self.temp_path,
                 )
@@ -300,7 +300,7 @@ class Main(Common):
         """
 
         for pic in self.pics_to_upload:
-            self.uploader.upload_to_server(f"{self.icons_cache_path}{pic}", pic)
+            self.multi_uploader.upload_to_server(f"{self.icons_cache_path}{pic}", pic)
 
             self.sending_progress += self.sending_progress_weight
             self.progress_bar(self.SendingBar, self.sending_progress)
@@ -314,10 +314,10 @@ class Main(Common):
         try:
             for icon in self.icons_to_upload:
                 
-                if self.uploader.upload_to_server(f"{self.icons_cache_path}{icon}", icon):
+                if self.multi_uploader.upload_to_server(f"{self.icons_cache_path}{icon}", icon):
                     
                     if icon == "icon0.png":
-                        self.uploader.update_local_icon(f"{self.icons_cache_path}{icon}", self.current_game_id)
+                        self.multi_uploader.update_local_icon(f"{self.icons_cache_path}{icon}", self.current_game_id)
 
                     self.sending_progress += self.sending_progress_weight
                     self.progress_bar(self.SendingBar, self.sending_progress)

@@ -5,13 +5,14 @@
     html: class holds repeated html tags and styling for the UI
     constant: class holds constant vars. Only getters
 """
-import os, datetime, shutil
 from ftplib import FTP
+
+import os, datetime, shutil, json
 import concurrent.futures
 import Module.Alerts as Alerts
 
-from Module.Widget.Shared import Widget
 from Module.Settings import Main as Settings
+from Module.Widget.Shared import Widget
 
 from Module.Widget.Translate import Translate
 from Module.Database.Generate import Game_Database, System_Database
@@ -19,16 +20,19 @@ from Module.Database.Generate import Game_Database, System_Database
 from Module.Constant.Html import Html
 from Module.Constant.Constants import Constants as Constant
 
+from PyQt5.QtWidgets import QMessageBox
+
+
 class Common:
     """
         * A Bridge class to connect between multiple classes 'different window process'
         
-        Class attributes accessable anywhere (SHARABLE ACCROSS CHILDS)
+        Class attributes accessable anywhere `SHARABLE ACCROSS CHILDS`
             - (Change attribute value) via setters
             - (Access attribute value) via direct call i.e. 'class_name.attr_name'
         
         init attributes are child specific.
-        Childs of this class have a copy of those attributes (NOT SHARABLE ACCROSS CHILDS)
+        Childs of this class have a copy of those attributes `NOT SHARABLE ACCROSS CHILDS`
             - (Change attribute value) via self assignment & setters
             - (Access attribute value) via self call
     """
@@ -37,11 +41,13 @@ class Common:
     app_path = os.getcwd()
     default_settings = {"font":"Arial", "port":"21", "ip":"", "icons_path":app_path, "download_path":app_path, "homebrew":"False", "language":"English"}
     
+
     #__________  shared attrs _________  #
     screen_w = 0
     screen_h = 0
     ui = None
     window = None
+
 
     #__________ Store connection for GoldHen one connection  _________________ #
     connection = None 
@@ -51,6 +57,12 @@ class Common:
     browsed_icon_path = ""
     browsed_pic_path = ""
 
+
+    #__________ Common mask baker window widgets _________________ #
+    state_widget = None
+    upload_btn_widget = None
+
+
     #__________ Different modes mapping _________________ #
     mode:dict = {
         "game" : {
@@ -59,6 +71,7 @@ class Common:
             "ignored file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\ignored.json",
             "cache path" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\game" + "\\",
             "cache file" : f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\games.json",
+            "default group path" : f"{app_path}\\Data\\Cache\\Groups\\Backup\\",
             "database" : Game_Database(f"{app_path}\\Data\\Cache\\Icons\\metadata\\game\\Database.json")
         },
 
@@ -79,6 +92,7 @@ class Common:
             "database" : ""
         }
     }
+
 
     def __init__(self) -> None:
         self.app_version = "5.12"
@@ -105,11 +119,11 @@ class Common:
         self.undetected_games_file = f"{self.app_root_path}GAMES MADE CACHING SLOWER.txt"
         self.setting_path = ""
 
-        self.ftp = FTP()
-        self.html = Html()
-        self.widgets = Widget()
-        self.constant = Constant()
-        self.settings = Settings()
+        self.ftp:FTP = FTP()
+        self.html:Html = Html()
+        self.widgets:Widget = Widget()
+        self.constant:Constant = Constant()
+        self.settings:Settings = Settings()
         
         self.settings.init(self.temp_path, self.language_path, self.default_settings, is_for_local_attr=True)
         self.translation = Translate(self.language_path)
@@ -161,8 +175,8 @@ class Common:
     def get_server_list(self, list:str = "directories") -> tuple:
         """ 
             This is a solution since PS4 ftp doesnt support nlst(). 
-            list: files = name of files if any 
-            list: directories = directories names if any 
+            * list: files = name of files if any 
+            * list: directories = directories names if any 
         """
         result = []
         command = lambda line : result.append(line.split(" ")[-1])
@@ -209,6 +223,15 @@ class Common:
             
             # Wait for all tasks to complete on the thread
             concurrent.futures.wait(tasks)
+
+
+    def read_json(self, json_path:str) -> dict:
+        """
+            Return JSON object as dictionary
+            Takes only path as str, no streaming
+        """
+
+        return json.load(open(json_path))
 
 
     def get_language(self) -> str:
@@ -278,3 +301,15 @@ class Common:
     def set_screen_size(self, w, h) -> None:
         Common.screen_w = w
         Common.screen_h = h
+
+    def set_state_widget(self, widget:Widget):
+        Common.state_widget = widget
+
+    def get_state_widget(self) -> Widget:
+        return Common.state_widget
+
+    def set_upload_btn_widget(self, widget:Widget):
+        Common.upload_btn_widget = widget
+
+    def get_upload_btn_widget(self) -> Widget:
+        return Common.upload_btn_widget
