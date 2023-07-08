@@ -290,7 +290,6 @@ class Main(Common):
 
         transparent_icon.paste(resized_game_icon, position)
         
-        # with Image.open(open(transparent_icon)) as icon:
         mask_copy = mask.copy()
         mask_copy.paste(transparent_icon, (0, 0), cover) 
         

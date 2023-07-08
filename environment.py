@@ -37,7 +37,7 @@ class Common:
             - (Access attribute value) via self call
     """
 
-    #__________  if Settings.json not found use these _________  #
+    #__________  Settings.json default state _________  #
     app_path = os.getcwd()
     default_settings = {"font":"Arial", "port":"21", "ip":"", "icons_path":app_path, "download_path":app_path, "homebrew":"False", "language":"English"}
     
@@ -95,8 +95,8 @@ class Common:
 
 
     def __init__(self) -> None:
-        self.app_version = "5.12"
-        self.app_release_date = "June 17th, 2023"
+        self.app_version = "5.13"
+        self.app_release_date = "July 7th, 2023"
 
         self.external_game_ids = []
         self.screen_w = Common.screen_w
