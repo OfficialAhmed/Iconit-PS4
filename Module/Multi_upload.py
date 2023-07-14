@@ -24,7 +24,7 @@ class Main(Common):
 
     def last_process(self, last_group_path:str = "") -> str|None:
         """
-            Save/Load process file with the group path 
+            Save/Load process file -> group path
         """
 
         # If path passed (write), else (read)
@@ -42,7 +42,7 @@ class Main(Common):
             Unfinished process detected, allow user to continue uploading the rest of baked icons
         """
 
-        self.generate_and_upload_icons(self.get_state_widget(), self.get_upload_btn_widget(), self.last_process())
+        self.generate_and_upload_icons(self.last_process())
         continue_btn_widget.setEnabled(False)
 
 
@@ -52,6 +52,11 @@ class Main(Common):
             * NOTE: Icons must be in baked folder for default and baking 
         """
 
+        isaccept = self.alerts.alert("WARNING", "Uploading might take sometime depends on number of games you have and the speed of your connection with the PS4. Iconit might look like frozen but its going to upload the icons on the background. Are you sure you want to continue?")
+
+        if not isaccept:
+            return True
+        
         self.get_state_widget().setText("UPLOADING... PLEASE WAIT")
         self.last_process(group_path)
 
@@ -106,8 +111,9 @@ class Main(Common):
                 self.get_state_widget().setText("DONE!")
 
             except Exception as e:
+                self.alerts.alert("UNSUCCESSFUL", f"Something went wrong while communicating with the PS4. Please rerun the application - Issue | {str(e)}", False)
                 self.log_to_external_file(str(e), "upload - baked mask")            
-                self.get_state_widget().setText("ERROR - READ logs.txt")
+                self.get_state_widget().setText("UNSUCCESSFUL")
                 self.upload_btn_widget.setEnabled(False)
                 return False
             
