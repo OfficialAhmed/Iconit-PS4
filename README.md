@@ -6,7 +6,7 @@
   
 # Overview
 
-_Latest `exe` version `5.12 (June 17th, 2023)`_
+_Latest `exe` version `5.13 (July 12th, 2023)`_
 
 _Currently working on `v5.56` mainly for performance & code factorization for `PS5 FTP` in the future_.
 
