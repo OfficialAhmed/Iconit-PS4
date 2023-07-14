@@ -45,14 +45,10 @@ class Main(Common):
         """
 
         style = Image.open(f"{self.temp_path}mask-style.png")
-        cover = Image.open(f"{self.temp_path}mask.png").resize(self.ps4_icon_dimension).convert("L")
+        cover = Image.open(f"{self.temp_path}mask.png").convert("L")
         mask = style.copy()
 
-        with Image.open(f"{self.preview_icon_path}previewTest.@OfficialAhmed0") as icon:
-
-            mask_copy = mask.copy()
-            mask_copy.paste(icon, (0, 0), cover) 
-            mask_copy.save(f"{self.temp_path}preview.png")
+        self.apply_mask("preview", cover, mask)
 
 
     def validate_baking(self) -> None:
@@ -245,7 +241,7 @@ class Main(Common):
             )
 
 
-    def apply_mask(self, id, cover, mask:Image, lock):
+    def apply_mask(self, id, cover, mask:Image, lock=None):
         """ 
             - Shrink icon while keeping aspect ratio `(512, 512)`
                 by pasting the icon/mask on transparent image
@@ -257,17 +253,20 @@ class Main(Common):
         vertical_shift = 0
         horizontal_shift = 0
         width, height = self.ps4_icon_dimension
-
-        game_icon = Image.open(f"{self.temp_path}Groups\\Backup\\{id}.png")
         transparent_icon = Image.new("RGBA", self.ps4_icon_dimension, (0, 0, 0, 0))
+
+        if id == "preview":
+            game_icon = Image.open(f"{self.preview_icon_path}previewTest.@OfficialAhmed0")
+        else:
+            game_icon = Image.open(f"{self.temp_path}Groups\\Backup\\{id}.png")
 
         try:
             # Reading mask specifications from JSON
             info = self.read_json(f"{self.temp_path}set.json")
 
-            vertical_shift = info.get("vertical_shift")
-            horizontal_shift = info.get("horizontal_shift")
-            width, height = info.get("width"), info.get("height")
+            vertical_shift = int(info.get("vertical_shift"))
+            horizontal_shift = int(info.get("horizontal_shift"))
+            width, height = int(info.get("width")), int(info.get("height"))
         except: pass
 
         resized_game_icon = game_icon.resize((width, height))
@@ -293,11 +292,15 @@ class Main(Common):
         mask_copy = mask.copy()
         mask_copy.paste(transparent_icon, (0, 0), cover) 
         
-        with lock:
-
+        if lock:
             # One thread writing to the system at a time
-            mask_copy.save(f"{self.baked_path}{id}.png")
-
+            with lock:
+                mask_copy.save(f"{self.baked_path}{id}.png")
+        
+        else:
+            # Preview baked 
+            mask_copy.save(f"{self.temp_path}preview.png")
+            
 
     def bake_mask(self) -> None:
         """
