@@ -31,34 +31,6 @@ This application is much convenient than uploading the icons manually, it automa
 * Image conversion `JPG, ICO, ...` to `PNG`
 * Image to compressed textures conversion `PNG` to `DDS dxt1`
 * Resize images to the required size `512x512`, `1920x1080`
-
-## How to apply masks
-
- Applying styled masks on a set of icons requires a mask download free from [here](https://all-exhost.github.io/Masks.html)
-
- 1. #### Create a set of icons (*groups*)
-
-	 1. Select **Icons** mode on the main window
-	 2. Select **Menu** (Top-left-hand-corner)
-	 3. Select **Set Icon Group**
-	 4. Click **SET/UPDATE DEFAULT GROUP** `NOTE: Make sure all icons are normal without any edits nor masks`
-	 
-	 All icons on the PS4 will be in the `default group`. To make a custom group:
-	 
-	 1. Click **SET CUSTOM GROUP**
-	 2. Pick the games for this group, type in the title for the group
-	 3. Click **SAVE**
-	 
-
- 2. #### Apply Mask
-
-	 1. Click **Mask Maker** on Icons mode
-	 2. Click **Mask...** and choose the mask *.Zip*
-	 3. Click **Group...** and choose the group to apply the mask
-	 4. Click **BAKE ICONS** to apply the mask on all icons of the selected group
-	 5. Click **UPLOAD BAKED ICONS** to send the icons to the PS4
-
-	If something went wrong while uploading, rerun the application but this time click on **Continue** it will redo the uploading process for the remaining icons
 	
 ## *What's new in v5*
 
@@ -100,11 +72,16 @@ This application is much convenient than uploading the icons manually, it automa
 
 ________________________________________
 
+## Generate executable
+
+* (no console)
+
+	`pyinstaller --noconfirm --onefile --windowed --icon "Iconit-path-here/Iconit-PS4/ico/icon.ico" --name "Iconit vX.X"  "iconit-path-here/Iconit-PS4/main.py"`
   
+* (verrsrc) - if available
+	`--version-file "Iconit-path-here/Iconit-PS4/verrsrc.h"`
 
-## Current implementation Main bugs
-
-This version isn't ready for end-users
+## Current implementation bugs
 
 1. Avatars option patch required
 
@@ -148,7 +125,13 @@ This version isn't ready for end-users
 
 * [@PS__TRICKS](https://twitter.com/PS__TRICKS)
 
+
+# Attention
   
+Some antivirus detect the compiled/converted `.exe` version as **_trojan or malware_ [Win64:Evo-gen [Trj] or Trojan.Generic.horqm]** because the compiler _Pyinstaller_ used by some people to make malware but don't worry `Iconit.exe is False-positive`. If you don't trust it, you can check the commits and changes if there's any malicious code or compile the code on your own. Otherwise, you may whitelist it and continue.
+
+The _Pyinstaller_ devs stated it here [False-positive Pyinstaller](https://github.com/pyinstaller/pyinstaller/issues/6754)
+
 
 ## _Preview_
 
@@ -156,16 +139,6 @@ This version isn't ready for end-users
 
 ![Icons_screen](Interface/view/icons_screen.jpg)
 
-  
-
-# Attention
-
-  
-Some antivirus detect the compiled/converted `.exe` version as **_trojan or malware_ [Win64:Evo-gen [Trj] or Trojan.Generic.horqm]** because the compiler _Pyinstaller_ used by some people to make malware but don't worry `Iconit.exe is False-positive`. If you don't trust it, you can check the commits and changes if there's any malicious code or compile the code on your own. Otherwise, you may whitelist it and continue.
-
-The _Pyinstaller_ devs stated it here [False-positive Pyinstaller](https://github.com/pyinstaller/pyinstaller/issues/6754)
-
-  
 
 # License
 

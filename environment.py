@@ -20,8 +20,6 @@ from Module.Database.Generate import Game_Database, System_Database
 from Module.Constant.Html import Html
 from Module.Constant.Constants import Constants as Constant
 
-from PyQt5.QtWidgets import QMessageBox
-
 
 class Common:
     """
@@ -96,7 +94,7 @@ class Common:
 
     def __init__(self) -> None:
         self.app_version = "5.13"
-        self.app_release_date = "July 7th, 2023"
+        self.app_release_date = "July 14th, 2023"
 
         self.external_game_ids = []
         self.screen_w = Common.screen_w
