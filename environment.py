@@ -93,8 +93,8 @@ class Common:
 
 
     def __init__(self) -> None:
-        self.app_version = "5.13"
-        self.app_release_date = "July 14th, 2023"
+        self.app_version = "5.15"
+        self.app_release_date = "September -, 2023"
 
         self.external_game_ids = []
         self.screen_w = Common.screen_w
@@ -130,6 +130,7 @@ class Common:
         self.ps4_system_icons_dir = self.constant.get_system_icons_path()
         self.ps4_internal_icons_dir = self.constant.get_internal_icons_path()
         self.ps4_external_icons_dir = self.constant.get_external_icons_path()
+        self.ps4_cache_path = self.constant.get_user_data_path()
 
         self.backup_path = f"{self.constant.get_backup_folder_name()}" + "\\"
         
