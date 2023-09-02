@@ -18,7 +18,7 @@ from Module.Widget.Translate import Translate
 from Module.Database.Generate import Game_Database, System_Database
 
 from Module.Constant.Html import Html
-from Module.Constant.Constants import Constants as Constant
+from Module.Constant.Constants import PS4 as PS4_Constants
 
 
 class Common:
@@ -120,7 +120,7 @@ class Common:
         self.ftp:FTP = FTP()
         self.html:Html = Html()
         self.widgets:Widget = Widget()
-        self.constant:Constant = Constant()
+        self.constant:PS4_Constants = PS4_Constants()
         self.settings:Settings = Settings()
         
         self.settings.init(self.temp_path, self.language_path, self.default_settings, is_for_local_attr=True)

@@ -1,10 +1,10 @@
-from Module.Constant.Constants import Constants as Constant
+from Module.Constant.Constants import PS4 as PS4_Constants
 
 class Html:
     def __init__(self) -> None:
         self.__start = "<html><head><body>"
         self.__end = "</body></head></html>"
-        self.__constant = Constant()
+        self.__constant = PS4_Constants()
         self.color = {
             "error":self.__constant.get_color("red"),
             "warning":self.__constant.get_color("orange"),
